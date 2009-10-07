@@ -39,15 +39,15 @@ LIB_DIR				= native/$(OS)$(WORD_SIZE)
 
 MAKE_SHARED			= $(MAKE) -C native/ shared; \
 					cp $(LIB_DIR)/$(LIB_PREFIX)sst.$(LIB_SUFFIX) \
-					build/lib/$(LIB_PREFIX)sst$(WORD_SIZE).$(LIB_SUFFIX); \
+					build/jni/$(LIB_PREFIX)sst$(WORD_SIZE).$(LIB_SUFFIX); \
 					$(ANT) build-resource
 MAKE_SHAREDX		= $(MAKE) -C native/ sharedx; \
 					cp $(LIB_DIR)/$(LIB_PREFIX)sstx.$(LIB_SUFFIX) \
-					build/libx/$(LIB_PREFIX)sstx$(WORD_SIZE).$(LIB_SUFFIX); \
+					build/jni/$(LIB_PREFIX)sstx$(WORD_SIZE).$(LIB_SUFFIX); \
 					$(ANT) build-resource
 MAKE_SHARED_CL		= $(MAKE) -C native/ shared_cl; \
 					cp $(LIB_DIR)/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX) \
-					build/lib/$(LIB_PREFIX)sst_cl$(WORD_SIZE).$(LIB_SUFFIX); \
+					build/jni/$(LIB_PREFIX)sst_cl$(WORD_SIZE).$(LIB_SUFFIX); \
 					$(ANT) build-resource
 MAKE_BUILD_AND_TEST	= $(MAKE) -C native/ BuildAndTest; \
 					cp $(LIB_DIR)/BuildAndTest.exe ./
@@ -75,7 +75,7 @@ all: shared sharedx
 
 shared: bin/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX)
 
-build/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX): \
+build/jni/$(LIB_PREFIX)sst.$(LIB_SUFFIX): \
 	bin/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX)
 
 bin/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX): \
@@ -84,7 +84,7 @@ bin/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX): \
 
 sharedx: bin/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
 
-build/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX): \
+build/jni/$(LIB_PREFIX)sstx.$(LIB_SUFFIX): \
 	bin/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
 
 bin/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX): \
@@ -93,7 +93,7 @@ bin/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX): \
 
 shared_cl: bin/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX)
 
-build/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX): \
+build/jni/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX): \
 	bin/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX)
 
 bin/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX): \
@@ -214,12 +214,12 @@ $(CHECKSTYLE_TOKEN): $(JSRCS) $(CSRCS) $(CHEADERS)
 
 publish: $(PUBLISH_TOKEN)
 
-$(PUBLISH_TOKEN): $(JSRCS) build/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX)
+$(PUBLISH_TOKEN): $(JSRCS) build/jni/$(LIB_PREFIX)sst.$(LIB_SUFFIX)
 	$(ANT) ivy-publish
 
 publishx: $(PUBLISHX_TOKEN)
 
-$(PUBLISHX_TOKEN): $(JSRCS) build/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
+$(PUBLISHX_TOKEN): $(JSRCS) build/jni/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
 	$(ANT) ivy-publishx
 
 #------------------------------------------------------------------------------#
@@ -227,9 +227,7 @@ $(PUBLISHX_TOKEN): $(JSRCS) build/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
 #------------------------------------------------------------------------------#
 
 clean: clean32 clean64 clean_win32
-	rm -rf doxydoc/ demo/ \
-		build/lib/*.$(LIB_SUFFIX) \
-		build/libx/*.$(LIB_SUFFIX)
+	rm -rf doxydoc/ demo/ build/jni/*.$(LIB_SUFFIX)
 	rm -f $(DOXYDOC_TOKEN) *.exe
 	$(ANT) clean
 	$(MAKE) -C native/ clean

@@ -29,6 +29,10 @@
 
     <target name="init">
         <mkdir dir="bin" />
+        <mkdir dir="build/jni" />
+        <mkdir dir="distrib/jars" />
+        <mkdir dir="distrib/sources" />
+        <mkdir dir="distrib/resources" />
         <available file=".dependencies" property="build.dependencies" />
         <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="Shared.classpath" />
     </target>
@@ -248,20 +252,20 @@
         <delete file="native/include/jni/jni_headers.h" />
         <delete file="native/include/jni/jni_headersx.h" />
         <delete dir="bin" />
+        <delete dir="distrib" />
         <delete dir="javadoc" />
+        <delete dir="build/jni" />
         <delete>
             <fileset dir="." includes="*.jar" />
-            <fileset dir="distrib" includes="**/*/*" />
-            <fileset dir="build/lib" excludes="**/*.jar" />
-            <fileset dir="build/libx" excludes="**/*.jar" />
         </delete>
     </target>
 
     <target name="distclean" depends="clean">
-        <delete>
-            <fileset dir="build" includes="**/*/*.jar" />
-        </delete>
         <delete file=".dependencies" />
+        <delete dir="build/ant" />
+        <delete dir="build/checkstyle" />
+        <delete dir="build/jni" />
+        <delete dir="build/lib" />
     </target>
 
 </project>
