@@ -1,0 +1,20 @@
+Depending on the distribution, this library is covered under either the GNU
+Lesser General Public License (license/license_LGPL.txt) or the GNU General
+Public License (license/license_GPL.txt). If you do not find the extension
+package hierarchy "sharedx.*" present, then all components are distributable
+under the LGPL; otherwise, the work as a whole is covered by the GPL.
+
+Other libraries have been incorporated to varying extents:
+
+  * Components of JAMA (license/license_JAMA.txt) have been adapted into:
+      * shared/array/kernel/LinearAlgebraOps.java
+      * shared/LinearAlgebraOps_eigs.cpp
+      * shared/LinearAlgebraOps_lu.cpp
+      * shared/LinearAlgebraOps_svd.cpp
+  * Components of Kiss FFT (license/license_Kiss-FFT.txt) have been adapted
+    into:
+      * shared/fft/FFTOps.java
+  * The Bitstream Vera font (license/license_Bitstream-Vera.txt) is included
+    at:
+      * shared/font/Vera.ttf
+  * Please look into retrieved Jar dependencies for more license information.

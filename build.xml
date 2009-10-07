@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project basedir="." default="build" name="Shared" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
+
+    <property environment="env" />
+    <property file="src/shared/project.properties" />
+
+    <property name="target" value="1.6" />
+    <property name="source" value="1.6" />
+    <property name="ivy.install.version" value="2.1.0-rc2" />
+
+    <!-- Source and class paths. -->
+
+    <path id="Shared.sourcepath">
+        <pathelement location="src" />
+        <pathelement location="src_commons" />
+        <pathelement location="src_extensions" />
+        <pathelement location="src_net" />
+        <pathelement location="src_test" />
+    </path>
+
+    <path id="Shared.classpath">
+        <pathelement location="bin" />
+        <pathelement location="build/conf" />
+        <fileset dir="build" includes="**/*/*.jar" />
+    </path>
+
+    <!-- Build project. -->
+
+    <target name="init">
+        <mkdir dir="bin" />
+        <available file=".dependencies" property="build.dependencies" />
+        <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="Shared.classpath" />
+    </target>
+
+    <target name="ivy-install" depends="init" unless="ivy.install">
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="build/ant/ivy.jar" usetimestamp="true" />
+    </target>
+
+    <target name="ivy-prepare" depends="ivy-install" unless="ivy.settings.file">
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="Shared.classpath" />
+        <ivy:configure file="build/ivysettings.xml" />
+    </target>
+
+    <target name="ivy-resolve" depends="ivy-prepare" unless="ivy.module.shared-shared">
+        <ivy:resolve />
+    </target>
+
+    <target name="ivy-retrieve" depends="ivy-prepare" unless="build.dependencies">
+        <ivy:retrieve conf="ant, checkstyle, lib" />
+        <touch file=".dependencies" />
+    </target>
+
+    <target name="build-prepare" depends="ivy-retrieve">
+        <taskdef resource="checkstyletask.properties" uri="antlib:com.puppycrawl.tools.checkstyle" classpathref="Shared.classpath" />
+        <taskdef name="header" classname="org.apache.tools.ant.taskdefs.optional.Javah" classpathref="Shared.classpath" />
+    </target>
+
+    <target name="build-project" depends="build-prepare">
+        <javac debug="true" debuglevel="source,lines,vars" destdir="bin" source="${source}" target="${target}">
+            <src refid="Shared.sourcepath" />
+            <classpath refid="Shared.classpath" />
+        </javac>
+    </target>
+
+    <target name="build-resource" depends="build-prepare">
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src" excludes="**/*.java" />
+            <fileset dir="src_commons" excludes="**/*.java" />
+            <fileset dir="src_extensions" excludes="**/*.java" />
+            <fileset dir="src_net" excludes="**/*.java" />
+            <fileset dir="src_test" excludes="**/*.java" />
+            <fileset dir="build" includes="lib/**, libx/**" />
+        </copy>
+    </target>
+
+    <target name="build" depends="build-project, build-resource">
+        <touch file=".bin" />
+    </target>
+
+    <!-- Jar targets. -->
+
+    <fileset id="Shared.metainf" dir=".">
+        <include name="README" />
+        <include name="license.txt" />
+        <include name="license/license_*.txt" />
+    </fileset>
+
+    <target name="jar" depends="build-project, build-resource">
+        <jar destfile="sst.jar" basedir="bin">
+            <manifest>
+                <attribute name="Main-Class" value="shared/test/All" />
+            </manifest>
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-base" depends="build-project, build-resource">
+        <jar destfile="distrib/jars/sst-base-${build.version}.jar" basedir="bin" includes="shared/**, font/**" excludes="shared/test/**, shared/cli/**, shared/codec/**, shared/log/**, shared/net/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-base-src" depends="build-project, build-resource">
+        <jar destfile="distrib/sources/sst-base-src-${build.version}.jar" basedir="src" includes="shared/**, font/**" excludes="shared/test/**, shared/cli/**, shared/codec/**, shared/log/**, shared/net/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-commons" depends="build-project, build-resource">
+        <jar destfile="distrib/jars/sst-commons-${build.version}.jar" basedir="bin" includes="shared/cli/**, shared/codec/**, shared/log/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-commons-src" depends="build-project, build-resource">
+        <jar destfile="distrib/sources/sst-commons-src-${build.version}.jar" basedir="src_commons" includes="shared/cli/**, shared/codec/**, shared/log/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-net" depends="build-project, build-resource">
+        <jar destfile="distrib/jars/sst-net-${build.version}.jar" basedir="bin" includes="shared/net/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-net-src" depends="build-project, build-resource">
+        <jar destfile="distrib/sources/sst-net-src-${build.version}.jar" basedir="src_net" includes="shared/net/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-build-conf" depends="build-project, build-resource">
+        <jar destfile="distrib/resources/sst-build-conf-${build.version}.jar" basedir="build" includes="conf/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-native" depends="build-project, build-resource">
+        <jar destfile="distrib/resources/sst-native-${build.version}.jar" basedir="build" includes="lib/**" excludes="lib/*.jar">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-extensions" depends="build-project, build-resource">
+        <jar destfile="distrib/jars/sst-extensions-${build.version}.jar" basedir="bin" includes="sharedx/**" excludes="sharedx/test/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-extensions-src" depends="build-project, build-resource">
+        <jar destfile="distrib/sources/sst-extensions-src-${build.version}.jar" basedir="src_extensions" includes="sharedx/**" excludes="sharedx/test/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-test" depends="build-project, build-resource">
+        <jar destfile="distrib/jars/sst-test-${build.version}.jar" basedir="bin" includes="shared/test/**, sharedx/test/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-test-src" depends="build-project, build-resource">
+        <jar destfile="distrib/sources/sst-test-src-${build.version}.jar" basedir="src_test" includes="shared/test/**, sharedx/test/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-nativex" depends="build-project, build-resource">
+        <jar destfile="distrib/resources/sst-nativex-${build.version}.jar" basedir="build" includes="libx/**" excludes="libx/*.jar">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <!-- Publish Jars. -->
+
+    <target name="ivy-publish" depends="ivy-resolve, jar-base, jar-base-src, jar-commons, jar-commons-src, jar-net, jar-net-src, jar-native, jar-build-conf">
+        <ivy:publish resolver="local" conf="ant, build-conf, checkstyle, base, base-src, commons, commons-src, net, net-src, native, build-conf" overwrite="true" forcedeliver="true" />
+        <delete file=".publishx" />
+        <touch file=".publish" />
+    </target>
+
+    <target name="ivy-publishx" depends="ivy-resolve, jar-base, jar-base-src, jar-commons, jar-commons-src, jar-net, jar-net-src, jar-native, jar-build-conf, jar-extensions, jar-extensions-src, jar-test, jar-test-src, jar-nativex">
+        <ivy:publish resolver="local" overwrite="true" forcedeliver="true" />
+        <delete file=".publish" />
+        <touch file=".publishx" />
+    </target>
+
+    <!-- JNI headers target. -->
+
+    <target name="headers" depends="build-project">
+        <header outputfile="native/include/jni/jni_headers.h" force="yes">
+            <class name="java.lang.Double" />
+            <class name="java.lang.Integer" />
+            <class name="shared.metaclass.Library" />
+            <class name="shared.image.jni.NativeImageKernel" />
+            <class name="shared.array.kernel.ArrayKernel" />
+            <class name="shared.array.jni.NativeArrayKernel" />
+            <classpath refid="Shared.classpath" />
+        </header>
+    </target>
+
+    <target name="headersx" depends="build-project">
+        <header outputfile="native/include/jni/jni_headersx.h" force="yes">
+            <class name="sharedx.fftw.Plan" />
+            <class name="sharedx.test.BenchmarkNative" />
+            <class name="sharedx.test.BenchmarkSpecification" />
+            <classpath refid="Shared.classpath" />
+        </header>
+    </target>
+
+    <!-- Javadoc target. -->
+
+    <target name="javadoc" depends="build-project">
+        <javadoc access="protected" destdir="javadoc" packagenames="*" source="${source}" splitindex="true" failonerror="true" author="true" use="true" version="true">
+            <sourcepath refid="Shared.sourcepath" />
+            <classpath refid="Shared.classpath" />
+            <link href="http://java.sun.com/javase/6/docs/api/" />
+            <doclet name="org.jboss.apiviz.APIviz" pathref="Shared.classpath" />
+        </javadoc>
+        <touch file=".javadoc" />
+    </target>
+
+    <!-- Checkstyle target. -->
+
+    <target name="checkstyle" depends="build-prepare">
+        <cs:checkstyle config="build/checkstyle.xml">
+            <fileset dir="native/src" includes="**/*.cpp" />
+            <fileset dir="native/include" includes="**/*.hpp" />
+            <fileset dir="src" includes="**/*.java" />
+            <fileset dir="src_commons" includes="**/*.java" />
+            <fileset dir="src_extensions" includes="**/*.java" />
+            <fileset dir="src_net" includes="**/*.java" />
+            <fileset dir="src_test" includes="**/*.java" />
+        </cs:checkstyle>
+        <touch file=".checkstyle" />
+    </target>
+
+    <!-- Wipe clean. -->
+
+    <target name="clean">
+        <delete file=".bin" />
+        <delete file=".checkstyle" />
+        <delete file=".javadoc" />
+        <delete file=".publish" />
+        <delete file=".publishx" />
+        <delete file="native/include/jni/jni_headers.h" />
+        <delete file="native/include/jni/jni_headersx.h" />
+        <delete dir="bin" />
+        <delete dir="javadoc" />
+        <delete>
+            <fileset dir="." includes="*.jar" />
+            <fileset dir="distrib" includes="**/*/*" />
+            <fileset dir="build/lib" excludes="**/*.jar" />
+            <fileset dir="build/libx" excludes="**/*.jar" />
+        </delete>
+    </target>
+
+    <target name="distclean" depends="clean">
+        <delete>
+            <fileset dir="build" includes="**/*/*.jar" />
+        </delete>
+        <delete file=".dependencies" />
+    </target>
+
+</project>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC
+                "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+                "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+
+    <property name="severity" value="error" />
+
+    <module name="RegexpHeader">
+        <property name="fileExtensions" value="java" />
+        <property name="headerFile" value="build/header_java.txt" />
+        <property name="multiLines" value="4, 9, 13" />
+    </module>
+
+    <module name="RegexpHeader">
+        <property name="fileExtensions" value="cpp, hpp" />
+        <property name="headerFile" value="build/header_cpp.txt" />
+        <property name="multiLines" value="4, 9, 13" />
+    </module>
+
+</module>

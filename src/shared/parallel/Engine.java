@@ -1,0 +1,639 @@
+/**
+ * This file is part of the Shared Scientific Toolbox in Java ("this library"). <br />
+ * <br />
+ * Copyright (C) 2007 Roy Liu <br />
+ * <br />
+ * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation, either version 2.1 of the License, or (at your option)
+ * any later version. <br />
+ * <br />
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details. <br />
+ * <br />
+ * You should have received a copy of the GNU Lesser General Public License along with this library. If not, see <a
+ * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+ */
+
+package shared.parallel;
+
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Formatter;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import shared.util.Control;
+
+/**
+ * An execution engine class for pushing data through the guts of some parallel computation given as a directed, acyclic
+ * graph.
+ * 
+ * @apiviz.composedOf shared.parallel.Engine.ThrowableReferenceHandler
+ * @apiviz.composedOf shared.parallel.Engine.EngineEdge
+ * @apiviz.composedOf shared.parallel.Engine.EngineNode
+ * @apiviz.owns shared.parallel.TraversalPolicy
+ * @param <T>
+ *            the input type.
+ * @author Roy Liu
+ */
+public class Engine<T> {
+
+    final Semaphore guard, notifier;
+    final ThrowableReferenceHandler exceptionRef;
+    final Calculator<? super Object, ? extends T> startCalculator;
+    final Calculator<? super Object, ? extends Object> stopCalculator;
+    final Map<Calculator<?, ?>, EngineNode<?, ?>> nodeMap;
+    final TraversalPolicy<EngineNode<?, ?>, EngineEdge<?>> policy;
+    final ThreadPoolExecutor executor;
+
+    boolean valid;
+
+    T engineInput;
+
+    /**
+     * Alternate constructor. Creates an engine with the number of threads set to {@link Runtime#availableProcessors()}
+     * and {@link LimitedMemoryPolicy} for its {@link TraversalPolicy}.
+     */
+    public Engine() {
+        this(Runtime.getRuntime().availableProcessors());
+    }
+
+    /**
+     * Alternate constructor. Creates an engine with {@link LimitedMemoryPolicy} for its {@link TraversalPolicy}.
+     * 
+     * @param nthreads
+     *            the number of threads.
+     */
+    public Engine(int nthreads) {
+        this(nthreads, new LimitedMemoryPolicy<EngineNode<?, ?>, EngineEdge<?>>());
+    }
+
+    /**
+     * Default constructor.
+     * 
+     * @param nthreads
+     *            the number of threads.
+     * @param policy
+     *            the {@link TraversalPolicy} to apply when ordering nodes.
+     */
+    public Engine(int nthreads, TraversalPolicy<EngineNode<?, ?>, EngineEdge<?>> policy) {
+
+        this.exceptionRef = new ThrowableReferenceHandler();
+        this.executor = Control.createPool(nthreads, nthreads, //
+                new PriorityBlockingQueue<Runnable>(), //
+                this.exceptionRef);
+
+        this.policy = policy;
+
+        this.guard = new Semaphore(1);
+        this.notifier = new Semaphore(0);
+
+        this.nodeMap = new LinkedHashMap<Calculator<?, ?>, EngineNode<?, ?>>();
+
+        // The start calculation that merely propagates the engine's input.
+        this.startCalculator = new Calculator<Object, T>() {
+
+            public T calculate(List<? extends Handle<? extends Object>> inputVector) {
+                return Engine.this.engineInput;
+            }
+
+            @Override
+            public String toString() {
+                return "Start ()";
+            }
+        };
+
+        this.nodeMap.put(this.startCalculator, //
+                new EngineNode<Object, T>(this.startCalculator, false));
+
+        // The token stop calculation that releases the semaphore guard.
+        this.stopCalculator = new Calculator<Object, Object>() {
+
+            public T calculate(List<? extends Handle<? extends Object>> inputVector) {
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "Stop ()";
+            }
+        };
+
+        this.nodeMap.put(this.stopCalculator, //
+
+                new EngineNode<Object, Object>(this.stopCalculator, false) {
+
+                    @Override
+                    public void run() {
+
+                        try {
+
+                            super.run();
+
+                        } finally {
+
+                            // Make sure that the notifier semaphore is released no matter
+                            // what.
+                            Engine.this.notifier.release();
+                        }
+                    }
+                });
+
+        this.valid = false;
+        this.engineInput = null;
+    }
+
+    /**
+     * Gets the initial {@link Calculator}, which does nothing aside from repeating input given to it.
+     */
+    public Calculator<? super Object, ? extends T> getInput() {
+        return this.startCalculator;
+    }
+
+    /**
+     * Adds a non-output {@link Calculator} along with its dependencies.
+     * 
+     * @see #add(Calculator, boolean, Collection)
+     */
+    public <I, O> void add( //
+            Calculator<I, O> calc, //
+            Calculator<?, ? extends I>... calcDeps //
+    ) {
+        add(calc, false, Arrays.asList(calcDeps));
+    }
+
+    /**
+     * Adds an output {@link Calculator} along with its dependencies.
+     * 
+     * @see #add(Calculator, boolean, Collection)
+     * @return a {@link Handle} from which potential output can be retrieved.
+     */
+    public <I, O> Handle<O> addOutput( //
+            Calculator<I, O> calc, //
+            Calculator<?, ? extends I>... calcDeps //
+    ) {
+        return add(calc, true, Arrays.asList(calcDeps));
+    }
+
+    /**
+     * Adds a {@link Calculator} along with its dependencies.
+     * 
+     * @param <I>
+     *            the {@link Calculator} input type.
+     * @param <O>
+     *            the {@link Calculator} output type.
+     * @param calc
+     *            the {@link Calculator}.
+     * @param hasOutput
+     *            whether this node has observable output.
+     * @param calcDeps
+     *            the dependencies.
+     * @return a {@link Handle} from which potential output can be retrieved.
+     */
+    @SuppressWarnings("unchecked")
+    public <I, O> Handle<O> add( //
+            Calculator<I, O> calc, boolean hasOutput, //
+            Collection<? extends Calculator<?, ? extends I>> calcDeps //
+    ) {
+
+        EngineNode<I, O> node = new EngineNode<I, O>(calc, hasOutput);
+
+        Control.checkTrue(calcDeps.size() > 0, //
+                "Please specify some dependencies");
+
+        try {
+
+            Control.checkTrue(this.guard.tryAcquire(), //
+                    "Operation in progress");
+
+            // The ordering is no longer valid.
+            invalidate();
+
+            // Check everything before inserts.
+            Control.checkTrue(!this.nodeMap.containsKey(calc), //
+                    "Node already exists");
+
+            for (Calculator<?, ? extends I> calcDep : calcDeps) {
+                Control.checkTrue(this.nodeMap.containsKey(calcDep), //
+                        "Node doesn't exist");
+            }
+
+            this.nodeMap.put(calc, node);
+
+            for (Calculator<?, ? extends I> calcDep : calcDeps) {
+                addEdge((EngineNode<?, ? extends I>) this.nodeMap.get(calcDep), node);
+            }
+
+        } finally {
+
+            this.guard.release();
+        }
+
+        return node.hasOutput ? node : null;
+    }
+
+    /**
+     * Executes with the given input.
+     * 
+     * @param engineInput
+     *            the input.
+     */
+    public void execute(final T engineInput) {
+
+        try {
+
+            Control.checkTrue(this.guard.tryAcquire(), //
+                    "Operation in progress");
+
+            validate();
+
+            // Reset reference counts in preparation for the new computation.
+            for (EngineNode<?, ?> node : this.nodeMap.values()) {
+
+                // Invariant: Both reference counts should have reached zero.
+                Control.assertTrue(node.outRefCount.getAndSet(node.outputs.size()) == 0 //
+                        && node.inRefCount.getAndSet(node.inputs.size()) == 0);
+
+                node.set(null);
+            }
+
+            // The queue size and the number of permits should be zero.
+            Control.assertTrue(this.notifier.availablePermits() == 0 //
+                    && this.executor.getQueue().isEmpty());
+
+            // Prime the priority queue with a single element -- the input calculator.
+            this.engineInput = engineInput;
+            this.executor.execute(this.nodeMap.get(this.startCalculator));
+
+            // Try to acquire a number of permits equal to the number of nodes, thus guaranteeing
+            // termination of the computation upon return.
+            this.notifier.acquireUninterruptibly();
+
+            Throwable t = this.exceptionRef.getAndSet(null);
+
+            // If the calculation internally encountered a problem.
+            if (t != null) {
+                Control.rethrow(t);
+            }
+
+        } finally {
+
+            this.guard.release();
+        }
+    }
+
+    /**
+     * Outputs human-readable directives for <a href="http://www.graphviz.org/">Dot</a> graph generation.
+     */
+    @Override
+    public String toString() {
+
+        try {
+
+            Control.checkTrue(this.guard.tryAcquire(), //
+                    "Operation in progress");
+
+            validate();
+
+            EngineNode<?, ?> root = this.nodeMap.get(this.startCalculator);
+            EngineNode<?, ?> sink = this.nodeMap.get(this.stopCalculator);
+
+            Formatter f = new Formatter();
+
+            f.format("%n/* Begin Node Specification */%n%n");
+            f.format("\"%s (%d)\" [shape = diamond, color = green];%n", root, root.order);
+            f.format("\"%s (%d)\" [shape = diamond, color = green];%n", sink, sink.order);
+
+            List<EngineNode<?, ?>> nodes = new ArrayList<EngineNode<?, ?>>(this.nodeMap.values());
+            Collections.sort(nodes);
+
+            for (EngineNode<?, ?> node : nodes) {
+
+                if (node.hasOutput) {
+
+                    f.format("\"%s (%d)\" [shape = octagon, color = red];%n", node, node.order);
+
+                } else if (!node.equals(root) && !node.equals(sink)) {
+
+                    f.format("\"%s (%d)\" [shape = rectangle, color = blue];%n", node, node.order);
+                }
+            }
+
+            f.format("%n/* Begin Edge Specification */%n%n");
+
+            for (EngineNode<?, ?> node : nodes) {
+
+                for (EngineEdge<?> edge : node.outputs) {
+
+                    for (int i = 0, n = node.depth; i < n; i++) {
+                        f.format("\t");
+                    }
+
+                    f.format("\"%s (%d)\" -> \"%s (%d)\"%n", //
+                            edge.getU(), edge.getU().order, //
+                            edge.getV(), edge.getV().order);
+                }
+            }
+
+            return f.toString();
+
+        } finally {
+
+            this.guard.release();
+        }
+    }
+
+    /**
+     * Computes a traversal ordering over the current configuration of {@link EngineNode}s.
+     */
+    @SuppressWarnings("unchecked")
+    protected void validate() {
+
+        if (!this.valid) {
+
+            Collection<EngineNode<?, ?>> nodes = this.nodeMap.values();
+
+            EngineNode<? super Object, ? extends Object> sink = //
+            (EngineNode<? super Object, ? extends Object>) this.nodeMap.get(this.stopCalculator);
+
+            // Unlink the output node. It had better be the case that a child knows about the output node.
+            for (EngineEdge<?> edge : sink.inputs) {
+                Control.assertTrue(edge.getU().outputs.remove(edge));
+            }
+
+            sink.inputs.clear();
+
+            // Attach everything that's a sink to the fake sink.
+            for (EngineNode<?, ?> node : nodes) {
+
+                if (node.outputs.size() == 0 && node != sink) {
+                    addEdge(node, sink);
+                }
+            }
+
+            // Assign priority order according to the traversal policy.
+            Control.assertTrue(this.policy.assign(sink) == nodes.size());
+
+            this.valid = true;
+        }
+    }
+
+    /**
+     * Invalidates the current traversal ordering.
+     */
+    protected void invalidate() {
+        this.valid = false;
+    }
+
+    /**
+     * Links two {@link EngineNode}s by an {@link EngineEdge}.
+     * 
+     * @param <O>
+     *            the output-input type.
+     */
+    protected <O> void addEdge(EngineNode<?, ? extends O> u, EngineNode<? super O, ?> v) {
+
+        EngineEdge<O> e = new EngineEdge<O>(u, v);
+
+        u.outputs.add(e);
+        v.inputs.add(e);
+    }
+
+    /**
+     * A computation node that is part of some topology of nodes.
+     * 
+     * @apiviz.owns shared.parallel.Calculator
+     * @param <I>
+     *            the input type.
+     * @param <O>
+     *            the output type.
+     */
+    protected class EngineNode<I, O> implements Handle<O>, Runnable, Traversable<EngineNode<?, ?>, EngineEdge<?>> {
+
+        final Calculator<? super I, ? extends O> calculator;
+        final List<EngineEdge<? extends I>> inputs;
+        final List<EngineEdge<? extends I>> inputsReadOnly;
+        final List<EngineEdge<? super O>> outputs;
+        final List<EngineEdge<? super O>> outputsReadOnly;
+
+        final AtomicInteger outRefCount, inRefCount;
+
+        final boolean hasOutput;
+
+        int order, depth;
+
+        O value;
+
+        /**
+         * Default constructor.
+         */
+        public EngineNode(Calculator<? super I, ? extends O> calculator, boolean hasOutput) {
+
+            this.calculator = calculator;
+            this.hasOutput = hasOutput;
+
+            this.inputs = new ArrayList<EngineEdge<? extends I>>();
+            this.inputsReadOnly = Collections.unmodifiableList(this.inputs);
+            this.outputs = new ArrayList<EngineEdge<? super O>>();
+            this.outputsReadOnly = Collections.unmodifiableList(this.outputs);
+
+            this.outRefCount = new AtomicInteger(0);
+            this.inRefCount = new AtomicInteger(0);
+
+            this.order = (this.depth = -1);
+
+            this.value = null;
+        }
+
+        /**
+         * Compares traversal orders to determine priority of execution.
+         */
+        public int compareTo(EngineNode<?, ?> node) {
+            return this.order - node.order;
+        }
+
+        public O get() {
+            return this.value;
+        }
+
+        public void set(O value) {
+            this.value = value;
+        }
+
+        public int getOrder() {
+            return this.order;
+        }
+
+        public void setOrder(int order) {
+            this.order = order;
+        }
+
+        public int getDepth() {
+            return this.depth;
+        }
+
+        public void setDepth(int depth) {
+            this.depth = depth;
+        }
+
+        public List<EngineEdge<? extends I>> getIn() {
+            return this.inputsReadOnly;
+        }
+
+        public List<EngineEdge<? super O>> getOut() {
+            return this.outputsReadOnly;
+        }
+
+        @Override
+        public String toString() {
+            return this.calculator.toString();
+        }
+
+        /**
+         * Executes the {@link Calculator#calculate(List)} method associated with this node.
+         */
+        public void run() {
+
+            try {
+
+                this.value = this.calculator.calculate(this.inputsReadOnly);
+
+            } catch (Throwable t) {
+
+                Engine.this.exceptionRef.compareAndSet(null, t);
+
+                Control.rethrow(t);
+
+            } finally {
+
+                for (int i = 0, n = this.inputs.size(), val; i < n; i++) {
+
+                    EngineNode<?, ? extends I> node = this.inputs.get(i).getU();
+
+                    // The node has all of its outputs observed; free its value.
+                    if ((val = node.outRefCount.decrementAndGet()) == 0) {
+
+                        if (!node.hasOutput) {
+                            node.set(null);
+                        }
+
+                    } else {
+
+                        Control.assertTrue(val > 0);
+                    }
+                }
+
+                for (int i = 0, n = this.outputs.size(), val; i < n; i++) {
+
+                    EngineNode<? super O, ?> node = this.outputs.get(i).getV();
+
+                    // The node in question has all of its inputs accounted for; insert it according
+                    // to its traversal order.
+                    if ((val = node.inRefCount.decrementAndGet()) == 0) {
+
+                        Engine.this.executor.execute(node);
+
+                    } else {
+
+                        Control.assertTrue(val > 0);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * An output-input relationship between two {@link Engine.EngineNode}s.
+     * 
+     * @param <O>
+     *            the output-input type.
+     */
+    protected class EngineEdge<O> implements Handle<O>, Edge<EngineNode<?, ?>> {
+
+        final EngineNode<?, ? extends O> u;
+        final EngineNode<? super O, ?> v;
+
+        /**
+         * Default constructor.
+         */
+        public EngineEdge(EngineNode<?, ? extends O> u, EngineNode<? super O, ?> v) {
+
+            this.u = u;
+            this.v = v;
+        }
+
+        public EngineNode<?, ? extends O> getU() {
+            return this.u;
+        }
+
+        public EngineNode<? super O, ?> getV() {
+            return this.v;
+        }
+
+        /**
+         * Delegates to the start {@link Engine.EngineNode}'s {@link #get()} method.
+         */
+        public O get() {
+            return this.u.get();
+        }
+
+        public void setU(EngineNode<?, ?> node) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void setV(EngineNode<?, ?> node) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void set(O output) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
+     * A subclass of {@link AtomicReference} that doubles as an {@link UncaughtExceptionHandler}. It is set whenever an
+     * uncaught {@link Throwable} occurs.
+     */
+    protected static class ThrowableReferenceHandler extends AtomicReference<Throwable> implements
+            UncaughtExceptionHandler {
+
+        /**
+         * The UID for serialization purposes.
+         */
+        final protected static long serialVersionUID = 1L;
+
+        /**
+         * Default constructor.
+         */
+        protected ThrowableReferenceHandler() {
+        }
+
+        /**
+         * Sets this reference.
+         */
+        public void uncaughtException(Thread thread, Throwable throwable) {
+
+            // Set the exception only if one hasn't already occurred.
+            compareAndSet(null, throwable);
+        }
+    }
+
+    // A finalizer guardian for the thread pool.
+    final Object poolReaper = new Object() {
+
+        @Override
+        protected void finalize() {
+            Engine.this.executor.shutdownNow();
+        }
+    };
+}

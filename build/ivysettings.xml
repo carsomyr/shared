@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivysettings>
+
+    <property name="ivy.deliver.revision" value="${build.version}" />
+
+    <resolvers>
+        <chain name="public" returnFirst="true">
+            <ibiblio name="first" m2compatible="true" />
+            <ibiblio name="second" root="http://repository.jboss.com/maven2/" m2compatible="true" />
+        </chain>
+    </resolvers>
+
+    <property name="ivy.dep.file" value="${basedir}/build/ivy.xml" />
+    <property name="ivy.settings.file" value="${basedir}/build/ivysettings.xml" />
+
+    <!-- Where shall we place retrieved artifacts? -->
+    <property name="ivy.retrieve.pattern" value="build/[conf]/[artifact].[ext]" />
+    <!-- Resolvers check file recency. -->
+    <property name="ivy.resolver.default.check.modified" value="true" />
+
+    <settings defaultResolver="default" />
+
+    <include url="${ivy.default.settings.dir}/ivysettings-shared.xml" />
+    <include url="${ivy.default.settings.dir}/ivysettings-local.xml" />
+    <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml" />
+    <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml" />
+
+</ivysettings>

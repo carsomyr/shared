@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+    <info organisation="shared" module="shared" />
+
+    <configurations>
+        <conf name="ant" />
+        <conf name="checkstyle" />
+        <conf name="base" />
+        <conf name="commons" extends="base" />
+        <conf name="net" extends="base, commons" />
+        <conf name="build-conf" />
+        <conf name="native" />
+        <conf name="extensions" extends="base" />
+        <conf name="test" extends="base, commons, net" />
+        <conf name="nativex" />
+        <conf name="lib" extends="base, commons, net" />
+    </configurations>
+
+    <publications>
+        <artifact name="sst-base" type="jar" conf="base" ext="jar" />
+        <artifact name="sst-base-src" type="source" conf="base" ext="jar" />
+        <artifact name="sst-commons" type="jar" conf="commons" ext="jar" />
+        <artifact name="sst-commons-src" type="source" conf="commons" ext="jar" />
+        <artifact name="sst-net" type="jar" conf="net" ext="jar" />
+        <artifact name="sst-net-src" type="source" conf="net" ext="jar" />
+        <artifact name="sst-build-conf" type="resource" conf="build-conf" ext="jar" />
+        <artifact name="sst-native" type="resource" conf="native" ext="jar" />
+        <artifact name="sst-extensions" type="jar" conf="extensions" ext="jar" />
+        <artifact name="sst-extensions-src" type="source" conf="extensions" ext="jar" />
+        <artifact name="sst-test" type="jar" conf="test" ext="jar" />
+        <artifact name="sst-test-src" type="source" conf="test" ext="jar" />
+        <artifact name="sst-nativex" type="resource" conf="nativex" ext="jar" />
+    </publications>
+
+    <dependencies>
+        <dependency org="ant" name="ant-nodeps" rev="1.6.5" conf="ant->default" />
+        <dependency org="org.jboss.apiviz" name="apiviz" rev="1.3.0.GA" conf="ant->default" />
+        <dependency org="checkstyle" name="checkstyle" rev="5.0" conf="checkstyle->default">
+            <exclude module="commons-cli" />
+        </dependency>
+        <dependency org="commons-cli" name="commons-cli" rev="1.2" conf="commons->default" />
+        <dependency org="commons-codec" name="commons-codec" rev="1.4" conf="commons->default" />
+        <dependency org="log4j" name="log4j" rev="1.2.15" conf="commons->default">
+            <exclude module="jmxri" />
+            <exclude module="jmxtools" />
+        </dependency>
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.5.8" conf="commons->default" />
+        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf="commons->default">
+            <exclude module="log4j" />
+        </dependency>
+        <dependency org="junit" name="junit" rev="4.7" conf="lib->default" />
+    </dependencies>
+
+</ivy-module>
