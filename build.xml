@@ -29,7 +29,8 @@
 
     <target name="init">
         <mkdir dir="bin" />
-        <mkdir dir="build/jni" />
+        <mkdir dir="build/lib" />
+        <mkdir dir="build/libx" />
         <mkdir dir="distrib/jars" />
         <mkdir dir="distrib/sources" />
         <mkdir dir="distrib/resources" />
@@ -254,9 +255,10 @@
         <delete dir="bin" />
         <delete dir="distrib" />
         <delete dir="javadoc" />
-        <delete dir="build/jni" />
         <delete>
             <fileset dir="." includes="*.jar" />
+            <fileset dir="build" includes="lib/*.dll, lib/*.jnilib, lib/*.so" />
+            <fileset dir="build" includes="libx/*.dll, libx/*.jnilib, libx/*.so" />
         </delete>
     </target>
 
@@ -264,8 +266,8 @@
         <delete file=".dependencies" />
         <delete dir="build/ant" />
         <delete dir="build/checkstyle" />
-        <delete dir="build/jni" />
         <delete dir="build/lib" />
+        <delete dir="build/libx" />
     </target>
 
 </project>
