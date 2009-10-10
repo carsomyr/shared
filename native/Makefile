@@ -64,7 +64,7 @@ cmake: $(OS)$(WORD_SIZE)/Makefile
 
 $(OS)$(WORD_SIZE)/Makefile: CMakeLists.txt
 	mkdir -p $(OS)$(WORD_SIZE)/
-	cd $(OS)$(WORD_SIZE)/; $(CMAKE) ../ $(CMAKE_FLAGS)
+	cd $(OS)$(WORD_SIZE)/ && $(CMAKE) ../ $(CMAKE_FLAGS)
 
 shared: cmake $(JNI_HEADERS)
 	$(MAKE) -C $(OS)$(WORD_SIZE)/ sst
