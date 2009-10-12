@@ -98,7 +98,7 @@ $(JNI_HEADERSX):
 $(ICON_PNGS): icon_%.png: src/icon/icon_%.svg
 	inkscape --without-gui \
 		--file=$< \
-		--export-png=$(CURDIR)/$@ \
+		--export-png="$(CURDIR)"/$@ \
 		--export-width=$*
 
 $(ICON_ICO): $(ICON_PNGS)

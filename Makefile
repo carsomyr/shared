@@ -54,7 +54,7 @@ MAKE_SHARED_CL		= \
 	&& $(ANT) build-resource
 MAKE_BUILD_AND_TEST	= \
 	$(MAKE) -C native/ BuildAndTest \
-	&& cp $(LIB_DIR)/BuildAndTest.exe ./
+	&& cp $(LIB_DIR)/BuildAndTest.exe .
 
 #------------------------------------------------------------------------------#
 # Make the high level targets.                                                 #
