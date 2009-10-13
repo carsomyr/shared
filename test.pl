@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 my $java =
 "java -ea -XX:+AggressiveHeap -XX:+AllowUserSignalHandlers -Xcheck:jni -cp bin/";
