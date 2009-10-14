@@ -21,8 +21,8 @@
 
     <path id="Shared.classpath">
         <pathelement location="bin" />
-        <pathelement location="build/conf" />
         <pathelement location="build/ivy.jar" />
+        <pathelement location="build/conf" />
         <fileset dir="build" includes="**/*/*.jar" />
     </path>
 
@@ -246,14 +246,14 @@
     <!-- Wipe clean. -->
 
     <target name="clean">
-        <delete dir="bin" />
-        <delete dir="distrib" />
-        <delete dir="javadoc" />
         <delete file=".bin" />
         <delete file=".checkstyle" />
         <delete file=".javadoc" />
         <delete file=".publish" />
         <delete file=".publishx" />
+        <delete dir="bin" />
+        <delete dir="distrib" />
+        <delete dir="javadoc" />
         <delete file="native/include/jni/jni_headers.h" />
         <delete file="native/include/jni/jni_headersx.h" />
         <delete>
@@ -264,12 +264,12 @@
     </target>
 
     <target name="distclean" depends="clean">
+        <delete file=".dependencies" />
+        <delete file="build/ivy.jar" />
         <delete dir="build/ant" />
         <delete dir="build/checkstyle" />
         <delete dir="build/lib" />
         <delete dir="build/libx" />
-        <delete file=".dependencies" />
-        <delete file="build/ivy.jar" />
     </target>
 
 </project>
