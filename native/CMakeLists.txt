@@ -134,11 +134,11 @@ if(MINGW)
         set_target_properties(${BUILD_TARGET} PROPERTIES PREFIX "")
     endforeach(BUILD_TARGET ${BUILD_TARGETS})
 
-    set(BUILD_TARGETS ${BUILD_TARGETS} "BuildAndTest")
-    add_executable("BuildAndTest" ${SRC_WIN32} "src/icon/icon.rc")
-    set_target_properties("BuildAndTest" PROPERTIES VERSION ${VERSION})
-    set_target_properties("BuildAndTest" PROPERTIES COMPILE_FLAGS "")
-    set_target_properties("BuildAndTest" PROPERTIES LINK_FLAGS "")
+    set(BUILD_TARGETS ${BUILD_TARGETS} "buildandtest")
+    add_executable("buildandtest" ${SRC_WIN32} "src/icon/icon.rc")
+    set_target_properties("buildandtest" PROPERTIES VERSION ${VERSION})
+    set_target_properties("buildandtest" PROPERTIES COMPILE_FLAGS "")
+    set_target_properties("buildandtest" PROPERTIES LINK_FLAGS "")
 
     foreach(BUILD_TARGET ${BUILD_TARGETS})
 

@@ -50,9 +50,8 @@ endif
 # Make the high level targets.                                                 #
 #------------------------------------------------------------------------------#
 
-.PHONY: all \
-	cmake shared sharedx \
-	BuildAndTest doxygen clean
+.INTERMEDIATE: $(ICON_PNGS)
+.PHONY: all cmake shared sharedx shared_cl buildandtest doxygen clean
 
 all: shared sharedx
 
@@ -75,8 +74,8 @@ sharedx: cmake $(JNI_HEADERS) $(JNI_HEADERSX)
 shared_cl: cmake $(JNI_HEADERS)
 	$(MAKE) -C $(OS)$(WORD_SIZE)/ sst_cl
 
-BuildAndTest: cmake $(ICON_ICO)
-	$(MAKE) -C $(OS)$(WORD_SIZE)/ BuildAndTest
+buildandtest: cmake $(ICON_ICO)
+	$(MAKE) -C $(OS)$(WORD_SIZE)/ buildandtest
 
 doxygen: cmake
 	$(MAKE) -C $(OS)$(WORD_SIZE)/ doxygen
@@ -111,4 +110,4 @@ $(ICON_ICO): $(ICON_PNGS)
 
 clean:
 	rm -rf $(OS)$(WORD_SIZE)/
-	rm -f *.png $(ICON_ICO)
+	rm -f $(ICON_ICO)

@@ -16,7 +16,6 @@ JSRCS				= $(wildcard src*/*/*.java) \
 # C++ Headers, Sources, and Objects
 
 CSRCS				= $(wildcard native/src/*/*.cpp)
-
 CHEADERS			= $(wildcard native/include/*/*.hpp)
 
 # JNI Headers
@@ -53,20 +52,17 @@ MAKE_SHARED_CL		= \
 		build/lib/$(LIB_PREFIX)sst_cl$(WORD_SIZE).$(LIB_SUFFIX) \
 	&& $(ANT) build-resource
 MAKE_BUILD_AND_TEST	= \
-	$(MAKE) -C native/ BuildAndTest \
-	&& cp $(LIB_DIR)/BuildAndTest.exe .
+	$(MAKE) -C native/ buildandtest \
+	&& cp $(LIB_DIR)/buildandtest.exe .
 
 #------------------------------------------------------------------------------#
 # Make the high level targets.                                                 #
 #------------------------------------------------------------------------------#
 
 .PHONY: all \
-	shared sharedx \
-	shared32 sharedx32 \
-	shared64 sharedx64 \
+	shared sharedx shared_cl shared32 sharedx32 shared64 sharedx64 \
 	headers headersx \
-	win32 java jar javadoc doxydoc checkstyle \
-	publish publishx \
+	win32 java jar javadoc doxydoc checkstyle publish publishx \
 	clean clean32 clean64 clean_win32 distclean
 
 all: shared sharedx
@@ -141,7 +137,7 @@ bin/libx/$(LIB_PREFIX)sstx64.$(LIB_SUFFIX): \
 win32: OS = Windows
 win32: LIB_PREFIX =
 win32: LIB_SUFFIX = dll
-win32: bin/lib/sst.dll bin/libx/sstx.dll BuildAndTest.exe
+win32: bin/lib/sst.dll bin/libx/sstx.dll buildandtest.exe
 
 bin/lib/sst.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS)
 	$(MAKE_SHARED)
@@ -149,7 +145,7 @@ bin/lib/sst.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS)
 bin/libx/sstx.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
 	$(MAKE_SHAREDX)
 
-BuildAndTest.exe: $(CSRCS) $(CHEADERS)
+buildandtest.exe: $(CSRCS) $(CHEADERS)
 	$(MAKE_BUILD_AND_TEST)
 
 #------------------------------------------------------------------------------#

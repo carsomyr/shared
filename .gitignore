@@ -18,7 +18,6 @@
 /build/checkstyle/
 /build/lib/
 /build/libx/
-/native/*.png
 /native/Darwin/
 /native/Linux/
 /native/Windows/
