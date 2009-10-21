@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="src_commons"/>
-	<classpathentry kind="src" path="src_net"/>
-	<classpathentry kind="src" path="src_test"/>
-	<classpathentry kind="src" path="src_extensions"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=build%2Fivy.xml&amp;confs=*"/>
-	<classpathentry kind="output" path="bin"/>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="src" path="src_commons"/>
+    <classpathentry kind="src" path="src_net"/>
+    <classpathentry kind="src" path="src_test"/>
+    <classpathentry kind="src" path="src_extensions"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+    <classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=build%2Fivy.xml&amp;confs=*"/>
+    <classpathentry kind="output" path="bin"/>
 </classpath>
