@@ -300,31 +300,91 @@ public class Control {
 
         if (f.isDirectory()) {
 
-            try {
+            // We don't recurse down symlinks.
+            if (isSymbolicLink(f)) {
+                return false;
+            }
 
-                File absoluteFile = f.getAbsoluteFile();
-                File canonicalFile = f.getCanonicalFile();
-                File absoluteParent = absoluteFile.getParentFile().getCanonicalFile();
-                File canonicalParent = canonicalFile.getParentFile();
+            for (File file : f.listFiles()) {
+                delete(file);
+            }
+        }
 
-                // The file is a symbolic link if and only if the names don't match and/or the parent
-                // directories don't match.
-                if (!absoluteParent.equals(canonicalParent) //
-                        || !absoluteFile.getName().equals(canonicalFile.getName())) {
+        return f.delete();
+    }
+
+    /**
+     * Copies a file or directory. If a directory, then recursively copies the contents while not following symbolic
+     * links.
+     * 
+     * @param src
+     *            the source file or directory.
+     * @param dst
+     *            the destination file or directory.
+     * @return whether the copy operation went smoothly.
+     */
+    final public static boolean copy(File src, File dst) {
+
+        // We don't operate on symlinks.
+        if (isSymbolicLink(src)) {
+            return true;
+        }
+
+        if (src.isDirectory()) {
+
+            if (dst.exists() || !dst.mkdirs()) {
+                return false;
+            }
+
+            for (File file : src.listFiles()) {
+
+                if (!copy(file, new File(dst, file.getName()))) {
                     return false;
                 }
+            }
 
-                for (File file : f.listFiles()) {
-                    delete(file);
-                }
+            return true;
+
+        } else if (src.isFile()) {
+
+            try {
+
+                transfer(src, dst);
 
             } catch (IOException e) {
 
                 return false;
             }
+
+            if (!dst.setReadable(src.canRead()) //
+                    || !dst.setWritable(src.canWrite()) //
+                    || !dst.setExecutable(src.canExecute())) {
+                return false;
+            }
+
+            return true;
         }
 
-        return f.delete();
+        return true;
+    }
+
+    /**
+     * Tests whether the given file is a symbolic link.
+     */
+    final public static boolean isSymbolicLink(File f) {
+
+        File parent = f.getParentFile();
+
+        try {
+
+            // The file path itself could contain symlinked directories.
+            File normalized = (parent != null) ? new File(parent.getCanonicalFile(), f.getName()) : f;
+            return !normalized.getCanonicalFile().equals(normalized.getAbsoluteFile());
+
+        } catch (IOException e) {
+
+            throw new RuntimeException(e);
+        }
     }
 
     /**
