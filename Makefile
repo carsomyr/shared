@@ -179,6 +179,7 @@ jar: sst.jar
 
 sst.jar: $(BUILD_TOKEN)
 	$(ANT) jar
+	touch $@
 
 #------------------------------------------------------------------------------#
 # Make the Javadoc.                                                            #
