@@ -20,6 +20,9 @@ package shared.test;
 import shared.array.ArrayBase;
 import shared.image.kernel.ImageOps;
 import shared.log.Logging;
+import shared.metaclass.Loader;
+import shared.metaclass.Loader.EntryPoint;
+import shared.metaclass.Loader.LoadableResources;
 import shared.test.array.AllArrayOperationTests;
 import shared.test.array.AllArrayUtilTests;
 import shared.test.fft.AllFFTTests;
@@ -29,11 +32,6 @@ import shared.test.parallel.AllParallelTests;
 import shared.test.stat.AllMLTests;
 import shared.test.stat.AllStatUtilTests;
 import shared.test.util.AllUtilTests;
-import shared.util.LoadableResources;
-import shared.util.Loader;
-import shared.util.LoadableResources.Resource;
-import shared.util.LoadableResources.ResourceType;
-import shared.util.Loader.EntryPoint;
 
 /**
  * Contains pure Java tests for the SST.
@@ -43,11 +41,11 @@ import shared.util.Loader.EntryPoint;
  */
 @LoadableResources(resources = {
 //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "commons-codec"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "junit"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "log4j"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "slf4j-api"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "slf4j-log4j12") //
+        "jar:lib.commons-codec", //
+        "jar:lib.junit", //
+        "jar:lib.log4j", //
+        "jar:lib.slf4j-api", //
+        "jar:lib.slf4j-log4j12" //
 }, //
 //
 packages = {

@@ -103,6 +103,6 @@ public class FileSystemRegistry implements ResourceRegistry {
             // Ah well.
         }
 
-        return String.format("FileSystemRegistry[url = \"%s\"]", url);
+        return String.format("%s[url = \"%s\"]", getClass().getSimpleName(), url);
     }
 }

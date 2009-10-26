@@ -216,6 +216,8 @@ public class Control {
                 closeable.close();
 
             } catch (IOException e) {
+
+                // Do nothing.
             }
         }
     }
@@ -422,9 +424,14 @@ public class Control {
 
         InputStream in = new FileInputStream(inFile);
 
-        transfer(in, out);
+        try {
 
-        close(in);
+            transfer(in, out);
+
+        } finally {
+
+            close(in);
+        }
     }
 
     /**
@@ -443,9 +450,14 @@ public class Control {
 
         OutputStream out = new FileOutputStream(outFile, append);
 
-        transfer(in, out);
+        try {
 
-        close(out);
+            transfer(in, out);
+
+        } finally {
+
+            close(out);
+        }
     }
 
     /**
@@ -464,9 +476,14 @@ public class Control {
 
         InputStream in = new FileInputStream(inFile);
 
-        transfer(in, outFile, append);
+        try {
 
-        close(in);
+            transfer(in, outFile, append);
+
+        } finally {
+
+            close(in);
+        }
     }
 
     /**
@@ -497,9 +514,14 @@ public class Control {
 
         InputStream in = new FileInputStream(inFile);
 
-        transfer(in, outFile, false);
+        try {
 
-        close(in);
+            transfer(in, outFile, false);
+
+        } finally {
+
+            close(in);
+        }
     }
 
     /**
@@ -516,9 +538,14 @@ public class Control {
 
         InputStream in = new ByteArrayInputStream(bytes);
 
-        transfer(in, out);
+        try {
 
-        close(in);
+            transfer(in, out);
+
+        } finally {
+
+            close(in);
+        }
     }
 
     /**
@@ -537,9 +564,14 @@ public class Control {
 
         InputStream in = new ByteArrayInputStream(bytes);
 
-        transfer(in, outFile, append);
+        try {
 
-        close(in);
+            transfer(in, outFile, append);
+
+        } finally {
+
+            close(in);
+        }
     }
 
     /**
@@ -556,9 +588,14 @@ public class Control {
 
         InputStream in = new ByteArrayInputStream(bytes);
 
-        transfer(in, outFile, false);
+        try {
 
-        close(in);
+            transfer(in, outFile, false);
+
+        } finally {
+
+            close(in);
+        }
     }
 
     /**

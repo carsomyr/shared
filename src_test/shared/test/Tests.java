@@ -37,7 +37,7 @@ public class Tests {
     /**
      * The instance used for logging.
      */
-    final protected static Logger Log = LoggerFactory.getLogger(Tests.class);
+    final public static Logger Log = LoggerFactory.getLogger(Tests.class);
 
     /**
      * Runs a batch of <a href="http://www.junit.org/">JUnit</a> tests.

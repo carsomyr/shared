@@ -17,6 +17,9 @@
 
 package shared.metaclass;
 
+import static shared.metaclass.RegistryClassLoader.getBytes;
+import static shared.metaclass.RegistryClassLoader.getResourceAsTemporaryFile;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -29,9 +32,6 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
-
-import shared.util.Control;
-import shared.util.TemporaryFiles;
 
 /**
  * An implementation of {@link ResourceRegistry} that consults {@link JarFile}s and {@link JarInputStream}s for
@@ -88,38 +88,7 @@ public class JarRegistry implements ResourceRegistry {
     }
 
     public URL getResource(String pathname) {
-
-        final byte[] data = this.dataMap.get(pathname);
-
-        if (data == null) {
-            return null;
-        }
-
-        synchronized (this) {
-
-            File f = this.fileMap.get(pathname);
-
-            try {
-
-                if (f != null) {
-                    return f.toURI().toURL();
-                }
-
-                f = File.createTempFile(pathname.replace("/", "_").concat("_"), "");
-
-                this.fileMap.put(pathname, f);
-                TemporaryFiles.deleteOnExit(f);
-
-                Control.transfer(data, f);
-
-                return f.toURI().toURL();
-
-            } catch (IOException e) {
-
-                // Return empty-handed if, for some reason, the temporary file could not be created.
-                return null;
-            }
-        }
+        return getResourceAsTemporaryFile(this, pathname);
     }
 
     @SuppressWarnings("unchecked")
@@ -141,11 +110,11 @@ public class JarRegistry implements ResourceRegistry {
     }
 
     /**
-     * Gets the string "Jar Registry".
+     * Creates a human-readable representation of this registry.
      */
     @Override
     public String toString() {
-        return String.format("JarRegistry[size = %d]", this.dataMap.size());
+        return String.format("%s[size = %d]", getClass().getSimpleName(), this.dataMap.size());
     }
 
     /**
@@ -159,7 +128,7 @@ public class JarRegistry implements ResourceRegistry {
         HashMap<String, byte[]> map = new HashMap<String, byte[]>();
 
         for (JarEntry je = null; (je = jis.getNextJarEntry()) != null;) {
-            map.put(je.getName(), Control.getBytes(jis));
+            map.put(je.getName(), RegistryClassLoader.getBytes(jis));
         }
 
         return map;
@@ -178,28 +147,9 @@ public class JarRegistry implements ResourceRegistry {
         for (Enumeration<JarEntry> jes = jf.entries(); jes.hasMoreElements();) {
 
             JarEntry je = jes.nextElement();
-            map.put(je.getName(), Control.getBytes(jf.getInputStream(je)));
+            map.put(je.getName(), getBytes(jf.getInputStream(je)));
         }
 
         return map;
     }
-
-    // A finalizer guardian for deleting outstanding files.
-    final Object fileReaper = new Object() {
-
-        @Override
-        protected void finalize() {
-
-            JarRegistry jr = JarRegistry.this;
-
-            synchronized (jr) {
-
-                for (File f : jr.fileMap.values()) {
-
-                    Control.delete(f);
-                    TemporaryFiles.undelete(f);
-                }
-            }
-        }
-    };
 }

@@ -20,15 +20,14 @@ package shared.test;
 import shared.array.ArrayBase;
 import shared.image.kernel.ImageOps;
 import shared.log.Logging;
+import shared.metaclass.Loader;
+import shared.metaclass.RegistryClassLoader;
+import shared.metaclass.Loader.EntryPoint;
+import shared.metaclass.Loader.LoadableResources;
 import shared.test.array.AllArrayOperationTests;
 import shared.test.image.AllImageTests;
 import shared.test.stat.AllMLTests;
 import shared.util.Control;
-import shared.util.LoadableResources;
-import shared.util.Loader;
-import shared.util.LoadableResources.Resource;
-import shared.util.LoadableResources.ResourceType;
-import shared.util.Loader.EntryPoint;
 
 /**
  * Contains native library tests for the SST.
@@ -38,11 +37,10 @@ import shared.util.Loader.EntryPoint;
  */
 @LoadableResources(resources = {
 //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "junit"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "log4j"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "slf4j-api"), //
-        @Resource(type = ResourceType.JAR, path = "lib", name = "slf4j-log4j12"), //
-        @Resource(type = ResourceType.NATIVE, path = "lib", name = "sst") //
+        "jar:lib.junit", //
+        "jar:lib.log4j", //
+        "jar:lib.slf4j-api", //
+        "jar:lib.slf4j-log4j12" //
 }, //
 //
 packages = {
@@ -69,14 +67,25 @@ public class AllNative {
     @EntryPoint
     public static void entryPoint(String[] args) {
 
+        Logging.configureLog4J("shared/log4j.xml");
+        Logging.configureLog4J("shared/test/log4j.xml");
+
+        try {
+
+            ((RegistryClassLoader) Thread.currentThread().getContextClassLoader()).loadLibrary("lib.sst");
+
+        } catch (RuntimeException e) {
+
+            Tests.Log.debug("Requisite native library not found. Skipping tests.");
+
+            return;
+        }
+
         Control.checkTrue(ArrayBase.OpKernel.useNative() && ImageOps.ImKernel.useNative(), //
                 "Could not link native library");
 
         ArrayBase.IOKernel.useMatlabIO();
         ArrayBase.FFTService.useJava();
-
-        Logging.configureLog4J("shared/log4j.xml");
-        Logging.configureLog4J("shared/test/log4j.xml");
 
         Tests.runTests("Native Tests", //
                 AllArrayOperationTests.class, //

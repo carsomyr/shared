@@ -604,13 +604,9 @@ public class Engine<T> {
      * A subclass of {@link AtomicReference} that doubles as an {@link UncaughtExceptionHandler}. It is set whenever an
      * uncaught {@link Throwable} occurs.
      */
+    @SuppressWarnings("serial")
     protected static class ThrowableReferenceHandler extends AtomicReference<Throwable> implements
             UncaughtExceptionHandler {
-
-        /**
-         * The UID for serialization purposes.
-         */
-        final protected static long serialVersionUID = 1L;
 
         /**
          * Default constructor.

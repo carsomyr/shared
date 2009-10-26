@@ -43,7 +43,6 @@ import shared.stat.plot.ProbabilityDistribution.Mode;
 import shared.test.Demo;
 import shared.util.Arithmetic;
 import shared.util.Control;
-import shared.util.TemporaryFiles;
 
 /**
  * A plotting demo.
@@ -238,8 +237,6 @@ public class PlotTest {
 
         File file = new File(DemoDir, "Vera.ttf");
 
-        TemporaryFiles.deleteOnExit(file);
-
         Control.transfer(url.openStream(), file);
 
         Control.beginEnvironment().put("GDFONTPATH", file.getParent());
@@ -254,7 +251,6 @@ public class PlotTest {
         }
 
         Control.delete(file);
-        TemporaryFiles.undelete(file);
 
         //
 

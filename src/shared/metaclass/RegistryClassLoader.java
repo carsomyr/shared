@@ -17,12 +17,15 @@
 
 package shared.metaclass;
 
-import static shared.util.Control.NullRunnable;
-
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -37,10 +40,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.Map.Entry;
-
-import shared.util.Control;
-import shared.util.Finalizable;
 
 /**
  * A subclass of {@link SecureClassLoader} that derives classes and resource {@link URL}s from a registry delegation
@@ -53,16 +54,47 @@ import shared.util.Finalizable;
  * @apiviz.uses shared.metaclass.Library
  * @author Roy Liu
  */
-public class RegistryClassLoader extends SecureClassLoader implements ResourceRegistry,
-        Finalizable<RegistryClassLoader> {
+public class RegistryClassLoader extends SecureClassLoader implements ResourceRegistry {
+
+    /**
+     * The bulk transfer size for {@link InputStream}s and {@link OutputStream}s.
+     */
+    final protected static int BULK_TRANSFER_SIZE = 1 << 8;
+
+    /**
+     * A weak mapping from {@link ResourceRegistry}s to {@link TemporaryFileSet}s.
+     */
+    final protected static Map<ResourceRegistry, TemporaryFileSet> RRToTFSMap = new WeakHashMap<ResourceRegistry, TemporaryFileSet>();
+
+    /**
+     * A weak set of {@link TemporaryFileSet}s.
+     */
+    final protected static Set<TemporaryFileSet> TFSs = //
+    Collections.newSetFromMap(new WeakHashMap<TemporaryFileSet, Boolean>());
+
+    static {
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+            public void run() {
+
+                Set<TemporaryFileSet> reapSets = new HashSet<TemporaryFileSet>();
+                reapSets.addAll(RRToTFSMap.values());
+                reapSets.addAll(TFSs);
+
+                for (TemporaryFileSet files : reapSets) {
+                    files.run();
+                }
+            }
+
+        }, "Temporary File Deletion Hook"));
+    }
 
     final Set<ResourceRegistry> delegates;
     final Set<String> classNames;
     final PrefixNode root;
     final Class<? extends Annotation> policyClass;
     final Method recursiveMethod, includesMethod, loadMethod, loadLibraryMethod;
-
-    volatile Runnable finalizer;
 
     /**
      * Default constructor.
@@ -82,7 +114,6 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
         this.root = new PrefixNode();
 
         this.delegates = new LinkedHashSet<ResourceRegistry>();
-        this.finalizer = NullRunnable;
 
         try {
 
@@ -93,10 +124,14 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
             // Force loading of shared.metaclass.Library by this class loader to effectively make native
             // libraries exclusive to it and not the parent class loader.
             Class<?> clazz = findClass("shared.metaclass.Library");
-            this.loadMethod = clazz.getDeclaredMethod("load", File.class);
+            this.loadMethod = clazz.getDeclaredMethod("load", String.class);
             this.loadLibraryMethod = clazz.getDeclaredMethod("loadLibrary", String.class);
 
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
+
+            throw new RuntimeException(e);
+
+        } catch (NoSuchMethodException e) {
 
             throw new RuntimeException(e);
         }
@@ -118,17 +153,8 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
             return clazz;
         }
 
-        final String[] prefixes;
-
-        if (className.contains(".")) {
-
-            String[] split = className.split("\\.", -1);
-            prefixes = Arrays.copyOf(split, split.length - 1);
-
-        } else {
-
-            prefixes = new String[] {};
-        }
+        String[] prefixes = className.split("\\.", -1);
+        prefixes = Arrays.copyOf(prefixes, prefixes.length - 1);
 
         // Check for truncated class name membership to deal with inner classes.
         int index = className.indexOf("$");
@@ -159,15 +185,26 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
     @Override
     protected Class<?> findClass(String className) throws ClassNotFoundException {
 
-        byte[] classData = getClassBytes(className);
+        InputStream in = getResourceAsStream(className.replace(".", "/").concat(".class"));
 
-        if (classData == null) {
+        if (in == null) {
             throw new ClassNotFoundException(String.format("Class '%s' not found", className));
         }
 
-        return defineClass(className, //
-                ByteBuffer.wrap(classData), //
-                RegistryClassLoader.class.getProtectionDomain());
+        try {
+
+            return defineClass(className, //
+                    ByteBuffer.wrap(getBytes(in)), //
+                    RegistryClassLoader.class.getProtectionDomain());
+
+        } catch (IOException e) {
+
+            throw new RuntimeException(e);
+
+        } finally {
+
+            close(in);
+        }
     }
 
     @Override
@@ -230,14 +267,56 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
         return null;
     }
 
-    public RegistryClassLoader setFinalizer(Runnable finalizer) {
+    /**
+     * Attempts to load a native library first from the class path, and then from the system's dynamic linker.
+     */
+    public void loadLibrary(String libraryName) {
 
-        Control.checkTrue(finalizer != null, //
-                "Finalizer must be non-null");
+        String pathname = libraryName.replace(".", "/");
 
-        this.finalizer = finalizer;
+        int index = pathname.lastIndexOf("/");
 
-        return this;
+        String librarySymbolicName = pathname.substring(index + 1);
+        pathname = pathname.substring(0, index + 1).concat(System.mapLibraryName(librarySymbolicName));
+
+        URL url = getResource(pathname);
+
+        // Attempt to load from a file, if found.
+        if (url != null) {
+
+            String filename = //
+            (url.getProtocol().equals("file") ? url : getResourceAsTemporaryFile(this, pathname)).getPath();
+
+            try {
+
+                this.loadMethod.invoke(null, filename);
+
+            } catch (IllegalAccessException e) {
+
+                throw new RuntimeException(e);
+
+            } catch (InvocationTargetException e) {
+
+                throw new RuntimeException(e);
+            }
+        }
+        // Fall back on the dynamic linker for resolution.
+        else {
+
+            try {
+
+                this.loadLibraryMethod.invoke(null, librarySymbolicName);
+
+            } catch (IllegalAccessException e) {
+
+                throw new RuntimeException(e);
+
+            } catch (InvocationTargetException e) {
+
+                throw new RuntimeException(String.format("Class path resolution of '%s' " //
+                        + "and dynamic linker resolution of '%s' failed", pathname, librarySymbolicName), e);
+            }
+        }
     }
 
     /**
@@ -278,8 +357,9 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
      */
     public RegistryClassLoader addPackage(String packageName) {
 
-        Control.checkTrue(packageName != null && !packageName.equals(""), //
-                "Invalid package name");
+        if (packageName == null || packageName.length() == 0) {
+            throw new IllegalArgumentException("Invalid package name");
+        }
 
         String className = packageName.concat(".package-info");
         String[] prefixes = packageName.split("\\.", -1);
@@ -299,8 +379,9 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
 
         Annotation policy = clazz.getAnnotation(this.policyClass);
 
-        Control.checkTrue(policy != null, //
-                "Package is not annotated with a class loading policy");
+        if (policy == null) {
+            throw new IllegalArgumentException("Package is not annotated with a class loading policy");
+        }
 
         final String[] includes;
 
@@ -308,7 +389,11 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
 
             includes = (String[]) this.includesMethod.invoke(policy);
 
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
+
+            throw new RuntimeException(e);
+
+        } catch (InvocationTargetException e) {
 
             throw new RuntimeException(e);
         }
@@ -338,40 +423,6 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
     }
 
     /**
-     * Loads a native library from the given file.
-     */
-    public RegistryClassLoader load(File libFile) {
-
-        try {
-
-            this.loadMethod.invoke(null, libFile);
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-        }
-
-        return this;
-    }
-
-    /**
-     * Loads a native library from dynamic linker resolution of the given name.
-     */
-    public RegistryClassLoader loadLibrary(String libName) {
-
-        try {
-
-            this.loadLibraryMethod.invoke(null, libName);
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-        }
-
-        return this;
-    }
-
-    /**
      * Creates a human-readable representation of this class loader.
      */
     @Override
@@ -392,53 +443,112 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
     }
 
     /**
-     * Gets bytecodes associated with the given class name.
+     * A {@link Closeable#close()} convenience wrapper.
      */
-    protected byte[] getClassBytes(String className) {
+    final protected static void close(Closeable closeable) {
 
-        String pathname = className.replace(".", "/").concat(".class");
-        ClassLoader parent = getParent();
+        if (closeable != null) {
 
-        byte[] classBytes = getBytes((parent != null) ? parent.getResourceAsStream(pathname) //
-                : getSystemResourceAsStream(pathname));
+            try {
 
-        if (classBytes != null) {
-            return classBytes;
-        }
+                closeable.close();
 
-        for (ResourceRegistry delegate : this.delegates) {
+            } catch (IOException e) {
 
-            classBytes = getBytes(delegate.getResourceAsStream(pathname));
-
-            if (classBytes != null) {
-                return classBytes;
+                // Do nothing.
             }
         }
-
-        return null;
     }
 
     /**
-     * Gets a {@code byte} array from the given {@link InputStream}.
+     * Transfers the contents of one stream into another.
+     * 
+     * @param in
+     *            the {@link InputStream}.
+     * @param out
+     *            the {@link OutputStream}.
+     * @throws IOException
+     *             when something goes awry.
      */
-    final protected static byte[] getBytes(InputStream in) {
+    final protected static void transfer(InputStream in, OutputStream out) throws IOException {
+
+        byte[] transferBuf = new byte[BULK_TRANSFER_SIZE];
+
+        for (int size; (size = in.read(transferBuf)) >= 0;) {
+            out.write(transferBuf, 0, size);
+        }
+
+        out.flush();
+    }
+
+    /**
+     * Gets a {@code byte} array from the given stream.
+     * 
+     * @param in
+     *            the {@link InputStream}.
+     * @return the {@code byte} array.
+     * @throws IOException
+     *             when something goes awry.
+     */
+    final protected static byte[] getBytes(InputStream in) throws IOException {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        transfer(in, out);
+
+        return out.toByteArray();
+    }
+
+    /**
+     * Gets a resource from the given registry as a temporary file.
+     */
+    final protected static URL getResourceAsTemporaryFile(ResourceRegistry registry, String pathname) {
+
+        InputStream in = registry.getResourceAsStream(pathname);
 
         if (in == null) {
             return null;
         }
 
-        final byte[] classBytes;
-
         try {
 
-            classBytes = Control.getBytes(in);
+            File f = File.createTempFile(pathname.replace("/", "_").concat("_"), "");
+
+            synchronized (TemporaryFileSet.class) {
+
+                TemporaryFileSet files = RRToTFSMap.get(registry);
+
+                if (files == null) {
+
+                    files = new TemporaryFileSet();
+                    RRToTFSMap.put(registry, files);
+                    TFSs.add(files);
+                }
+
+                files.add(f);
+            }
+
+            FileOutputStream out = new FileOutputStream(f);
+
+            try {
+
+                transfer(in, out);
+
+            } finally {
+
+                close(out);
+            }
+
+            return f.toURI().toURL();
 
         } catch (IOException e) {
 
             throw new RuntimeException(e);
-        }
 
-        return (classBytes != null && classBytes.length > 0) ? classBytes : null;
+        } finally {
+
+            close(in);
+        }
     }
 
     /**
@@ -512,10 +622,13 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
 
                             try {
 
-                                recursive = (Boolean) RegistryClassLoader.this.recursiveMethod //
-                                        .invoke(node.policy);
+                                recursive = (Boolean) RegistryClassLoader.this.recursiveMethod.invoke(node.policy);
 
-                            } catch (Exception e) {
+                            } catch (IllegalAccessException e) {
+
+                                throw new RuntimeException(e);
+
+                            } catch (InvocationTargetException e) {
 
                                 throw new RuntimeException(e);
                             }
@@ -564,12 +677,35 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
         }
     }
 
-    // A finalizer guardian for the class loader.
-    final Object reaper = new Object() {
+    /**
+     * A subclass of {@link LinkedHashSet} that holds temporary files and doubles as a deletion hook.
+     */
+    @SuppressWarnings("serial")
+    protected static class TemporaryFileSet extends LinkedHashSet<File> implements Runnable {
 
-        @Override
-        protected void finalize() {
-            RegistryClassLoader.this.finalizer.run();
+        /**
+         * Default constructor.
+         */
+        protected TemporaryFileSet() {
         }
-    };
+
+        /**
+         * Deletes all contained temporary files.
+         */
+        public void run() {
+
+            for (File f : this) {
+                f.delete();
+            }
+        }
+
+        // A finalizer guardian for the list.
+        final Object guardian = new Object() {
+
+            @Override
+            public void finalize() {
+                run();
+            }
+        };
+    }
 }

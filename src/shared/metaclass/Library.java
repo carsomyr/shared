@@ -17,8 +17,6 @@
 
 package shared.metaclass;
 
-import java.io.File;
-
 /**
  * A class for interacting with dynamically linked native code.
  * 
@@ -39,10 +37,10 @@ public class Library {
     }
 
     /**
-     * Loads a native library from the given file.
+     * Loads a native library from the given filename.
      */
-    final public static void load(File libFile) {
-        System.load(libFile.getAbsolutePath());
+    final public static void load(String filename) {
+        System.load(filename);
     }
 
     /**
