@@ -300,7 +300,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
                 throw new RuntimeException(e);
             }
         }
-        // Fall back on the dynamic linker for resolution.
+        // Fall back on the system's dynamic linker for resolution.
         else {
 
             try {
@@ -313,7 +313,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
 
             } catch (InvocationTargetException e) {
 
-                throw new RuntimeException(String.format("Class path resolution of '%s' " //
+                throw new RuntimeException(String.format("Library '%s' not found " //
                         + "and dynamic linker resolution of '%s' failed", pathname, librarySymbolicName), e);
             }
         }
@@ -699,7 +699,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
             }
         }
 
-        // A finalizer guardian for the list.
+        // A finalizer guardian for the set.
         final Object guardian = new Object() {
 
             @Override
