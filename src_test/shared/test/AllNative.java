@@ -52,13 +52,13 @@ packages = {
 public class AllNative {
 
     /**
-     * Delegates to {@link Loader#start(String, Object)}.
+     * Delegates to {@link Loader#run(String, Object)}.
      * 
      * @throws Exception
      *             when something goes awry.
      */
     public static void main(String[] args) throws Exception {
-        Loader.start("shared.test.AllNative", null);
+        Loader.run("shared.test.AllNative", null);
     }
 
     /**

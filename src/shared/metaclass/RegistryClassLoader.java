@@ -17,19 +17,19 @@
 
 package shared.metaclass;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileOutputStream;
+import static shared.metaclass.MetaclassBase.close;
+import static shared.metaclass.MetaclassBase.getBytes;
+import static shared.metaclass.MetaclassBase.getResourceAsTemporaryFile;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.SecureClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -40,7 +40,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.Map.Entry;
 
 /**
@@ -52,43 +51,10 @@ import java.util.Map.Entry;
  * @apiviz.owns shared.metaclass.FileSystemRegistry
  * @apiviz.has shared.metaclass.Policy - - - argument
  * @apiviz.uses shared.metaclass.Library
+ * @apiviz.uses shared.metaclass.MetaclassBase
  * @author Roy Liu
  */
 public class RegistryClassLoader extends SecureClassLoader implements ResourceRegistry {
-
-    /**
-     * The bulk transfer size for {@link InputStream}s and {@link OutputStream}s.
-     */
-    final protected static int BULK_TRANSFER_SIZE = 1 << 8;
-
-    /**
-     * A weak mapping from {@link ResourceRegistry}s to {@link TemporaryFileSet}s.
-     */
-    final protected static Map<ResourceRegistry, TemporaryFileSet> RRToTFSMap = new WeakHashMap<ResourceRegistry, TemporaryFileSet>();
-
-    /**
-     * A weak set of {@link TemporaryFileSet}s.
-     */
-    final protected static Set<TemporaryFileSet> TFSs = //
-    Collections.newSetFromMap(new WeakHashMap<TemporaryFileSet, Boolean>());
-
-    static {
-
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-
-            public void run() {
-
-                Set<TemporaryFileSet> reapSets = new HashSet<TemporaryFileSet>();
-                reapSets.addAll(RRToTFSMap.values());
-                reapSets.addAll(TFSs);
-
-                for (TemporaryFileSet files : reapSets) {
-                    files.run();
-                }
-            }
-
-        }, "Temporary File Deletion Hook"));
-    }
 
     final Set<ResourceRegistry> delegates;
     final Set<String> classNames;
@@ -208,19 +174,11 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
     }
 
     @Override
-    public URL getResource(String pathname) {
-
-        ClassLoader parent = getParent();
-        URL url = (parent != null) ? parent.getResource(pathname) //
-                : getSystemResource(pathname);
-
-        if (url != null) {
-            return url;
-        }
+    protected URL findResource(String pathname) {
 
         for (ResourceRegistry delegate : this.delegates) {
 
-            url = delegate.getResource(pathname);
+            URL url = delegate.getResource(pathname);
 
             if (url != null) {
                 return url;
@@ -231,11 +189,9 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
     }
 
     @Override
-    public Enumeration<URL> getResources(String pathname) throws IOException {
+    protected Enumeration<URL> findResources(String pathname) throws IOException {
 
-        ClassLoader parent = getParent();
-        List<URL> urls = Collections.list((parent != null) ? parent.getResources(pathname) //
-                : getSystemResources(pathname));
+        List<URL> urls = new ArrayList<URL>();
 
         for (ResourceRegistry delegate : this.delegates) {
             urls.addAll(Collections.list(delegate.getResources(pathname)));
@@ -443,115 +399,6 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
     }
 
     /**
-     * A {@link Closeable#close()} convenience wrapper.
-     */
-    final protected static void close(Closeable closeable) {
-
-        if (closeable != null) {
-
-            try {
-
-                closeable.close();
-
-            } catch (IOException e) {
-
-                // Do nothing.
-            }
-        }
-    }
-
-    /**
-     * Transfers the contents of one stream into another.
-     * 
-     * @param in
-     *            the {@link InputStream}.
-     * @param out
-     *            the {@link OutputStream}.
-     * @throws IOException
-     *             when something goes awry.
-     */
-    final protected static void transfer(InputStream in, OutputStream out) throws IOException {
-
-        byte[] transferBuf = new byte[BULK_TRANSFER_SIZE];
-
-        for (int size; (size = in.read(transferBuf)) >= 0;) {
-            out.write(transferBuf, 0, size);
-        }
-
-        out.flush();
-    }
-
-    /**
-     * Gets a {@code byte} array from the given stream.
-     * 
-     * @param in
-     *            the {@link InputStream}.
-     * @return the {@code byte} array.
-     * @throws IOException
-     *             when something goes awry.
-     */
-    final protected static byte[] getBytes(InputStream in) throws IOException {
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        transfer(in, out);
-
-        return out.toByteArray();
-    }
-
-    /**
-     * Gets a resource from the given registry as a temporary file.
-     */
-    final protected static URL getResourceAsTemporaryFile(ResourceRegistry registry, String pathname) {
-
-        InputStream in = registry.getResourceAsStream(pathname);
-
-        if (in == null) {
-            return null;
-        }
-
-        try {
-
-            File f = File.createTempFile(pathname.replace("/", "_").concat("_"), "");
-
-            synchronized (TemporaryFileSet.class) {
-
-                TemporaryFileSet files = RRToTFSMap.get(registry);
-
-                if (files == null) {
-
-                    files = new TemporaryFileSet();
-                    RRToTFSMap.put(registry, files);
-                    TFSs.add(files);
-                }
-
-                files.add(f);
-            }
-
-            FileOutputStream out = new FileOutputStream(f);
-
-            try {
-
-                transfer(in, out);
-
-            } finally {
-
-                close(out);
-            }
-
-            return f.toURI().toURL();
-
-        } catch (IOException e) {
-
-            throw new RuntimeException(e);
-
-        } finally {
-
-            close(in);
-        }
-    }
-
-    /**
      * A node class for policy hierarchy lookups.
      */
     protected class PrefixNode {
@@ -675,37 +522,5 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
                 node.format(f, indent.concat("\t"));
             }
         }
-    }
-
-    /**
-     * A subclass of {@link LinkedHashSet} that holds temporary files and doubles as a deletion hook.
-     */
-    @SuppressWarnings("serial")
-    protected static class TemporaryFileSet extends LinkedHashSet<File> implements Runnable {
-
-        /**
-         * Default constructor.
-         */
-        protected TemporaryFileSet() {
-        }
-
-        /**
-         * Deletes all contained temporary files.
-         */
-        public void run() {
-
-            for (File f : this) {
-                f.delete();
-            }
-        }
-
-        // A finalizer guardian for the set.
-        final Object guardian = new Object() {
-
-            @Override
-            public void finalize() {
-                run();
-            }
-        };
     }
 }

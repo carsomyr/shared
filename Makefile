@@ -198,7 +198,7 @@ doxydoc: $(DOXYDOC_TOKEN)
 
 $(DOXYDOC_TOKEN): $(CSRCS) $(CHEADERS)
 	$(MAKE) -C native/ doxygen
-	touch $(DOXYDOC_TOKEN)
+	touch $@
 
 #------------------------------------------------------------------------------#
 # Run Checkstyle.                                                              #

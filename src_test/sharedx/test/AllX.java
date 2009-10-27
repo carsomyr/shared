@@ -47,13 +47,13 @@ packages = {
 public class AllX {
 
     /**
-     * Delegates to {@link Loader#start(String, Object)}.
+     * Delegates to {@link Loader#run(String, Object)}.
      * 
      * @throws Exception
      *             when something goes awry.
      */
     public static void main(String[] args) throws Exception {
-        Loader.start("sharedx.test.AllX", null);
+        Loader.run("sharedx.test.AllX", null);
     }
 
     /**

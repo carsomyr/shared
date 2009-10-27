@@ -82,17 +82,17 @@ public class Loader {
             throw new IllegalArgumentException("Please specify a class to load");
         }
 
-        start(args[0], Arrays.copyOfRange(args, 1, args.length), true);
+        run(args[0], Arrays.copyOfRange(args, 1, args.length), true);
     }
 
     /**
-     * Delegates to {@link #start(String, Object, boolean)} with the class loader delegation flag set to {@code true}.
+     * Delegates to {@link #run(String, Object, boolean)} with the class loader delegation flag set to {@code true}.
      * 
      * @exception Exception
      *                when something goes awry.
      */
-    public static void start(String targetName, Object invocationArg) throws Exception {
-        start(targetName, invocationArg, true);
+    public static void run(String targetName, Object invocationArg) throws Exception {
+        run(targetName, invocationArg, true);
     }
 
     /**
@@ -109,7 +109,7 @@ public class Loader {
      *             when something goes awry.
      */
     @SuppressWarnings("unchecked")
-    public static void start(String targetName, Object invocationArg, boolean useDelegation) throws Exception {
+    public static void run(String targetName, Object invocationArg, boolean useDelegation) throws Exception {
 
         Thread currentThread = Thread.currentThread();
         ClassLoader cl = currentThread.getContextClassLoader();

@@ -17,6 +17,9 @@
 
 package shared.metaclass;
 
+import static shared.metaclass.MetaclassBase.getBytes;
+import static shared.metaclass.MetaclassBase.getResourceAsTemporaryFile;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +37,7 @@ import java.util.jar.JarInputStream;
  * An implementation of {@link ResourceRegistry} that consults {@link JarFile}s and {@link JarInputStream}s for
  * resources.
  * 
+ * @apiviz.uses shared.metaclass.MetaclassBase
  * @author Roy Liu
  */
 public class JarRegistry implements ResourceRegistry {
@@ -85,7 +89,7 @@ public class JarRegistry implements ResourceRegistry {
     }
 
     public URL getResource(String pathname) {
-        return RegistryClassLoader.getResourceAsTemporaryFile(this, pathname);
+        return getResourceAsTemporaryFile(this, pathname);
     }
 
     @SuppressWarnings("unchecked")
@@ -125,7 +129,7 @@ public class JarRegistry implements ResourceRegistry {
         HashMap<String, byte[]> map = new HashMap<String, byte[]>();
 
         for (JarEntry je = null; (je = jis.getNextJarEntry()) != null;) {
-            map.put(je.getName(), RegistryClassLoader.getBytes(jis));
+            map.put(je.getName(), getBytes(jis));
         }
 
         return map;
@@ -144,7 +148,7 @@ public class JarRegistry implements ResourceRegistry {
         for (Enumeration<JarEntry> jes = jf.entries(); jes.hasMoreElements();) {
 
             JarEntry je = jes.nextElement();
-            map.put(je.getName(), RegistryClassLoader.getBytes(jf.getInputStream(je)));
+            map.put(je.getName(), getBytes(jf.getInputStream(je)));
         }
 
         return map;
