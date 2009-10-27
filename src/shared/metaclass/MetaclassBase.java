@@ -35,6 +35,7 @@ import java.util.WeakHashMap;
 /**
  * A collection of useful static methods and infrastructure.
  * 
+ * @apiviz.composedOf shared.metaclass.MetaclassBase.TemporaryFileSet
  * @author Roy Liu
  */
 public class MetaclassBase {

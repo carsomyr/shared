@@ -37,6 +37,7 @@ import java.util.jar.JarInputStream;
  * use it, one annotates a target class with resource descriptions specifying the Jars and native libraries to be
  * loaded.
  * 
+ * @apiviz.owns shared.metaclass.RegistryClassLoader
  * @apiviz.has shared.metaclass.Loader.LoadableResources - - - argument
  * @apiviz.has shared.metaclass.Loader.EntryPoint - - - argument
  * @author Roy Liu
@@ -62,8 +63,7 @@ public class Loader {
     }
 
     /**
-     * A marker annotation for the entry point of a program <i>after</i> {@link Loader} has acquired the required
-     * resources.
+     * A marker annotation for the entry point of a program after resource acquisition.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
