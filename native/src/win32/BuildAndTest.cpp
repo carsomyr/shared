@@ -55,9 +55,9 @@ void BuildAndTest::execAndWaitFor(const TCHAR *cmd) {
 int _tmain(int argc, TCHAR *argv[]) {
 
     BuildAndTest::execAndWaitFor("cmd /C java -cp build/ant-launcher.jar org.apache.tools.ant.launch.Launcher");
-    BuildAndTest::execAndWaitFor("cmd /C java -cp bin/ shared.test.All");
-    BuildAndTest::execAndWaitFor("cmd /C java -cp bin/ shared.test.AllNative");
-    BuildAndTest::execAndWaitFor("cmd /C java -cp bin/ sharedx.test.AllX");
+    BuildAndTest::execAndWaitFor("cmd /C java -cp bin shared.test.All");
+    BuildAndTest::execAndWaitFor("cmd /C java -cp bin shared.test.AllNative");
+    BuildAndTest::execAndWaitFor("cmd /C java -cp bin sharedx.test.AllX");
 
     printf("\nPress ENTER to continue.\n");
 

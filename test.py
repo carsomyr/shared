@@ -13,7 +13,7 @@ def main():
 
     subprocess.Popen(["make", "java"]).wait()
 
-    javacmd = ["java", "-ea", "-XX:+AggressiveHeap", "-XX:+AllowUserSignalHandlers", "-Xcheck:jni", "-cp", "bin/"];
+    javacmd = ["java", "-ea", "-XX:+AggressiveHeap", "-XX:+AllowUserSignalHandlers", "-Xcheck:jni", "-cp", "bin"];
 
     subprocess.Popen(javacmd + ["shared.test.All"]).wait()
     subprocess.Popen(javacmd + ["shared.test.Demo"]).wait()
