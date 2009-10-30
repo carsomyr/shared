@@ -11,6 +11,12 @@ if(NOT MINGW_INSTALLATION)
     message(SEND_ERROR "An installation of MinGW could not be found.")
 endif(NOT MINGW_INSTALLATION)
 
+# Set the default behavior for finding programs, libraries, and headers.
+
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
+
 # Set up the MinGW toolchain.
 
 set(CMAKE_SYSTEM_NAME "Windows")
