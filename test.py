@@ -11,9 +11,9 @@ def main():
     The main method body.
     """
 
-    subprocess.Popen(["make", "java"]).wait()
+    subprocess.Popen(["make", "jar"]).wait()
 
-    javacmd = ["java", "-ea", "-XX:+AggressiveHeap", "-XX:+AllowUserSignalHandlers", "-Xcheck:jni", "-cp", "bin"];
+    javacmd = ["java", "-ea", "-XX:+AggressiveHeap", "-XX:+AllowUserSignalHandlers", "-Xcheck:jni", "-cp", "sst.jar"];
 
     subprocess.Popen(javacmd + ["shared.test.All"]).wait()
     subprocess.Popen(javacmd + ["shared.test.Demo"]).wait()
