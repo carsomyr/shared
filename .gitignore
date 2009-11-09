@@ -8,6 +8,7 @@
 /.javadoc
 /.publish
 /.publishx
+/.settings/
 /bin/
 /demo/
 /distrib/
