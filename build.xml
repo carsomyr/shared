@@ -87,7 +87,6 @@
     <!-- Jar targets. -->
 
     <fileset id="Shared.metainf" dir=".">
-        <include name="README" />
         <include name="license.txt" />
         <include name="license/license_*.txt" />
     </fileset>
@@ -95,7 +94,7 @@
     <target name="jar" depends="build-project, build-resource">
         <jar destfile="sst.jar" basedir="bin">
             <manifest>
-                <attribute name="Main-Class" value="shared/test/All" />
+                <attribute name="Main-Class" value="shared.test.All" />
             </manifest>
             <metainf refid="Shared.metainf" />
         </jar>
