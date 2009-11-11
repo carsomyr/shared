@@ -113,6 +113,12 @@
         </jar>
     </target>
 
+    <target name="jar-build-conf" depends="build-project, build-resource">
+        <jar destfile="distrib/resources/sst-build-conf-${build.version}.jar" basedir="build" includes="conf/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
     <target name="jar-commons" depends="build-project, build-resource">
         <jar destfile="distrib/jars/sst-commons-${build.version}.jar" basedir="bin" includes="shared/cli/**, shared/codec/**, shared/log/**">
             <metainf refid="Shared.metainf" />
@@ -121,30 +127,6 @@
 
     <target name="jar-commons-src" depends="build-project, build-resource">
         <jar destfile="distrib/sources/sst-commons-src-${build.version}.jar" basedir="src_commons" includes="shared/cli/**, shared/codec/**, shared/log/**">
-            <metainf refid="Shared.metainf" />
-        </jar>
-    </target>
-
-    <target name="jar-net" depends="build-project, build-resource">
-        <jar destfile="distrib/jars/sst-net-${build.version}.jar" basedir="bin" includes="shared/net/**">
-            <metainf refid="Shared.metainf" />
-        </jar>
-    </target>
-
-    <target name="jar-net-src" depends="build-project, build-resource">
-        <jar destfile="distrib/sources/sst-net-src-${build.version}.jar" basedir="src_net" includes="shared/net/**">
-            <metainf refid="Shared.metainf" />
-        </jar>
-    </target>
-
-    <target name="jar-build-conf" depends="build-project, build-resource">
-        <jar destfile="distrib/resources/sst-build-conf-${build.version}.jar" basedir="build" includes="conf/**">
-            <metainf refid="Shared.metainf" />
-        </jar>
-    </target>
-
-    <target name="jar-native" depends="build-project, build-resource">
-        <jar destfile="distrib/resources/sst-native-${build.version}.jar" basedir="build" includes="lib/**" excludes="lib/*.jar">
             <metainf refid="Shared.metainf" />
         </jar>
     </target>
@@ -161,6 +143,30 @@
         </jar>
     </target>
 
+    <target name="jar-native" depends="build-project, build-resource">
+        <jar destfile="distrib/resources/sst-native-${build.version}.jar" basedir="build" includes="lib/**" excludes="lib/*.jar">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-nativex" depends="build-project, build-resource">
+        <jar destfile="distrib/resources/sst-nativex-${build.version}.jar" basedir="build" includes="libx/**" excludes="libx/*.jar">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-net" depends="build-project, build-resource">
+        <jar destfile="distrib/jars/sst-net-${build.version}.jar" basedir="bin" includes="shared/net/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
+    <target name="jar-net-src" depends="build-project, build-resource">
+        <jar destfile="distrib/sources/sst-net-src-${build.version}.jar" basedir="src_net" includes="shared/net/**">
+            <metainf refid="Shared.metainf" />
+        </jar>
+    </target>
+
     <target name="jar-test" depends="build-project, build-resource">
         <jar destfile="distrib/jars/sst-test-${build.version}.jar" basedir="bin" includes="shared/test/**, sharedx/test/**">
             <metainf refid="Shared.metainf" />
@@ -173,21 +179,15 @@
         </jar>
     </target>
 
-    <target name="jar-nativex" depends="build-project, build-resource">
-        <jar destfile="distrib/resources/sst-nativex-${build.version}.jar" basedir="build" includes="libx/**" excludes="libx/*.jar">
-            <metainf refid="Shared.metainf" />
-        </jar>
-    </target>
-
     <!-- Publish Jars. -->
 
-    <target name="ivy-publish" depends="ivy-resolve, jar-base, jar-base-src, jar-commons, jar-commons-src, jar-net, jar-net-src, jar-native, jar-build-conf">
+    <target name="ivy-publish" depends="ivy-resolve, jar-base, jar-base-src, jar-build-conf, jar-commons, jar-commons-src, jar-native, jar-net, jar-net-src">
         <ivy:publish resolver="local" conf="ant, build-conf, checkstyle, base, base-src, commons, commons-src, net, net-src, native, build-conf" overwrite="true" forcedeliver="true" />
         <delete file=".publishx" />
         <touch file=".publish" />
     </target>
 
-    <target name="ivy-publishx" depends="ivy-resolve, jar-base, jar-base-src, jar-commons, jar-commons-src, jar-net, jar-net-src, jar-native, jar-build-conf, jar-extensions, jar-extensions-src, jar-test, jar-test-src, jar-nativex">
+    <target name="ivy-publishx" depends="ivy-resolve, jar-base, jar-base-src, jar-build-conf, jar-commons, jar-commons-src, jar-extensions, jar-extensions-src, jar-native, jar-nativex, jar-net, jar-net-src, jar-test, jar-test-src">
         <ivy:publish resolver="local" overwrite="true" forcedeliver="true" />
         <delete file=".publish" />
         <touch file=".publishx" />

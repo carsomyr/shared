@@ -65,7 +65,7 @@ public class All {
     }
 
     /**
-     * The entry point.
+     * The program entry point.
      */
     @EntryPoint
     public static void entryPoint(String[] args) {
