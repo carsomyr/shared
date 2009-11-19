@@ -18,6 +18,8 @@
 /**
  * A framework for transparent, scalable networking with asynchronous sockets.
  */
-@shared.metaclass.Policy(recursive = true)
+@Policy(recursive = true)
 package shared.net;
+
+import shared.metaclass.Policy;
 

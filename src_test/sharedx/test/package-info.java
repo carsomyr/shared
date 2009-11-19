@@ -18,7 +18,7 @@
 /**
  * A suite of suites encompassing all extension SST unit tests.
  */
-@shared.metaclass.Policy(recursive = true, //
+@Policy(recursive = true, //
 //
 includes = {
 //
@@ -28,4 +28,6 @@ includes = {
         "sharedx.fftw" //
 })
 package sharedx.test;
+
+import shared.metaclass.Policy;
 

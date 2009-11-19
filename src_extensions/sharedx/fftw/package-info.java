@@ -16,6 +16,8 @@
 /**
  * A package of <a href="http://www.fftw.org/">FFTW3</a> bindings.
  */
-@shared.metaclass.Policy(recursive = false)
+@Policy(recursive = false)
 package sharedx.fftw;
+
+import shared.metaclass.Policy;
 

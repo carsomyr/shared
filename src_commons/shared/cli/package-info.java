@@ -18,6 +18,8 @@
 /**
  * A package for annotation-driven command line parsing.
  */
-@shared.metaclass.Policy(recursive = false)
+@Policy(recursive = false)
 package shared.cli;
+
+import shared.metaclass.Policy;
 

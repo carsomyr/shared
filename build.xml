@@ -59,7 +59,7 @@
 
     <target name="build-prepare" depends="ivy-retrieve">
         <taskdef resource="checkstyletask.properties" uri="antlib:com.puppycrawl.tools.checkstyle" classpathref="Shared.classpath" />
-        <taskdef name="header" classname="org.apache.tools.ant.taskdefs.optional.Javah" classpathref="Shared.classpath" />
+        <taskdef name="javah" classname="org.apache.tools.ant.taskdefs.optional.Javah" classpathref="Shared.classpath" />
     </target>
 
     <target name="build-project" depends="build-prepare">
@@ -195,7 +195,7 @@
     <!-- JNI headers target. -->
 
     <target name="headers" depends="build-project">
-        <header outputfile="native/include/jni/jni_headers.h" force="yes">
+        <javah outputfile="native/include/jni/jni_headers.h" force="yes">
             <class name="java.lang.Double" />
             <class name="java.lang.Integer" />
             <class name="shared.metaclass.Library" />
@@ -203,16 +203,16 @@
             <class name="shared.array.kernel.ArrayKernel" />
             <class name="shared.array.jni.NativeArrayKernel" />
             <classpath refid="Shared.classpath" />
-        </header>
+        </javah>
     </target>
 
     <target name="headersx" depends="build-project">
-        <header outputfile="native/include/jni/jni_headersx.h" force="yes">
+        <javah outputfile="native/include/jni/jni_headersx.h" force="yes">
             <class name="sharedx.fftw.Plan" />
             <class name="sharedx.test.BenchmarkNative" />
             <class name="sharedx.test.BenchmarkSpecification" />
             <classpath refid="Shared.classpath" />
-        </header>
+        </javah>
     </target>
 
     <!-- Javadoc target. -->

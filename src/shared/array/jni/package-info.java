@@ -18,6 +18,8 @@
 /**
  * A package for providing JNI-backed {@link shared.array.Array} operations.
  */
-@shared.metaclass.Policy(recursive = false)
+@Policy(recursive = false)
 package shared.array.jni;
+
+import shared.metaclass.Policy;
 

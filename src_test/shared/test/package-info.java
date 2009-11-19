@@ -18,7 +18,7 @@
 /**
  * A suite of suites encompassing all non-extension SST unit tests.
  */
-@shared.metaclass.Policy(recursive = true, //
+@Policy(recursive = true, //
 //
 includes = {
 //
@@ -27,4 +27,6 @@ includes = {
         "shared.net" //
 })
 package shared.test;
+
+import shared.metaclass.Policy;
 

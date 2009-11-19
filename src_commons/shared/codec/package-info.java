@@ -18,6 +18,8 @@
 /**
  * A package for I/O codecs.
  */
-@shared.metaclass.Policy(recursive = false)
+@Policy(recursive = false)
 package shared.codec;
+
+import shared.metaclass.Policy;
 

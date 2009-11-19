@@ -18,6 +18,8 @@
 /**
  * A package for providing JNI-backed image processing operations.
  */
-@shared.metaclass.Policy(recursive = false)
+@Policy(recursive = false)
 package shared.image.jni;
+
+import shared.metaclass.Policy;
 

@@ -18,6 +18,8 @@
 /**
  * A package for logging support.
  */
-@shared.metaclass.Policy(recursive = false)
+@Policy(recursive = false)
 package shared.log;
+
+import shared.metaclass.Policy;
 
