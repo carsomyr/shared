@@ -8,8 +8,7 @@ import subprocess
 import sys
 
 def main():
-    """
-    The main method body.
+    """The main method body.
     """
 
     subprocess.call(["make", "jar"])
