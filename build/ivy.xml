@@ -53,8 +53,8 @@
             <exclude module="jmxtools" />
             <exclude module="mail" />
         </dependency>
-        <dependency org="org.slf4j" name="slf4j-api" rev="1.5.8" conf="commons->default" />
-        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf="commons->default">
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.5.10" conf="commons->default" />
+        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.10" conf="commons->default">
             <exclude module="log4j" />
         </dependency>
     </dependencies>
