@@ -197,7 +197,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
             array = array.reverseOrder();
         }
 
-        int[] dims = array.dimensions();
+        int[] dims = array.dims();
         double[] values = array.values();
 
         int totalSize = getDataElementSize(MI_UINT32, 2) //
@@ -231,10 +231,10 @@ public class MatlabIOKernel implements ArrayIOKernel {
      */
     final public static byte[] getBytes(ComplexArray complexArray, String name) {
 
-        RealArray array = new RealArray(complexArray.values(), complexArray.order(), complexArray.dimensions()) //
+        RealArray array = new RealArray(complexArray.values(), complexArray.order(), complexArray.dims()) //
                 .reverseOrder();
 
-        int[] dims = array.dimensions();
+        int[] dims = array.dims();
         double[] values = array.values();
 
         int totalSize = getDataElementSize(MI_UINT32, 2) //
@@ -276,7 +276,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
             array = array.reverseOrder();
         }
 
-        int[] dims = array.dimensions();
+        int[] dims = array.dims();
         int[] values = array.values();
 
         int totalSize = getDataElementSize(MI_UINT32, 2) //

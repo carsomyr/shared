@@ -85,7 +85,7 @@ public class BenchmarkJava implements BenchmarkSpecification {
         ConvolutionCache cc = ConvolutionCache.getInstance();
 
         for (int i = 0; i < NREPS; i++) {
-            im.eMul(cc.get(kernel, im.dimensions())).ifft();
+            im.eMul(cc.get(kernel, im.dims())).ifft();
         }
     }
 }

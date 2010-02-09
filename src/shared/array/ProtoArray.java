@@ -427,7 +427,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return this.dims.length;
     }
 
-    public int[] dimensions() {
+    public int[] dims() {
         return this.dims.clone();
     }
 

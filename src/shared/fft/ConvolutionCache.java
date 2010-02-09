@@ -58,11 +58,11 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
      */
     public ComplexArray convolve(ComplexArray cIm, ComplexArray ker) {
 
-        int[] dimsT = cIm.dimensions();
+        int[] dimsT = cIm.dims();
         ComplexArray res = (cIm.eMul(ker instanceof Cacheable ? get(ker, dimsT) //
                 : createCacheable(ker, dimsT))).ifft();
 
-        int[] dims = res.dimensions();
+        int[] dims = res.dims();
         int ndims = dims.length;
         int[] bounds = new int[ndims * 2];
 
@@ -91,7 +91,7 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
         RealArray res = (cIm.eMul(ker instanceof Cacheable ? get(ker, dimsT) //
                 : createCacheable(ker, dimsT))).rifft();
 
-        int[] dims = res.dimensions();
+        int[] dims = res.dims();
         int ndims = dims.length;
         int[] bounds = new int[ndims * 2];
 
@@ -138,7 +138,7 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
     final public static RealArray pad(RealArray im, int... margins) {
 
         int ndims = im.ndims();
-        int[] dims = im.dimensions();
+        int[] dims = im.dims();
         int[] newDims = dims.clone();
 
         Control.checkTrue(dims.length == margins.length, //

@@ -88,24 +88,18 @@ public class CodecTest {
         assertTrue(Arrays.equals(base64ToInts(intsToBase64(intValues)), intValues));
         assertTrue(Arrays.equals(base64ToLongs(longsToBase64(longValues)), longValues));
 
-        assertTrue(Arrays.equals( //
-                base64ToDoubles(doublesToBase64(doubleValues, BIG_ENDIAN), BIG_ENDIAN), //
+        assertTrue(Arrays.equals(base64ToDoubles(doublesToBase64(doubleValues, BIG_ENDIAN), BIG_ENDIAN), //
                 doubleValues));
-        assertTrue(Arrays.equals( //
-                base64ToInts(intsToBase64(intValues, BIG_ENDIAN), BIG_ENDIAN), //
+        assertTrue(Arrays.equals(base64ToInts(intsToBase64(intValues, BIG_ENDIAN), BIG_ENDIAN), //
                 intValues));
-        assertTrue(Arrays.equals( //
-                base64ToLongs(longsToBase64(longValues, BIG_ENDIAN), BIG_ENDIAN), //
+        assertTrue(Arrays.equals(base64ToLongs(longsToBase64(longValues, BIG_ENDIAN), BIG_ENDIAN), //
                 longValues));
 
-        assertTrue(Arrays.equals( //
-                base64ToDoubles(doublesToBase64(doubleValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
+        assertTrue(Arrays.equals(base64ToDoubles(doublesToBase64(doubleValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
                 doubleValues));
-        assertTrue(Arrays.equals( //
-                base64ToInts(intsToBase64(intValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
+        assertTrue(Arrays.equals(base64ToInts(intsToBase64(intValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
                 intValues));
-        assertTrue(Arrays.equals( //
-                base64ToLongs(longsToBase64(longValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
+        assertTrue(Arrays.equals(base64ToLongs(longsToBase64(longValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
                 longValues));
     }
 

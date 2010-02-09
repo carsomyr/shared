@@ -46,8 +46,8 @@ public class IntegralHistogram extends RealArray {
 
         RealArray dst = this;
 
-        int[] srcDims = src.dimensions();
-        int[] dstDims = dst.dimensions();
+        int[] srcDims = src.dims();
+        int[] dstDims = dst.dims();
 
         Control.checkTrue(src.order() == membership.order(), //
                 "Indexing order mismatch");

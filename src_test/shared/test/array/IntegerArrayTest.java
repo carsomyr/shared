@@ -73,8 +73,7 @@ public class IntegerArrayTest {
         a = a.map(new IntegerArray(IndexingOrder.FAR, 3, 3, 4), //
                 1, 0, 2, 0, 1, 2, 1, 0, 3);
 
-        assertTrue(Arrays.equals( //
-                a.reverseOrder().values(), expected.values()));
+        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
     }
 
     /**
@@ -131,8 +130,7 @@ public class IntegerArrayTest {
                 2, 3, 4 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.reverseOrder().values(), expected.values()));
+        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
 
         a = new IntegerArray(new int[] {
         //
@@ -166,8 +164,7 @@ public class IntegerArrayTest {
                 3, 3 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.values(), expected.values()));
+        assertTrue(Arrays.equals(a.values(), expected.values()));
     }
 
     /**
@@ -209,5 +206,62 @@ public class IntegerArrayTest {
         assertTrue(Arrays.equals(a.find(2, 1, -1), new int[] { 45, 46, 47 }));
         assertTrue(Arrays.equals(a.find(2, 2, -1), new int[] { 50, 51 }));
         assertTrue(Arrays.equals(a.find(2, 3, -1), new int[] { 55 }));
+    }
+
+    /**
+     * Tests {@link IntegerArray#ndgrid(int...)}.
+     */
+    @Test
+    public void testNDGrid() {
+
+        IntegerArray[] arrays = IntegerArray.ndgrid(-3, 0, 1, 3, 0, -1, 6, 0, -2);
+
+        assertTrue(Arrays.equals(arrays[0].values(), new int[] {
+        //
+                -3, -3, -3, //
+                -3, -3, -3, //
+                -3, -3, -3, //
+                //
+                -2, -2, -2, //
+                -2, -2, -2, //
+                -2, -2, -2, //
+                //
+                -1, -1, -1, //
+                -1, -1, -1, //
+                -1, -1, -1 //
+                }) //
+        );
+
+        assertTrue(Arrays.equals(arrays[1].values(), new int[] {
+        //
+                3, 3, 3, //
+                2, 2, 2, //
+                1, 1, 1, //
+                //
+                3, 3, 3, //
+                2, 2, 2, //
+                1, 1, 1, //
+                //
+                3, 3, 3, //
+                2, 2, 2, //
+                1, 1, 1 //
+                }) //
+        );
+
+        assertTrue(Arrays.equals(arrays[2].values(), new int[] {
+        //
+                6, 4, 2, //
+                6, 4, 2, //
+                6, 4, 2, //
+                //
+                6, 4, 2, //
+                6, 4, 2, //
+                6, 4, 2, //
+                //
+                6, 4, 2, //
+                6, 4, 2, //
+                6, 4, 2 //
+                }) //
+        );
     }
 }

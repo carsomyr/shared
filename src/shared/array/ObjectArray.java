@@ -68,7 +68,7 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
      */
     public ObjectArray(T[] values, int... dims) {
         this(0, values, IndexingOrder.FAR, //
-                AbstractArray.inferDimensions(dims, values.length, false));
+                ArrayBase.inferDimensions(dims, values.length, false));
     }
 
     /**
@@ -76,7 +76,7 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
      */
     public ObjectArray(T[] values, IndexingOrder order, int... dims) {
         this(0, values, order, //
-                AbstractArray.inferDimensions(dims, values.length, false));
+                ArrayBase.inferDimensions(dims, values.length, false));
     }
 
     /**
@@ -238,5 +238,16 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
         }
 
         return dst;
+    }
+
+    /**
+     * Gets the singleton value from this array.
+     */
+    public T singleton() {
+
+        Control.checkTrue(this.values.length == 1, //
+                "Array must contain exactly one value");
+
+        return this.values[0];
     }
 }

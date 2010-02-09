@@ -160,11 +160,6 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
     }
 
     @Override
-    public int[] dimensions() {
-        return super.dimensions();
-    }
-
-    @Override
     public int[] rifftDimensions() {
         return super.rifftDimensions();
     }

@@ -59,14 +59,14 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
      * Alternate constructor.
      */
     public IntegerArray(int[] values, int... dims) {
-        this(0, values, IndexingOrder.FAR, dims);
+        this(0, values, IndexingOrder.FAR, ArrayBase.inferDimensions(dims, values.length, false));
     }
 
     /**
      * Alternate constructor.
      */
     public IntegerArray(int[] values, IndexingOrder order, int... dims) {
-        this(0, values, order, dims);
+        this(0, values, order, ArrayBase.inferDimensions(dims, values.length, false));
     }
 
     /**
@@ -216,6 +216,17 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
         OpKernel.convert(ITOR, a.values, false, res.values, false);
 
         return res;
+    }
+
+    /**
+     * Gets the singleton value from this array.
+     */
+    public int singleton() {
+
+        Control.checkTrue(this.values.length == 1, //
+                "Array must contain exactly one value");
+
+        return this.values[0];
     }
 
     /**
@@ -377,5 +388,55 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
      */
     final public static IntegerArray parse(byte[] data) {
         return IOKernel.parse(data);
+    }
+
+    /**
+     * Generates arrays representing integral coordinates along each dimension of a multidimensional function's domain.
+     * Intended to mimic the behavior of the Matlab function of the same name.
+     * 
+     * @param ranges
+     *            the range specifications as an array of three-tuples. Given the <tt>i</tt>th tuple, the first
+     *            component denotes the start value, the second component denotes the end value, and the third component
+     *            denotes the step size.
+     * @return an array of <tt>n</tt> {@link IntegerArray}s, where <tt>n</tt> is the number of dimensions.
+     */
+    final public static IntegerArray[] ndgrid(int... ranges) {
+
+        Control.checkTrue(ranges.length % 3 == 0, //
+                "Invalid range specifications");
+
+        int ndims = ranges.length / 3;
+        int[] dims = new int[ndims];
+
+        IntegerArray[] arrays = new IntegerArray[ndims];
+
+        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+
+            int start = ranges[offset];
+            int end = ranges[offset + 1];
+            int step = ranges[offset + 2];
+
+            int[] values = Arithmetic.range(start, end, step);
+
+            Arrays.fill(dims, 1);
+            dims[dim] = values.length;
+
+            arrays[dim] = new IntegerArray(values, dims);
+        }
+
+        for (int dim = 0; dim < ndims; dim++) {
+            dims[dim] = arrays[dim].size(dim);
+        }
+
+        for (int dim = 0; dim < ndims; dim++) {
+
+            int dimSize = dims[dim];
+
+            dims[dim] = 1;
+            arrays[dim] = arrays[dim].tile(dims);
+            dims[dim] = dimSize;
+        }
+
+        return arrays;
     }
 }

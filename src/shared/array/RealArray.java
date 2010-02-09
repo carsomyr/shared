@@ -58,14 +58,14 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
      * Alternate constructor.
      */
     public RealArray(double[] values, int... dims) {
-        this(0, values, DEFAULT_ORDER, inferDimensions(dims, values.length, false));
+        this(0, values, DEFAULT_ORDER, ArrayBase.inferDimensions(dims, values.length, false));
     }
 
     /**
      * Alternate constructor.
      */
     public RealArray(double[] values, IndexingOrder order, int... dims) {
-        this(0, values, order, inferDimensions(dims, values.length, false));
+        this(0, values, order, ArrayBase.inferDimensions(dims, values.length, false));
     }
 
     /**
@@ -268,6 +268,17 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
     @Override
     public byte[] getBytes() {
         return IOKernel.getBytes(this);
+    }
+
+    /**
+     * Gets the singleton value from this array.
+     */
+    public double singleton() {
+
+        Control.checkTrue(this.values.length == 1, //
+                "Array must contain exactly one value");
+
+        return this.values[0];
     }
 
     /**

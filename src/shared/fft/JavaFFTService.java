@@ -97,7 +97,7 @@ public class JavaFFTService implements FFTService {
      */
     public ComplexArray reducedToFull(ComplexArray reduced, int[] logicalDims) {
 
-        int[] reducedDims = reduced.dimensions();
+        int[] reducedDims = reduced.dims();
         int ndims = reducedDims.length;
 
         int[] fullDims = Arrays.copyOf(logicalDims, ndims);
@@ -174,7 +174,7 @@ public class JavaFFTService implements FFTService {
      */
     public ComplexArray fullToReduced(ComplexArray full) {
 
-        int[] fullDims = full.dimensions();
+        int[] fullDims = full.dims();
         int ndims = fullDims.length;
 
         int[] subbounds = new int[ndims << 1];

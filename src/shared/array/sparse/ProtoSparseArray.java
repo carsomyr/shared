@@ -541,7 +541,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return this.dims.length;
     }
 
-    public int[] dimensions() {
+    public int[] dims() {
         return this.dims.clone();
     }
 

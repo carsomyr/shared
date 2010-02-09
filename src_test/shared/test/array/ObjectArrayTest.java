@@ -83,8 +83,7 @@ public class ObjectArrayTest {
                         0, 1, 2, //
                         1, 0, 3);
 
-        assertTrue(Arrays.equals( //
-                a.reverseOrder().values(), expected.values()));
+        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
     }
 
     /**
@@ -142,8 +141,7 @@ public class ObjectArrayTest {
                 2, 3, 4 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.reverseOrder().values(), expected.values()));
+        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
 
         a = original.slice( //
                 new int[][] {
@@ -162,8 +160,7 @@ public class ObjectArrayTest {
                         new int[] { 0, 1, 2, 3 } //
                 });
 
-        assertTrue(Arrays.equals( //
-                a.reverseOrder().values(), expected.values()));
+        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
     }
 
     /**

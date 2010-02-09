@@ -79,8 +79,7 @@ public class RealArrayTest {
         a = a.map(new RealArray(IndexingOrder.FAR, 3, 3, 4), //
                 1, 0, 2, 0, 1, 2, 1, 0, 3);
 
-        assertTrue(Arrays.equals( //
-                a.reverseOrder().values(), expected.values()));
+        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
     }
 
     /**
@@ -126,8 +125,7 @@ public class RealArrayTest {
                 5, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.values(), expected.values()));
+        assertTrue(Arrays.equals(a.values(), expected.values()));
 
         a = original.slice( //
                 new int[][] {
@@ -146,8 +144,7 @@ public class RealArrayTest {
 
                 });
 
-        assertTrue(Arrays.equals( //
-                a.values(), expected.values()));
+        assertTrue(Arrays.equals(a.values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -175,8 +172,7 @@ public class RealArrayTest {
                 new int[] { 0, 2, 4 }, //
                 new int[] { 0, 2, 4 });
 
-        assertTrue(Arrays.equals( //
-                a.values(), expected.values()));
+        assertTrue(Arrays.equals(a.values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -206,8 +202,7 @@ public class RealArrayTest {
                 new int[] { 0, 2, 4 }, //
                 new int[] { 0, 2, 4 });
 
-        assertTrue(Arrays.equals( //
-                a.values(), expected.values()));
+        assertTrue(Arrays.equals(a.values(), expected.values()));
 
         a = original.slice( //
                 new int[] { 1, 3, 5 }, //
@@ -223,8 +218,7 @@ public class RealArrayTest {
                 3, 4 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.values(), expected.values()));
+        assertTrue(Arrays.equals(a.values(), expected.values()));
     }
 
     /**
@@ -271,8 +265,7 @@ public class RealArrayTest {
                 4, 4, 4 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.tile(2, 2, 2).values(), expected.values()));
+        assertTrue(Arrays.equals(a.tile(2, 2, 2).values(), expected.values()));
 
         //
 
@@ -296,8 +289,7 @@ public class RealArrayTest {
                 5, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.tile(1, 5).values(), expected.values()));
+        assertTrue(Arrays.equals(a.tile(1, 5).values(), expected.values()));
     }
 
     /**
@@ -325,8 +317,7 @@ public class RealArrayTest {
                 3, 4 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.transpose(1, 0).values(), expected.values()));
+        assertTrue(Arrays.equals(a.transpose(1, 0).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -379,8 +370,7 @@ public class RealArrayTest {
                 5, 4, 3 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.transpose(2, 0, 1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.transpose(2, 0, 1).values(), expected.values()));
     }
 
     /**
@@ -461,8 +451,7 @@ public class RealArrayTest {
                 5, 5, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.shift(-3, -1, 1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.shift(-3, -1, 1).values(), expected.values()));
     }
 
     /**
@@ -493,9 +482,7 @@ public class RealArrayTest {
                 3, 3, 4 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.reverseOrder().reverseOrder().reverseOrder().values(), //
-                expected.values()));
+        assertTrue(Arrays.equals(a.reverseOrder().reverseOrder().reverseOrder().values(), expected.values()));
     }
 
     /**
@@ -544,8 +531,7 @@ public class RealArrayTest {
                 2, 3, 2 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.subarray(1, 3, 1, 4, 1, 3).values(), expected.values()));
+        assertTrue(Arrays.equals(a.subarray(1, 3, 1, 4, 1, 3).values(), expected.values()));
     }
 
     /**
@@ -574,8 +560,7 @@ public class RealArrayTest {
                 3, 3 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.mMul(a.reshape(6, 3)).values(), expected.values()));
+        assertTrue(Arrays.equals(a.mMul(a.reshape(6, 3)).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -613,8 +598,7 @@ public class RealArrayTest {
                 9, 6 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.reshape(9, 3).tile(1, 2).values(), expected.values()));
+        assertTrue(Arrays.equals(a.reshape(9, 3).tile(1, 2).values(), expected.values()));
     }
 
     /**
@@ -665,8 +649,7 @@ public class RealArrayTest {
                 3, 4, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.reverse(2, 0).values(), expected.values()));
+        assertTrue(Arrays.equals(a.reverse(2, 0).values(), expected.values()));
     }
 
     /**
@@ -767,10 +750,8 @@ public class RealArrayTest {
                 1, 1, 5 //
         );
 
-        assertTrue(Tests.equals( //
-                a.rSum(1, 0).values(), expected.values()));
-        assertTrue(Arrays.equals( //
-                a.rSum(1, 0).dimensions(), expected.dimensions()));
+        assertTrue(Tests.equals(a.rSum(1, 0).values(), expected.values()));
+        assertTrue(Arrays.equals(a.rSum(1, 0).dims(), expected.dims()));
 
         expected = new RealArray(new double[] {
         //
@@ -782,19 +763,15 @@ public class RealArrayTest {
                 3, 1, 1 //
         );
 
-        assertTrue(Tests.equals( //
-                a.rSum(1, 2).values(), expected.values()));
-        assertTrue(Arrays.equals( //
-                a.rSum(1, 2).dimensions(), expected.dimensions()));
+        assertTrue(Tests.equals(a.rSum(1, 2).values(), expected.values()));
+        assertTrue(Arrays.equals(a.rSum(1, 2).dims(), expected.dims()));
 
         expected = new RealArray(new double[] { 1770 }, //
                 IndexingOrder.NEAR, //
                 1, 1, 1);
 
-        assertTrue(Tests.equals( //
-                a.rSum(1, 0, 2).values(), expected.values()));
-        assertTrue(Arrays.equals( //
-                a.rSum(1, 0, 2).dimensions(), expected.dimensions()));
+        assertTrue(Tests.equals(a.rSum(1, 0, 2).values(), expected.values()));
+        assertTrue(Arrays.equals(a.rSum(1, 0, 2).dims(), expected.dims()));
 
         a = new RealArray(new double[] {
         //
@@ -844,8 +821,7 @@ public class RealArrayTest {
                 1, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.rMin(0).values(), expected.values()));
+        assertTrue(Arrays.equals(a.rMin(0).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -871,8 +847,7 @@ public class RealArrayTest {
                 5, 1 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.rMax(1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.rMax(1).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -894,8 +869,7 @@ public class RealArrayTest {
                 1, 3 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.rVar(0).values(), expected.values()));
+        assertTrue(Arrays.equals(a.rVar(0).values(), expected.values()));
     }
 
     /**
@@ -944,11 +918,8 @@ public class RealArrayTest {
                 3, 4, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.iMax(1).values(), expected.values()));
-
-        assertTrue(Arrays.equals( //
-                a.uMul(-1.0).iMin(1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.iMax(1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.uMul(-1.0).iMin(1).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -990,8 +961,7 @@ public class RealArrayTest {
                 3, 4, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.iZero(2).values(), expected.values()));
+        assertTrue(Arrays.equals(a.iZero(2).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -1033,11 +1003,8 @@ public class RealArrayTest {
                 3, 4, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.iGZero(2).values(), expected.values()));
-
-        assertTrue(Arrays.equals( //
-                a.clone().uMul(-1.0).iLZero(2).values(), expected.values()));
+        assertTrue(Arrays.equals(a.iGZero(2).values(), expected.values()));
+        assertTrue(Arrays.equals(a.clone().uMul(-1.0).iLZero(2).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -1127,8 +1094,7 @@ public class RealArrayTest {
                 5, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.iMax(-1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.iMax(-1).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -1152,8 +1118,7 @@ public class RealArrayTest {
                 5, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.iMin(-1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.iMin(-1).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -1177,8 +1142,7 @@ public class RealArrayTest {
                 5, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.iZero(-1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.iZero(-1).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -1202,11 +1166,8 @@ public class RealArrayTest {
                 5, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.iGZero(-1).values(), expected.values()));
-
-        assertTrue(Arrays.equals( //
-                a.clone().uMul(-1.0).iLZero(-1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.iGZero(-1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.clone().uMul(-1.0).iLZero(-1).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -1296,8 +1257,7 @@ public class RealArrayTest {
                 3, 4, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.dSum(0, 2).values(), expected.values()));
+        assertTrue(Arrays.equals(a.dSum(0, 2).values(), expected.values()));
 
         a = new RealArray(new double[] {
         //
@@ -1332,8 +1292,7 @@ public class RealArrayTest {
                 2, 4, 5 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.dProd(1).values(), expected.values()));
+        assertTrue(Arrays.equals(a.dProd(1).values(), expected.values()));
     }
 
     /**

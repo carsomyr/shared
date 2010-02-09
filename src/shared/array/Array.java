@@ -52,7 +52,7 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
     /**
      * Gets the dimensions.
      */
-    public int[] dimensions();
+    public int[] dims();
 
     /**
      * Gets the strides.

@@ -51,7 +51,7 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
      * Alternate constructor.
      */
     public ComplexArray(double[] values, int... dims) {
-        this(0, values, inferDimensions(dims, values.length, true));
+        this(0, values, ArrayBase.inferDimensions(dims, values.length, true));
     }
 
     /**
@@ -142,6 +142,17 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
     @Override
     public byte[] getBytes() {
         return IOKernel.getBytes(this);
+    }
+
+    /**
+     * Gets the singleton value from this array.
+     */
+    public double[] singleton() {
+
+        Control.checkTrue(this.values.length == 2, //
+                "Array must contain exactly one value");
+
+        return this.values.clone();
     }
 
     /**

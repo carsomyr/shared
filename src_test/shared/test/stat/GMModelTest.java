@@ -66,7 +66,7 @@ public class GMModelTest {
         gmc.covariances.clone().uSqrt().map(expected, 0, 0, input.size(0), 0, ndims, ndims);
         gmc.weights.map(expected, 0, 0, input.size(0), 0, 2 * ndims, 1);
 
-        assertTrue(KMeans.distances(input, expected).rMin(0).rMax(1).get(0, 0) < 0.5);
+        assertTrue(KMeans.distances(input, expected).rMin(0).rMax(1).singleton() < 0.5);
     }
 
     /**

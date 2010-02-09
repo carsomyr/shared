@@ -271,11 +271,8 @@ public class ArrayFFTTest {
                 5, 3, 4, 2 //
         );
 
-        assertTrue(Arrays.equals( //
-                a.fftShift().values(), expected.values()));
-
-        assertTrue(Arrays.equals( //
-                a.fftShift().ifftShift().values(), a.values()));
+        assertTrue(Arrays.equals(a.fftShift().values(), expected.values()));
+        assertTrue(Arrays.equals(a.fftShift().ifftShift().values(), a.values()));
     }
 
     /**

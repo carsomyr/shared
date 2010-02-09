@@ -259,6 +259,44 @@ public class Arithmetic {
     }
 
     /**
+     * Creates a <tt>[m, n)</tt> range of {@code int}s with step increment <tt>k</tt>.
+     * 
+     * @param m
+     *            the (inclusive) start value.
+     * @param n
+     *            the (exclusive) end value.
+     * @param k
+     *            the step increment.
+     * @return the range.
+     */
+    final public static int[] range(int m, int n, int k) {
+
+        Control.checkTrue((n >= m && k > 0) || (n <= m && k < 0), //
+                "Invalid range specification");
+
+        final int[] res;
+
+        if (k > 0) {
+
+            res = new int[(n - m + k - 1) / k];
+
+            for (int i = m, ii = 0; i < n; i += k, ii++) {
+                res[ii] = i;
+            }
+
+        } else {
+
+            res = new int[(n - m + k + 1) / k];
+
+            for (int i = m, ii = 0; i > n; i += k, ii++) {
+                res[ii] = i;
+            }
+        }
+
+        return res;
+    }
+
+    /**
      * Creates a <tt>[m, n)</tt> range of {@code int}s.
      * 
      * @param m
@@ -268,14 +306,7 @@ public class Arithmetic {
      * @return the range.
      */
     final public static int[] range(int m, int n) {
-
-        int[] res = new int[n - m];
-
-        for (int i = m, ii = 0; i < n; i++, ii++) {
-            res[ii] = i;
-        }
-
-        return res;
+        return range(m, n, 1);
     }
 
     /**
@@ -286,7 +317,45 @@ public class Arithmetic {
      * @return the range.
      */
     final public static int[] range(int n) {
-        return range(0, n);
+        return range(0, n, 1);
+    }
+
+    /**
+     * Creates a <tt>[m, n)</tt> range of {@code double}s with step increment <tt>k</tt>.
+     * 
+     * @param m
+     *            the (inclusive) start value.
+     * @param n
+     *            the (exclusive) end value.
+     * @param k
+     *            the step increment.
+     * @return the range.
+     */
+    final public static double[] doubleRange(int m, int n, int k) {
+
+        Control.checkTrue((n >= m && k > 0) || (n <= m && k < 0), //
+                "Invalid range specification");
+
+        final double[] res;
+
+        if (k > 0) {
+
+            res = new double[(n - m + k - 1) / k];
+
+            for (int i = m, ii = 0; i < n; i += k, ii++) {
+                res[ii] = i;
+            }
+
+        } else {
+
+            res = new double[(n - m + k + 1) / k];
+
+            for (int i = m, ii = 0; i > n; i += k, ii++) {
+                res[ii] = i;
+            }
+        }
+
+        return res;
     }
 
     /**
@@ -299,14 +368,7 @@ public class Arithmetic {
      * @return the range.
      */
     final public static double[] doubleRange(int m, int n) {
-
-        double[] res = new double[n - m];
-
-        for (int i = m, ii = 0; i < n; i++, ii++) {
-            res[ii] = i;
-        }
-
-        return res;
+        return doubleRange(m, n, 1);
     }
 
     /**
@@ -317,7 +379,45 @@ public class Arithmetic {
      * @return the range.
      */
     final public static double[] doubleRange(int n) {
-        return doubleRange(0, n);
+        return doubleRange(0, n, 1);
+    }
+
+    /**
+     * Creates a <tt>[m, n)</tt> range of {@code long}s with step increment <tt>k</tt>.
+     * 
+     * @param m
+     *            the (inclusive) start value.
+     * @param n
+     *            the (exclusive) end value.
+     * @param k
+     *            the step increment.
+     * @return the range.
+     */
+    final public static long[] longRange(int m, int n, int k) {
+
+        Control.checkTrue((n >= m && k > 0) || (n <= m && k < 0), //
+                "Invalid range specification");
+
+        final long[] res;
+
+        if (k > 0) {
+
+            res = new long[(n - m + k - 1) / k];
+
+            for (int i = m, ii = 0; i < n; i += k, ii++) {
+                res[ii] = i;
+            }
+
+        } else {
+
+            res = new long[(n - m + k + 1) / k];
+
+            for (int i = m, ii = 0; i > n; i += k, ii++) {
+                res[ii] = i;
+            }
+        }
+
+        return res;
     }
 
     /**
@@ -330,14 +430,7 @@ public class Arithmetic {
      * @return the range.
      */
     final public static long[] longRange(int m, int n) {
-
-        long[] res = new long[n - m];
-
-        for (int i = m, ii = 0; i < n; i++, ii++) {
-            res[ii] = i;
-        }
-
-        return res;
+        return longRange(m, n, 1);
     }
 
     /**
@@ -348,7 +441,7 @@ public class Arithmetic {
      * @return the range.
      */
     final public static long[] longRange(int n) {
-        return longRange(0, n);
+        return longRange(0, n, 1);
     }
 
     /**

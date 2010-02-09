@@ -56,11 +56,6 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
     }
 
     @Override
-    public int[] dimensions() {
-        return super.dimensions();
-    }
-
-    @Override
     public int[] rfftDimensions() {
         return super.rfftDimensions();
     }

@@ -390,6 +390,22 @@ public class ArrayBase {
         return logical;
     }
 
+    /**
+     * Infers dimensions from the backing array length if the number of declared dimensions is {@code 0}.
+     * 
+     * @param dims
+     *            the declared dimensions.
+     * @param len
+     *            the array length.
+     * @param isComplex
+     *            whether the array contains complex values.
+     * @return the inferred dimensions.
+     */
+    final public static int[] inferDimensions(int[] dims, int len, boolean isComplex) {
+        return (dims.length > 0) ? dims.clone() : (isComplex ? new int[] {
+                Control.checkEquals(len, (len >>> 1) << 1) >>> 1, 2 } : new int[] { len });
+    }
+
     // Dummy constructor.
     ArrayBase() {
     }
