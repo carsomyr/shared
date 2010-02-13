@@ -363,19 +363,19 @@ public class DimensionOps {
         /**
          * Performs a real dimension operation.
          */
-        public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] selectedDims);
+        public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims);
     }
 
     final static RealDimensionOperation RDSumOp = new RealDimensionOperation() {
 
-        public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] selectedDims) {
+        public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims) {
 
             int len = Control.checkEquals(srcV.length, dstV.length);
             int ndims = Control.checkEquals(srcD.length, srcS.length);
 
             boolean[] indicator = new boolean[ndims];
 
-            for (int dim : selectedDims) {
+            for (int dim : opDims) {
                 indicator[dim] = true;
             }
 
@@ -415,14 +415,14 @@ public class DimensionOps {
 
     final static RealDimensionOperation RDProdOp = new RealDimensionOperation() {
 
-        public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] selectedDims) {
+        public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims) {
 
             int len = Control.checkEquals(srcV.length, dstV.length);
             int ndims = Control.checkEquals(srcD.length, srcS.length);
 
             boolean[] indicator = new boolean[ndims];
 
-            for (int dim : selectedDims) {
+            for (int dim : opDims) {
                 indicator[dim] = true;
             }
 
@@ -497,7 +497,7 @@ public class DimensionOps {
     final public static void rrOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS, //
-            int[] selectedDims) {
+            int[] opDims) {
 
         int srcLen = MappingOps.checkDimensions(srcV.length, srcD, srcS);
         int dstLen = MappingOps.checkDimensions(dstV.length, dstD, dstS);
@@ -530,22 +530,22 @@ public class DimensionOps {
             throw new IllegalArgumentException();
         }
 
-        Arrays.sort(selectedDims);
+        Arrays.sort(opDims);
 
-        int nselectedDims = selectedDims.length;
+        int nopDims = opDims.length;
         int ndims = Control.checkEquals(srcD.length, dstD.length, //
                 "Dimensionality mismatch");
 
-        for (int i = 1; i < nselectedDims; i++) {
-            Control.checkTrue(selectedDims[i - 1] != selectedDims[i], //
+        for (int i = 1; i < nopDims; i++) {
+            Control.checkTrue(opDims[i - 1] != opDims[i], //
                     "Duplicate selected dimensions not allowed");
         }
 
         int acc = dstLen;
 
-        for (int i = 0; i < nselectedDims; i++) {
+        for (int i = 0; i < nopDims; i++) {
 
-            int dim = selectedDims[i];
+            int dim = opDims[i];
 
             Control.checkTrue(dim >= 0 && dim < ndims, //
                     "Invalid dimension");
@@ -568,9 +568,9 @@ public class DimensionOps {
 
         acc = srcLen;
 
-        for (int i = 0; i < nselectedDims; i++) {
+        for (int i = 0; i < nopDims; i++) {
 
-            int dim = selectedDims[i];
+            int dim = opDims[i];
 
             acc /= srcD[dim];
 
@@ -649,7 +649,7 @@ public class DimensionOps {
      */
     final public static void rdOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, double[] dstV, //
-            int[] selectedDims) {
+            int[] opDims) {
 
         int srcLen = MappingOps.checkDimensions(srcV.length, srcD, srcS);
 
@@ -672,7 +672,7 @@ public class DimensionOps {
         int ndims = Control.checkEquals(srcD.length, srcS.length, //
                 "Dimensionality mismatch");
 
-        for (int dim : selectedDims) {
+        for (int dim : opDims) {
             Control.checkTrue(dim >= 0 && dim < ndims, //
                     "Invalid dimension");
         }
@@ -681,7 +681,7 @@ public class DimensionOps {
             return;
         }
 
-        op.op(srcV, srcD, srcS, dstV, selectedDims);
+        op.op(srcV, srcD, srcS, dstV, opDims);
     }
 
     // Dummy constructor.

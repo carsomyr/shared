@@ -59,7 +59,7 @@ public class NativeArrayKernel implements ArrayKernel {
     final public native void rrOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS, //
-            int... selectedDims);
+            int... opDims);
 
     final public native void riOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, int[] dstV, //
@@ -67,7 +67,7 @@ public class NativeArrayKernel implements ArrayKernel {
 
     final public native void rdOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, double[] dstV, //
-            int... selectedDims);
+            int... opDims);
 
     //
 

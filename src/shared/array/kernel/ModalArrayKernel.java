@@ -100,8 +100,8 @@ public class ModalArrayKernel implements ArrayKernel {
     public void rrOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS, //
-            int... selectedDims) {
-        this.opKernel.rrOp(type, srcV, srcD, srcS, dstV, dstD, dstS, selectedDims);
+            int... opDims) {
+        this.opKernel.rrOp(type, srcV, srcD, srcS, dstV, dstD, dstS, opDims);
     }
 
     public void riOp(int type, //
@@ -112,8 +112,8 @@ public class ModalArrayKernel implements ArrayKernel {
 
     public void rdOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, double[] dstV, //
-            int... selectedDims) {
-        this.opKernel.rdOp(type, srcV, srcD, srcS, dstV, selectedDims);
+            int... opDims) {
+        this.opKernel.rdOp(type, srcV, srcD, srcS, dstV, opDims);
     }
 
     public double raOp(int type, double[] srcV) {

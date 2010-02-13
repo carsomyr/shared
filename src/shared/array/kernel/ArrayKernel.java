@@ -343,13 +343,13 @@ public interface ArrayKernel extends Service {
      *            the destination dimensions.
      * @param dstS
      *            the destination strides.
-     * @param selectedDims
+     * @param opDims
      *            the dimensions of interest.
      */
     public void rrOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS, //
-            int... selectedDims);
+            int... opDims);
 
     /**
      * Performs a real index operation.
@@ -385,12 +385,12 @@ public interface ArrayKernel extends Service {
      *            the source strides.
      * @param dstV
      *            the destination values.
-     * @param selectedDims
+     * @param opDims
      *            the dimensions of interest.
      */
     public void rdOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, double[] dstV, //
-            int... selectedDims);
+            int... opDims);
 
     //
 

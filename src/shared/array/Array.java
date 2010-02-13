@@ -180,11 +180,22 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
     /**
      * Reverses along the given dimensions.
      * 
-     * @param selectedDims
+     * @param opDims
      *            the dimensions to reverse along.
      * @return the reversed array.
      */
-    public T reverse(int... selectedDims);
+    public T reverse(int... opDims);
+
+    /**
+     * Concatenates this array with the given arrays along the given dimension.
+     * 
+     * @param opDim
+     *            the dimension to concatenate along.
+     * @param srcs
+     *            the arrays to concatenate with.
+     * @return the concatenation result.
+     */
+    public T concat(int opDim, T... srcs);
 
     /**
      * Creates an array where the storage order is reversed.

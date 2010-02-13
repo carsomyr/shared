@@ -324,50 +324,50 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
     /**
      * Computes the sum along the given dimensions.
      */
-    public R rSum(int... selectedDims) {
-        return applyKernelRealReduceOperation(ArrayKernel.RR_SUM, selectedDims);
+    public R rSum(int... opDims) {
+        return applyKernelRealReduceOperation(ArrayKernel.RR_SUM, opDims);
     }
 
     /**
      * Computes the product along the given dimensions.
      */
-    public R rProd(int... selectedDims) {
-        return applyKernelRealReduceOperation(ArrayKernel.RR_PROD, selectedDims);
+    public R rProd(int... opDims) {
+        return applyKernelRealReduceOperation(ArrayKernel.RR_PROD, opDims);
     }
 
     /**
      * Computes the maximum along the given dimensions.
      */
-    public R rMax(int... selectedDims) {
-        return applyKernelRealReduceOperation(ArrayKernel.RR_MAX, selectedDims);
+    public R rMax(int... opDims) {
+        return applyKernelRealReduceOperation(ArrayKernel.RR_MAX, opDims);
     }
 
     /**
      * Computes the minimum along the given dimensions.
      */
-    public R rMin(int... selectedDims) {
-        return applyKernelRealReduceOperation(ArrayKernel.RR_MIN, selectedDims);
+    public R rMin(int... opDims) {
+        return applyKernelRealReduceOperation(ArrayKernel.RR_MIN, opDims);
     }
 
     /**
      * Computes the mean along the given dimensions.
      */
-    public R rMean(int... selectedDims) {
+    public R rMean(int... opDims) {
 
         int acc = 1;
 
-        for (int dim : selectedDims) {
+        for (int dim : opDims) {
             acc *= size(dim);
         }
 
-        return rSum(selectedDims).uMul(1.0 / acc);
+        return rSum(opDims).uMul(1.0 / acc);
     }
 
     /**
      * Computes the variance along the given dimensions.
      */
-    public R rVar(int... selectedDims) {
-        return applyKernelRealReduceOperation(ArrayKernel.RR_VAR, selectedDims);
+    public R rVar(int... opDims) {
+        return applyKernelRealReduceOperation(ArrayKernel.RR_VAR, opDims);
     }
 
     /**
@@ -457,15 +457,15 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
     /**
      * Takes the sum along the given dimensions.
      */
-    public R dSum(int... selectedDims) {
-        return applyKernelRealDimensionOperation(ArrayKernel.RD_SUM, selectedDims);
+    public R dSum(int... opDims) {
+        return applyKernelRealDimensionOperation(ArrayKernel.RD_SUM, opDims);
     }
 
     /**
      * Takes the product along the given dimensions.
      */
-    public R dProd(int... selectedDims) {
-        return applyKernelRealDimensionOperation(ArrayKernel.RD_PROD, selectedDims);
+    public R dProd(int... opDims) {
+        return applyKernelRealDimensionOperation(ArrayKernel.RD_PROD, opDims);
     }
 
     /**
@@ -542,13 +542,13 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
      * Supports the r* series of operations.
      */
     @SuppressWarnings("unchecked")
-    protected R applyKernelRealReduceOperation(int type, int[] selectedDims) {
+    protected R applyKernelRealReduceOperation(int type, int[] opDims) {
 
         R a = (R) this;
 
         int[] newDims = a.dims.clone();
 
-        for (int dim : selectedDims) {
+        for (int dim : opDims) {
 
             // In case the dimension is 0.
             newDims[dim] = Math.min(a.dims[dim], 1);
@@ -559,7 +559,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
         OpKernel.rrOp(type, //
                 a.values, a.dims, a.strides, //
                 res.values, res.dims, res.strides, //
-                selectedDims);
+                opDims);
 
         return res;
     }
@@ -585,7 +585,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
      * Supports the d* series of operations.
      */
     @SuppressWarnings("unchecked")
-    protected R applyKernelRealDimensionOperation(int type, int[] selectedDims) {
+    protected R applyKernelRealDimensionOperation(int type, int[] opDims) {
 
         R a = (R) this;
 
@@ -593,7 +593,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
 
         OpKernel.rdOp(type, //
                 a.values, a.dims, a.strides, res.values, //
-                selectedDims);
+                opDims);
 
         return res;
     }

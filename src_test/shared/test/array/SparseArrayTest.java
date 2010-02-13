@@ -51,6 +51,7 @@ public class SparseArrayTest {
     /**
      * Tests all operations supported by {@link ProtoSparseArray} against those supported by {@link ProtoArray}.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testOperations() {
 
@@ -271,17 +272,17 @@ public class SparseArrayTest {
 
             //
 
-            int[] selectedReverseDims = Arrays.copyOf(Arithmetic.shuffle(perm), //
+            int[] opDims = Arrays.copyOf(Arithmetic.shuffle(perm), //
                     Arithmetic.nextInt(ndims));
 
-            dstRCompare = srcR.reverse(selectedReverseDims);
-            dstRSparseCompare = srcRSparse.reverse(selectedReverseDims);
+            dstRCompare = srcR.reverse(opDims);
+            dstRSparseCompare = srcRSparse.reverse(opDims);
 
-            dstICompare = srcI.reverse(selectedReverseDims);
-            dstISparseCompare = srcISparse.reverse(selectedReverseDims);
+            dstICompare = srcI.reverse(opDims);
+            dstISparseCompare = srcISparse.reverse(opDims);
 
-            dstOCompare = srcO.reverse(selectedReverseDims);
-            dstOSparseCompare = srcOSparse.reverse(selectedReverseDims);
+            dstOCompare = srcO.reverse(opDims);
+            dstOSparseCompare = srcOSparse.reverse(opDims);
 
             assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
             assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
@@ -373,6 +374,23 @@ public class SparseArrayTest {
 
             dstOCompare = srcO.subarray(bounds);
             dstOSparseCompare = srcOSparse.subarray(bounds);
+
+            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+
+            //
+
+            int opDim = Arithmetic.nextInt(ndims);
+
+            dstRCompare = srcR.concat(opDim, dstR);
+            dstRSparseCompare = srcRSparse.concat(opDim, dstRSparse);
+
+            dstICompare = srcI.concat(opDim, dstI);
+            dstISparseCompare = srcISparse.concat(opDim, dstISparse);
+
+            dstOCompare = srcO.concat(opDim, dstO);
+            dstOSparseCompare = srcOSparse.concat(opDim, dstOSparse);
 
             assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
             assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));

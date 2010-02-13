@@ -318,28 +318,6 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
-    public T reverseOrder() {
-
-        ProtoArray<T, V, E> src = this;
-
-        IndexingOrder newOrder = src.order.reverse();
-        T dst = wrap(newOrder, src.dims, newOrder.strides(src.dims));
-
-        int ndims = src.dims.length;
-
-        int[] mappingBounds = new int[3 * ndims];
-
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
-            mappingBounds[offset + 2] = src.dims[dim];
-        }
-
-        OpKernel.map(mappingBounds, //
-                src.values, src.dims, src.strides, //
-                dst.values, dst.dims, dst.strides);
-
-        return dst;
-    }
-
     public T subarray(int... bounds) {
 
         ProtoArray<T, V, E> src = this;
@@ -371,13 +349,13 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
-    public T reverse(int... selectedDims) {
+    public T reverse(int... opDims) {
 
         ProtoArray<T, V, E> src = this;
 
         T dst = wrap(src.order, src.dims, src.strides);
 
-        OpKernel.slice(createReverseSlices(src.dims, selectedDims), //
+        OpKernel.slice(createReverseSlices(src.dims, opDims), //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -395,6 +373,89 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         T dst = wrap(src.order, dims, src.order.strides(dims));
 
         System.arraycopy(src.values, 0, dst.values, 0, len);
+
+        return dst;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T concat(int opDim, T... srcs) {
+
+        ProtoArray<T, V, E> src = this;
+
+        int ndims = src.dims.length;
+
+        Control.checkTrue(opDim >= 0 && opDim < ndims, //
+                "Invalid dimension");
+
+        srcs = Arrays.copyOf(srcs, srcs.length + 1);
+        System.arraycopy(srcs, 0, srcs, 1, srcs.length - 1);
+        srcs[0] = (T) this;
+
+        int offset = 0;
+
+        for (int i = 0, n = srcs.length; i < n; i++) {
+
+            int dimSize = srcs[i].size(opDim);
+
+            for (int dim = 0; dim < opDim; dim++) {
+                Control.checkTrue(src.dims[dim] == srcs[i].dims[dim], //
+                        "Dimension mismatch");
+            }
+
+            for (int dim = opDim + 1; dim < ndims; dim++) {
+                Control.checkTrue(src.dims[dim] == srcs[i].dims[dim], //
+                        "Dimension mismatch");
+            }
+
+            offset += dimSize;
+        }
+
+        int[] newDims = src.dims.clone();
+        newDims[opDim] = offset;
+
+        int[] mappingBounds = new int[3 * ndims];
+
+        for (int dim = 0; dim < ndims; dim++) {
+            mappingBounds[3 * dim + 2] = src.dims[dim];
+        }
+
+        T dst = wrap(src.order, newDims, src.order.strides(newDims));
+
+        offset = 0;
+
+        for (int i = 0, n = srcs.length; i < n; i++) {
+
+            int dimSize = srcs[i].size(opDim);
+
+            mappingBounds[3 * opDim + 1] = offset;
+            mappingBounds[3 * opDim + 2] = dimSize;
+
+            srcs[i].map(dst, mappingBounds);
+
+            offset += dimSize;
+        }
+
+        return dst;
+    }
+
+    public T reverseOrder() {
+
+        ProtoArray<T, V, E> src = this;
+
+        IndexingOrder newOrder = src.order.reverse();
+        T dst = wrap(newOrder, src.dims, newOrder.strides(src.dims));
+
+        int ndims = src.dims.length;
+
+        int[] mappingBounds = new int[3 * ndims];
+
+        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+            mappingBounds[offset + 2] = src.dims[dim];
+        }
+
+        OpKernel.map(mappingBounds, //
+                src.values, src.dims, src.strides, //
+                dst.values, dst.dims, dst.strides);
 
         return dst;
     }

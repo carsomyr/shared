@@ -163,10 +163,10 @@ public class ArrayBase {
     /**
      * Creates a slicing specification for {@link shared.array.Array#reverse(int...)}.
      */
-    final public static int[] createReverseSlices(int[] srcDims, int[] selectedDims) {
+    final public static int[] createReverseSlices(int[] srcDims, int[] opDims) {
 
         int ndims = srcDims.length;
-        int nindices = selectedDims.length;
+        int nindices = opDims.length;
 
         int nslices = Arithmetic.sum(srcDims);
         int[] slices = new int[3 * nslices];
@@ -174,7 +174,7 @@ public class ArrayBase {
         boolean[] sentinel = new boolean[ndims];
 
         for (int i = 0; i < nindices; i++) {
-            sentinel[selectedDims[i]] = true;
+            sentinel[opDims[i]] = true;
         }
 
         for (int dim = 0, offset = 0; dim < ndims; dim++) {

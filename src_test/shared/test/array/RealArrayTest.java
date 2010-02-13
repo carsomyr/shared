@@ -455,37 +455,6 @@ public class RealArrayTest {
     }
 
     /**
-     * Tests {@link RealArray#reverseOrder()}.
-     */
-    @Test
-    public void testReverseIndex() {
-
-        RealArray a = new RealArray(new double[] {
-        //
-                0, 1, 2, 3, 4, 5, 6, 7, 8, //
-                9, 10, 11, 12, 13, 14, 15, 16, 17, //
-                18, 19, 20, 21, 22, 23, 24, 25, 26, //
-                27, 28, 29, 30, 31, 32, 33, 34, 35 //
-                }, //
-                IndexingOrder.FAR, //
-                3, 3, 4 //
-        );
-
-        RealArray expected = new RealArray(new double[] {
-        //
-                0, 12, 24, 4, 16, 28, 8, 20, 32, //
-                1, 13, 25, 5, 17, 29, 9, 21, 33, //
-                2, 14, 26, 6, 18, 30, 10, 22, 34, //
-                3, 15, 27, 7, 19, 31, 11, 23, 35 //
-                }, //
-                IndexingOrder.NEAR, //
-                3, 3, 4 //
-        );
-
-        assertTrue(Arrays.equals(a.reverseOrder().reverseOrder().reverseOrder().values(), expected.values()));
-    }
-
-    /**
      * Tests {@link RealArray#subarray(int...)}.
      */
     @Test
@@ -650,6 +619,94 @@ public class RealArrayTest {
         );
 
         assertTrue(Arrays.equals(a.reverse(2, 0).values(), expected.values()));
+    }
+
+    /**
+     * Tests {@link Array#concat(int, Array...)}.
+     */
+    @Test
+    public void testConcat() {
+
+        RealArray a = new RealArray(new double[] {
+        //
+                0, 1, //
+                2, 3, //
+                //
+                4, 5, //
+                6, 7 //
+                }, //
+                IndexingOrder.FAR, //
+                2, 2, 2 //
+        );
+
+        RealArray b = new RealArray(new double[] {
+        //
+                0, 1, //
+                2, 3, //
+                4, 5, //
+                //
+                6, 7, //
+                8, 9, //
+                10, 11 //
+                }, //
+                IndexingOrder.FAR, //
+                2, 3, 2 //
+        );
+
+        RealArray expected = new RealArray(new double[] {
+        //
+                0, 1, //
+                2, 3, //
+                0, 1, //
+                2, 3, //
+                4, 5, //
+                0, 1, //
+                2, 3, //
+                //
+                4, 5, //
+                6, 7, //
+                6, 7, //
+                8, 9, //
+                10, 11, //
+                4, 5, //
+                6, 7 //
+                }, //
+                IndexingOrder.FAR, //
+                2, 7, 2 //
+        );
+
+        assertTrue(Arrays.equals(a.concat(1, b, a).values(), expected.values()));
+    }
+
+    /**
+     * Tests {@link RealArray#reverseOrder()}.
+     */
+    @Test
+    public void testReverseOrder() {
+
+        RealArray a = new RealArray(new double[] {
+        //
+                0, 1, 2, 3, 4, 5, 6, 7, 8, //
+                9, 10, 11, 12, 13, 14, 15, 16, 17, //
+                18, 19, 20, 21, 22, 23, 24, 25, 26, //
+                27, 28, 29, 30, 31, 32, 33, 34, 35 //
+                }, //
+                IndexingOrder.FAR, //
+                3, 3, 4 //
+        );
+
+        RealArray expected = new RealArray(new double[] {
+        //
+                0, 12, 24, 4, 16, 28, 8, 20, 32, //
+                1, 13, 25, 5, 17, 29, 9, 21, 33, //
+                2, 14, 26, 6, 18, 30, 10, 22, 34, //
+                3, 15, 27, 7, 19, 31, 11, 23, 35 //
+                }, //
+                IndexingOrder.NEAR, //
+                3, 3, 4 //
+        );
+
+        assertTrue(Arrays.equals(a.reverseOrder().reverseOrder().reverseOrder().values(), expected.values()));
     }
 
     /**

@@ -70,8 +70,8 @@ public class JavaArrayKernel implements ArrayKernel {
     public void rrOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS, //
-            int... selectedDims) {
-        DimensionOps.rrOp(type, srcV, srcD, srcS, dstV, dstD, dstS, selectedDims);
+            int... opDims) {
+        DimensionOps.rrOp(type, srcV, srcD, srcS, dstV, dstD, dstS, opDims);
     }
 
     public void riOp(int type, //
@@ -82,8 +82,8 @@ public class JavaArrayKernel implements ArrayKernel {
 
     public void rdOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, double[] dstV, //
-            int... selectedDims) {
-        DimensionOps.rdOp(type, srcV, srcD, srcS, dstV, selectedDims);
+            int... opDims) {
+        DimensionOps.rdOp(type, srcV, srcD, srcS, dstV, opDims);
     }
 
     //

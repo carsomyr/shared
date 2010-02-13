@@ -474,7 +474,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
                 mappingBounds);
     }
 
-    public T reverse(int... selectedDims) {
+    public T reverse(int... opDims) {
 
         ProtoSparseArray<T, V, E, D> src = this;
 
@@ -483,7 +483,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         SparseArrayState<V> srcState = src.state;
         SparseArrayState<V> dstState = dst.state;
 
-        dst.state = OpKernel.sliceSparse(createReverseSlices(src.dims, selectedDims), //
+        dst.state = OpKernel.sliceSparse(createReverseSlices(src.dims, opDims), //
                 srcState.values, src.dims, src.strides, src.dimOffsets, //
                 srcState.indices, srcState.indirectionOffsets, srcState.indirections, //
                 dstState.values, dst.dims, dst.strides, dst.dimOffsets, //
@@ -507,6 +507,67 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         T dst = wrap(OpKernel.insertSparse( //
                 empty(), dims, strides, dimOffsets, EmptyIndices, //
                 srcState.values, srcState.indices), dims, strides, dimOffsets);
+
+        return dst;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T concat(int opDim, T... srcs) {
+
+        ProtoSparseArray<T, V, E, D> src = this;
+
+        int ndims = src.dims.length;
+
+        Control.checkTrue(opDim >= 0 && opDim < ndims, //
+                "Invalid dimension");
+
+        srcs = Arrays.copyOf(srcs, srcs.length + 1);
+        System.arraycopy(srcs, 0, srcs, 1, srcs.length - 1);
+        srcs[0] = (T) this;
+
+        int offset = 0;
+
+        for (int i = 0, n = srcs.length; i < n; i++) {
+
+            int dimSize = srcs[i].size(opDim);
+
+            for (int dim = 0; dim < opDim; dim++) {
+                Control.checkTrue(src.dims[dim] == srcs[i].dims[dim], //
+                        "Dimension mismatch");
+            }
+
+            for (int dim = opDim + 1; dim < ndims; dim++) {
+                Control.checkTrue(src.dims[dim] == srcs[i].dims[dim], //
+                        "Dimension mismatch");
+            }
+
+            offset += dimSize;
+        }
+
+        int[] newDims = src.dims.clone();
+        newDims[opDim] = offset;
+
+        int[] mappingBounds = new int[3 * ndims];
+
+        for (int dim = 0; dim < ndims; dim++) {
+            mappingBounds[3 * dim + 2] = src.dims[dim];
+        }
+
+        T dst = wrap((E) null, newDims, src.order().strides(newDims), createDimensionOffsets(newDims));
+
+        offset = 0;
+
+        for (int i = 0, n = srcs.length; i < n; i++) {
+
+            int dimSize = srcs[i].size(opDim);
+
+            mappingBounds[3 * opDim + 1] = offset;
+            mappingBounds[3 * opDim + 2] = dimSize;
+
+            srcs[i].map(dst, mappingBounds);
+
+            offset += dimSize;
+        }
 
         return dst;
     }
