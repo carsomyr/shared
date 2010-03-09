@@ -63,7 +63,7 @@
     </target>
 
     <target name="build-project" depends="build-prepare">
-        <javac debug="true" debuglevel="source,lines,vars" destdir="bin" source="${source}" target="${target}">
+        <javac debug="true" debuglevel="source,lines,vars" destdir="bin" source="${source}" target="${target}" includeAntRuntime="false">
             <src refid="Shared.sourcepath" />
             <classpath refid="Shared.classpath" />
         </javac>
