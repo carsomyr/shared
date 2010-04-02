@@ -79,8 +79,8 @@ public class Gabor extends ComplexArray implements Cacheable {
      *            the elongation.
      */
     public Gabor(int supportRadius, //
-            final double theta, double scale, //
-            double frequency, final double elongation) {
+            double theta, double scale, //
+            double frequency, double elongation) {
         super(2 * supportRadius + 1, 2 * supportRadius + 1, 2);
 
         this.supportRadius = supportRadius;

@@ -80,7 +80,13 @@ abstract public class FFTCache<C extends AbstractArray<C, C, R, ?>, R extends Ab
         if (kernel == null) {
 
             kernel = createCacheable(tag, dims);
-            this.rr.register(ReferenceType.SOFT, kernel, this.kernelMap, key);
+
+            this.kernelMap.put(key, this.rr.wrap(ReferenceType.SOFT, kernel, new Runnable() {
+
+                public void run() {
+                    FFTCache.this.kernelMap.remove(key);
+                }
+            }));
         }
 
         return kernel;

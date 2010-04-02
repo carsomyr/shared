@@ -197,7 +197,13 @@ public class FFTWService implements FFTService {
         if (plan == null) {
 
             plan = new Plan(type, dims, mode);
-            this.rr.register(ReferenceType.SOFT, plan, this.planMap, key);
+
+            this.planMap.put(key, this.rr.wrap(ReferenceType.SOFT, plan, new Runnable() {
+
+                public void run() {
+                    FFTWService.this.planMap.remove(key);
+                }
+            }));
         }
 
         plan.transform(in, out);

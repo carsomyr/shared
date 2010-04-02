@@ -46,7 +46,7 @@ abstract public class AbstractGMModel {
      *            the change in likelihood required for termination.
      * @return the mixture components trained.
      */
-    public GMComponents train(final RealArray points, int ncomps, double regularization, double delta) {
+    public GMComponents train(RealArray points, int ncomps, double regularization, double delta) {
 
         // Convert to a list of points.
         GMComponents gmc = initialize(points, ncomps, regularization);

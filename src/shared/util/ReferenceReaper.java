@@ -17,6 +17,7 @@
 
 package shared.util;
 
+import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
@@ -41,14 +42,19 @@ public class ReferenceReaper<T> {
     public enum ReferenceType {
 
         /**
+         * Indicates a {@link WeakReference}.
+         */
+        WEAK, //
+
+        /**
          * Indicates a {@link SoftReference}.
          */
         SOFT, //
 
         /**
-         * Indicates a {@link WeakReference}.
+         * Indicates a {@link PhantomReference}.
          */
-        WEAK;
+        PHANTOM;
     }
 
     final ReaperThread<T> thread;
@@ -61,68 +67,63 @@ public class ReferenceReaper<T> {
     }
 
     /**
-     * Registers a referent with this reaper.
+     * Wraps the given object in some sort of {@link Reference}.
      * 
      * @param type
      *            the type of {@link Reference} desired.
      * @param referent
-     *            the referent.
-     * @param cache
-     *            the {@link ConcurrentMap} to register with and clean up from.
-     * @param cacheKey
-     *            the key used to retrieve the referent.
-     * @param <K>
-     *            the key type.
-     * @return a {@link Reference} to the referent.
+     *            the object being referred to.
+     * @param cleanup
+     *            the cleanup action.
+     * @return the wrapping {@link Reference}.
      */
-    public <K> Reference<T> register(ReferenceType type, T referent, //
-            final ConcurrentMap<K, Reference<T>> cache, final K cacheKey) {
-
-        Runnable cleanup = new Runnable() {
-
-            public void run() {
-                cache.remove(cacheKey);
-            }
-        };
+    public Reference<T> wrap(ReferenceType type, T referent, Runnable cleanup) {
 
         final Reference<T> ref;
 
-        // Synchronization ensures that insertion happens BEFORE removal.
-        synchronized (this.thread) {
+        switch (type) {
 
-            switch (type) {
+        case WEAK:
 
-            case SOFT:
+            ref = new WeakReference<T>(referent, this.thread.rq) {
 
-                ref = new SoftReference<T>(referent, this.thread.rq) {
+                @Override
+                public String toString() {
+                    return String.valueOf(get());
+                }
+            };
 
-                    @Override
-                    public String toString() {
-                        return String.valueOf(get());
-                    }
-                };
+            break;
 
-                break;
+        case SOFT:
 
-            case WEAK:
+            ref = new SoftReference<T>(referent, this.thread.rq) {
 
-                ref = new WeakReference<T>(referent, this.thread.rq) {
+                @Override
+                public String toString() {
+                    return String.valueOf(get());
+                }
+            };
 
-                    @Override
-                    public String toString() {
-                        return String.valueOf(get());
-                    }
-                };
+            break;
 
-                break;
+        case PHANTOM:
 
-            default:
-                throw new IllegalArgumentException("Invalid reference type");
-            }
+            ref = new PhantomReference<T>(referent, this.thread.rq) {
 
-            cache.put(cacheKey, ref);
-            this.thread.map.put(ref, cleanup);
+                @Override
+                public String toString() {
+                    return String.valueOf(get());
+                }
+            };
+
+            break;
+
+        default:
+            throw new IllegalArgumentException("Invalid reference type");
         }
+
+        this.thread.map.put(ref, cleanup);
 
         return ref;
     }
@@ -174,17 +175,9 @@ public class ReferenceReaper<T> {
                     continue loop;
                 }
 
-                // Synchronization ensures that removal happens AFTER insertion.
-                synchronized (this) {
-                }
-
                 try {
 
                     this.map.remove(ref).run();
-
-                } catch (NullPointerException e) {
-
-                    // In case the key-value relationship was not successfully added to the map.
 
                 } catch (Throwable t) {
 

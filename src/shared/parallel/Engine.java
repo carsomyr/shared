@@ -248,7 +248,7 @@ public class Engine<T> {
      * @param engineInput
      *            the input.
      */
-    public void execute(final T engineInput) {
+    public void execute(T engineInput) {
 
         try {
 

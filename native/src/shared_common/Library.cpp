@@ -99,11 +99,11 @@ void Library::JNI_OnUnload(JavaVM *jvm, void *reserved) {
 
     //
 
-    Common::deleteWeakGlobalRef(env, libraryClass);
-    Common::deleteWeakGlobalRef(env, servicesClass);
-
     // Set the initialization flag field to be false.
     env->SetStaticBooleanField(libraryClass, initializedFieldID, JNI_FALSE);
+
+    Common::deleteWeakGlobalRef(env, servicesClass);
+    Common::deleteWeakGlobalRef(env, libraryClass);
 }
 
 void Library::registerService(JNIEnv *env, //

@@ -133,7 +133,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
      *            the outbound object.
      * @return the number of bytes remaining to be written.
      */
-    public int doOutbound(Filter<ByteBuffer, T> filter, T outbound) {
+    protected int doOutbound(Filter<ByteBuffer, T> filter, T outbound) {
 
         if (outbound != null) {
             this.out.add(outbound);

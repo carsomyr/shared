@@ -153,7 +153,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
         return res;
     }
 
-    public SSLFilter<C> newFilter(final C connection) {
+    public SSLFilter<C> newFilter(C connection) {
         return new SSLFilter<C>(newSSLEngine(), connection, this.executor);
     }
 

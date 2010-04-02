@@ -143,7 +143,7 @@ public class SynchronousConnectionTest {
      * @exception IOException
      *                when something goes awry.
      */
-    protected Verifier createReceiver(final int index, //
+    protected Verifier createReceiver(int index, //
             int bufferSize, final InetSocketAddress localAddress) throws IOException {
 
         final SynchronousManagedConnection receiver = new SynchronousManagedConnection( //
@@ -242,7 +242,7 @@ public class SynchronousConnectionTest {
      * @exception IOException
      *                when something goes awry.
      */
-    protected Verifier createSender(final int index, //
+    protected Verifier createSender(int index, //
             int bufferSize, final InetSocketAddress remoteAddress) throws IOException {
 
         final SynchronousManagedConnection sender = new SynchronousManagedConnection( //

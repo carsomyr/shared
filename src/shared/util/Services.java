@@ -92,7 +92,13 @@ public class Services {
      * @param implClass
      *            the implementing class.
      */
-    public static <A extends Service> void registerService(Class<A> specClass, Class<? extends A> implClass) {
-        Instance.rr.register(ReferenceType.WEAK, implClass, Instance.serviceMap, specClass);
+    public static <A extends Service> void registerService(final Class<A> specClass, Class<? extends A> implClass) {
+
+        Instance.serviceMap.put(specClass, Instance.rr.wrap(ReferenceType.WEAK, implClass, new Runnable() {
+
+            public void run() {
+                Instance.serviceMap.remove(specClass);
+            }
+        }));
     }
 }

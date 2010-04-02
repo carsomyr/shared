@@ -62,12 +62,16 @@ public class Filters {
                 }
             }
 
-            public V peek() {
-                return backing.peek();
+            public boolean offer(V e) {
+                return add(e);
             }
 
             public V element() {
                 return backing.element();
+            }
+
+            public V peek() {
+                return backing.peek();
             }
 
             public V poll() {
@@ -78,10 +82,6 @@ public class Filters {
                 return backing.remove();
             }
 
-            public boolean isEmpty() {
-                return backing.isEmpty();
-            }
-
             public void clear() {
                 backing.clear();
             }
@@ -90,13 +90,13 @@ public class Filters {
                 return backing.size();
             }
 
+            public boolean isEmpty() {
+                return backing.isEmpty();
+            }
+
             @Override
             public String toString() {
                 return backing.toString();
-            }
-
-            public boolean offer(V e) {
-                throw new UnsupportedOperationException();
             }
 
             public boolean addAll(Collection<? extends V> c) {
@@ -143,16 +143,16 @@ public class Filters {
      * @param <V>
      *            the value type.
      */
-    final protected static <V> Queue<V> readOnlyQueue(final Queue<V> backing) {
+    final public static <V> Queue<V> readOnlyQueue(final Queue<V> backing) {
 
         return new Queue<V>() {
 
-            public V peek() {
-                return backing.peek();
-            }
-
             public V element() {
                 return backing.element();
+            }
+
+            public V peek() {
+                return backing.peek();
             }
 
             public V poll() {
@@ -163,16 +163,16 @@ public class Filters {
                 return backing.remove();
             }
 
-            public boolean isEmpty() {
-                return backing.isEmpty();
-            }
-
             public void clear() {
                 backing.clear();
             }
 
             public int size() {
                 return backing.size();
+            }
+
+            public boolean isEmpty() {
+                return backing.isEmpty();
             }
 
             @Override
@@ -232,7 +232,7 @@ public class Filters {
      * @param <V>
      *            the value type.
      */
-    final protected static <V> Queue<V> writeOnlyQueue(final Queue<V> backing) {
+    final public static <V> Queue<V> writeOnlyQueue(final Queue<V> backing) {
 
         return new Queue<V>() {
 
@@ -240,12 +240,16 @@ public class Filters {
                 return backing.add(e);
             }
 
-            public boolean isEmpty() {
-                return backing.isEmpty();
+            public boolean offer(V e) {
+                return backing.offer(e);
             }
 
             public int size() {
                 return backing.size();
+            }
+
+            public boolean isEmpty() {
+                return backing.isEmpty();
             }
 
             @Override
@@ -270,10 +274,6 @@ public class Filters {
             }
 
             public void clear() {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean offer(V e) {
                 throw new UnsupportedOperationException();
             }
 
