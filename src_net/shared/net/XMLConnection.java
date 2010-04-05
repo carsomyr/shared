@@ -47,7 +47,8 @@ import shared.util.Control;
  * @author Roy Liu
  */
 abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends XMLEvent<T, ?, S>, S extends Enum<S>> //
-        extends FilteredManagedConnection<C, T> implements Source<T, S>, FilterFactory<Element, T, C> {
+        extends FilteredManagedConnection<C, T> //
+        implements Source<T, S>, FilterFactory<Filter<Element, T>, Element, T, C> {
 
     final S type;
 
@@ -153,20 +154,20 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
     public void onReceiveInbound(Queue<T> evts) {
 
-        for (T evt = null; (evt = evts.poll()) != null;) {
+        for (T evt; (evt = evts.poll()) != null;) {
             onLocal(evt);
         }
     }
 
-    public void onCloseInbound(Queue<T> inbounds) {
+    public void onCloseInbound(Queue<T> evts) {
         onClose();
     }
 
-    public void onEOSInbound(Queue<T> inbounds) {
+    public void onEOSInbound(Queue<T> evts) {
 
         onLocal(parse(null));
 
-        Control.checkTrue(inbounds.isEmpty(), //
+        Control.checkTrue(evts.isEmpty(), //
                 "No more events can remain in queue");
     }
 
@@ -185,7 +186,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
                 assert !Thread.holdsLock(connection);
 
-                for (Element inbound = null; (inbound = in.poll()) != null;) {
+                for (Element inbound; (inbound = in.poll()) != null;) {
                     out.add(parse(inbound));
                 }
             }
@@ -194,7 +195,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
                 assert Thread.holdsLock(connection);
 
-                for (T outbound = null; (outbound = in.poll()) != null;) {
+                for (T outbound; (outbound = in.poll()) != null;) {
                     out.add(outbound.toDOM());
                 }
             }

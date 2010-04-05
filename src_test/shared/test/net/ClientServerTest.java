@@ -100,7 +100,8 @@ public class ClientServerTest {
      * An internal {@link Connection} class for demo purposes.
      */
     protected static class UTF8Connection extends FilteredManagedConnection<UTF8Connection, String> //
-            implements FilterFactory<ByteBuffer, String, UTF8Connection>, Filter<ByteBuffer, String> {
+            implements FilterFactory<Filter<ByteBuffer, String>, ByteBuffer, String, UTF8Connection>, //
+            Filter<ByteBuffer, String> {
 
         final Logger log;
 
@@ -120,7 +121,7 @@ public class ClientServerTest {
 
         public void onReceiveInbound(Queue<String> inbounds) {
 
-            for (String str = null; (str = inbounds.poll()) != null;) {
+            for (String str; (str = inbounds.poll()) != null;) {
                 this.log.info(String.format("Received: \"%s\".", str));
             }
         }
@@ -147,7 +148,7 @@ public class ClientServerTest {
 
         public void getInbound(Queue<ByteBuffer> in, Queue<String> out) {
 
-            for (ByteBuffer bb = null; (bb = in.poll()) != null;) {
+            for (ByteBuffer bb; (bb = in.poll()) != null;) {
 
                 byte[] bytes = new byte[bb.remaining()];
                 bb.get(bytes);
@@ -158,7 +159,7 @@ public class ClientServerTest {
 
         public void getOutbound(Queue<String> in, Queue<ByteBuffer> out) {
 
-            for (String str = null; (str = in.poll()) != null;) {
+            for (String str; (str = in.poll()) != null;) {
                 out.add(ByteBuffer.wrap(str.getBytes()));
             }
         }

@@ -40,7 +40,7 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
      * @param filterFactory
      *            the {@link FilterFactory}.
      */
-    public C setFilterFactory(FilterFactory<ByteBuffer, T, ? super C> filterFactory);
+    public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory);
 
     /**
      * Sends the given outbound value.

@@ -102,13 +102,13 @@ public class AllNetTests {
             throw new RuntimeException(e);
         }
 
-        Properties pSSL = (Properties) p.clone();
-        pSSL.setProperty("use_SSL", "yes");
-        Object[] paramsSSL = new Object[] { pSSL };
-
         Properties pNoSSL = (Properties) p.clone();
         pNoSSL.setProperty("use_SSL", "no");
         Object[] paramsNoSSL = new Object[] { pNoSSL };
+
+        Properties pSSL = (Properties) p.clone();
+        pSSL.setProperty("use_SSL", "yes");
+        Object[] paramsSSL = new Object[] { pSSL };
 
         Parameterizations = Arrays.asList(new Object[][] { paramsNoSSL, paramsSSL });
 

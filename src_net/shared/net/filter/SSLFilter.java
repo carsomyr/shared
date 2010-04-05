@@ -39,7 +39,7 @@ import shared.net.Connection;
  *            the {@link FilteredConnection} type.
  * @author Roy Liu
  */
-public class SSLFilter<C extends FilteredConnection<C, ?>> implements StatefulFilter<ByteBuffer, ByteBuffer> {
+public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<ByteBuffer, ByteBuffer> {
 
     /**
      * The global {@link Logger} instance.
@@ -91,7 +91,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements StatefulFi
 
         //
 
-        for (ByteBuffer bb = null; (bb = in.poll()) != null;) {
+        for (ByteBuffer bb; (bb = in.poll()) != null;) {
             this.readBuffer = (ByteBuffer) Buffers.append(this.readBuffer.compact(), bb, 1).flip();
         }
 
@@ -230,7 +230,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements StatefulFi
 
         //
 
-        for (ByteBuffer bb = null; (bb = in.poll()) != null;) {
+        for (ByteBuffer bb; (bb = in.poll()) != null;) {
             this.writeBuffer = (ByteBuffer) Buffers.append(this.writeBuffer.compact(), bb, 1).flip();
         }
 
@@ -348,21 +348,30 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements StatefulFi
         out.add((ByteBuffer) this.encryptBuffer.flip());
     }
 
-    public void bindInbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
+    public void getInboundOOB( //
+            Queue<ByteBuffer> in, Queue<OOBEvent> inEvts, //
+            Queue<ByteBuffer> out, Queue<OOBEvent> outEvts) {
+
+        Filters.transfer(inEvts, outEvts);
+
         getInbound(in, out);
     }
 
-    public void bindOutbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
-        getOutbound(in, out);
-    }
+    public void getOutboundOOB( //
+            Queue<ByteBuffer> in, Queue<OOBEvent> inEvts, //
+            Queue<ByteBuffer> out, Queue<OOBEvent> outEvts) {
 
-    public void shutdownInbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
-        getInbound(in, out);
-    }
+        for (OOBEvent evt; (evt = inEvts.poll()) != null;) {
 
-    public void shutdownOutbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
+            switch (evt.getType()) {
 
-        this.shutdownOutbound = true;
+            case CLOSE_USER:
+                this.shutdownOutbound = true;
+                break;
+            }
+
+            outEvts.add(evt);
+        }
 
         getOutbound(in, out);
     }

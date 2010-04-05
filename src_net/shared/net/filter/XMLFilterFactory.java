@@ -33,7 +33,8 @@ import shared.util.Control;
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class XMLFilterFactory<C extends Connection> implements FilterFactory<ByteBuffer, Element, C> {
+public class XMLFilterFactory<C extends Connection> //
+        implements FilterFactory<Filter<ByteBuffer, Element>, ByteBuffer, Element, C> {
 
     /**
      * The global instance.
@@ -65,7 +66,7 @@ public class XMLFilterFactory<C extends Connection> implements FilterFactory<Byt
 
                 assert !Thread.holdsLock(connection);
 
-                for (ByteBuffer bb = null; (bb = in.poll()) != null;) {
+                for (ByteBuffer bb; (bb = in.poll()) != null;) {
 
                     int save = bb.position();
                     int size = bb.remaining();
@@ -84,7 +85,7 @@ public class XMLFilterFactory<C extends Connection> implements FilterFactory<Byt
 
                 assert Thread.holdsLock(connection);
 
-                for (Element elt = null; (elt = in.poll()) != null;) {
+                for (Element elt; (elt = in.poll()) != null;) {
                     out.add(ByteBuffer.wrap(Control.toString(elt).getBytes()));
                 }
             }

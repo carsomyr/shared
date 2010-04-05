@@ -262,7 +262,8 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             setDefaultWriter();
         }
 
-        setFilterFactory(new IdentityFilterFactory<ByteBuffer, SynchronousManagedConnection>());
+        IdentityFilterFactory<ByteBuffer, SynchronousManagedConnection> iFF = IdentityFilterFactory.getInstance();
+        setFilterFactory(iFF);
     }
 
     /**
@@ -359,7 +360,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             setErrorWriter(new IOException("Connection closed"));
 
             // Append the remainders onto the incoming buffer.
-            for (ByteBuffer bb = null; (bb = inbounds.poll()) != null;) {
+            for (ByteBuffer bb; (bb = inbounds.poll()) != null;) {
                 this.in.inBuffer = (ByteBuffer) Buffers.append(this.in.inBuffer.compact(), bb).flip();
             }
         }
@@ -375,7 +376,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             setErrorWriter(x);
 
             // Append the remainders onto the incoming buffer.
-            for (ByteBuffer bb = null; (bb = inbounds.poll()) != null;) {
+            for (ByteBuffer bb; (bb = inbounds.poll()) != null;) {
                 this.in.inBuffer = (ByteBuffer) Buffers.append(this.in.inBuffer.compact(), bb).flip();
             }
         }

@@ -640,12 +640,31 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
             public InetSocketAddress get() throws InterruptedException, ExecutionException {
 
-                try {
+                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
 
-                    return get(0, TimeUnit.MILLISECONDS);
+                synchronized (amc) {
 
-                } catch (TimeoutException e) {
+                    for (; !isDone();) {
+                        amc.wait();
+                    }
+                }
 
+                if (amc.error != null) {
+                    throw new ExecutionException(amc.error);
+                }
+
+                switch (opType) {
+
+                case ACCEPT:
+                    return getRemoteAddress();
+
+                case CONNECT:
+                    return getLocalAddress();
+
+                case REGISTER:
+                    return null;
+
+                default:
                     throw new AssertionError("Control should never reach here");
                 }
             }
@@ -655,30 +674,18 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                 AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
 
-                long timeoutMillis = TimeUnit.MILLISECONDS.convert(timeout, unit);
+                long timeoutMillis = unit.toMillis(timeout);
 
                 synchronized (amc) {
 
-                    if (timeoutMillis > 0) {
+                    for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
+                    remaining > 0 && !isDone(); //
+                    remaining = end - System.currentTimeMillis()) {
+                        amc.wait(remaining);
+                    }
 
-                        long endTimeMillis = System.currentTimeMillis() + timeoutMillis;
-                        long remaining = timeoutMillis;
-
-                        for (; !isDone() && remaining > 0;) {
-
-                            amc.wait(remaining);
-                            remaining = endTimeMillis - System.currentTimeMillis();
-                        }
-
-                        if (!isDone()) {
-                            throw new TimeoutException();
-                        }
-
-                    } else {
-
-                        for (; !isDone();) {
-                            amc.wait();
-                        }
+                    if (!isDone()) {
+                        throw new TimeoutException();
                     }
                 }
 

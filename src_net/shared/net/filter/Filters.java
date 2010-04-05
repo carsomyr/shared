@@ -316,46 +316,58 @@ public class Filters {
     }
 
     /**
-     * Unrolls the given {@link StatefulFilter} into session, bind, and shutdown {@link Filter}s.
+     * Wraps the given {@link Filter} with an {@link OOBFilter} adapter that has trivial behavior on {@link OOBEvent}s.
      * 
+     * @param filter
+     *            the {@link Filter}.
      * @param <I>
-     *            the nominal input type.
+     *            the input type.
      * @param <O>
-     *            the nominal output type.
-     * @param statefulFilter
-     *            the {@link StatefulFilter}.
-     * @return the unrolled {@link Filter}s.
+     *            the output type.
+     * @return the {@link OOBFilter} adapter, or the original {@link Filter} if it is already an instance.
      */
     @SuppressWarnings("unchecked")
-    final public static <I, O> Filter<I, O>[] unroll(final StatefulFilter<I, O> statefulFilter) {
+    final public static <I, O> OOBFilter<I, O> asOOBFilter(final Filter<I, O> filter) {
 
-        Filter<I, O>[] filters = new Filter[3];
-
-        filters[0] = statefulFilter;
-
-        filters[1] = new Filter<I, O>() {
+        return (filter instanceof OOBFilter) ? (OOBFilter<I, O>) filter : new OOBFilter<I, O>() {
 
             public void getInbound(Queue<I> in, Queue<O> out) {
-                statefulFilter.bindInbound(in, out);
+                filter.getInbound(in, out);
             }
 
             public void getOutbound(Queue<O> in, Queue<I> out) {
-                statefulFilter.bindOutbound(in, out);
+                filter.getOutbound(in, out);
+            }
+
+            public void getInboundOOB( //
+                    Queue<I> in, Queue<OOBEvent> inEvts, //
+                    Queue<O> out, Queue<OOBEvent> outEvts) {
+
+                transfer(inEvts, outEvts);
+                getInbound(in, out);
+            }
+
+            public void getOutboundOOB( //
+                    Queue<O> in, Queue<OOBEvent> inEvts, //
+                    Queue<I> out, Queue<OOBEvent> outEvts) {
+
+                transfer(inEvts, outEvts);
+                getOutbound(in, out);
             }
         };
+    }
 
-        filters[2] = new Filter<I, O>() {
+    /**
+     * Transfers elements from the given input {@link Queue} to the given output {@link Queue}.
+     * 
+     * @param <T>
+     *            the element type.
+     */
+    final public static <T> void transfer(Queue<T> in, Queue<T> out) {
 
-            public void getInbound(Queue<I> in, Queue<O> out) {
-                statefulFilter.shutdownInbound(in, out);
-            }
-
-            public void getOutbound(Queue<O> in, Queue<I> out) {
-                statefulFilter.shutdownOutbound(in, out);
-            }
-        };
-
-        return filters;
+        for (T elt; (elt = in.poll()) != null;) {
+            out.add(elt);
+        }
     }
 
     // Dummy constructor.

@@ -38,7 +38,8 @@ import shared.util.Control;
  * @author Roy Liu
  */
 public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
-        implements FilterFactory<ByteBuffer, ByteBuffer, C>, SSLEngineFactory<SSLFilterFactory<C>> {
+        implements FilterFactory<SSLFilter<C>, ByteBuffer, ByteBuffer, C>, //
+        SSLEngineFactory<SSLFilterFactory<C>> {
 
     final ThreadPoolExecutor executor;
 

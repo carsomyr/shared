@@ -25,22 +25,30 @@ import shared.net.Connection;
  * An implementation of {@link FilterFactory} that creates identity filters, which simply pull values off of the input
  * queue and push them onto the output queue.
  * 
+ * @param <T>
+ *            the input and output type.
  * @param <C>
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class IdentityFilterFactory<T, C extends Connection> implements FilterFactory<T, T, C>, Filter<T, T> {
+public class IdentityFilterFactory<T, C extends Connection> //
+        implements FilterFactory<IdentityFilterFactory<T, C>, T, T, C>, OOBFilter<T, T> {
 
     /**
      * The global {@link IdentityFilterFactory} instance.
      */
-    final protected static IdentityFilterFactory<?, ?> Instance = new IdentityFilterFactory<Object, Connection>();
+    final protected static IdentityFilterFactory<Object, Connection> Instance = new IdentityFilterFactory<Object, Connection>();
 
     /**
      * Gets the global instance.
+     * 
+     * @param <T>
+     *            the input and output type.
+     * @param <C>
+     *            the {@link Connection} type.
      */
     @SuppressWarnings("unchecked")
-    final public static <T, C extends Connection> FilterFactory<T, T, C> getInstance() {
+    final public static <T, C extends Connection> IdentityFilterFactory<T, C> getInstance() {
         return (IdentityFilterFactory<T, C>) Instance;
     }
 
@@ -51,20 +59,30 @@ public class IdentityFilterFactory<T, C extends Connection> implements FilterFac
     }
 
     public void getInbound(Queue<T> in, Queue<T> out) {
-
-        for (T inbound = null; (inbound = in.poll()) != null;) {
-            out.add(inbound);
-        }
+        Filters.transfer(in, out);
     }
 
     public void getOutbound(Queue<T> in, Queue<T> out) {
-
-        for (T outbound = null; (outbound = in.poll()) != null;) {
-            out.add(outbound);
-        }
+        Filters.transfer(in, out);
     }
 
-    public Filter<T, T> newFilter(C connection) {
+    public void getInboundOOB( //
+            Queue<T> in, Queue<OOBEvent> inEvts, //
+            Queue<T> out, Queue<OOBEvent> outEvts) {
+
+        Filters.transfer(inEvts, outEvts);
+        getInbound(in, out);
+    }
+
+    public void getOutboundOOB( //
+            Queue<T> in, Queue<OOBEvent> inEvts, //
+            Queue<T> out, Queue<OOBEvent> outEvts) {
+
+        Filters.transfer(inEvts, outEvts);
+        getOutbound(in, out);
+    }
+
+    public IdentityFilterFactory<T, C> newFilter(C connection) {
         return this;
     }
 }

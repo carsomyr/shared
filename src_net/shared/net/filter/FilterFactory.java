@@ -23,6 +23,8 @@ import shared.net.Connection;
  * Defines a factory for creating {@link Filter}s.
  * 
  * @apiviz.owns shared.net.filter.Filter
+ * @param <F>
+ *            the {@link Filter} type.
  * @param <I>
  *            the nominal input type.
  * @param <O>
@@ -31,10 +33,10 @@ import shared.net.Connection;
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public interface FilterFactory<I, O, C extends Connection> {
+public interface FilterFactory<F extends Filter<I, O>, I, O, C extends Connection> {
 
     /**
      * Creates a new {@link Filter}.
      */
-    public Filter<I, O> newFilter(C connection);
+    public F newFilter(C connection);
 }

@@ -20,7 +20,7 @@ package shared.net.filter;
 import java.util.Queue;
 
 /**
- * Defines a stateful {@link Filter}.
+ * Defines a {@link Filter} that requires special processing on {@link OOBEvent}s.
  * 
  * @param <I>
  *            the nominal input type.
@@ -28,45 +28,33 @@ import java.util.Queue;
  *            the nominal output type.
  * @author Roy Liu
  */
-public interface StatefulFilter<I, O> extends Filter<I, O> {
+public interface OOBFilter<I, O> extends Filter<I, O> {
 
     /**
-     * Initializes inbound traffic.
+     * Processes an {@link OOBEvent} as it would apply to inbound traffic.
      * 
      * @param in
      *            the input {@link Queue}.
+     * @param inEvts
+     *            the input event {@link Queue}.
      * @param out
      *            the output {@link Queue}.
+     * @param outEvts
+     *            the output event {@link Queue}.
      */
-    public void bindInbound(Queue<I> in, Queue<O> out);
+    public void getInboundOOB(Queue<I> in, Queue<OOBEvent> inEvts, Queue<O> out, Queue<OOBEvent> outEvts);
 
     /**
-     * Initializes outbound traffic.
+     * Processes an {@link OOBEvent} as it would apply to outbound traffic.
      * 
      * @param in
      *            the input {@link Queue}.
+     * @param inEvts
+     *            the input event {@link Queue}.
      * @param out
      *            the output {@link Queue}.
+     * @param outEvts
+     *            the output event {@link Queue}.
      */
-    public void bindOutbound(Queue<O> in, Queue<I> out);
-
-    /**
-     * Shuts down inbound traffic.
-     * 
-     * @param in
-     *            the input {@link Queue}.
-     * @param out
-     *            the output {@link Queue}.
-     */
-    public void shutdownInbound(Queue<I> in, Queue<O> out);
-
-    /**
-     * Shuts down outbound traffic.
-     * 
-     * @param in
-     *            the input {@link Queue}.
-     * @param out
-     *            the output {@link Queue}.
-     */
-    public void shutdownOutbound(Queue<O> in, Queue<I> out);
+    public void getOutboundOOB(Queue<O> in, Queue<OOBEvent> inEvts, Queue<I> out, Queue<OOBEvent> outEvts);
 }

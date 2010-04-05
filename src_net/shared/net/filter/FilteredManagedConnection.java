@@ -23,6 +23,7 @@ import java.util.Queue;
 import shared.event.Handler;
 import shared.net.AbstractManagedConnection;
 import shared.net.ConnectionManager;
+import shared.net.filter.OOBEvent.OOBEventType;
 import shared.util.Control;
 
 /**
@@ -39,13 +40,6 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         extends AbstractManagedConnection<C> //
         implements FilteredConnection<C, T> {
 
-    final Handler<Queue<T>> receiveHandler = new Handler<Queue<T>>() {
-
-        public void handle(Queue<T> inbounds) {
-            onReceiveInbound(inbounds);
-        }
-    };
-
     final Queue<ByteBuffer> in;
     final Queue<ByteBuffer> inReadOnly;
     final Queue<T> inFiltered;
@@ -54,8 +48,16 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     final Queue<T> outReadOnly;
     final Queue<ByteBuffer> outFiltered;
     final Queue<ByteBuffer> outFilteredWriteOnly;
+    final Queue<OOBEvent> inEvts;
+    final Queue<OOBEvent> inEvtsReadOnly;
+    final Queue<OOBEvent> inEvtsFiltered;
+    final Queue<OOBEvent> inEvtsFilteredWriteOnly;
+    final Queue<OOBEvent> outEvts;
+    final Queue<OOBEvent> outEvtsReadOnly;
+    final Queue<OOBEvent> outEvtsFiltered;
+    final Queue<OOBEvent> outEvtsFilteredWriteOnly;
 
-    Filter<ByteBuffer, T> sessionFilter;
+    OOBFilter<ByteBuffer, T> filter;
     Filter<ByteBuffer, T> bindFilter;
     Filter<ByteBuffer, T> shutdownFilter;
 
@@ -75,8 +77,16 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         this.outReadOnly = Filters.readOnlyQueue(this.out);
         this.outFiltered = Filters.createQueue();
         this.outFilteredWriteOnly = Filters.writeOnlyQueue(this.outFiltered);
+        this.inEvts = Filters.createQueue();
+        this.inEvtsReadOnly = Filters.readOnlyQueue(this.inEvts);
+        this.inEvtsFiltered = Filters.createQueue();
+        this.inEvtsFilteredWriteOnly = Filters.writeOnlyQueue(this.inEvtsFiltered);
+        this.outEvts = Filters.createQueue();
+        this.outEvtsReadOnly = Filters.readOnlyQueue(this.outEvts);
+        this.outEvtsFiltered = Filters.createQueue();
+        this.outEvtsFilteredWriteOnly = Filters.writeOnlyQueue(this.outEvtsFiltered);
 
-        this.sessionFilter = this.bindFilter = this.shutdownFilter = new Filter<ByteBuffer, T>() {
+        this.filter = new OOBFilter<ByteBuffer, T>() {
 
             public void getInbound(Queue<ByteBuffer> in, Queue<T> out) {
                 throw new IllegalArgumentException("Please initialize the filter factory");
@@ -85,11 +95,21 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
             public void getOutbound(Queue<T> in, Queue<ByteBuffer> out) {
                 throw new IllegalArgumentException("Please initialize the filter factory");
             }
+
+            public void getInboundOOB(Queue<ByteBuffer> in, Queue<OOBEvent> inEvts, //
+                    Queue<T> out, Queue<OOBEvent> outEvts) {
+                throw new IllegalArgumentException("Please initialize the filter factory");
+            }
+
+            public void getOutboundOOB(Queue<T> in, Queue<OOBEvent> inEvts, //
+                    Queue<ByteBuffer> out, Queue<OOBEvent> outEvts) {
+                throw new IllegalArgumentException("Please initialize the filter factory");
+            }
         };
     }
 
     @SuppressWarnings("unchecked")
-    public C setFilterFactory(FilterFactory<ByteBuffer, T, ? super C> filterFactory) {
+    public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory) {
 
         Filter<ByteBuffer, T> filter = filterFactory.newFilter((C) this);
 
@@ -98,19 +118,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
             Control.checkTrue(!isSubmitted(), //
                     "Cannot modify already submitted connections");
 
-            if (filter instanceof StatefulFilter) {
-
-                StatefulFilter<ByteBuffer, T> statefulFilter = (StatefulFilter<ByteBuffer, T>) filter;
-                Filter<ByteBuffer, T>[] filters = Filters.unroll(statefulFilter);
-
-                this.sessionFilter = filters[0];
-                this.bindFilter = filters[1];
-                this.shutdownFilter = filters[2];
-
-            } else {
-
-                this.sessionFilter = this.bindFilter = this.shutdownFilter = filter;
-            }
+            this.filter = Filters.asOOBFilter(filter);
         }
 
         return (C) this;
@@ -120,63 +128,34 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
 
         // All outbound filtering is done under the protection of the connection monitor.
         synchronized (this) {
-            return doOutbound(this.sessionFilter, output);
+
+            if (output != null) {
+                this.out.add(output);
+            }
+
+            this.filter.getOutbound(this.outReadOnly, this.outFilteredWriteOnly);
+
+            int remaining = 0;
+
+            for (ByteBuffer bb; (bb = this.outFiltered.poll()) != null;) {
+                remaining = send(bb);
+            }
+
+            return remaining;
         }
     }
 
-    /**
-     * Processes an outbound object with the given {@link Filter}.
-     * 
-     * @param filter
-     *            the {@link Filter}.
-     * @param outbound
-     *            the outbound object.
-     * @return the number of bytes remaining to be written.
-     */
-    protected int doOutbound(Filter<ByteBuffer, T> filter, T outbound) {
+    public void onReceive(ByteBuffer input) {
 
-        if (outbound != null) {
-            this.out.add(outbound);
-        }
+        this.in.add(input);
+        this.filter.getInbound(this.inReadOnly, this.inFilteredWriteOnly);
 
-        filter.getOutbound(this.outReadOnly, this.outFilteredWriteOnly);
-
-        int remaining = 0;
-
-        for (ByteBuffer bb = null; (bb = this.outFiltered.poll()) != null;) {
-            remaining = send(bb);
-        }
-
-        return remaining;
-    }
-
-    public void onReceive(ByteBuffer bb) {
-        doInbound(this.sessionFilter, bb, this.receiveHandler);
-    }
-
-    /**
-     * Processes inbound data with the given {@link Filter} and inbound {@link Handler}.
-     * 
-     * @param filter
-     *            the {@link Filter}.
-     * @param inbound
-     *            the inbound data.
-     * @param handler
-     *            the {@link Handler} for filtered inbound data.
-     */
-    protected void doInbound(Filter<ByteBuffer, T> filter, ByteBuffer inbound, Handler<Queue<T>> handler) {
-
-        if (inbound != null) {
-            this.in.add(inbound);
-        }
-
-        filter.getInbound(this.inReadOnly, this.inFilteredWriteOnly);
-
-        handler.handle(this.inFiltered);
+        onReceiveInbound(this.inFiltered);
     }
 
     public void onBind() {
-        doStatefulFilterLifeCycle(this.bindFilter, null, new Handler<Queue<T>>() {
+
+        onOOBEvent(OOBEventType.BIND, null, new Handler<Queue<T>>() {
 
             public void handle(Queue<T> inbounds) {
                 onBindInbound(inbounds);
@@ -185,7 +164,8 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     }
 
     public void onClosingUser(ByteBuffer bb) {
-        doStatefulFilterLifeCycle(this.shutdownFilter, bb, new Handler<Queue<T>>() {
+
+        onOOBEvent(OOBEventType.CLOSE_USER, bb, new Handler<Queue<T>>() {
 
             public void handle(Queue<T> inbounds) {
                 onCloseInbound(inbounds);
@@ -194,7 +174,8 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     }
 
     public void onClosingEOS(ByteBuffer bb) {
-        doStatefulFilterLifeCycle(this.shutdownFilter, bb, new Handler<Queue<T>>() {
+
+        onOOBEvent(OOBEventType.CLOSE_EOS, bb, new Handler<Queue<T>>() {
 
             public void handle(Queue<T> inbounds) {
                 onEOSInbound(inbounds);
@@ -203,16 +184,39 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     }
 
     /**
-     * Processes parts of the {@link StatefulFilter} life cycle: {@link StatefulFilter#bindInbound(Queue, Queue)},
-     * {@link StatefulFilter#bindOutbound(Queue, Queue)}, and {@link StatefulFilter#shutdownInbound(Queue, Queue)},
-     * {@link StatefulFilter#shutdownOutbound(Queue, Queue)}.
+     * Propagates an {@link OOBEvent} through the underlying {@link OOBFilter}.
      */
-    protected void doStatefulFilterLifeCycle(Filter<ByteBuffer, T> filter, ByteBuffer bb, Handler<Queue<T>> handler) {
+    protected void onOOBEvent(OOBEventType type, ByteBuffer input, Handler<Queue<T>> handler) {
 
-        doInbound(filter, bb, handler);
+        OOBEvent evt = new OOBEvent(type, null);
+
+        if (input != null) {
+            this.in.add(input);
+        }
+
+        this.inEvts.add(evt);
+        this.filter.getInboundOOB( //
+                this.inReadOnly, this.inEvtsReadOnly, //
+                this.inFilteredWriteOnly, this.inEvtsFilteredWriteOnly);
+
+        handler.handle(this.inFiltered);
+
+        // We can't do anything with events that are filtering byproducts.
+        this.inEvtsFiltered.clear();
 
         synchronized (this) {
-            doOutbound(filter, null);
+
+            this.outEvts.add(evt);
+            this.filter.getOutboundOOB( //
+                    this.outReadOnly, this.outEvtsReadOnly, //
+                    this.outFilteredWriteOnly, this.outEvtsFilteredWriteOnly);
+
+            for (ByteBuffer bb; (bb = this.outFiltered.poll()) != null;) {
+                send(bb);
+            }
+
+            // We can't do anything with events that are filtering byproducts.
+            this.outEvtsFiltered.clear();
         }
     }
 

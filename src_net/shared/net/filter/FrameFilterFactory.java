@@ -30,7 +30,8 @@ import shared.util.Control;
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class FrameFilterFactory<C extends Connection> implements FilterFactory<ByteBuffer, ByteBuffer, C> {
+public class FrameFilterFactory<C extends Connection> //
+        implements FilterFactory<Filter<ByteBuffer, ByteBuffer>, ByteBuffer, ByteBuffer, C> {
 
     final int minimumSize;
     final int maximumSize;
@@ -121,7 +122,7 @@ public class FrameFilterFactory<C extends Connection> implements FilterFactory<B
 
                 assert Thread.holdsLock(connection);
 
-                for (ByteBuffer bb = null; (bb = in.poll()) != null;) {
+                for (ByteBuffer bb; (bb = in.poll()) != null;) {
 
                     int save = bb.position();
 
