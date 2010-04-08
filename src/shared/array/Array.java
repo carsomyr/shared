@@ -221,14 +221,13 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
     /**
      * An enumeration of internal storage orders for {@link Array}s.
      */
-    public enum IndexingOrder {
+    public interface IndexingOrder {
 
         /**
          * An ordering where low indices vary most.
          */
-        NEAR {
+        final public static IndexingOrder NEAR = new IndexingOrder() {
 
-            @Override
             public int[] strides(int[] dims) {
 
                 final int numDims = dims.length;
@@ -243,18 +242,16 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
                 return strides;
             }
 
-            @Override
             public IndexingOrder reverse() {
                 return FAR;
             }
-        }, //
+        };
 
         /**
          * An ordering where high indices vary most.
          */
-        FAR {
+        final public static IndexingOrder FAR = new IndexingOrder() {
 
-            @Override
             public int[] strides(int[] dims) {
 
                 final int numDims = dims.length;
@@ -269,7 +266,6 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
                 return strides;
             }
 
-            @Override
             public IndexingOrder reverse() {
                 return NEAR;
             }
@@ -280,11 +276,11 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
          * 
          * @return the strides -- a vector such that its dot product with a logical index yields a physical index.
          */
-        abstract public int[] strides(int[] dims);
+        public int[] strides(int[] dims);
 
         /**
          * Gets the reversed value.
          */
-        abstract public IndexingOrder reverse();
+        public IndexingOrder reverse();
     }
 }

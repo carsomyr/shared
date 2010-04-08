@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A utility class for reaping {@link SoftReference}s and {@link WeakReference}s.
+ * A utility class for reaping {@link Reference}s after their referents have been garbage collected.
  * 
  * @apiviz.composedOf shared.util.ReferenceReaper.ReaperThread
  * @apiviz.has shared.util.ReferenceReaper.ReferenceType - - - argument
@@ -67,7 +67,7 @@ public class ReferenceReaper<T> {
     }
 
     /**
-     * Wraps the given object in some sort of {@link Reference}.
+     * Wraps the given object in a {@link Reference} of the requested type.
      * 
      * @param type
      *            the type of {@link Reference} desired.

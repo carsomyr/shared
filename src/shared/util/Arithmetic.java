@@ -259,6 +259,27 @@ public class Arithmetic {
     }
 
     /**
+     * Computes the greatest common divisor of the given two numbers.
+     * 
+     * @param a
+     *            the first number.
+     * @param b
+     *            the second number.
+     * @return the greatest common divisor (gcd).
+     */
+    final public static int gcd(int a, int b) {
+
+        for (int c; b != 0;) {
+
+            c = a % b;
+            a = b;
+            b = c;
+        }
+
+        return a;
+    }
+
+    /**
      * Creates a <tt>[m, n)</tt> range of {@code int}s with step increment <tt>k</tt>.
      * 
      * @param m
