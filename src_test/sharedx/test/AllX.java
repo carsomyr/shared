@@ -1,7 +1,7 @@
 /**
  * This file is part of the Shared Scientific Toolbox in Java ("this library"). <br />
  * <br />
- * Copyright (C) 2007 Roy Liu, The Regents of the University of California <br />
+ * Copyright (C) 2007 The Regents of the University of California <br />
  * <br />
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License, version 2, as published by the Free Software Foundation. <br />
