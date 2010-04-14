@@ -279,6 +279,6 @@ MergeResult *SparseOps::merge( //
             delete res;
         }
 
-        throw ;
+        throw;
     }
 }

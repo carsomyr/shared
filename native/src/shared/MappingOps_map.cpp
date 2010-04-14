@@ -186,6 +186,6 @@ MappingResult *MappingOps::map( //
             delete res;
         }
 
-        throw ;
+        throw;
     }
 }

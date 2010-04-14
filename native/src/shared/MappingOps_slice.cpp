@@ -188,6 +188,6 @@ MappingResult *MappingOps::slice( //
             delete res;
         }
 
-        throw ;
+        throw;
     }
 }

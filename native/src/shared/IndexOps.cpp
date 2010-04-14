@@ -142,6 +142,6 @@ inline jint *IndexOps::findProxy(JNIEnv *env, //
             delete[] resArr;
         }
 
-        throw ;
+        throw;
     }
 }

@@ -365,7 +365,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
             jint count = 0;
 
-            for (jint i = 0, m = dstIndirections[0]; i < m; i++, count++) {
+            for (jint i = 0, n = dstIndirections[0]; i < n; i++, count++) {
 
                 oldIndices[count] = dstIArr[i];
                 oldIndirections[count] = i;
@@ -380,7 +380,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
                 }
             }
 
-            for (jint i = dstIndirections[ndstIndirections - 1] + 1, m = dstLen; i < m; i++, count++) {
+            for (jint i = dstIndirections[ndstIndirections - 1] + 1, n = dstLen; i < n; i++, count++) {
 
                 oldIndices[count] = dstIArr[i];
                 oldIndirections[count] = i;
@@ -414,7 +414,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
             delete mergeResult;
         }
 
-        throw ;
+        throw;
     }
 }
 

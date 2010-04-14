@@ -158,6 +158,6 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
             delete mergeResult;
         }
 
-        throw ;
+        throw;
     }
 }

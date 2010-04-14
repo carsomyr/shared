@@ -218,15 +218,15 @@ public class FFTOps {
      * A recursive FFT subroutine for a specific radix.
      */
     final protected static void fft(double[] dst, int dstOffsetCurrent, double[] scratch, //
-            int p, int m, double[] twiddles, int size, int strideCurrent) {
+            int p, int n, double[] twiddles, int size, int strideCurrent) {
 
-        int dstOffsetIncr = m << 1;
+        int dstOffsetIncr = n << 1;
         int scratchOffsetIncr = 2;
-        int twiddleOffsetIncr = (strideCurrent * m) << 1;
+        int twiddleOffsetIncr = (strideCurrent * n) << 1;
 
         int modulus = size << 1;
 
-        for (int i = 0; i < m; i++) {
+        for (int i = 0; i < n; i++) {
 
             for (int j = 0, dstOffset = (i << 1) + dstOffsetCurrent, scratchOffset = 0; j < p; //
             j++, dstOffset += dstOffsetIncr, scratchOffset += scratchOffsetIncr) {

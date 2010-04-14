@@ -334,7 +334,7 @@ public class SparseOps {
 
             int count = 0;
 
-            for (int i = 0, m = dstIndirections[0]; i < m; i++, count++) {
+            for (int i = 0, n = dstIndirections[0]; i < n; i++, count++) {
 
                 oldIndices[count] = dstI[i];
                 oldIndirections[count] = i;
@@ -349,7 +349,7 @@ public class SparseOps {
                 }
             }
 
-            for (int i = dstIndirections[ndstIndirections - 1] + 1, m = dstI.length; i < m; i++, count++) {
+            for (int i = dstIndirections[ndstIndirections - 1] + 1, n = dstI.length; i < n; i++, count++) {
 
                 oldIndices[count] = dstI[i];
                 oldIndirections[count] = i;
