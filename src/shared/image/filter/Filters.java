@@ -57,7 +57,7 @@ public class Filters {
     }
 
     /**
-     * Creates the <tt>2x2</tt> rotation matrix <br />
+     * Creates the <tt>2&#215;2</tt> rotation matrix <br />
      * <tt>-cos(theta) -sin(theta)</tt> <br />
      * <tt>-sin(theta) cos(theta)</tt>. <br />
      * 

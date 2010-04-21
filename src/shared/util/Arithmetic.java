@@ -280,7 +280,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code int}s with step increment <tt>k</tt>.
+     * Creates a <tt>[m, n)</tt> range of {@code int}s with step increment {@code k}.
      * 
      * @param m
      *            the (inclusive) start value.
@@ -342,7 +342,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code double}s with step increment <tt>k</tt>.
+     * Creates a <tt>[m, n)</tt> range of {@code double}s with step increment {@code k}.
      * 
      * @param m
      *            the (inclusive) start value.
@@ -404,7 +404,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code long}s with step increment <tt>k</tt>.
+     * Creates a <tt>[m, n)</tt> range of {@code long}s with step increment {@code k}.
      * 
      * @param m
      *            the (inclusive) start value.
@@ -574,7 +574,7 @@ public class Arithmetic {
      * 
      * @param n
      *            the size of the random {@code byte} array.
-     * @return a randomly generated {@code byte} array of length <tt>n</tt>.
+     * @return a randomly generated {@code byte} array of length {@code n}.
      */
     final public static byte[] nextBytes(int n) {
 
