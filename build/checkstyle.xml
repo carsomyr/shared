@@ -10,13 +10,13 @@
     <module name="RegexpHeader">
         <property name="fileExtensions" value="java" />
         <property name="headerFile" value="build/header_java.txt" />
-        <property name="multiLines" value="4, 9, 13" />
+        <property name="multiLines" value="3" />
     </module>
 
     <module name="RegexpHeader">
         <property name="fileExtensions" value="cpp, hpp" />
         <property name="headerFile" value="build/header_cpp.txt" />
-        <property name="multiLines" value="4, 9, 13" />
+        <property name="multiLines" value="2" />
     </module>
 
 </module>

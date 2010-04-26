@@ -1,20 +1,31 @@
-Depending on the distribution, this library is covered under either the GNU
-Lesser General Public License (license/license_LGPL.txt) or the GNU General
-Public License (license/license_GPL.txt). If you do not find the extension
-package hierarchy "sharedx.*" present, then all components are distributable
-under the LGPL; otherwise, the work as a whole is covered by the GPL.
+Copyright (c) 2005-2010 Roy Liu
+Copyright (c) 2006-2010 The Regents of the University of California
+
+This software is distributed under the New BSD License
+(license/license_BSD.txt) or the GNU General Public License
+(license/license_GPL.txt). With the dual-licensing scheme, linking certain
+components with GPL-licensed libraries will require the combined work to be
+distributed under the GPL. Namely, components not incorporating source code
+from the "src_extensions", "native/src/sharedx", or "native/include/sharedx"
+directory hierarchies are distributable under the BSD; otherwise, they are
+distributable under the GPL.
 
 Other libraries have been incorporated to varying extents:
 
   * Components of JAMA (license/license_JAMA.txt) have been adapted into:
-      * shared/array/kernel/LinearAlgebraOps.java
-      * shared/LinearAlgebraOps_eigs.cpp
-      * shared/LinearAlgebraOps_lu.cpp
-      * shared/LinearAlgebraOps_svd.cpp
+    * native/src/shared/LinearAlgebraOps_eigs.cpp
+    * native/src/shared/LinearAlgebraOps_lu.cpp
+    * native/src/shared/LinearAlgebraOps_svd.cpp
+    * src/shared/array/kernel/LinearAlgebraOps.java
   * Components of Kiss FFT (license/license_Kiss-FFT.txt) have been adapted
     into:
-      * shared/fft/FFTOps.java
+    * src/shared/fft/FFTOps.java
   * The Bitstream Vera font (license/license_Bitstream-Vera.txt) is included
     at:
-      * shared/font/Vera.ttf
+    * src/font/Vera.ttf
+  * The FFTW3 library (optional, license/license_FFTW3.txt) is used by:
+    * native/include/sharedx/Plan.hpp
+    * native/src/sharedx/Plan.cpp
+    Important: Linking against this library will cause the combined work to be
+    distributed under the GPL.
   * Please look into retrieved Jar dependencies for more license information.
