@@ -171,42 +171,42 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
         Control.checkTrue(a.dims.length == 2, //
                 "Array must have exactly two dimensions");
 
-        int nrows = a.dims[0];
-        int ncols = a.dims[1];
+        int nRows = a.dims[0];
+        int nCols = a.dims[1];
 
-        final int matStrideRow, matStrideCol, nrowsT, ncolsT;
+        final int matStrideRow, matStrideCol, nRowsT, nColsT;
 
-        boolean transpose = (nrows < ncols);
+        boolean transpose = (nRows < nCols);
 
         if (!transpose) {
 
-            nrowsT = nrows;
-            ncolsT = ncols;
+            nRowsT = nRows;
+            nColsT = nCols;
 
-            matStrideRow = ncolsT;
+            matStrideRow = nColsT;
             matStrideCol = 1;
 
         } else {
 
-            nrowsT = ncols;
-            ncolsT = nrows;
+            nRowsT = nCols;
+            nColsT = nRows;
 
             matStrideRow = 1;
-            matStrideCol = nrowsT;
+            matStrideCol = nRowsT;
         }
 
-        RealArray u = new RealArray(nrowsT, ncolsT);
-        RealArray s = new RealArray(ncolsT, ncolsT);
-        RealArray v = new RealArray(ncolsT, ncolsT);
+        RealArray u = new RealArray(nRowsT, nColsT);
+        RealArray s = new RealArray(nColsT, nColsT);
+        RealArray v = new RealArray(nColsT, nColsT);
 
-        double[] sV = new double[ncolsT];
+        double[] sV = new double[nColsT];
 
-        OpKernel.svd(a.values, matStrideRow, matStrideCol, u.values(), sV, v.values(), nrowsT, ncolsT);
+        OpKernel.svd(a.values, matStrideRow, matStrideCol, u.values(), sV, v.values(), nRowsT, nColsT);
 
         double[] sValues = s.values();
 
-        for (int i = 0; i < ncolsT; i++) {
-            sValues[ncolsT * i + i] = sV[i];
+        for (int i = 0; i < nColsT; i++) {
+            sValues[nColsT * i + i] = sV[i];
         }
 
         return !transpose ? new RealArray[] { u, s, v } : new RealArray[] { v, s, u };
@@ -302,9 +302,9 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
     /**
      * Creates an array of the given size and number of dimensions, with ones for diagonals.
      */
-    final public static RealArray eye(int size, int ndims) {
+    final public static RealArray eye(int size, int nDims) {
 
-        RealArray res = new RealArray(Arrays.newArray(ndims, size));
+        RealArray res = new RealArray(Arrays.newArray(nDims, size));
         double[] resValues = res.values();
 
         for (int i = 0, offset = 0, increment = Arithmetic.sum(res.strides()); i < size; i++, offset += increment) {

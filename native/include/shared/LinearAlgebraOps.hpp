@@ -52,15 +52,15 @@ public:
      *      the gain controls.
      * @param vV
      *      the output vectors.
-     * @param nrows
+     * @param nRows
      *      the number of rows.
-     * @param ncols
+     * @param nCols
      *      the number of columns.
      */
     static void svd(JNIEnv *env, jobject thisObj, //
             jdoubleArray srcV, jint srcStrideRow, jint srcStrideCol, //
             jdoubleArray uV, jdoubleArray sV, jdoubleArray vV, //
-            jint nrows, jint ncols);
+            jint nRows, jint nCols);
 
     /**
      * Computes the eigenvectors and eigenvalues of a matrix.

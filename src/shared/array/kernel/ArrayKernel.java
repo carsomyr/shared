@@ -550,14 +550,14 @@ public interface ArrayKernel extends Service {
      *            the gain controls.
      * @param vV
      *            the output vectors.
-     * @param nrows
+     * @param nRows
      *            the number of rows.
-     * @param ncols
+     * @param nCols
      *            the number of columns.
      */
     public void svd(double[] srcV, int srcStrideRow, int srcStrideCol, //
             double[] uV, double[] sV, double[] vV, //
-            int nrows, int ncols);
+            int nRows, int nCols);
 
     /**
      * Computes the eigenvectors and eigenvalues of a {@link Matrix}.

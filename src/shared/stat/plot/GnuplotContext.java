@@ -113,7 +113,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         final Gnuplot gp = new Gnuplot(plottable.getDatasets());
 
-        for (int dim = 0, ndims = gp.ndims; dim < ndims; dim++) {
+        for (int dim = 0, nDims = gp.nDims; dim < nDims; dim++) {
 
             AxisType axisType = AxisType.values()[dim];
 
@@ -227,8 +227,8 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         for (Gnuplot plot : this.plots) {
 
-            int ndims = plot.ndims;
-            int nclasses = plot.datasets.length;
+            int nDims = plot.nDims;
+            int nClasses = plot.datasets.length;
 
             f.format("set origin %.4f, %.4f%n", //
                     plot.panelX / (double) maxWidth, //
@@ -257,7 +257,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             f.format("%s%n", (plot.viewportParameters != null) ? String.format("set view %.2f, %.2f", //
                     plot.viewportParameters[0], plot.viewportParameters[1]) : "unset view");
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
 
                 String axisName = AxisType.values()[dim].toString().toLowerCase();
 
@@ -269,13 +269,13 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
                         axisName);
             }
 
-            for (int i = 0; i < nclasses; i++) {
+            for (int i = 0; i < nClasses; i++) {
                 f.format("set style line %d%s%n", i + 1, createLineStyleDefinition(plot.dataStyles[i]));
             }
 
             final String plotStr;
 
-            switch (plot.ndims) {
+            switch (plot.nDims) {
 
             case 2:
                 plotStr = "plot";
@@ -291,7 +291,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
             f.format("%s ", plotStr);
 
-            for (int i = 0; i < nclasses; i++) {
+            for (int i = 0; i < nClasses; i++) {
 
                 DataStyle style = plot.dataStyles[i];
 
@@ -324,19 +324,19 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
                 }
 
                 f.format("\"-\" title \"%s\" with %s ls %d", plot.dataTitles[i], styleStr, i + 1);
-                f.format((i < nclasses - 1) ? ", " : "%n");
+                f.format((i < nClasses - 1) ? ", " : "%n");
             }
 
-            for (int i = 0; i < nclasses; i++) {
+            for (int i = 0; i < nClasses; i++) {
 
                 RealArray data = plot.datasets[i];
 
                 for (int j = 0, m = data.size(0); j < m; j++) {
 
-                    for (int dim = 0; dim < ndims; dim++) {
+                    for (int dim = 0; dim < nDims; dim++) {
 
                         f.format("%.4e", data.get(j, dim));
-                        f.format((dim < ndims - 1) ? " " : "%n");
+                        f.format((dim < nDims - 1) ? " " : "%n");
                     }
                 }
 
@@ -420,7 +420,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
         final AxisScaleType[] axisScaleTypes;
         final double[] axisRanges;
 
-        final int ndims;
+        final int nDims;
         final RealArray[] datasets;
         final String[] dataTitles;
         final DataStyle[] dataStyles;
@@ -444,22 +444,22 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
          */
         public Gnuplot(RealArray[] datasets) {
 
-            int nclasses = datasets.length;
+            int nClasses = datasets.length;
 
-            this.ndims = PlotBase.inferDimensionality(datasets);
+            this.nDims = PlotBase.inferDimensionality(datasets);
 
-            Control.checkTrue(this.ndims >= 2 && this.ndims <= 3, //
+            Control.checkTrue(this.nDims >= 2 && this.nDims <= 3, //
                     "The dimensionality must be either two or three");
 
-            this.axisTitles = shared.util.Arrays.newArray(String.class, this.ndims, "");
-            this.axisScaleTypes = shared.util.Arrays.newArray(AxisScaleType.class, this.ndims, AxisScaleType.NORMAL);
-            this.axisRanges = new double[2 * this.ndims];
+            this.axisTitles = shared.util.Arrays.newArray(String.class, this.nDims, "");
+            this.axisScaleTypes = shared.util.Arrays.newArray(AxisScaleType.class, this.nDims, AxisScaleType.NORMAL);
+            this.axisRanges = new double[2 * this.nDims];
 
             this.datasets = datasets;
-            this.dataTitles = shared.util.Arrays.newArray(String.class, nclasses, "");
-            this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nclasses, DataStyle.Points);
+            this.dataTitles = shared.util.Arrays.newArray(String.class, nClasses, "");
+            this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.Points);
 
-            for (int i = 0, n = 2 * this.ndims; i < n; i += 2) {
+            for (int i = 0, n = 2 * this.nDims; i < n; i += 2) {
 
                 this.axisRanges[i] = 0.0;
                 this.axisRanges[i + 1] = 1.0;
@@ -489,7 +489,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
             int dim = axisType.ordinal();
 
-            Control.checkTrue(dim < this.ndims, //
+            Control.checkTrue(dim < this.nDims, //
                     "Invalid axis type");
 
             this.axisTitles[dim] = axisTitle;
@@ -504,7 +504,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
             int dim = axisType.ordinal();
 
-            Control.checkTrue(dim < this.ndims, //
+            Control.checkTrue(dim < this.nDims, //
                     "Invalid axis type");
 
             this.axisTitles[dim] = axisTitle;
@@ -516,7 +516,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
             int dim = axisType.ordinal();
 
-            Control.checkTrue(dim < this.ndims, //
+            Control.checkTrue(dim < this.nDims, //
                     "Invalid axis type");
 
             this.axisRanges[2 * dim] = lower;
@@ -529,7 +529,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
             int dim = axisType.ordinal();
 
-            Control.checkTrue(dim < this.ndims, //
+            Control.checkTrue(dim < this.nDims, //
                     "Invalid axis type");
 
             this.axisScaleTypes[dim] = axisScaleType;
@@ -555,7 +555,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         public Gnuplot setViewport(double... viewportParameters) {
 
-            Control.checkTrue(this.ndims == 3, //
+            Control.checkTrue(this.nDims == 3, //
                     "Only three-dimensional plots may have their viewports specified");
 
             Control.checkTrue(viewportParameters.length == 2, //

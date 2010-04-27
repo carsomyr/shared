@@ -45,7 +45,7 @@ public interface BenchmarkSpecification {
     /**
      * The number of repetitions.
      */
-    final public static int NREPS = 2048;
+    final public static int N_REPS = 2048;
 
     /**
      * The desired level of <a href="http://www.fftw.org/">FFTW3</a> precomputation.

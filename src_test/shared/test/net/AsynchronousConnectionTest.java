@@ -82,8 +82,8 @@ public class AsynchronousConnectionTest {
     final InetSocketAddress remoteAddress;
     final long delay;
     final int messageLength;
-    final int nmessages;
-    final int nconnections;
+    final int nMessages;
+    final int nConnections;
     final boolean useSSL;
 
     ConnectionManager rcm;
@@ -97,8 +97,8 @@ public class AsynchronousConnectionTest {
         this.remoteAddress = new InetSocketAddress(p.getProperty("remote"), Integer.parseInt(p.getProperty("port")));
         this.delay = Long.parseLong(p.getProperty("delay"));
         this.messageLength = Integer.parseInt(p.getProperty("message_length"));
-        this.nmessages = Integer.parseInt(p.getProperty("nmessages"));
-        this.nconnections = Integer.parseInt(p.getProperty("nasync_connections"));
+        this.nMessages = Integer.parseInt(p.getProperty("nmessages"));
+        this.nConnections = Integer.parseInt(p.getProperty("nasync_connections"));
         this.useSSL = p.getProperty("use_SSL").equals("yes");
     }
 
@@ -116,8 +116,8 @@ public class AsynchronousConnectionTest {
     @Before
     public void init() {
 
-        this.rcm = new ConnectionManager("RCM", this.nconnections);
-        this.scm = new ConnectionManager("SCM", this.nconnections);
+        this.rcm = new ConnectionManager("RCM", this.nConnections);
+        this.scm = new ConnectionManager("SCM", this.nConnections);
     }
 
     /**
@@ -145,7 +145,7 @@ public class AsynchronousConnectionTest {
 
         List<AbstractTestVerifier<?>> verifiers = new ArrayList<AbstractTestVerifier<?>>();
 
-        for (int i = 0, n = this.nconnections; i < n; i++) {
+        for (int i = 0, n = this.nConnections; i < n; i++) {
 
             ReceiverXMLVerifier xmlV = new ReceiverXMLVerifier();
 
@@ -169,11 +169,11 @@ public class AsynchronousConnectionTest {
 
         Control.sleep(this.delay);
 
-        for (int i = 0, n = this.nconnections; i < n; i++) {
+        for (int i = 0, n = this.nConnections; i < n; i++) {
 
             long seqNo = Arithmetic.nextInt(4096);
 
-            SenderXMLVerifier xmlV = new SenderXMLVerifier(seqNo, this.nmessages, this.messageLength);
+            SenderXMLVerifier xmlV = new SenderXMLVerifier(seqNo, this.nMessages, this.messageLength);
 
             TestXMLConnection xmlSConn = new TestXMLConnection(String.format("s_xml_%d", i), //
                     minMessageSize, maxMessageSize, this.scm, xmlV) //
@@ -190,7 +190,7 @@ public class AsynchronousConnectionTest {
 
             // The asynchronous sockets specification allows us to write data before connecting; we should
             // test this case.
-            xmlSConn.onRemote(new SequenceXMLEvent(seqNo, this.nmessages, null));
+            xmlSConn.onRemote(new SequenceXMLEvent(seqNo, this.nMessages, null));
 
             try {
 

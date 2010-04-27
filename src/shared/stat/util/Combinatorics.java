@@ -60,26 +60,26 @@ public class Combinatorics {
     }
 
     /**
-     * Calculates all partitions of an {@code n} element set into at least {@code npartsLower} parts and at most
-     * (exclusive) {@code npartsUpper} parts.
+     * Calculates all partitions of an {@code n} element set into at least {@code nPartsLower} parts and at most
+     * (exclusive) {@code nPartsUpper} parts.
      * 
      * @param n
      *            the number of elements.
-     * @param npartsLower
+     * @param nPartsLower
      *            the lower bound on the number of parts.
-     * @param npartsUpper
+     * @param nPartsUpper
      *            the upper bound (exclusive) on the number of parts.
      * @return the partitions.
      */
-    final public static int[][] partition(int n, int npartsLower, int npartsUpper) {
+    final public static int[][] partition(int n, int nPartsLower, int nPartsUpper) {
 
-        Control.checkTrue(npartsLower >= 1 && npartsUpper <= n + 1, //
+        Control.checkTrue(nPartsLower >= 1 && nPartsUpper <= n + 1, //
                 "Invalid arguments");
 
         DynamicObjectArray<int[]> acc = new DynamicObjectArray<int[]>(int[].class);
 
-        for (int nparts = npartsLower; nparts < npartsUpper; nparts++) {
-            partition(acc, new int[nparts], 0, 1, n);
+        for (int nParts = nPartsLower; nParts < nPartsUpper; nParts++) {
+            partition(acc, new int[nParts], 0, 1, n);
         }
 
         return acc.values();
@@ -92,28 +92,28 @@ public class Combinatorics {
      *            the partition accumulator.
      * @param sizes
      *            the partition sizes.
-     * @param nsizes
+     * @param nSizes
      *            the number of parts so far.
      * @param currentSize
      *            the part size so far.
-     * @param nremaining
+     * @param nRemaining
      *            the number of remaining elements.
      */
     final protected static void partition(DynamicObjectArray<int[]> acc, //
-            int[] sizes, int nsizes, int currentSize, int nremaining) {
+            int[] sizes, int nSizes, int currentSize, int nRemaining) {
 
-        if (nremaining == 0 && sizes.length == nsizes) {
+        if (nRemaining == 0 && sizes.length == nSizes) {
             acc.push(sizes.clone());
         }
 
-        if (sizes.length == nsizes) {
+        if (sizes.length == nSizes) {
             return;
         }
 
-        for (int size = currentSize, maxSize = nremaining / (sizes.length - nsizes); size <= maxSize; size++) {
+        for (int size = currentSize, maxSize = nRemaining / (sizes.length - nSizes); size <= maxSize; size++) {
 
-            sizes[nsizes] = size;
-            partition(acc, sizes, nsizes + 1, size, nremaining - size);
+            sizes[nSizes] = size;
+            partition(acc, sizes, nSizes + 1, size, nRemaining - size);
         }
     }
 
@@ -129,26 +129,26 @@ public class Combinatorics {
     }
 
     /**
-     * Calculates all ordered partitions of an {@code n} element set into at least {@code npartsLower} parts and at most
-     * (exclusive) {@code npartsUpper} parts.
+     * Calculates all ordered partitions of an {@code n} element set into at least {@code nPartsLower} parts and at most
+     * (exclusive) {@code nPartsUpper} parts.
      * 
      * @param n
      *            the number of elements.
-     * @param npartsLower
+     * @param nPartsLower
      *            the lower bound on the number of parts.
-     * @param npartsUpper
+     * @param nPartsUpper
      *            the upper bound (exclusive) on the number of parts.
      * @return the ordered partitions.
      */
-    final public static int[][] orderedPartition(int n, int npartsLower, int npartsUpper) {
+    final public static int[][] orderedPartition(int n, int nPartsLower, int nPartsUpper) {
 
-        Control.checkTrue(npartsLower < npartsUpper, //
+        Control.checkTrue(nPartsLower < nPartsUpper, //
                 "Invalid arguments");
 
         DynamicObjectArray<int[]> acc = new DynamicObjectArray<int[]>(int[].class);
 
-        for (int nparts = npartsLower; nparts < npartsUpper; nparts++) {
-            orderedPartition(acc, new int[nparts], 0, n);
+        for (int nParts = nPartsLower; nParts < nPartsUpper; nParts++) {
+            orderedPartition(acc, new int[nParts], 0, n);
         }
 
         return acc.values();
@@ -161,26 +161,26 @@ public class Combinatorics {
      *            the ordered partition accumulator.
      * @param sizes
      *            the ordered partition sizes.
-     * @param nsizes
+     * @param nSizes
      *            the number of parts so far.
-     * @param nremaining
+     * @param nRemaining
      *            the number of remaining elements.
      */
     final protected static void orderedPartition(DynamicObjectArray<int[]> acc, //
-            int[] sizes, int nsizes, int nremaining) {
+            int[] sizes, int nSizes, int nRemaining) {
 
-        if (nremaining == 0 && sizes.length == nsizes) {
+        if (nRemaining == 0 && sizes.length == nSizes) {
             acc.push(sizes.clone());
         }
 
-        if (sizes.length == nsizes) {
+        if (sizes.length == nSizes) {
             return;
         }
 
-        for (int size = 0, maxSize = nremaining; size <= maxSize; size++) {
+        for (int size = 0, maxSize = nRemaining; size <= maxSize; size++) {
 
-            sizes[nsizes] = size;
-            orderedPartition(acc, sizes, nsizes + 1, nremaining - size);
+            sizes[nSizes] = size;
+            orderedPartition(acc, sizes, nSizes + 1, nRemaining - size);
         }
     }
 

@@ -64,12 +64,12 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
 
         jint srcLen = env->GetArrayLength(srcV);
         jint dstLen = env->GetArrayLength(dstV);
-        jint ndims = env->GetArrayLength(srcD);
-        jint nselectedDims = env->GetArrayLength(selectedDims);
+        jint nDims = env->GetArrayLength(srcD);
+        jint nSelectedDims = env->GetArrayLength(selectedDims);
 
-        if ((ndims != env->GetArrayLength(srcS)) //
-                || (ndims != env->GetArrayLength(dstD)) //
-                || (ndims != env->GetArrayLength(dstS))) {
+        if ((nDims != env->GetArrayLength(srcS)) //
+                || (nDims != env->GetArrayLength(dstD)) //
+                || (nDims != env->GetArrayLength(dstS))) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -93,12 +93,12 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
         jint *dstSArr = (jint *) dstSH.get();
         jint *selectedDimsArr = (jint *) selectedDimsH.get();
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, srcLen);
-        MappingOps::checkDimensions(dstDArr, dstSArr, ndims, dstLen);
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
+        MappingOps::checkDimensions(dstDArr, dstSArr, nDims, dstLen);
 
-        std::sort(selectedDimsArr, selectedDimsArr + nselectedDims);
+        std::sort(selectedDimsArr, selectedDimsArr + nSelectedDims);
 
-        for (jint i = 1; i < nselectedDims; i++) {
+        for (jint i = 1; i < nSelectedDims; i++) {
 
             if (selectedDimsArr[i - 1] == selectedDimsArr[i]) {
                 throw std::runtime_error("Duplicate selected dimensions not allowed");
@@ -107,11 +107,11 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
 
         jint acc = dstLen;
 
-        for (jint i = 0; i < nselectedDims; i++) {
+        for (jint i = 0; i < nSelectedDims; i++) {
 
             jint dim = selectedDimsArr[i];
 
-            if (!(dim >= 0 && dim < ndims)) {
+            if (!(dim >= 0 && dim < nDims)) {
                 throw std::runtime_error("Invalid dimension");
             }
 
@@ -132,22 +132,22 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
         }
 
         MallocHandler mallocH(sizeof(jdouble) * srcLen //
-                + sizeof(jint) * (srcLen + ndims + 2 * (ndims - 1) + dstLen));
+                + sizeof(jint) * (srcLen + nDims + 2 * (nDims - 1) + dstLen));
         void *all = mallocH.get();
 
         jdouble *workingV = (jdouble *) all;
         jint *workingIndices = (jint *) ((jdouble *) all + srcLen);
         jint *workingD = (jint *) ((jdouble *) all + srcLen) + srcLen;
-        jint *workingDModified = (jint *) ((jdouble *) all + srcLen) + srcLen + ndims;
-        jint *srcSArrModified = (jint *) ((jdouble *) all + srcLen) + srcLen + ndims + (ndims - 1);
-        jint *dstIndices = (jint *) ((jdouble *) all + srcLen) + srcLen + ndims + 2 * (ndims - 1);
+        jint *workingDModified = (jint *) ((jdouble *) all + srcLen) + srcLen + nDims;
+        jint *srcSArrModified = (jint *) ((jdouble *) all + srcLen) + srcLen + nDims + (nDims - 1);
+        jint *dstIndices = (jint *) ((jdouble *) all + srcLen) + srcLen + nDims + 2 * (nDims - 1);
 
         memcpy(workingV, srcVArr, sizeof(jdouble) * srcLen);
-        memcpy(workingD, srcDArr, sizeof(jint) * ndims);
+        memcpy(workingD, srcDArr, sizeof(jint) * nDims);
 
         acc = srcLen;
 
-        for (jint i = 0; i < nselectedDims; i++) {
+        for (jint i = 0; i < nSelectedDims; i++) {
 
             jint dim = selectedDimsArr[i];
 
@@ -157,7 +157,7 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
             DimensionOps::assignBaseIndices(workingIndices, //
                     workingD, workingDModified, //
                     srcSArr, srcSArrModified, //
-                    ndims, dim);
+                    nDims, dim);
 
             // Execute the reduce operation.
             op(workingV, workingIndices, acc, workingD[dim], srcSArr[dim]);
@@ -165,8 +165,8 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
             workingD[dim] = 1;
         }
 
-        MappingOps::assignMappingIndices(workingIndices, dstDArr, srcSArr, ndims);
-        MappingOps::assignMappingIndices(dstIndices, dstDArr, dstSArr, ndims);
+        MappingOps::assignMappingIndices(workingIndices, dstDArr, srcSArr, nDims);
+        MappingOps::assignMappingIndices(dstIndices, dstDArr, dstSArr, nDims);
 
         for (jint i = 0; i < dstLen; i++) {
             dstVArr[dstIndices[i]] = workingV[workingIndices[i]];
@@ -179,9 +179,9 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
 }
 
 inline void DimensionOps::rrSum(jdouble *working, const jint *workingIndices, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
-    for (jint i = 0; i < nindices; i++) {
+    for (jint i = 0; i < nIndices; i++) {
 
         jint workingIndex = workingIndices[i];
 
@@ -192,9 +192,9 @@ inline void DimensionOps::rrSum(jdouble *working, const jint *workingIndices, //
 }
 
 inline void DimensionOps::rrProd(jdouble *working, const jint *workingIndices, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
-    for (jint i = 0; i < nindices; i++) {
+    for (jint i = 0; i < nIndices; i++) {
 
         jint workingIndex = workingIndices[i];
 
@@ -205,9 +205,9 @@ inline void DimensionOps::rrProd(jdouble *working, const jint *workingIndices, /
 }
 
 inline void DimensionOps::rrMax(jdouble *working, const jint *workingIndices, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
-    for (jint i = 0; i < nindices; i++) {
+    for (jint i = 0; i < nIndices; i++) {
 
         jint workingIndex = workingIndices[i];
 
@@ -218,9 +218,9 @@ inline void DimensionOps::rrMax(jdouble *working, const jint *workingIndices, //
 }
 
 inline void DimensionOps::rrMin(jdouble *working, const jint *workingIndices, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
-    for (jint i = 0; i < nindices; i++) {
+    for (jint i = 0; i < nIndices; i++) {
 
         jint workingIndex = workingIndices[i];
 
@@ -231,9 +231,9 @@ inline void DimensionOps::rrMin(jdouble *working, const jint *workingIndices, //
 }
 
 inline void DimensionOps::rrVar(jdouble *working, const jint *workingIndices, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
-    for (jint i = 0; i < nindices; i++) {
+    for (jint i = 0; i < nIndices; i++) {
 
         jint workingIndex = workingIndices[i];
 

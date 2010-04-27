@@ -154,14 +154,14 @@ public class ArrayKernelTest {
         Arrays.sort(v);
         assertTrue(Tests.equals(v, new double[] { 1, 2, 3, 4, 5, 6, 7, 8 }));
 
-        int nsamples = 1 << 16;
-        int nbins = 1 << 2;
-        int samplesPerBin = nsamples / nbins;
+        int nSamples = 1 << 16;
+        int nBins = 1 << 2;
+        int samplesPerBin = nSamples / nBins;
 
-        kernel.ruOp(ArrayKernel.RU_RND, Math.PI, v = new double[nsamples]);
-        kernel.riOp(ArrayKernel.RI_SORT, v, new int[] { nsamples }, new int[] { 1 }, new int[nsamples], 0);
+        kernel.ruOp(ArrayKernel.RU_RND, Math.PI, v = new double[nSamples]);
+        kernel.riOp(ArrayKernel.RI_SORT, v, new int[] { nSamples }, new int[] { 1 }, new int[nSamples], 0);
 
-        for (int i = 0, binOffset = 0; i < nbins; i++, binOffset += samplesPerBin) {
+        for (int i = 0, binOffset = 0; i < nBins; i++, binOffset += samplesPerBin) {
 
             double acc = 0.0;
 
@@ -169,7 +169,7 @@ public class ArrayKernelTest {
                 acc += v[binOffset + j];
             }
 
-            assertTrue(Math.abs(acc / (Math.PI * samplesPerBin) - (i + 0.5) / nbins) < 0.005);
+            assertTrue(Math.abs(acc / (Math.PI * samplesPerBin) - (i + 0.5) / nBins) < 0.005);
         }
 
         //
@@ -222,12 +222,12 @@ public class ArrayKernelTest {
         Arrays.sort(v);
         assertTrue(Tests.equals(v, new double[] { 1, 1, 2, 2, 3, 3, 4, 4 }));
 
-        kernel.cuOp(ArrayKernel.CU_RND, Math.E, Math.PI, v = new double[nsamples << 1]);
+        kernel.cuOp(ArrayKernel.CU_RND, Math.E, Math.PI, v = new double[nSamples << 1]);
 
-        double[] vRe = new double[nsamples];
-        double[] vIm = new double[nsamples];
+        double[] vRe = new double[nSamples];
+        double[] vIm = new double[nSamples];
 
-        for (int i = 0, offset = 0; i < nsamples; i++, offset += 2) {
+        for (int i = 0, offset = 0; i < nSamples; i++, offset += 2) {
 
             vRe[i] = v[offset];
             vIm[i] = v[offset + 1];
@@ -236,7 +236,7 @@ public class ArrayKernelTest {
         Arrays.sort(vRe);
         Arrays.sort(vIm);
 
-        for (int i = 0, binOffset = 0; i < nbins; i++, binOffset += samplesPerBin) {
+        for (int i = 0, binOffset = 0; i < nBins; i++, binOffset += samplesPerBin) {
 
             double accRe = 0.0;
             double accIm = 0.0;
@@ -247,8 +247,8 @@ public class ArrayKernelTest {
                 accIm += vIm[binOffset + j];
             }
 
-            assertTrue(Math.abs(accRe / (Math.E * samplesPerBin) - (i + 0.5) / nbins) < 0.005);
-            assertTrue(Math.abs(accIm / (Math.PI * samplesPerBin) - (i + 0.5) / nbins) < 0.005);
+            assertTrue(Math.abs(accRe / (Math.E * samplesPerBin) - (i + 0.5) / nBins) < 0.005);
+            assertTrue(Math.abs(accIm / (Math.PI * samplesPerBin) - (i + 0.5) / nBins) < 0.005);
         }
 
         //

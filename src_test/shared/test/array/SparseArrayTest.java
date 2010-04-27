@@ -67,24 +67,24 @@ public class SparseArrayTest {
     public void testOperations() {
 
         int size = 16;
-        int ndims = 3;
-        int ntrials = 16;
+        int nDims = 3;
+        int nTrials = 16;
 
-        int[] dims = new int[ndims];
-        int nelts = 1;
+        int[] dims = new int[nDims];
+        int nElts = 1;
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             dims[dim] = size;
-            nelts *= size;
+            nElts *= size;
         }
 
-        int[] physicals = Arithmetic.range(nelts);
+        int[] physicals = Arithmetic.range(nElts);
         int[] dimIndices = Arithmetic.range(size);
 
-        for (int i = 0; i < ntrials; i++) {
+        for (int i = 0; i < nTrials; i++) {
 
-            int nselected = Arithmetic.nextInt(nelts + 1);
+            int nSelected = Arithmetic.nextInt(nElts + 1);
 
             RealArray srcR = new RealArray(DEFAULT_ORDER, dims);
             RealArray dstR = new RealArray(DEFAULT_ORDER, dims);
@@ -113,23 +113,23 @@ public class SparseArrayTest {
             ObjectSparseArray<Integer> srcOSparse = new ObjectSparseArray<Integer>(Integer.class, dims);
             ObjectSparseArray<Integer> dstOSparse = new ObjectSparseArray<Integer>(Integer.class, dims);
 
-            double[] srcRNewValues = new double[nselected];
-            double[] dstRNewValues = new double[nselected];
+            double[] srcRNewValues = new double[nSelected];
+            double[] dstRNewValues = new double[nSelected];
 
-            int[] srcINewValues = new int[nselected];
-            int[] dstINewValues = new int[nselected];
+            int[] srcINewValues = new int[nSelected];
+            int[] dstINewValues = new int[nSelected];
 
-            Integer[] srcONewValues = new Integer[nselected];
-            Integer[] dstONewValues = new Integer[nselected];
+            Integer[] srcONewValues = new Integer[nSelected];
+            Integer[] dstONewValues = new Integer[nSelected];
 
-            int[] srcLogicals = new int[ndims * nselected];
-            int[] dstLogicals = new int[ndims * nselected];
+            int[] srcLogicals = new int[nDims * nSelected];
+            int[] dstLogicals = new int[nDims * nSelected];
 
             //
 
             Arithmetic.shuffle(physicals);
 
-            for (int j = 0; j < nselected; j++) {
+            for (int j = 0; j < nSelected; j++) {
 
                 int physical = physicals[j];
 
@@ -142,18 +142,18 @@ public class SparseArrayTest {
                 srcOValues[physical] = j;
                 srcONewValues[j] = j;
 
-                for (int dim = 0; dim < ndims; dim++) {
+                for (int dim = 0; dim < nDims; dim++) {
 
                     int stride = srcR.stride(dim);
 
-                    srcLogicals[ndims * j + dim] = physical / stride;
+                    srcLogicals[nDims * j + dim] = physical / stride;
                     physical %= stride;
                 }
             }
 
             Arithmetic.shuffle(physicals);
 
-            for (int j = 0; j < nselected; j++) {
+            for (int j = 0; j < nSelected; j++) {
 
                 int physical = physicals[j];
 
@@ -166,11 +166,11 @@ public class SparseArrayTest {
                 dstOValues[physical] = -j;
                 dstONewValues[j] = -j;
 
-                for (int dim = 0; dim < ndims; dim++) {
+                for (int dim = 0; dim < nDims; dim++) {
 
                     int stride = dstR.stride(dim);
 
-                    dstLogicals[ndims * j + dim] = physical / stride;
+                    dstLogicals[nDims * j + dim] = physical / stride;
                     physical %= stride;
                 }
             }
@@ -186,15 +186,15 @@ public class SparseArrayTest {
 
             //
 
-            int[][] srcSlices = new int[ndims][];
-            int[][] dstSlices = new int[ndims][];
+            int[][] srcSlices = new int[nDims][];
+            int[][] dstSlices = new int[nDims][];
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
 
-                nselected = Arithmetic.nextInt(size);
+                nSelected = Arithmetic.nextInt(size);
 
-                srcSlices[dim] = Arrays.copyOf(Arithmetic.shuffle(dimIndices), nselected);
-                dstSlices[dim] = Arrays.copyOf(Arithmetic.shuffle(dimIndices), nselected);
+                srcSlices[dim] = Arrays.copyOf(Arithmetic.shuffle(dimIndices), nSelected);
+                dstSlices[dim] = Arrays.copyOf(Arithmetic.shuffle(dimIndices), nSelected);
             }
 
             //
@@ -232,7 +232,7 @@ public class SparseArrayTest {
 
             //
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
                 dstSlices[dim] = Arithmetic.shuffle(dimIndices).clone();
             }
 
@@ -266,7 +266,7 @@ public class SparseArrayTest {
 
             //
 
-            int[] perm = Arithmetic.shuffle(Arithmetic.range(ndims));
+            int[] perm = Arithmetic.shuffle(Arithmetic.range(nDims));
 
             dstRCompare = srcR.transpose(perm);
             dstRSparseCompare = srcRSparse.transpose(perm);
@@ -284,7 +284,7 @@ public class SparseArrayTest {
             //
 
             int[] opDims = Arrays.copyOf(Arithmetic.shuffle(perm), //
-                    Arithmetic.nextInt(ndims));
+                    Arithmetic.nextInt(nDims));
 
             dstRCompare = srcR.reverse(opDims);
             dstRSparseCompare = srcRSparse.reverse(opDims);
@@ -301,9 +301,9 @@ public class SparseArrayTest {
 
             //
 
-            int[] shifts = new int[ndims];
+            int[] shifts = new int[nDims];
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
                 shifts[dim] = Arithmetic.nextInt(4 * size + 1) - 2 * size;
             }
 
@@ -322,9 +322,9 @@ public class SparseArrayTest {
 
             //
 
-            int[] repetitions = new int[ndims];
+            int[] repetitions = new int[nDims];
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
                 repetitions[dim] = Arithmetic.nextInt(2) + 1;
             }
 
@@ -343,13 +343,13 @@ public class SparseArrayTest {
 
             //
 
-            int[] reshapeDims = new int[ndims - 1];
+            int[] reshapeDims = new int[nDims - 1];
 
-            for (int dim = 0; dim < ndims - 2; dim++) {
+            for (int dim = 0; dim < nDims - 2; dim++) {
                 reshapeDims[dim] = dims[dim];
             }
 
-            reshapeDims[ndims - 2] = dims[ndims - 2] * dims[ndims - 1];
+            reshapeDims[nDims - 2] = dims[nDims - 2] * dims[nDims - 1];
 
             dstRCompare = srcR.reshape(reshapeDims);
             dstRSparseCompare = srcRSparse.reshape(reshapeDims);
@@ -366,9 +366,9 @@ public class SparseArrayTest {
 
             //
 
-            int[] bounds = new int[2 * ndims];
+            int[] bounds = new int[2 * nDims];
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
 
                 int len = Arithmetic.nextInt(size + 1);
                 int offset = Arithmetic.nextInt(size + 1 - len);
@@ -392,7 +392,7 @@ public class SparseArrayTest {
 
             //
 
-            int opDim = Arithmetic.nextInt(ndims);
+            int opDim = Arithmetic.nextInt(nDims);
 
             dstRCompare = srcR.concat(opDim, dstR);
             dstRSparseCompare = srcRSparse.concat(opDim, dstRSparse);

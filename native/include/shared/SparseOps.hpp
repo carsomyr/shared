@@ -55,7 +55,7 @@ public:
 
         this->count = 0;
         this->dims = NULL;
-        this->ndims = 0;
+        this->nDims = 0;
     }
 
     /**
@@ -95,21 +95,21 @@ public:
      *      the number of elements.
      * @param dims
      *      the dimensions.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      */
-    virtual void createMetadata(jint count, jint *dims, jint ndims) {
+    virtual void createMetadata(jint count, jint *dims, jint nDims) {
 
         if (this->metadata) {
             throw std::runtime_error("Metadata already created");
         }
 
-        jint sumD = Common::sum(dims, ndims, (jint) 0);
+        jint sumD = Common::sum(dims, nDims, (jint) 0);
 
         void *metadata = malloc(sizeof(jint) * (count //
-                + (sumD + ndims) //
-                + ndims * count //
-                + ndims));
+                + (sumD + nDims) //
+                + nDims * count //
+                + nDims));
 
         if (!metadata) {
             throw std::runtime_error("Allocation failed");
@@ -118,13 +118,13 @@ public:
         this->metadata = metadata;
         this->indices = (jint *) metadata;
         this->indirectionOffsets = (jint *) metadata + count;
-        this->indirections = (jint *) metadata + count + (sumD + ndims);
+        this->indirections = (jint *) metadata + count + (sumD + nDims);
 
         this->count = count;
-        this->dims = (jint *) metadata + count + (sumD + ndims) + (ndims * count);
-        this->ndims = ndims;
+        this->dims = (jint *) metadata + count + (sumD + nDims) + (nDims * count);
+        this->nDims = nDims;
 
-        memcpy(this->dims, dims, sizeof(jint) * ndims);
+        memcpy(this->dims, dims, sizeof(jint) * nDims);
     }
 
     virtual ~MergeResult() {
@@ -196,7 +196,7 @@ public:
     /**
      * The number of dimensions.
      */
-    jint ndims;
+    jint nDims;
 
 private:
 
@@ -256,14 +256,14 @@ public:
      *      the strides.
      * @param dimOffsets
      *      the dimension offsets.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      * @return the MergeResult.
      */
     static MergeResult *merge( //
             jint *oldIndices, jint *oldIndirections, jint oldLen, //
             jint *newIndices, jint *newIndirections, jint newLen, //
-            jint *dims, jint *strides, jint *dimOffsets, jint ndims);
+            jint *dims, jint *strides, jint *dimOffsets, jint nDims);
 
     /**
      * Normalizes a range of sorted values such that duplicates are removed.
@@ -293,11 +293,11 @@ public:
      *      the indirection offsets.
      * @param indirections
      *      the indirections.
-     * @param nindirections
+     * @param nIndirections
      *      the number of indirections.
      * @param dims
      *      the dimensions.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      * @param result
      *      the result array.
@@ -306,8 +306,8 @@ public:
      */
     static void getSlicedIndirections( //
             jint *sliceOffsets, jint *sliceCounts, jint *slices, //
-            jint *dimOffsets, jint *indirectionOffsets, jint *indirections, jint nindirections, //
-            jint *dims, jint ndims, //
+            jint *dimOffsets, jint *indirectionOffsets, jint *indirections, jint nIndirections, //
+            jint *dims, jint nDims, //
             jint *result, jint &len);
 
     /**

@@ -58,7 +58,7 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
     /**
      * Gets the number of dimensions.
      */
-    public int ndims();
+    public int nDims();
 
     /**
      * Gets the dimensions.
@@ -241,13 +241,13 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
 
             public int[] strides(int[] dims) {
 
-                final int numDims = dims.length;
-                final int[] strides = new int[numDims];
+                final int nDims = dims.length;
+                final int[] strides = new int[nDims];
 
                 strides[0] = 1;
 
-                for (int i = 1; i < numDims; i++) {
-                    strides[i] = strides[i - 1] * dims[i - 1];
+                for (int dim = 1; dim < nDims; dim++) {
+                    strides[dim] = strides[dim - 1] * dims[dim - 1];
                 }
 
                 return strides;
@@ -265,13 +265,13 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
 
             public int[] strides(int[] dims) {
 
-                final int numDims = dims.length;
-                final int[] strides = new int[numDims];
+                final int nDims = dims.length;
+                final int[] strides = new int[nDims];
 
-                strides[numDims - 1] = 1;
+                strides[nDims - 1] = 1;
 
-                for (int i = numDims - 2; i >= 0; i--) {
-                    strides[i] = strides[i + 1] * dims[i + 1];
+                for (int dim = nDims - 2; dim >= 0; dim--) {
+                    strides[dim] = strides[dim + 1] * dims[dim + 1];
                 }
 
                 return strides;

@@ -127,8 +127,8 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_diag(JNIEnv *env,
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_svd(JNIEnv *env, jobject thisObj, //
         jdoubleArray srcV, jint srcStrideRow, jint srcStrideCol, //
         jdoubleArray uV, jdoubleArray sV, jdoubleArray vV, //
-        jint nrows, jint ncols) {
-    LinearAlgebraOps::svd(env, thisObj, srcV, srcStrideRow, srcStrideCol, uV, sV, vV, nrows, ncols);
+        jint nRows, jint nCols) {
+    LinearAlgebraOps::svd(env, thisObj, srcV, srcStrideRow, srcStrideCol, uV, sV, vV, nRows, nCols);
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_eigs(JNIEnv *env, jobject thisObj, //

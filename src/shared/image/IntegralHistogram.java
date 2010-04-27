@@ -49,11 +49,11 @@ public class IntegralHistogram extends RealArray {
      *            the {@link RealArray} to integrate over.
      * @param membership
      *            the class membership information.
-     * @param nbins
+     * @param nBins
      *            the number of bins.
      */
-    public IntegralHistogram(RealArray src, IntegerArray membership, int nbins) {
-        super(getDimensionsPlusOne(src, nbins));
+    public IntegralHistogram(RealArray src, IntegerArray membership, int nBins) {
+        super(getDimensionsPlusOne(src, nBins));
 
         RealArray dst = this;
 
@@ -67,7 +67,7 @@ public class IntegralHistogram extends RealArray {
                 src.values(), srcDims, src.order().strides(srcDims), membership.values(), //
                 dst.values(), dstDims, dst.order().strides(dstDims));
 
-        this.ilut = ImageOps.createILUT(ndims() - 1);
+        this.ilut = ImageOps.createILUT(nDims() - 1);
     }
 
     /**
@@ -80,26 +80,26 @@ public class IntegralHistogram extends RealArray {
 
         double[] values = values();
 
-        int ndims = ndims() - 1;
-        int stride = ndims + 1;
+        int nDims = nDims() - 1;
+        int stride = nDims + 1;
         int[] ilut = this.ilut;
 
-        int nbins = size(ndims);
-        int binStride = stride(ndims);
+        int nBins = size(nDims);
+        int binStride = stride(nDims);
 
-        for (int binIndex = 0, binOffset = 0; binIndex < nbins; binIndex++, binOffset += binStride) {
+        for (int binIndex = 0, binOffset = 0; binIndex < nBins; binIndex++, binOffset += binStride) {
 
             double sum = 0.0;
 
-            for (int i = 0, n = (1 << ndims), offset = 0; i < n; i++, offset += stride) {
+            for (int i = 0, n = (1 << nDims), offset = 0; i < n; i++, offset += stride) {
 
                 int index = binOffset;
 
-                for (int dim = 0; dim < ndims; dim++) {
+                for (int dim = 0; dim < nDims; dim++) {
                     index += bounds[ilut[offset + dim]] * stride(dim);
                 }
 
-                sum += values[index] * ilut[offset + ndims];
+                sum += values[index] * ilut[offset + nDims];
             }
 
             res[binIndex] = sum;
@@ -111,24 +111,24 @@ public class IntegralHistogram extends RealArray {
     /**
      * Gets the number of bins.
      */
-    public int nbins() {
-        return size(ndims() - 1);
+    public int nBins() {
+        return size(nDims() - 1);
     }
 
     /**
      * Gets the original dimensions plus one with an additional "bins" dimension at the end.
      */
-    final protected static int[] getDimensionsPlusOne(RealArray arr, int nbins) {
+    final protected static int[] getDimensionsPlusOne(RealArray arr, int nBins) {
 
-        int ndims = arr.ndims();
+        int nDims = arr.nDims();
 
-        int[] res = new int[ndims + 1];
+        int[] res = new int[nDims + 1];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             res[dim] = arr.size(dim) + 1;
         }
 
-        res[ndims] = nbins;
+        res[nDims] = nBins;
 
         return res;
     }

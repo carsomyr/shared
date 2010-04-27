@@ -66,9 +66,9 @@ public class DynamicArrayTest {
 
         DynamicArray<?, ?, ?>[] arrays = new DynamicArray[] { dia, dda, dla, doa };
 
-        int nstages = 7;
+        int nStages = 7;
 
-        for (int i = 0, count = 0; i < nstages; i++) {
+        for (int i = 0, count = 0; i < nStages; i++) {
 
             int length = 1 << i;
 
@@ -85,12 +85,12 @@ public class DynamicArrayTest {
             }
         }
 
-        assertTrue(java.util.Arrays.equals(dia.values(), Arithmetic.range((1 << nstages) - 1)));
-        assertTrue(java.util.Arrays.equals(dda.values(), Arithmetic.doubleRange((1 << nstages) - 1)));
-        assertTrue(java.util.Arrays.equals(dla.values(), Arithmetic.longRange((1 << nstages) - 1)));
-        assertTrue(java.util.Arrays.equals(doa.values(), Arrays.box(Arithmetic.range((1 << nstages) - 1))));
+        assertTrue(java.util.Arrays.equals(dia.values(), Arithmetic.range((1 << nStages) - 1)));
+        assertTrue(java.util.Arrays.equals(dda.values(), Arithmetic.doubleRange((1 << nStages) - 1)));
+        assertTrue(java.util.Arrays.equals(dla.values(), Arithmetic.longRange((1 << nStages) - 1)));
+        assertTrue(java.util.Arrays.equals(doa.values(), Arrays.box(Arithmetic.range((1 << nStages) - 1))));
 
-        for (int i = 0, length = 1 << (nstages - 1); i < length; i++) {
+        for (int i = 0, length = 1 << (nStages - 1); i < length; i++) {
 
             dia.pop();
             dda.pop();
@@ -98,7 +98,7 @@ public class DynamicArrayTest {
             doa.pop();
         }
 
-        for (int i = nstages - 2; i >= 0; i--) {
+        for (int i = nStages - 2; i >= 0; i--) {
 
             int length = 1 << i;
 

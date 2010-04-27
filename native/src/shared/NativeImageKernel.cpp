@@ -41,11 +41,11 @@ void NativeImageKernel::createIntegralImage(JNIEnv *env, jobject thisObj, //
 
         jint srcLen = env->GetArrayLength(srcV);
         jint dstLen = env->GetArrayLength(dstV);
-        jint ndims = env->GetArrayLength(srcD);
+        jint nDims = env->GetArrayLength(srcD);
 
-        if ((ndims != env->GetArrayLength(srcS)) //
-                || (ndims != env->GetArrayLength(dstD)) //
-                || (ndims != env->GetArrayLength(dstS))) {
+        if ((nDims != env->GetArrayLength(srcS)) //
+                || (nDims != env->GetArrayLength(dstD)) //
+                || (nDims != env->GetArrayLength(dstS))) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -64,12 +64,12 @@ void NativeImageKernel::createIntegralImage(JNIEnv *env, jobject thisObj, //
         jint *dstDArr = (jint *) dstDH.get();
         jint *dstSArr = (jint *) dstSH.get();
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, srcLen);
-        MappingOps::checkDimensions(dstDArr, dstSArr, ndims, dstLen);
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
+        MappingOps::checkDimensions(dstDArr, dstSArr, nDims, dstLen);
 
         jint dstOffset = 0;
 
-        for (jint dim = 0; dim < ndims; dim++) {
+        for (jint dim = 0; dim < nDims; dim++) {
 
             if (srcDArr[dim] + 1 != dstDArr[dim]) {
                 throw std::runtime_error("Dimension mismatch");
@@ -88,8 +88,8 @@ void NativeImageKernel::createIntegralImage(JNIEnv *env, jobject thisObj, //
         jint *srcIndices = (jint *) all;
         jint *dstIndices = ((jint *) all) + srcLen;
 
-        MappingOps::assignMappingIndices(srcIndices, srcDArr, srcSArr, ndims);
-        MappingOps::assignMappingIndices(dstIndices, srcDArr, dstSArr, ndims);
+        MappingOps::assignMappingIndices(srcIndices, srcDArr, srcSArr, nDims);
+        MappingOps::assignMappingIndices(dstIndices, srcDArr, dstSArr, nDims);
 
         for (jint i = 0; i < srcLen; i++) {
             dstVArr[dstIndices[i] + dstOffset] = srcVArr[srcIndices[i]];
@@ -97,9 +97,9 @@ void NativeImageKernel::createIntegralImage(JNIEnv *env, jobject thisObj, //
 
         //
 
-        MappingOps::assignMappingIndices(dstIndices, dstDArr, dstSArr, ndims);
+        MappingOps::assignMappingIndices(dstIndices, dstDArr, dstSArr, nDims);
 
-        for (jint dim = 0, indexBlockIncrement = dstLen; dim < ndims; indexBlockIncrement /= dstDArr[dim++]) {
+        for (jint dim = 0, indexBlockIncrement = dstLen; dim < nDims; indexBlockIncrement /= dstDArr[dim++]) {
 
             jint size = dstDArr[dim];
             jint stride = dstSArr[dim];
@@ -140,11 +140,11 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
         jint srcLen = env->GetArrayLength(srcV);
         jint memLen = env->GetArrayLength(memV);
         jint dstLen = env->GetArrayLength(dstV);
-        jint ndims = env->GetArrayLength(srcD);
+        jint nDims = env->GetArrayLength(srcD);
 
-        if ((ndims != env->GetArrayLength(srcS)) //
-                || (ndims + 1 != env->GetArrayLength(dstD)) //
-                || (ndims + 1 != env->GetArrayLength(dstS)) //
+        if ((nDims != env->GetArrayLength(srcS)) //
+                || (nDims + 1 != env->GetArrayLength(dstD)) //
+                || (nDims + 1 != env->GetArrayLength(dstS)) //
                 || (srcLen != memLen)) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -166,12 +166,12 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
         jint *dstDArr = (jint *) dstDH.get();
         jint *dstSArr = (jint *) dstSH.get();
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, srcLen);
-        MappingOps::checkDimensions(dstDArr, dstSArr, ndims + 1, dstLen);
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
+        MappingOps::checkDimensions(dstDArr, dstSArr, nDims + 1, dstLen);
 
         jint dstOffset = 0;
 
-        for (jint dim = 0; dim < ndims; dim++) {
+        for (jint dim = 0; dim < nDims; dim++) {
 
             if (srcDArr[dim] + 1 != dstDArr[dim]) {
                 throw std::runtime_error("Dimension mismatch");
@@ -184,9 +184,9 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
             return;
         }
 
-        jint nbins = dstDArr[ndims];
-        jint binStride = dstSArr[ndims];
-        jint dstLenModified = dstLen / nbins;
+        jint nBins = dstDArr[nDims];
+        jint binStride = dstSArr[nDims];
+        jint dstLenModified = dstLen / nBins;
 
         MallocHandler mallocH(sizeof(jint) * (srcLen + dstLenModified));
         void *all = mallocH.get();
@@ -194,14 +194,14 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
         jint *srcIndices = (jint *) all;
         jint *dstIndices = ((jint *) all) + srcLen;
 
-        MappingOps::assignMappingIndices(srcIndices, srcDArr, srcSArr, ndims);
-        MappingOps::assignMappingIndices(dstIndices, srcDArr, dstSArr, ndims);
+        MappingOps::assignMappingIndices(srcIndices, srcDArr, srcSArr, nDims);
+        MappingOps::assignMappingIndices(dstIndices, srcDArr, dstSArr, nDims);
 
         for (jint i = 0; i < srcLen; i++) {
 
             jint index = memVArr[srcIndices[i]];
 
-            if (!(index >= 0 && index < nbins)) {
+            if (!(index >= 0 && index < nBins)) {
                 throw std::runtime_error("Invalid membership index");
             }
 
@@ -210,9 +210,9 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
 
         //
 
-        MappingOps::assignMappingIndices(dstIndices, dstDArr, dstSArr, ndims);
+        MappingOps::assignMappingIndices(dstIndices, dstDArr, dstSArr, nDims);
 
-        for (jint dim = 0, indexBlockIncrement = dstLenModified; dim < ndims; //
+        for (jint dim = 0, indexBlockIncrement = dstLenModified; dim < nDims; //
         indexBlockIncrement /= dstDArr[dim++]) {
 
             jint size = dstDArr[dim];
@@ -224,7 +224,7 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
 
                 for (jint indexIndex = lower; indexIndex < upper; indexIndex++) {
 
-                    for (jint binIndex = 0, binOffset = 0; binIndex < nbins; binIndex++, binOffset += binStride) {
+                    for (jint binIndex = 0, binOffset = 0; binIndex < nBins; binIndex++, binOffset += binStride) {
 
                         jdouble acc = 0.0;
 

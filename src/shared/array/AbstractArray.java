@@ -125,10 +125,10 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
         int[] dims = this.dims;
         int[] strides = this.strides;
 
-        int ndims = dims.length;
-        int nrows = (ndims == 1) ? 1 : size(ndims - 2);
-        int ncols = size(ndims - 1);
-        int sliceSize = nrows * ncols;
+        int nDims = dims.length;
+        int nRows = (nDims == 1) ? 1 : size(nDims - 2);
+        int nCols = size(nDims - 1);
+        int sliceSize = nRows * nCols;
 
         int exponent = (int) Math.log10(Arithmetic.max( //
                 Arithmetic.max(values), Math.abs(Arithmetic.min(values)), 1e-128));
@@ -151,12 +151,12 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
 
         strides = IndexingOrder.FAR.strides(dims);
 
-        if (ndims <= 2) {
+        if (nDims <= 2) {
 
             f.format("%n");
 
             formatSlice(f, format, //
-                    values, indices, 0, nrows, ncols, false);
+                    values, indices, 0, nRows, nCols, false);
 
             return f.toString();
         }
@@ -165,14 +165,14 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
 
             f.format("%n[slice (");
 
-            for (int i = 0, n = ndims - 2, offsetAcc = offset; i < n; offsetAcc %= strides[i], i++) {
+            for (int i = 0, n = nDims - 2, offsetAcc = offset; i < n; offsetAcc %= strides[i], i++) {
                 f.format("%d, ", offsetAcc / strides[i]);
             }
 
             f.format(":, :)]%n");
 
             formatSlice(f, format, //
-                    values, indices, offset, nrows, ncols, false);
+                    values, indices, offset, nRows, nCols, false);
         }
 
         return f.toString();
@@ -226,12 +226,12 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
      */
     protected int[] rfftDimensions() {
 
-        int ndims = this.dims.length;
-        int lastDimSize = (this.dims[ndims - 1] / 2 + 1);
+        int nDims = this.dims.length;
+        int lastDimSize = (this.dims[nDims - 1] / 2 + 1);
 
-        int[] dimsModified = Arrays.copyOf(this.dims, ndims + 1);
-        dimsModified[ndims - 1] = lastDimSize;
-        dimsModified[ndims] = 2;
+        int[] dimsModified = Arrays.copyOf(this.dims, nDims + 1);
+        dimsModified[nDims - 1] = lastDimSize;
+        dimsModified[nDims] = 2;
 
         return dimsModified;
     }
@@ -244,11 +244,11 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
         Control.checkTrue(this.parity != INVALID_PARITY, //
                 "Array must have valid parity");
 
-        int ndims = this.dims.length;
-        int lastDimSize = (this.dims[ndims - 2] - 1) * 2 + this.parity;
+        int nDims = this.dims.length;
+        int lastDimSize = (this.dims[nDims - 2] - 1) * 2 + this.parity;
 
-        int[] dimsModified = Arrays.copyOf(this.dims, ndims - 1);
-        dimsModified[ndims - 2] = lastDimSize;
+        int[] dimsModified = Arrays.copyOf(this.dims, nDims - 1);
+        dimsModified[nDims - 2] = lastDimSize;
 
         return dimsModified;
     }

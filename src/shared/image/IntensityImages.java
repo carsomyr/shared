@@ -88,7 +88,7 @@ public class IntensityImages {
      */
     final public static BufferedImage createImage(RealArray m, String cmName, double rangeMin, double rangeMax) {
 
-        Control.checkTrue(m.ndims() == 2, //
+        Control.checkTrue(m.nDims() == 2, //
                 "Number of array dimensions must equal two");
 
         Control.checkTrue(rangeMax > rangeMin, //

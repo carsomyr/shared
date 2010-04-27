@@ -209,9 +209,9 @@ public class MatrixTest {
     public void testMEigs() {
 
         int size = 128;
-        int ntrials = 16;
+        int nTrials = 16;
 
-        for (int i = 0; i < ntrials; i++) {
+        for (int i = 0; i < nTrials; i++) {
 
             RealArray r = new RealArray(size, size).uRnd(1.0);
             RealArray[] eigs = r.mEigs();
@@ -228,11 +228,11 @@ public class MatrixTest {
     public void testMInvert() {
 
         int size = 128;
-        int ntrials = 16;
+        int nTrials = 16;
 
         RealArray eye = RealArray.eye(size, 2);
 
-        for (int i = 0; i < ntrials; i++) {
+        for (int i = 0; i < nTrials; i++) {
 
             RealArray r = new RealArray(size, size).uRnd(1.0).lAdd(eye);
 

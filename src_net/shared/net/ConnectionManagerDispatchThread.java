@@ -403,14 +403,14 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     /**
      * Default constructor.
      */
-    protected ConnectionManagerDispatchThread(String name, int backlog, int nthreads) {
+    protected ConnectionManagerDispatchThread(String name, int backlog, int nThreads) {
         super(String.format("%s/Dispatch", name));
 
         this.acceptRegistry = new AcceptRegistry(this.selector, this.backlog);
 
         this.ioThreads = new LinkedList<ConnectionManagerIOThread>();
 
-        for (int i = 0; i < nthreads; i++) {
+        for (int i = 0; i < nThreads; i++) {
             this.ioThreads.add(new ConnectionManagerIOThread(String.format("%s/IO-%d", name, i), this));
         }
 

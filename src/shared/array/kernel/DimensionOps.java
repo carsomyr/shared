@@ -169,7 +169,7 @@ public class DimensionOps {
 
                 int maxStride = stride * size;
 
-                for (int i = 0, nindices = srcIndices.length; i < nindices; i++) {
+                for (int i = 0, nIndices = srcIndices.length; i < nIndices; i++) {
 
                     double acc = -Double.MAX_VALUE;
 
@@ -212,7 +212,7 @@ public class DimensionOps {
 
                 int maxStride = stride * size;
 
-                for (int i = 0, nindices = srcIndices.length; i < nindices; i++) {
+                for (int i = 0, nIndices = srcIndices.length; i < nIndices; i++) {
 
                     double acc = Double.MAX_VALUE;
 
@@ -255,7 +255,7 @@ public class DimensionOps {
 
                 int maxStride = stride * size;
 
-                for (int i = 0, nindices = srcIndices.length; i < nindices; i++) {
+                for (int i = 0, nIndices = srcIndices.length; i < nIndices; i++) {
 
                     int count = 0;
 
@@ -290,7 +290,7 @@ public class DimensionOps {
 
                 int maxStride = stride * size;
 
-                for (int i = 0, nindices = srcIndices.length; i < nindices; i++) {
+                for (int i = 0, nIndices = srcIndices.length; i < nIndices; i++) {
 
                     int count = 0;
 
@@ -325,7 +325,7 @@ public class DimensionOps {
 
                 int maxStride = stride * size;
 
-                for (int i = 0, nindices = srcIndices.length; i < nindices; i++) {
+                for (int i = 0, nIndices = srcIndices.length; i < nIndices; i++) {
 
                     int count = 0;
 
@@ -382,9 +382,9 @@ public class DimensionOps {
         public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims) {
 
             int len = Control.checkEquals(srcV.length, dstV.length);
-            int ndims = Control.checkEquals(srcD.length, srcS.length);
+            int nDims = Control.checkEquals(srcD.length, srcS.length);
 
-            boolean[] indicator = new boolean[ndims];
+            boolean[] indicator = new boolean[nDims];
 
             for (int dim : opDims) {
                 indicator[dim] = true;
@@ -396,7 +396,7 @@ public class DimensionOps {
 
             System.arraycopy(srcV, 0, dstV, 0, len);
 
-            for (int dim = 0, indexBlockIncrement = len; dim < ndims; indexBlockIncrement /= srcD[dim++]) {
+            for (int dim = 0, indexBlockIncrement = len; dim < nDims; indexBlockIncrement /= srcD[dim++]) {
 
                 if (!indicator[dim]) {
                     continue;
@@ -429,9 +429,9 @@ public class DimensionOps {
         public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims) {
 
             int len = Control.checkEquals(srcV.length, dstV.length);
-            int ndims = Control.checkEquals(srcD.length, srcS.length);
+            int nDims = Control.checkEquals(srcD.length, srcS.length);
 
-            boolean[] indicator = new boolean[ndims];
+            boolean[] indicator = new boolean[nDims];
 
             for (int dim : opDims) {
                 indicator[dim] = true;
@@ -443,7 +443,7 @@ public class DimensionOps {
 
             System.arraycopy(srcV, 0, dstV, 0, len);
 
-            for (int dim = 0, indexBlockIncrement = len; dim < ndims; indexBlockIncrement /= srcD[dim++]) {
+            for (int dim = 0, indexBlockIncrement = len; dim < nDims; indexBlockIncrement /= srcD[dim++]) {
 
                 if (!indicator[dim]) {
                     continue;
@@ -474,7 +474,7 @@ public class DimensionOps {
     /**
      * Assigns base indices when excluding a dimension.
      * 
-     * @param nindices
+     * @param nIndices
      *            the number of indices.
      * @param srcD
      *            the dimensions.
@@ -484,21 +484,21 @@ public class DimensionOps {
      *            the dimension to exclude.
      * @return the base physical indices.
      */
-    final public static int[] assignBaseIndices(int nindices, int[] srcD, int[] srcS, int dim) {
+    final public static int[] assignBaseIndices(int nIndices, int[] srcD, int[] srcS, int dim) {
 
-        int ndims = Control.checkEquals(srcD.length, srcS.length, //
+        int nDims = Control.checkEquals(srcD.length, srcS.length, //
                 "Invalid arguments");
 
-        int[] dModified = new int[ndims - 1];
-        int[] sModified = new int[ndims - 1];
+        int[] dModified = new int[nDims - 1];
+        int[] sModified = new int[nDims - 1];
 
         System.arraycopy(srcD, 0, dModified, 0, dim);
-        System.arraycopy(srcD, dim + 1, dModified, dim, (ndims - 1) - dim);
+        System.arraycopy(srcD, dim + 1, dModified, dim, (nDims - 1) - dim);
 
         System.arraycopy(srcS, 0, sModified, 0, dim);
-        System.arraycopy(srcS, dim + 1, sModified, dim, (ndims - 1) - dim);
+        System.arraycopy(srcS, dim + 1, sModified, dim, (nDims - 1) - dim);
 
-        return MappingOps.assignMappingIndices(nindices, dModified, sModified);
+        return MappingOps.assignMappingIndices(nIndices, dModified, sModified);
     }
 
     /**
@@ -543,22 +543,22 @@ public class DimensionOps {
 
         Arrays.sort(opDims);
 
-        int nopDims = opDims.length;
-        int ndims = Control.checkEquals(srcD.length, dstD.length, //
+        int nOpDims = opDims.length;
+        int nDims = Control.checkEquals(srcD.length, dstD.length, //
                 "Dimensionality mismatch");
 
-        for (int i = 1; i < nopDims; i++) {
+        for (int i = 1; i < nOpDims; i++) {
             Control.checkTrue(opDims[i - 1] != opDims[i], //
                     "Duplicate selected dimensions not allowed");
         }
 
         int acc = dstLen;
 
-        for (int i = 0; i < nopDims; i++) {
+        for (int i = 0; i < nOpDims; i++) {
 
             int dim = opDims[i];
 
-            Control.checkTrue(dim >= 0 && dim < ndims, //
+            Control.checkTrue(dim >= 0 && dim < nDims, //
                     "Invalid dimension");
 
             Control.checkTrue(dstD[dim] <= 1, //
@@ -579,7 +579,7 @@ public class DimensionOps {
 
         acc = srcLen;
 
-        for (int i = 0; i < nopDims; i++) {
+        for (int i = 0; i < nOpDims; i++) {
 
             int dim = opDims[i];
 
@@ -680,11 +680,11 @@ public class DimensionOps {
             throw new IllegalArgumentException();
         }
 
-        int ndims = Control.checkEquals(srcD.length, srcS.length, //
+        int nDims = Control.checkEquals(srcD.length, srcS.length, //
                 "Dimensionality mismatch");
 
         for (int dim : opDims) {
-            Control.checkTrue(dim >= 0 && dim < ndims, //
+            Control.checkTrue(dim >= 0 && dim < nDims, //
                     "Invalid dimension");
         }
 

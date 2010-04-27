@@ -45,24 +45,24 @@ public class PlotBase {
      */
     final public static int inferDimensionality(RealArray... datasets) {
 
-        int nclasses = datasets.length;
+        int nClasses = datasets.length;
 
-        Control.checkTrue(nclasses > 0, //
+        Control.checkTrue(nClasses > 0, //
                 "Please specify some datasets");
 
-        for (int i = 0; i < nclasses; i++) {
-            Control.checkTrue(datasets[i].ndims() == 2, //
+        for (int i = 0; i < nClasses; i++) {
+            Control.checkTrue(datasets[i].nDims() == 2, //
                     "Invalid arguments");
         }
 
-        int ndims = datasets[0].size(1);
+        int nDims = datasets[0].size(1);
 
-        for (int i = 1; i < nclasses; i++) {
-            Control.checkTrue(ndims == datasets[i].size(1), //
+        for (int i = 1; i < nClasses; i++) {
+            Control.checkTrue(nDims == datasets[i].size(1), //
                     "Dimensionality mismatch");
         }
 
-        return ndims;
+        return nDims;
     }
 
     /**

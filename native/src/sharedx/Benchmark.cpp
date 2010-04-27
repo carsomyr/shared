@@ -57,7 +57,7 @@ void Benchmark::testConvolve(JNIEnv *env, jobject thisObj) {
         }
 
         jint size = sharedx_test_BenchmarkSpecification_SIZE;
-        jint nreps = sharedx_test_BenchmarkSpecification_NREPS;
+        jint nReps = sharedx_test_BenchmarkSpecification_N_REPS;
 
         const int dims[2] = { size, size };
         jint len = size * size;
@@ -87,7 +87,7 @@ void Benchmark::testConvolve(JNIEnv *env, jobject thisObj) {
 
         if (forward && backward) {
 
-            for (jint i = 0; i < nreps; i++) {
+            for (jint i = 0; i < nReps; i++) {
 
                 out1 = new jcomplex[len];
                 out2 = new jcomplex[len];

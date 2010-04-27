@@ -108,7 +108,7 @@ public class NativeArrayKernel implements ArrayKernel {
 
     final public native void svd(double[] srcV, int srcStrideRow, int srcStrideCol, //
             double[] uV, double[] sV, double[] vV, //
-            int nrows, int ncols);
+            int nRows, int nCols);
 
     final public native void eigs(double[] srcV, double[] vecV, double[] valV, int size);
 

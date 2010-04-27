@@ -49,7 +49,7 @@ abstract public class AbstractGMModel {
      * 
      * @param points
      *            the input.
-     * @param ncomps
+     * @param nComps
      *            the number of components.
      * @param regularization
      *            the regularization hint.
@@ -57,12 +57,12 @@ abstract public class AbstractGMModel {
      *            the change in likelihood required for termination.
      * @return the mixture components trained.
      */
-    public GMComponents train(RealArray points, int ncomps, double regularization, double delta) {
+    public GMComponents train(RealArray points, int nComps, double regularization, double delta) {
 
         // Convert to a list of points.
-        GMComponents gmc = initialize(points, ncomps, regularization);
+        GMComponents gmc = initialize(points, nComps, regularization);
 
-        int nrounds = 0;
+        int nRounds = 0;
 
         for (double currentLL = -Double.MAX_VALUE / 4.0, previousLL = 2.0 * currentLL; //
         currentLL - previousLL > delta;) {
@@ -71,9 +71,9 @@ abstract public class AbstractGMModel {
             update(gmc, computePosterior(gmc, points), points, regularization);
             currentLL = gmc.likelihood;
 
-            nrounds++;
+            nRounds++;
 
-            gmc.nrounds = nrounds;
+            gmc.nRounds = nRounds;
         }
 
         return gmc;
@@ -90,18 +90,18 @@ abstract public class AbstractGMModel {
      */
     public RealArray computePosterior(GMComponents gmc, RealArray points) {
 
-        int ncomps = gmc.weights.size(0);
+        int nComps = gmc.weights.size(0);
 
-        // The log of the weighted densities has dimensions (ncomps, npoints).
+        // The log of the weighted densities has dimensions (nComps, nPoints).
         RealArray logWeightedDensities = computeLogWeightedDensities(gmc, points);
         RealArray rowMax = logWeightedDensities.rMax(0);
 
         // Compute the normalized posterior for numerical stability.
-        RealArray posterior = logWeightedDensities.eSub(rowMax.tile(ncomps, 1)).uExp();
+        RealArray posterior = logWeightedDensities.eSub(rowMax.tile(nComps, 1)).uExp();
         RealArray rowSum = posterior.rSum(0);
 
         // Normalize the posterior.
-        posterior = posterior.lDiv(rowSum.tile(ncomps, 1));
+        posterior = posterior.lDiv(rowSum.tile(nComps, 1));
 
         // Calculate the total log-likelihood.
         gmc.likelihood = (rowSum.clone().uAdd(1e-64).uLog()).lAdd(rowMax).aMean();
@@ -128,13 +128,13 @@ abstract public class AbstractGMModel {
      * 
      * @param points
      *            the input.
-     * @param ncomps
+     * @param nComps
      *            the number of components.
      * @param regularization
      *            the regularization hint.
      * @return the initial mixture components.
      */
-    abstract protected GMComponents initialize(RealArray points, int ncomps, double regularization);
+    abstract protected GMComponents initialize(RealArray points, int nComps, double regularization);
 
     /**
      * Computes the log of the weighted densities.

@@ -70,35 +70,35 @@ public class Histogram implements Plottable {
      *            the range minimum.
      * @param max
      *            the range maximum.
-     * @param nbins
+     * @param nBins
      *            the number of bins.
      * @param valuesArray
      *            the array of values.
      */
-    public Histogram(double min, double max, int nbins, double[]... valuesArray) {
+    public Histogram(double min, double max, int nBins, double[]... valuesArray) {
 
-        int nclasses = valuesArray.length;
+        int nClasses = valuesArray.length;
 
-        this.datasets = new RealArray[nclasses];
+        this.datasets = new RealArray[nClasses];
 
-        double increment = (max - min) / nbins;
+        double increment = (max - min) / nBins;
         double maxCount = 0.0;
 
         for (int i = 0, n = valuesArray.length; i < n; i++) {
 
-            RealArray dataset = new RealArray(nbins, 2);
+            RealArray dataset = new RealArray(nBins, 2);
 
-            for (int bin = 0; bin < nbins; bin++) {
+            for (int bin = 0; bin < nBins; bin++) {
                 dataset.set(increment * (bin + 0.5) + min, bin, 0);
             }
 
             for (double value : valuesArray[i]) {
 
-                int bin = Math.max(0, Math.min(nbins - 1, (int) ((value - min) / increment)));
+                int bin = Math.max(0, Math.min(nBins - 1, (int) ((value - min) / increment)));
                 dataset.set(dataset.get(bin, 1) + 1.0d, bin, 1);
             }
 
-            maxCount = Math.max(maxCount, dataset.subarray(0, nbins, 1, 2).aMax());
+            maxCount = Math.max(maxCount, dataset.subarray(0, nBins, 1, 2).aMax());
 
             this.datasets[i] = dataset;
         }
@@ -106,8 +106,8 @@ public class Histogram implements Plottable {
         this.xrange = new double[] { min, max };
         this.yrange = new double[] { 0, maxCount };
 
-        this.dataTitles = PlotBase.createDefaultTitles(nclasses);
-        this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nclasses, DataStyle.Bars);
+        this.dataTitles = PlotBase.createDefaultTitles(nClasses);
+        this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.Bars);
     }
 
     public String getTitle() {

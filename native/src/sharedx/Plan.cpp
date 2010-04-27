@@ -57,7 +57,7 @@ void Plan::transform(JNIEnv *env, jobject thisObj, jdoubleArray in, jdoubleArray
             throw std::runtime_error("The byte array reference was not properly initialized");
         }
 
-        jint ndims = env->GetArrayLength(dims);
+        jint nDims = env->GetArrayLength(dims);
         jint inLen = env->GetArrayLength(in);
         jint outLen = env->GetArrayLength(out);
 
@@ -83,7 +83,7 @@ void Plan::transform(JNIEnv *env, jobject thisObj, jdoubleArray in, jdoubleArray
         jint inLenExpected, outLenExpected;
         jdouble scalingFactor;
 
-        Plan::getTransformParameters(inLenExpected, outLenExpected, scalingFactor, type, dimsArr, ndims);
+        Plan::getTransformParameters(inLenExpected, outLenExpected, scalingFactor, type, dimsArr, nDims);
 
         if (inLen != inLenExpected || outLen != outLenExpected) {
             throw std::runtime_error("Input and/or output arrays do not have expected sizes");
@@ -108,7 +108,7 @@ jbyteArray Plan::create(JNIEnv *env, jobject thisObj, jint type, jintArray dims,
             throw std::runtime_error("Invalid arguments");
         }
 
-        jint ndims = env->GetArrayLength(dims);
+        jint nDims = env->GetArrayLength(dims);
 
         mem = Common::newByteArray(env, sizeof(fftw_plan));
 
@@ -127,10 +127,10 @@ jbyteArray Plan::create(JNIEnv *env, jobject thisObj, jint type, jintArray dims,
         jint inLen, outLen;
         jdouble scalingFactor;
 
-        Plan::getTransformParameters(inLen, outLen, scalingFactor, type, dimsArr, ndims);
+        Plan::getTransformParameters(inLen, outLen, scalingFactor, type, dimsArr, nDims);
 
         // Plan creation is NOT thread-safe.
-        *memArr = Plan::createPlan(type, dimsArr, ndims, logicalMode, inLen, outLen);
+        *memArr = Plan::createPlan(type, dimsArr, nDims, logicalMode, inLen, outLen);
 
     } catch (std::exception &e) {
 
@@ -231,13 +231,13 @@ void Plan::importWisdom(JNIEnv *env, jstring wisdom) {
 
 inline void Plan::getTransformParameters( //
         jint &inLen, jint &outLen, //
-        jdouble &scalingFactor, jint type, const jint *dimsArr, jint ndims) {
+        jdouble &scalingFactor, jint type, const jint *dimsArr, jint nDims) {
 
-    if (ndims == 0) {
+    if (nDims == 0) {
         throw std::runtime_error("Rank must be greater than zero");
     }
 
-    for (jint dim = 0; dim < ndims; dim++) {
+    for (jint dim = 0; dim < nDims; dim++) {
 
         if (dimsArr[dim] <= 0) {
             throw std::runtime_error("Invalid dimensions");
@@ -249,10 +249,10 @@ inline void Plan::getTransformParameters( //
     case sharedx_fftw_Plan_R2C:
 
     {
-        jint acc1 = dimsArr[ndims - 1];
-        jint acc2 = 2 * ((dimsArr[ndims - 1] / 2) + 1);
+        jint acc1 = dimsArr[nDims - 1];
+        jint acc2 = 2 * ((dimsArr[nDims - 1] / 2) + 1);
 
-        for (jint i = 0, n = ndims - 1; i < n; i++) {
+        for (jint i = 0, n = nDims - 1; i < n; i++) {
 
             acc1 *= dimsArr[i];
             acc2 *= dimsArr[i];
@@ -268,10 +268,10 @@ inline void Plan::getTransformParameters( //
     case sharedx_fftw_Plan_C2R:
 
     {
-        jint acc1 = 2 * ((dimsArr[ndims - 1] / 2) + 1);
-        jint acc2 = dimsArr[ndims - 1];
+        jint acc1 = 2 * ((dimsArr[nDims - 1] / 2) + 1);
+        jint acc2 = dimsArr[nDims - 1];
 
-        for (jint i = 0, n = ndims - 1; i < n; i++) {
+        for (jint i = 0, n = nDims - 1; i < n; i++) {
 
             acc1 *= dimsArr[i];
             acc2 *= dimsArr[i];
@@ -287,9 +287,9 @@ inline void Plan::getTransformParameters( //
     case sharedx_fftw_Plan_FORWARD:
 
     {
-        jint acc1 = 2 * dimsArr[ndims - 1];
+        jint acc1 = 2 * dimsArr[nDims - 1];
 
-        for (jint i = 0, n = ndims - 1; i < n; i++) {
+        for (jint i = 0, n = nDims - 1; i < n; i++) {
             acc1 *= dimsArr[i];
         }
 
@@ -303,9 +303,9 @@ inline void Plan::getTransformParameters( //
     case sharedx_fftw_Plan_BACKWARD:
 
     {
-        jint acc1 = 2 * dimsArr[ndims - 1];
+        jint acc1 = 2 * dimsArr[nDims - 1];
 
-        for (jint i = 0, n = ndims - 1; i < n; i++) {
+        for (jint i = 0, n = nDims - 1; i < n; i++) {
             acc1 *= dimsArr[i];
         }
 
@@ -322,7 +322,7 @@ inline void Plan::getTransformParameters( //
 }
 
 inline fftw_plan Plan::createPlan( //
-        jint type, const jint *dimsArr, jint ndims, //
+        jint type, const jint *dimsArr, jint nDims, //
         jint logicalMode, jint inLen, jint outLen) {
 
     fftw_plan plan = NULL;
@@ -361,24 +361,24 @@ inline fftw_plan Plan::createPlan( //
     switch (type) {
 
     case sharedx_fftw_Plan_R2C:
-        plan = fftw_plan_dft_r2c(ndims, (const int *) dimsArr, //
+        plan = fftw_plan_dft_r2c(nDims, (const int *) dimsArr, //
                 inArr, (fftw_complex *) outArr, mode | FFTW_PRESERVE_INPUT | FFTW_UNALIGNED);
         break;
 
     case sharedx_fftw_Plan_C2R:
         // NOTE: C2R transforms may destroy their input.
-        plan = fftw_plan_dft_c2r(ndims, (const int *) dimsArr, //
+        plan = fftw_plan_dft_c2r(nDims, (const int *) dimsArr, //
                 (fftw_complex *) inArr, outArr, mode | FFTW_DESTROY_INPUT | FFTW_UNALIGNED);
         break;
 
     case sharedx_fftw_Plan_FORWARD:
-        plan = fftw_plan_dft(ndims, (const int *) dimsArr, //
+        plan = fftw_plan_dft(nDims, (const int *) dimsArr, //
                 (fftw_complex *) inArr, (fftw_complex *) outArr, //
                 FFTW_FORWARD, mode | FFTW_PRESERVE_INPUT | FFTW_UNALIGNED);
         break;
 
     case sharedx_fftw_Plan_BACKWARD:
-        plan = fftw_plan_dft(ndims, (const int *) dimsArr, //
+        plan = fftw_plan_dft(nDims, (const int *) dimsArr, //
                 (fftw_complex *) inArr, (fftw_complex *) outArr, //
                 FFTW_BACKWARD, mode | FFTW_PRESERVE_INPUT | FFTW_UNALIGNED);
         break;

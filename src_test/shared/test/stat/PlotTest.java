@@ -184,11 +184,11 @@ public class PlotTest {
                 .setPanelLocation(1, 0) //
                 .setPanelSize(1, 2);
 
-        int nvalues = 1024;
+        int nValues = 1024;
 
-        double[] values = new double[nvalues];
+        double[] values = new double[nValues];
 
-        for (int i = 0; i < nvalues; i++) {
+        for (int i = 0; i < nValues; i++) {
             values[i] = Arithmetic.nextGaussian(2.0);
         }
 
@@ -208,9 +208,9 @@ public class PlotTest {
 
         Arithmetic.derandomize();
 
-        boolean[] outcomes = new boolean[nvalues];
+        boolean[] outcomes = new boolean[nValues];
 
-        for (int i = 0; i < nvalues; i++) {
+        for (int i = 0; i < nValues; i++) {
 
             values[i] = Arithmetic.nextDouble(1.0);
             outcomes[i] = (Arithmetic.nextDouble(1.0) < (1.0 - values[i]) * 0.25) ? false : true;

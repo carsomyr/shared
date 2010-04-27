@@ -64,27 +64,27 @@ public class IntegralHistogramTest {
 
         int baseBins = 4;
 
-        int ntrials = 3;
-        int nqueries = 128;
+        int nTrials = 3;
+        int nQueries = 128;
 
-        for (int trialIndex = 0; trialIndex < ntrials; trialIndex++) {
+        for (int trialIndex = 0; trialIndex < nTrials; trialIndex++) {
 
-            for (int ndims = 1; ndims <= maxDims; ndims++) {
+            for (int nDims = 1; nDims <= maxDims; nDims++) {
 
-                int[] dims = new int[ndims];
+                int[] dims = new int[nDims];
 
-                for (int dim = 0; dim < ndims; dim++) {
+                for (int dim = 0; dim < nDims; dim++) {
                     dims[dim] = baseSize + Arithmetic.nextInt(baseSize);
                 }
 
-                int nvalues = Arithmetic.product(dims);
-                int nbins = baseBins + Arithmetic.nextInt(baseBins);
+                int nValues = Arithmetic.product(dims);
+                int nBins = baseBins + Arithmetic.nextInt(baseBins);
 
                 IndexingOrder order = //
                 Arithmetic.nextInt(2) == 0 ? IndexingOrder.FAR : IndexingOrder.NEAR;
 
-                RealArray mat = new RealArray(Arithmetic.doubleRange(nvalues), //
-                        order, dims).uMul(1.0 / nvalues);
+                RealArray mat = new RealArray(Arithmetic.doubleRange(nValues), //
+                        order, dims).uMul(1.0 / nValues);
 
                 double[] values = mat.values();
 
@@ -92,39 +92,39 @@ public class IntegralHistogramTest {
 
                 int[] mValues = memberships.values();
 
-                double[][] valuesArr = new double[nbins][];
+                double[][] valuesArr = new double[nBins][];
 
-                for (int i = 0; i < nbins; i++) {
+                for (int i = 0; i < nBins; i++) {
                     valuesArr[i] = new double[mValues.length];
                 }
 
                 for (int i = 0, n = mValues.length; i < n; i++) {
-                    valuesArr[mValues[i] = Arithmetic.nextInt(nbins)][i] = values[i];
+                    valuesArr[mValues[i] = Arithmetic.nextInt(nBins)][i] = values[i];
                 }
 
-                IntegralImage[] iis = new IntegralImage[nbins];
+                IntegralImage[] iis = new IntegralImage[nBins];
 
-                for (int i = 0; i < nbins; i++) {
+                for (int i = 0; i < nBins; i++) {
                     iis[i] = new IntegralImage(new RealArray(valuesArr[i], order, dims));
                 }
 
-                double[] h = new double[nbins];
-                double[] hExpected = new double[nbins];
+                double[] h = new double[nBins];
+                double[] hExpected = new double[nBins];
 
-                IntegralHistogram ih = new IntegralHistogram(mat, memberships, nbins);
+                IntegralHistogram ih = new IntegralHistogram(mat, memberships, nBins);
 
-                for (int i = 0; i < nqueries; i++) {
+                for (int i = 0; i < nQueries; i++) {
 
-                    int[] bounds = new int[2 * ndims];
+                    int[] bounds = new int[2 * nDims];
 
-                    for (int dim = 0; dim < ndims; dim++) {
+                    for (int dim = 0; dim < nDims; dim++) {
 
                         bounds[dim << 1] = Arithmetic.nextInt(dims[dim]);
                         bounds[(dim << 1) + 1] = //
                         bounds[dim << 1] + Arithmetic.nextInt(dims[dim] - bounds[dim << 1]) + 1;
                     }
 
-                    for (int j = 0; j < nbins; j++) {
+                    for (int j = 0; j < nBins; j++) {
                         hExpected[j] = iis[j].query(bounds);
                     }
 

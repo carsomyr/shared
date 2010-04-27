@@ -85,23 +85,23 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
     @SuppressWarnings("unchecked")
     public OOBFilter<I, O> newFilter(C connection) {
 
-        final int nfilters = this.factories.length;
+        final int nFilters = this.factories.length;
 
-        final OOBFilter<Object, Object>[] filters = new OOBFilter[nfilters];
-        final Queue<Object>[] inboundReadOnlys = new Queue[nfilters - 1];
-        final Queue<Object>[] inboundWriteOnlys = new Queue[nfilters - 1];
-        final Queue<Object>[] outboundReadOnlys = new Queue[nfilters - 1];
-        final Queue<Object>[] outboundWriteOnlys = new Queue[nfilters - 1];
-        final Queue<OOBEvent>[] inboundReadOnlyOOBs = new Queue[nfilters - 1];
-        final Queue<OOBEvent>[] inboundWriteOnlyOOBs = new Queue[nfilters - 1];
-        final Queue<OOBEvent>[] outboundReadOnlyOOBs = new Queue[nfilters - 1];
-        final Queue<OOBEvent>[] outboundWriteOnlyOOBs = new Queue[nfilters - 1];
+        final OOBFilter<Object, Object>[] filters = new OOBFilter[nFilters];
+        final Queue<Object>[] inboundReadOnlys = new Queue[nFilters - 1];
+        final Queue<Object>[] inboundWriteOnlys = new Queue[nFilters - 1];
+        final Queue<Object>[] outboundReadOnlys = new Queue[nFilters - 1];
+        final Queue<Object>[] outboundWriteOnlys = new Queue[nFilters - 1];
+        final Queue<OOBEvent>[] inboundReadOnlyOOBs = new Queue[nFilters - 1];
+        final Queue<OOBEvent>[] inboundWriteOnlyOOBs = new Queue[nFilters - 1];
+        final Queue<OOBEvent>[] outboundReadOnlyOOBs = new Queue[nFilters - 1];
+        final Queue<OOBEvent>[] outboundWriteOnlyOOBs = new Queue[nFilters - 1];
 
-        for (int i = 0; i < nfilters; i++) {
+        for (int i = 0; i < nFilters; i++) {
             filters[i] = Filters.asOOBFilter(this.factories[i].newFilter(connection));
         }
 
-        for (int i = 0, n = nfilters - 1; i < n; i++) {
+        for (int i = 0, n = nFilters - 1; i < n; i++) {
 
             Queue<Object> inbound = Filters.createQueue();
             inboundReadOnlys[i] = Filters.readOnlyQueue(inbound);
@@ -134,11 +134,11 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
 
                     ((Filter<I, Object>) filters[0]).getInbound(in, inboundWriteOnlys[0]);
 
-                    for (int i = 1, n = nfilters - 1; i < n; i++) {
+                    for (int i = 1, n = nFilters - 1; i < n; i++) {
                         filters[i].getInbound(inboundReadOnlys[i - 1], inboundWriteOnlys[i]);
                     }
 
-                    ((Filter<Object, O>) filters[nfilters - 1]).getInbound(inboundReadOnlys[nfilters - 2], out);
+                    ((Filter<Object, O>) filters[nFilters - 1]).getInbound(inboundReadOnlys[nFilters - 2], out);
 
                     break;
                 }
@@ -154,9 +154,9 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
 
                 default:
 
-                    ((Filter<Object, O>) filters[nfilters - 1]).getOutbound(in, outboundWriteOnlys[nfilters - 2]);
+                    ((Filter<Object, O>) filters[nFilters - 1]).getOutbound(in, outboundWriteOnlys[nFilters - 2]);
 
-                    for (int i = nfilters - 2; i >= 1; i--) {
+                    for (int i = nFilters - 2; i >= 1; i--) {
                         filters[i].getOutbound(outboundReadOnlys[i], outboundWriteOnlys[i - 1]);
                     }
 
@@ -180,14 +180,14 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
                             in, inEvts, //
                             inboundWriteOnlys[0], inboundWriteOnlyOOBs[0]);
 
-                    for (int i = 1, n = nfilters - 1; i < n; i++) {
+                    for (int i = 1, n = nFilters - 1; i < n; i++) {
                         filters[i].getInboundOOB( //
                                 inboundReadOnlys[i - 1], inboundReadOnlyOOBs[i - 1], //
                                 inboundWriteOnlys[i], inboundWriteOnlyOOBs[i]);
                     }
 
-                    ((OOBFilter<Object, O>) filters[nfilters - 1]).getInboundOOB( //
-                            inboundReadOnlys[nfilters - 2], inboundReadOnlyOOBs[nfilters - 2], //
+                    ((OOBFilter<Object, O>) filters[nFilters - 1]).getInboundOOB( //
+                            inboundReadOnlys[nFilters - 2], inboundReadOnlyOOBs[nFilters - 2], //
                             out, outEvts);
 
                     break;
@@ -204,11 +204,11 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
 
                 default:
 
-                    ((OOBFilter<Object, O>) filters[nfilters - 1]).getOutboundOOB( //
+                    ((OOBFilter<Object, O>) filters[nFilters - 1]).getOutboundOOB( //
                             in, inEvts, //
-                            outboundWriteOnlys[nfilters - 2], outboundWriteOnlyOOBs[nfilters - 2]);
+                            outboundWriteOnlys[nFilters - 2], outboundWriteOnlyOOBs[nFilters - 2]);
 
-                    for (int i = nfilters - 2; i >= 1; i--) {
+                    for (int i = nFilters - 2; i >= 1; i--) {
                         filters[i].getOutboundOOB( //
                                 outboundReadOnlys[i], outboundReadOnlyOOBs[i], //
                                 outboundWriteOnlys[i - 1], outboundWriteOnlyOOBs[i - 1]);

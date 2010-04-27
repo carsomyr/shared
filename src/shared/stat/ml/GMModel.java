@@ -49,13 +49,13 @@ public class GMModel extends AbstractGMModel {
     }
 
     @Override
-    public GMComponents initialize(RealArray input, int ncomps, double regularization) {
+    public GMComponents initialize(RealArray input, int nComps, double regularization) {
 
-        int ndims = input.size(1);
+        int nDims = input.size(1);
 
-        GMComponents gmc = new GMComponents(ncomps, ndims);
+        GMComponents gmc = new GMComponents(nComps, nDims);
 
-        List<RealArray> clusters = KMeans.cluster(ncomps, input);
+        List<RealArray> clusters = KMeans.cluster(nComps, input);
 
         // Assign the covariances to be the global covariance.
         RealArray globalSum = input.rSum(0);
@@ -63,16 +63,16 @@ public class GMModel extends AbstractGMModel {
 
         (globalSum.clone().uSqr().uMul(1.0 / input.size(0))) //
                 .lSub(globalMean.eMul(globalMean)).uAdd(regularization) //
-                .tile(ncomps, 1) //
-                .map(gmc.covariances, 0, 0, ncomps, 0, 0, ndims);
+                .tile(nComps, 1) //
+                .map(gmc.covariances, 0, 0, nComps, 0, 0, nDims);
 
         // Assign the means to be the cluster means.
-        for (int i = 0; i < ncomps; i++) {
-            clusters.get(i).rMean(0).map(gmc.centers, 0, i, 1, 0, 0, ndims);
+        for (int i = 0; i < nComps; i++) {
+            clusters.get(i).rMean(0).map(gmc.centers, 0, i, 1, 0, 0, nDims);
         }
 
         // Every component starts out as equally likely.
-        gmc.weights.uFill(1.0 / ncomps);
+        gmc.weights.uFill(1.0 / nComps);
 
         return gmc;
     }
@@ -80,48 +80,48 @@ public class GMModel extends AbstractGMModel {
     @Override
     public void update(GMComponents gmc, RealArray posterior, RealArray points, double regularization) {
 
-        int ncomps = gmc.weights.size(0);
-        int ndims = points.size(1);
-        int npoints = Control.checkEquals(points.size(0), posterior.size(1));
+        int nComps = gmc.weights.size(0);
+        int nDims = points.size(1);
+        int nPoints = Control.checkEquals(points.size(0), posterior.size(1));
 
         RealArray colSum = posterior.rSum(1);
 
-        // The normalization has dimensions (ncomps, ndims).
-        RealArray nrmp = colSum.tile(1, ndims).uAdd(1e-64);
+        // The normalization has dimensions (nComps, nDims).
+        RealArray nrmp = colSum.tile(1, nDims).uAdd(1e-64);
 
         // Update the means.
 
         posterior.mMul(points).lDiv(nrmp) //
-                .map(gmc.centers, 0, 0, ncomps, 0, 0, ndims);
+                .map(gmc.centers, 0, 0, nComps, 0, 0, nDims);
 
         // Update the covariances.
 
         posterior.mMul(points.clone().uSqr()).lDiv(nrmp) //
                 .lSub(gmc.centers.clone().uSqr()) //
-                .map(gmc.covariances, 0, 0, ncomps, 0, 0, ndims);
+                .map(gmc.covariances, 0, 0, nComps, 0, 0, nDims);
 
         gmc.regularize(regularization);
 
         // Update the weights.
 
-        colSum.map(gmc.weights, 0, 0, ncomps, 0, 0, 1).uMul(1.0 / npoints);
+        colSum.map(gmc.weights, 0, 0, nComps, 0, 0, 1).uMul(1.0 / nPoints);
     }
 
     @Override
     public RealArray computeLogWeightedDensities(GMComponents gmc, RealArray points) {
 
-        int npoints = points.size(0);
+        int nPoints = points.size(0);
 
         RealArray iCov = gmc.covariances.clone().uInv(1.0);
 
         RealArray nrmTiled = //
         (gmc.centers.clone().uSqr().lMul(iCov)) //
                 .lAdd(gmc.covariances.clone().uLog()) //
-                .rSum(1).tile(1, npoints);
+                .rSum(1).tile(1, nPoints);
 
         RealArray pointsT = points.transpose(1, 0);
 
-        RealArray logWeightsTiled = gmc.weights.tile(1, npoints).uAdd(1e-64).uLog();
+        RealArray logWeightsTiled = gmc.weights.tile(1, nPoints).uAdd(1e-64).uLog();
 
         RealArray exponent = (iCov.mMul(pointsT.clone().uSqr())) //
                 .lAdd(gmc.centers.eMul(iCov).mMul(pointsT).uMul(-2.0)) //

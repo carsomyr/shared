@@ -23,9 +23,9 @@
 
 #include <Common.hpp>
 
-MallocHandler::MallocHandler(jint nbytes) {
+MallocHandler::MallocHandler(jint nBytes) {
 
-    this->ptr = malloc(nbytes);
+    this->ptr = malloc(nBytes);
 
     if (!this->ptr) {
         throw std::runtime_error("Allocation failed");

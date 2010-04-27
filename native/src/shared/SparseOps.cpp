@@ -116,13 +116,13 @@ jobject SparseOps::createSparseArrayState(JNIEnv *env, //
 
     jint count = mergeResult->count;
     jint *dims = mergeResult->dims;
-    jint ndims = mergeResult->ndims;
+    jint nDims = mergeResult->nDims;
 
-    jint sumD = Common::sum(dims, ndims, (jint) 0);
+    jint sumD = Common::sum(dims, nDims, (jint) 0);
 
     jintArray indices = Common::newIntArray(env, count);
-    jintArray indirectionOffsets = Common::newIntArray(env, sumD + ndims);
-    jintArray indirections = Common::newIntArray(env, ndims * count);
+    jintArray indirectionOffsets = Common::newIntArray(env, sumD + nDims);
+    jintArray indirections = Common::newIntArray(env, nDims * count);
 
     {
         ArrayPinHandler indicesH(env, indices, //
@@ -135,9 +135,9 @@ jobject SparseOps::createSparseArrayState(JNIEnv *env, //
         memcpy((jint *) indicesH.get(), //
                 mergeResult->indices, sizeof(jint) * count);
         memcpy((jint *) indirectionOffsetsH.get(), //
-                mergeResult->indirectionOffsets, sizeof(jint) * (sumD + ndims));
+                mergeResult->indirectionOffsets, sizeof(jint) * (sumD + nDims));
         memcpy((jint *) indirectionsH.get(), //
-                mergeResult->indirections, sizeof(jint) * (ndims * count));
+                mergeResult->indirections, sizeof(jint) * (nDims * count));
     }
 
     return NativeArrayKernel::newSparseArrayState(env, values, indices, indirectionOffsets, indirections);
@@ -146,7 +146,7 @@ jobject SparseOps::createSparseArrayState(JNIEnv *env, //
 MergeResult *SparseOps::merge( //
         jint *oldIndices, jint *oldIndirections, jint oldLen, //
         jint *newIndices, jint *newIndirections, jint newLen, //
-        jint *dims, jint *strides, jint *dimOffsets, jint ndims) {
+        jint *dims, jint *strides, jint *dimOffsets, jint nDims) {
 
     MergeResult *res = NULL;
 
@@ -191,7 +191,7 @@ MergeResult *SparseOps::merge( //
             newAssignments[newCount] = count;
         }
 
-        res->createMetadata(count, dims, ndims);
+        res->createMetadata(count, dims, nDims);
 
         jint *indices = res->indices;
         jint *indirectionOffsets = res->indirectionOffsets;
@@ -214,15 +214,15 @@ MergeResult *SparseOps::merge( //
 
         //
 
-        jint sumD = Common::sum(dims, ndims, (jint) 0);
-        jint prodD = Common::product(dims, ndims, (jint) 1);
+        jint sumD = Common::sum(dims, nDims, (jint) 0);
+        jint prodD = Common::product(dims, nDims, (jint) 1);
 
-        MallocHandler mallocH(sizeof(jint) * (sumD + ndims));
+        MallocHandler mallocH(sizeof(jint) * (sumD + nDims));
         jint *dimCounts = (jint *) mallocH.get();
 
         //
 
-        memset(dimCounts, 0, sizeof(jint) * (sumD + ndims));
+        memset(dimCounts, 0, sizeof(jint) * (sumD + nDims));
 
         for (jint i = 0, acc; i < count; i++) {
 
@@ -232,7 +232,7 @@ MergeResult *SparseOps::merge( //
                 throw std::runtime_error("Invalid physical index");
             }
 
-            for (jint dim = 0; dim < ndims; dim++) {
+            for (jint dim = 0; dim < nDims; dim++) {
 
                 jint dimOffset = dimOffsets[dim] + acc / strides[dim];
 
@@ -243,7 +243,7 @@ MergeResult *SparseOps::merge( //
 
         //
 
-        for (jint dim = 0, acc; dim < ndims; dim++) {
+        for (jint dim = 0, acc; dim < nDims; dim++) {
 
             acc = 0;
 
@@ -261,13 +261,13 @@ MergeResult *SparseOps::merge( //
 
         //
 
-        memset(dimCounts, 0, sizeof(jint) * (sumD + ndims));
+        memset(dimCounts, 0, sizeof(jint) * (sumD + nDims));
 
         for (jint i = 0, acc; i < count; i++) {
 
             acc = indices[i];
 
-            for (jint dim = 0; dim < ndims; dim++) {
+            for (jint dim = 0; dim < nDims; dim++) {
 
                 jint dimOffset = dimOffsets[dim] + acc / strides[dim];
 

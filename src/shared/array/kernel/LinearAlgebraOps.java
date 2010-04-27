@@ -46,61 +46,61 @@ public class LinearAlgebraOps {
      */
     final public static void svd(double[] srcV, int srcStrideRow, int srcStrideCol, //
             double[] uV, double[] sV, double[] vV, //
-            int nrows, int ncols) {
+            int nRows, int nCols) {
 
-        Control.checkTrue(nrows >= ncols //
-                && srcV.length == nrows * ncols //
-                && uV.length == nrows * ncols //
-                && sV.length == ncols //
-                && vV.length == ncols * ncols //
-                && ((srcStrideRow == ncols && srcStrideCol == 1) //
-                || (srcStrideRow == 1 && srcStrideCol == nrows)), //
+        Control.checkTrue(nRows >= nCols //
+                && srcV.length == nRows * nCols //
+                && uV.length == nRows * nCols //
+                && sV.length == nCols //
+                && vV.length == nCols * nCols //
+                && ((srcStrideRow == nCols && srcStrideCol == 1) //
+                || (srcStrideRow == 1 && srcStrideCol == nRows)), //
                 "Invalid arguments");
 
-        int uStrideRow = ncols;
-        int vStrideRow = ncols;
+        int uStrideRow = nCols;
+        int vStrideRow = nCols;
 
-        double[] e = new double[ncols];
-        double[] work = new double[nrows];
+        double[] e = new double[nCols];
+        double[] work = new double[nRows];
         double[] a = srcV.clone();
 
         // Reduce A to bidiagonal form, storing the diagonal elements
         // in s and the super-diagonal elements in e.
 
-        int nct = Math.min(nrows - 1, ncols);
-        int nrt = Math.max(0, Math.min(ncols - 2, nrows));
-        for (int k = 0, l = Math.max(nct, nrt); k < l; k++) {
-            if (k < nct) {
+        int nc = Math.min(nRows - 1, nCols);
+        int nr = Math.max(0, Math.min(nCols - 2, nRows));
+        for (int k = 0, l = Math.max(nc, nr); k < l; k++) {
+            if (k < nc) {
 
                 // Compute the transformation for the k-th column and
                 // place the k-th diagonal in s[k].
                 // Compute 2-norm of k-th column without under/overflow.
                 sV[k] = 0;
-                for (int i = k; i < nrows; i++) {
+                for (int i = k; i < nRows; i++) {
                     sV[k] = CTORAbsOp.op(sV[k], a[srcStrideRow * (i) + srcStrideCol * (k)]);
                 }
                 if (sV[k] != 0.0) {
                     if (a[srcStrideRow * (k) + srcStrideCol * (k)] < 0.0) {
                         sV[k] = -sV[k];
                     }
-                    for (int i = k; i < nrows; i++) {
+                    for (int i = k; i < nRows; i++) {
                         a[srcStrideRow * (i) + srcStrideCol * (k)] /= sV[k];
                     }
                     a[srcStrideRow * (k) + srcStrideCol * (k)] += 1.0;
                 }
                 sV[k] = -sV[k];
             }
-            for (int j = k + 1; j < ncols; j++) {
-                if ((k < nct) & (sV[k] != 0.0)) {
+            for (int j = k + 1; j < nCols; j++) {
+                if ((k < nc) & (sV[k] != 0.0)) {
 
                     // Apply the transformation.
 
                     double t = 0;
-                    for (int i = k; i < nrows; i++) {
+                    for (int i = k; i < nRows; i++) {
                         t += a[srcStrideRow * (i) + srcStrideCol * (k)] * a[srcStrideRow * (i) + srcStrideCol * (j)];
                     }
                     t = -t / a[srcStrideRow * (k) + srcStrideCol * (k)];
-                    for (int i = k; i < nrows; i++) {
+                    for (int i = k; i < nRows; i++) {
                         a[srcStrideRow * (i) + srcStrideCol * (j)] += t * a[srcStrideRow * (i) + srcStrideCol * (k)];
                     }
                 }
@@ -110,49 +110,49 @@ public class LinearAlgebraOps {
 
                 e[j] = a[srcStrideRow * (k) + srcStrideCol * (j)];
             }
-            if (k < nct) {
+            if (k < nc) {
 
                 // Place the transformation in U for subsequent back
                 // multiplication.
 
-                for (int i = k; i < nrows; i++) {
+                for (int i = k; i < nRows; i++) {
                     uV[uStrideRow * (i) + (k)] = a[srcStrideRow * (i) + srcStrideCol * (k)];
                 }
             }
-            if (k < nrt) {
+            if (k < nr) {
 
                 // Compute the k-th row transformation and place the
                 // k-th super-diagonal in e[k].
                 // Compute 2-norm without under/overflow.
                 e[k] = 0;
-                for (int i = k + 1; i < ncols; i++) {
+                for (int i = k + 1; i < nCols; i++) {
                     e[k] = CTORAbsOp.op(e[k], e[i]);
                 }
                 if (e[k] != 0.0) {
                     if (e[k + 1] < 0.0) {
                         e[k] = -e[k];
                     }
-                    for (int i = k + 1; i < ncols; i++) {
+                    for (int i = k + 1; i < nCols; i++) {
                         e[i] /= e[k];
                     }
                     e[k + 1] += 1.0;
                 }
                 e[k] = -e[k];
-                if ((k + 1 < nrows) & (e[k] != 0.0)) {
+                if ((k + 1 < nRows) & (e[k] != 0.0)) {
 
                     // Apply the transformation.
 
-                    for (int i = k + 1; i < nrows; i++) {
+                    for (int i = k + 1; i < nRows; i++) {
                         work[i] = 0.0;
                     }
-                    for (int j = k + 1; j < ncols; j++) {
-                        for (int i = k + 1; i < nrows; i++) {
+                    for (int j = k + 1; j < nCols; j++) {
+                        for (int i = k + 1; i < nRows; i++) {
                             work[i] += e[j] * a[srcStrideRow * (i) + srcStrideCol * (j)];
                         }
                     }
-                    for (int j = k + 1; j < ncols; j++) {
+                    for (int j = k + 1; j < nCols; j++) {
                         double t = -e[j] / e[k + 1];
-                        for (int i = k + 1; i < nrows; i++) {
+                        for (int i = k + 1; i < nRows; i++) {
                             a[srcStrideRow * (i) + srcStrideCol * (j)] += t * work[i];
                         }
                     }
@@ -161,7 +161,7 @@ public class LinearAlgebraOps {
                 // Place the transformation in V for subsequent
                 // back multiplication.
 
-                for (int i = k + 1; i < ncols; i++) {
+                for (int i = k + 1; i < nCols; i++) {
                     vV[vStrideRow * (i) + (k)] = e[i];
                 }
             }
@@ -169,39 +169,39 @@ public class LinearAlgebraOps {
 
         // Set up the final bidiagonal matrix or order p.
 
-        int p = ncols;
-        if (nct < ncols) {
-            sV[nct] = a[srcStrideRow * (nct) + srcStrideCol * (nct)];
+        int p = nCols;
+        if (nc < nCols) {
+            sV[nc] = a[srcStrideRow * (nc) + srcStrideCol * (nc)];
         }
-        if (nrows < p) {
+        if (nRows < p) {
             sV[p - 1] = 0.0;
         }
-        if (nrt + 1 < p) {
-            e[nrt] = a[srcStrideRow * (nrt) + srcStrideCol * (p - 1)];
+        if (nr + 1 < p) {
+            e[nr] = a[srcStrideRow * (nr) + srcStrideCol * (p - 1)];
         }
         e[p - 1] = 0.0;
 
         // If required, generate U.
 
-        for (int j = nct; j < ncols; j++) {
-            for (int i = 0; i < nrows; i++) {
+        for (int j = nc; j < nCols; j++) {
+            for (int i = 0; i < nRows; i++) {
                 uV[uStrideRow * (i) + (j)] = 0.0;
             }
             uV[uStrideRow * (j) + (j)] = 1.0;
         }
-        for (int k = nct - 1; k >= 0; k--) {
+        for (int k = nc - 1; k >= 0; k--) {
             if (sV[k] != 0.0) {
-                for (int j = k + 1; j < ncols; j++) {
+                for (int j = k + 1; j < nCols; j++) {
                     double t = 0;
-                    for (int i = k; i < nrows; i++) {
+                    for (int i = k; i < nRows; i++) {
                         t += uV[uStrideRow * (i) + (k)] * uV[uStrideRow * (i) + (j)];
                     }
                     t = -t / uV[uStrideRow * (k) + (k)];
-                    for (int i = k; i < nrows; i++) {
+                    for (int i = k; i < nRows; i++) {
                         uV[uStrideRow * (i) + (j)] += t * uV[uStrideRow * (i) + (k)];
                     }
                 }
-                for (int i = k; i < nrows; i++) {
+                for (int i = k; i < nRows; i++) {
                     uV[uStrideRow * (i) + (k)] = -uV[uStrideRow * (i) + (k)];
                 }
                 uV[uStrideRow * (k) + (k)] = 1.0 + uV[uStrideRow * (k) + (k)];
@@ -209,7 +209,7 @@ public class LinearAlgebraOps {
                     uV[uStrideRow * (i) + (k)] = 0.0;
                 }
             } else {
-                for (int i = 0; i < nrows; i++) {
+                for (int i = 0; i < nRows; i++) {
                     uV[uStrideRow * (i) + (k)] = 0.0;
                 }
                 uV[uStrideRow * (k) + (k)] = 1.0;
@@ -218,20 +218,20 @@ public class LinearAlgebraOps {
 
         // If required, generate V.
 
-        for (int k = ncols - 1; k >= 0; k--) {
-            if ((k < nrt) & (e[k] != 0.0)) {
-                for (int j = k + 1; j < ncols; j++) {
+        for (int k = nCols - 1; k >= 0; k--) {
+            if ((k < nr) & (e[k] != 0.0)) {
+                for (int j = k + 1; j < nCols; j++) {
                     double t = 0;
-                    for (int i = k + 1; i < ncols; i++) {
+                    for (int i = k + 1; i < nCols; i++) {
                         t += vV[vStrideRow * (i) + (k)] * vV[vStrideRow * (i) + (j)];
                     }
                     t = -t / vV[vStrideRow * (k + 1) + (k)];
-                    for (int i = k + 1; i < ncols; i++) {
+                    for (int i = k + 1; i < nCols; i++) {
                         vV[vStrideRow * (i) + (j)] += t * vV[vStrideRow * (i) + (k)];
                     }
                 }
             }
-            for (int i = 0; i < ncols; i++) {
+            for (int i = 0; i < nCols; i++) {
                 vV[vStrideRow * (i) + (k)] = 0.0;
             }
             vV[vStrideRow * (k) + (k)] = 1.0;
@@ -310,7 +310,7 @@ public class LinearAlgebraOps {
                         f = -sn * e[j - 1];
                         e[j - 1] = cs * e[j - 1];
                     }
-                    for (int i = 0; i < ncols; i++) {
+                    for (int i = 0; i < nCols; i++) {
                         t = cs * vV[vStrideRow * (i) + (j)] + sn * vV[vStrideRow * (i) + (p - 1)];
                         vV[vStrideRow * (i) + (p - 1)] = -sn * vV[vStrideRow * (i) + (j)] + cs
                                 * vV[vStrideRow * (i) + (p - 1)];
@@ -332,7 +332,7 @@ public class LinearAlgebraOps {
                     sV[j] = t;
                     f = -sn * e[j];
                     e[j] = cs * e[j];
-                    for (int i = 0; i < nrows; i++) {
+                    for (int i = 0; i < nRows; i++) {
                         t = cs * uV[uStrideRow * (i) + (j)] + sn * uV[uStrideRow * (i) + (k - 1)];
                         uV[uStrideRow * (i) + (k - 1)] = -sn * uV[uStrideRow * (i) + (j)] + cs
                                 * uV[uStrideRow * (i) + (k - 1)];
@@ -381,7 +381,7 @@ public class LinearAlgebraOps {
                     e[j] = cs * e[j] - sn * sV[j];
                     g = sn * sV[j + 1];
                     sV[j + 1] = cs * sV[j + 1];
-                    for (int i = 0; i < ncols; i++) {
+                    for (int i = 0; i < nCols; i++) {
                         t = cs * vV[vStrideRow * (i) + (j)] + sn * vV[vStrideRow * (i) + (j + 1)];
                         vV[vStrideRow * (i) + (j + 1)] = -sn * vV[vStrideRow * (i) + (j)] + cs
                                 * vV[vStrideRow * (i) + (j + 1)];
@@ -395,8 +395,8 @@ public class LinearAlgebraOps {
                     sV[j + 1] = -sn * e[j] + cs * sV[j + 1];
                     g = sn * e[j + 1];
                     e[j + 1] = cs * e[j + 1];
-                    if (j < nrows - 1) {
-                        for (int i = 0; i < nrows; i++) {
+                    if (j < nRows - 1) {
+                        for (int i = 0; i < nRows; i++) {
                             t = cs * uV[uStrideRow * (i) + (j)] + sn * uV[uStrideRow * (i) + (j + 1)];
                             uV[uStrideRow * (i) + (j + 1)] = -sn * uV[uStrideRow * (i) + (j)] + cs
                                     * uV[uStrideRow * (i) + (j + 1)];
@@ -431,15 +431,15 @@ public class LinearAlgebraOps {
                     double t = sV[k];
                     sV[k] = sV[k + 1];
                     sV[k + 1] = t;
-                    if (k < ncols - 1) {
-                        for (int i = 0; i < ncols; i++) {
+                    if (k < nCols - 1) {
+                        for (int i = 0; i < nCols; i++) {
                             t = vV[vStrideRow * (i) + (k + 1)];
                             vV[vStrideRow * (i) + (k + 1)] = vV[vStrideRow * (i) + (k)];
                             vV[vStrideRow * (i) + (k)] = t;
                         }
                     }
-                    if (k < nrows - 1) {
-                        for (int i = 0; i < nrows; i++) {
+                    if (k < nRows - 1) {
+                        for (int i = 0; i < nRows; i++) {
                             t = uV[uStrideRow * (i) + (k + 1)];
                             uV[uStrideRow * (i) + (k + 1)] = uV[uStrideRow * (i) + (k)];
                             uV[uStrideRow * (i) + (k)] = t;
@@ -1080,32 +1080,32 @@ public class LinearAlgebraOps {
      *            the LU matrix.
      * @param pivots
      *            the row pivots.
-     * @param nrows
+     * @param nRows
      *            the number of rows.
-     * @param ncols
+     * @param nCols
      *            the number of columns.
      */
-    final protected static void lup(double[] lu, int[] pivots, int nrows, int ncols) {
+    final protected static void lup(double[] lu, int[] pivots, int nRows, int nCols) {
 
-        int luStrideRow = ncols;
+        int luStrideRow = nCols;
 
         // Use a "left-looking", dot-product, Crout/Doolittle algorithm.
 
-        double[] luColJ = new double[nrows];
+        double[] luColJ = new double[nRows];
 
         // Outer loop.
 
-        for (int j = 0; j < ncols; j++) {
+        for (int j = 0; j < nCols; j++) {
 
             // Make a copy of the j-th column to localize references.
 
-            for (int i = 0; i < nrows; i++) {
+            for (int i = 0; i < nRows; i++) {
                 luColJ[i] = lu[luStrideRow * (i) + (j)];
             }
 
             // Apply previous transformations.
 
-            for (int i = 0; i < nrows; i++) {
+            for (int i = 0; i < nRows; i++) {
 
                 // Most of the time is spent in the following dot product.
 
@@ -1121,13 +1121,13 @@ public class LinearAlgebraOps {
             // Find pivot and exchange if necessary.
 
             int p = j;
-            for (int i = j + 1; i < nrows; i++) {
+            for (int i = j + 1; i < nRows; i++) {
                 if (Math.abs(luColJ[i]) > Math.abs(luColJ[p])) {
                     p = i;
                 }
             }
             if (p != j) {
-                for (int k = 0; k < ncols; k++) {
+                for (int k = 0; k < nCols; k++) {
                     double t = lu[luStrideRow * (p) + (k)];
                     lu[luStrideRow * (p) + (k)] = lu[luStrideRow * (j) + (k)];
                     lu[luStrideRow * (j) + (k)] = t;
@@ -1139,8 +1139,8 @@ public class LinearAlgebraOps {
 
             // Compute multipliers.
 
-            if (j < nrows && lu[luStrideRow * (j) + (j)] != 0.0) {
-                for (int i = j + 1; i < nrows; i++) {
+            if (j < nRows && lu[luStrideRow * (j) + (j)] != 0.0) {
+                for (int i = j + 1; i < nRows; i++) {
                     lu[luStrideRow * (i) + (j)] /= lu[luStrideRow * (j) + (j)];
                 }
             }
@@ -1152,33 +1152,33 @@ public class LinearAlgebraOps {
      * 
      * @param lu
      *            the LU matrix.
-     * @param nluCols
+     * @param nLUCols
      *            the number of columns in the LU matrix.
      * @param dstV
      *            the destination matrix.
-     * @param ndstVCols
+     * @param nDstVCols
      *            the number of columns in the destination matrix.
      */
-    final protected static void luSolve(double[] lu, int nluCols, double[] dstV, int ndstVCols) {
+    final protected static void luSolve(double[] lu, int nLUCols, double[] dstV, int nDstVCols) {
 
-        int luStrideRow = nluCols;
-        int vStrideRow = ndstVCols;
+        int luStrideRow = nLUCols;
+        int vStrideRow = nDstVCols;
 
         // Solve L*Y = B(piv,:)
-        for (int k = 0; k < nluCols; k++) {
-            for (int i = k + 1; i < nluCols; i++) {
-                for (int j = 0; j < ndstVCols; j++) {
+        for (int k = 0; k < nLUCols; k++) {
+            for (int i = k + 1; i < nLUCols; i++) {
+                for (int j = 0; j < nDstVCols; j++) {
                     dstV[vStrideRow * (i) + (j)] -= dstV[vStrideRow * (k) + (j)] * lu[luStrideRow * (i) + (k)];
                 }
             }
         }
         // Solve U*X = Y;
-        for (int k = nluCols - 1; k >= 0; k--) {
-            for (int j = 0; j < nluCols; j++) {
+        for (int k = nLUCols - 1; k >= 0; k--) {
+            for (int j = 0; j < nLUCols; j++) {
                 dstV[vStrideRow * (k) + (j)] /= lu[luStrideRow * (k) + (k)];
             }
             for (int i = 0; i < k; i++) {
-                for (int j = 0; j < ndstVCols; j++) {
+                for (int j = 0; j < nDstVCols; j++) {
                     dstV[vStrideRow * (i) + (j)] -= dstV[vStrideRow * (k) + (j)] * lu[luStrideRow * (i) + (k)];
                 }
             }

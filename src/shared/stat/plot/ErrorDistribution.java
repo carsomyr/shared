@@ -65,22 +65,22 @@ abstract public class ErrorDistribution implements Plottable {
      */
     public ErrorDistribution(double[][] confidencesArray, boolean[][] outcomesArray) {
 
-        int nclasses = Control.checkEquals(confidencesArray.length, outcomesArray.length);
+        int nClasses = Control.checkEquals(confidencesArray.length, outcomesArray.length);
 
-        this.datasets = new RealArray[nclasses];
+        this.datasets = new RealArray[nClasses];
 
-        for (int i = 0; i < nclasses; i++) {
+        for (int i = 0; i < nClasses; i++) {
 
-            int nexamples = Control.checkEquals(confidencesArray[i].length, outcomesArray[i].length);
+            int nExamples = Control.checkEquals(confidencesArray[i].length, outcomesArray[i].length);
 
-            double[] confidences = new double[nexamples];
-            boolean[] outcomes = new boolean[nexamples];
+            double[] confidences = new double[nExamples];
+            boolean[] outcomes = new boolean[nExamples];
 
-            RealArray dataset = new RealArray(nexamples, 2);
+            RealArray dataset = new RealArray(nExamples, 2);
 
             int[] perm = new RealArray(confidencesArray[i]).clone().iSort(0).reverse(0).values();
 
-            for (int j = 0; j < nexamples; j++) {
+            for (int j = 0; j < nExamples; j++) {
 
                 confidences[j] = confidencesArray[i][perm[j]];
                 outcomes[j] = outcomesArray[i][perm[j]];
@@ -91,8 +91,8 @@ abstract public class ErrorDistribution implements Plottable {
             this.datasets[i] = dataset;
         }
 
-        this.dataTitles = PlotBase.createDefaultTitles(nclasses);
-        this.dataStyles = Arrays.newArray(DataStyle.class, nclasses, DataStyle.Lines);
+        this.dataTitles = PlotBase.createDefaultTitles(nClasses);
+        this.dataStyles = Arrays.newArray(DataStyle.class, nClasses, DataStyle.Lines);
     }
 
     /**

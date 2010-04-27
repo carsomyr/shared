@@ -82,25 +82,25 @@ public class Engine<T> {
     /**
      * Alternate constructor. Creates an engine with {@link LimitedMemoryPolicy} for its {@link TraversalPolicy}.
      * 
-     * @param nthreads
+     * @param nThreads
      *            the number of threads.
      */
-    public Engine(int nthreads) {
-        this(nthreads, new LimitedMemoryPolicy<EngineNode<?, ?>, EngineEdge<?>>());
+    public Engine(int nThreads) {
+        this(nThreads, new LimitedMemoryPolicy<EngineNode<?, ?>, EngineEdge<?>>());
     }
 
     /**
      * Default constructor.
      * 
-     * @param nthreads
+     * @param nThreads
      *            the number of threads.
      * @param policy
      *            the {@link TraversalPolicy} to apply when ordering nodes.
      */
-    public Engine(int nthreads, TraversalPolicy<EngineNode<?, ?>, EngineEdge<?>> policy) {
+    public Engine(int nThreads, TraversalPolicy<EngineNode<?, ?>, EngineEdge<?>> policy) {
 
         this.exceptionRef = new ThrowableReferenceHandler();
-        this.executor = Control.createPool(nthreads, nthreads, //
+        this.executor = Control.createPool(nThreads, nThreads, //
                 new PriorityBlockingQueue<Runnable>(), //
                 this.exceptionRef);
 

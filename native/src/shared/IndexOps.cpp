@@ -67,10 +67,10 @@ inline jint *IndexOps::findProxy(JNIEnv *env, //
         }
 
         jint srcLen = env->GetArrayLength(srcV);
-        jint ndims = env->GetArrayLength(srcD);
+        jint nDims = env->GetArrayLength(srcD);
 
-        if ((ndims != env->GetArrayLength(srcS)) //
-                || (ndims != env->GetArrayLength(logical))) {
+        if ((nDims != env->GetArrayLength(srcS)) //
+                || (nDims != env->GetArrayLength(logical))) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -87,12 +87,12 @@ inline jint *IndexOps::findProxy(JNIEnv *env, //
         jint *srcSArr = (jint *) srcSH.get();
         jint *logicalArr = (jint *) indicesH.get();
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, srcLen);
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
 
         jint activeDim = -1;
         jint count = 0;
 
-        for (jint dim = 0; dim < ndims; dim++) {
+        for (jint dim = 0; dim < nDims; dim++) {
 
             if (logicalArr[dim] == -1) {
 
@@ -107,7 +107,7 @@ inline jint *IndexOps::findProxy(JNIEnv *env, //
 
         jint offset = 0;
 
-        for (jint dim = 0; dim < ndims; dim++) {
+        for (jint dim = 0; dim < nDims; dim++) {
 
             if (dim != activeDim) {
 

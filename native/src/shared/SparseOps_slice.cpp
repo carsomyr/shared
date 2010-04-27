@@ -85,22 +85,22 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         jint srcLen = env->GetArrayLength(srcV);
         jint dstLen = env->GetArrayLength(dstV);
-        jint ndims = env->GetArrayLength(srcD);
+        jint nDims = env->GetArrayLength(srcD);
         jint srcIOLen = env->GetArrayLength(srcIO);
         jint dstIOLen = env->GetArrayLength(dstIO);
 
-        jint nslices = env->GetArrayLength(slices) / 3;
+        jint nSlices = env->GetArrayLength(slices) / 3;
 
-        if ((ndims != env->GetArrayLength(srcS)) //
-                || (ndims != env->GetArrayLength(dstD)) //
-                || (ndims != env->GetArrayLength(dstS)) //
+        if ((nDims != env->GetArrayLength(srcS)) //
+                || (nDims != env->GetArrayLength(dstD)) //
+                || (nDims != env->GetArrayLength(dstS)) //
                 || (env->GetArrayLength(slices) % 3) //
                 || (srcLen != env->GetArrayLength(srcI)) //
                 || (dstLen != env->GetArrayLength(dstI)) //
-                || (ndims + 1 != env->GetArrayLength(srcDO)) //
-                || (ndims * srcLen != env->GetArrayLength(srcII)) //
-                || (ndims + 1 != env->GetArrayLength(dstDO)) //
-                || (ndims * dstLen != env->GetArrayLength(dstII))) {
+                || (nDims + 1 != env->GetArrayLength(srcDO)) //
+                || (nDims * srcLen != env->GetArrayLength(srcII)) //
+                || (nDims + 1 != env->GetArrayLength(dstDO)) //
+                || (nDims * dstLen != env->GetArrayLength(dstII))) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -132,21 +132,21 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint *dstIOArr = (jint *) dstIOH.get();
         jint *dstIIArr = (jint *) dstIIH.get();
 
-        if ((srcIOLen != Common::sum(srcDArr, ndims, (jint) 0) + ndims) //
-                || (dstIOLen != Common::sum(dstDArr, ndims, (jint) 0) + ndims)) {
+        if ((srcIOLen != Common::sum(srcDArr, nDims, (jint) 0) + nDims) //
+                || (dstIOLen != Common::sum(dstDArr, nDims, (jint) 0) + nDims)) {
             throw std::runtime_error("Invalid arguments");
         }
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, Common::product(srcDArr, ndims, (jint) 1));
-        MappingOps::checkDimensions(dstDArr, dstSArr, ndims, Common::product(dstDArr, ndims, (jint) 1));
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, Common::product(srcDArr, nDims, (jint) 1));
+        MappingOps::checkDimensions(dstDArr, dstSArr, nDims, Common::product(dstDArr, nDims, (jint) 1));
 
-        for (jint i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (jint i = 0, n = 3 * nSlices; i < n; i += 3) {
 
             jint srcIndex = slicesArr[i];
             jint dstIndex = slicesArr[i + 1];
             jint dim = slicesArr[i + 2];
 
-            if (!(dim >= 0 && dim < ndims)) {
+            if (!(dim >= 0 && dim < nDims)) {
                 throw std::runtime_error("Invalid dimension");
             }
 
@@ -156,7 +156,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
             }
         }
 
-        for (jint dim = 0; dim < ndims; dim++) {
+        for (jint dim = 0; dim < nDims; dim++) {
 
             if ((srcDOArr[dim + 1] - srcDOArr[dim] - 1 != srcDArr[dim]) //
                     || (dstDOArr[dim + 1] - dstDOArr[dim] - 1 != dstDArr[dim])) {
@@ -166,21 +166,21 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         //
 
-        jint offsetArrayLen = srcDOArr[ndims];
+        jint offsetArrayLen = srcDOArr[nDims];
 
-        MallocHandler all0H(sizeof(jint) * (2 * ndims + 2 * offsetArrayLen + 1 + srcLen + dstLen));
+        MallocHandler all0H(sizeof(jint) * (2 * nDims + 2 * offsetArrayLen + 1 + srcLen + dstLen));
         jint *all0 = (jint *) all0H.get();
         jint *srcSliceCounts = all0;
-        jint *lookupCounts = all0 + ndims;
-        jint *sliceOffsets = all0 + ndims + offsetArrayLen;
-        jint *lookupOffsets = all0 + 2 * ndims + offsetArrayLen + 1;
-        jint *srcIndirections = all0 + 2 * ndims + 2 * offsetArrayLen + 1;
-        jint *dstIndirections = all0 + 2 * ndims + 2 * offsetArrayLen + 1 + srcLen;
+        jint *lookupCounts = all0 + nDims;
+        jint *sliceOffsets = all0 + nDims + offsetArrayLen;
+        jint *lookupOffsets = all0 + 2 * nDims + offsetArrayLen + 1;
+        jint *srcIndirections = all0 + 2 * nDims + 2 * offsetArrayLen + 1;
+        jint *dstIndirections = all0 + 2 * nDims + 2 * offsetArrayLen + 1 + srcLen;
 
-        memset(srcSliceCounts, 0, sizeof(jint) * ndims);
+        memset(srcSliceCounts, 0, sizeof(jint) * nDims);
         memset(lookupCounts, 0, sizeof(jint) * offsetArrayLen);
 
-        for (jint i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (jint i = 0, n = 3 * nSlices; i < n; i += 3) {
 
             jint srcIndex = slicesArr[i];
             jint dim = slicesArr[i + 2];
@@ -194,7 +194,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint sliceOffset = 0;
         jint lookupOffset = 0;
 
-        for (jint dim = 0; dim < ndims; dim++) {
+        for (jint dim = 0; dim < nDims; dim++) {
 
             sliceOffsets[dim] = sliceOffset;
             sliceOffset += srcSliceCounts[dim];
@@ -210,21 +210,21 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
             lookupOffsets[srcDOArr[dim] + dimSize] = lookupOffset;
         }
 
-        sliceOffsets[ndims] = sliceOffset;
+        sliceOffsets[nDims] = sliceOffset;
 
         //
 
-        MallocHandler all1H(sizeof(jint) * (2 * sliceOffset + ndims + lookupOffset));
+        MallocHandler all1H(sizeof(jint) * (2 * sliceOffset + nDims + lookupOffset));
         jint *all1 = (jint *) all1H.get();
         jint *srcSlices = all1;
         jint *dstSlices = all1 + sliceOffset;
         jint *dstSliceCounts = all1 + 2 * sliceOffset;
-        jint *dstLookups = all1 + 2 * sliceOffset + ndims;
+        jint *dstLookups = all1 + 2 * sliceOffset + nDims;
 
-        memset(srcSliceCounts, 0, sizeof(jint) * ndims);
+        memset(srcSliceCounts, 0, sizeof(jint) * nDims);
         memset(lookupCounts, 0, sizeof(jint) * offsetArrayLen);
 
-        for (jint i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (jint i = 0, n = 3 * nSlices; i < n; i += 3) {
 
             jint srcIndex = slicesArr[i];
             jint dstIndex = slicesArr[i + 1];
@@ -241,10 +241,10 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         //
 
-        memset(srcSliceCounts, 0, sizeof(jint) * ndims);
+        memset(srcSliceCounts, 0, sizeof(jint) * nDims);
         memset(lookupCounts, 0, sizeof(jint) * offsetArrayLen);
 
-        for (jint dim = 0; dim < ndims; dim++) {
+        for (jint dim = 0; dim < nDims; dim++) {
 
             srcSliceCounts[dim] = normalize(srcSlices, sliceOffsets[dim], sliceOffsets[dim + 1]);
             dstSliceCounts[dim] = normalize(dstSlices, sliceOffsets[dim], sliceOffsets[dim + 1]);
@@ -258,31 +258,31 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         //
 
-        jint nsrcIndirections;
+        jint nSrcIndirections;
 
         getSlicedIndirections(sliceOffsets, srcSliceCounts, srcSlices, //
                 srcDOArr, srcIOArr, srcIIArr, srcLen, //
-                srcDArr, ndims, //
-                srcIndirections, nsrcIndirections);
+                srcDArr, nDims, //
+                srcIndirections, nSrcIndirections);
 
-        jint ndstIndirections;
+        jint nDstIndirections;
 
         getSlicedIndirections(sliceOffsets, dstSliceCounts, dstSlices, //
                 dstDOArr, dstIOArr, dstIIArr, dstLen, //
-                dstDArr, ndims, //
-                dstIndirections, ndstIndirections);
+                dstDArr, nDims, //
+                dstIndirections, nDstIndirections);
 
         //
 
-        MallocHandler all2H(sizeof(jint) * (nsrcIndirections + 1 + 2 * dstLen - 2 * ndstIndirections));
+        MallocHandler all2H(sizeof(jint) * (nSrcIndirections + 1 + 2 * dstLen - 2 * nDstIndirections));
         jint *all2 = (jint *) all2H.get();
         jint *indirectionOffsets = all2;
-        jint *oldIndices = all2 + nsrcIndirections + 1;
-        jint *oldIndirections = all2 + nsrcIndirections + 1 + dstLen - ndstIndirections;
+        jint *oldIndices = all2 + nSrcIndirections + 1;
+        jint *oldIndirections = all2 + nSrcIndirections + 1 + dstLen - nDstIndirections;
 
         jint indirectionOffset = 0;
 
-        for (jint i = 0, prodD = Common::product(srcDArr, ndims, (jint) 1); i < nsrcIndirections; i++) {
+        for (jint i = 0, prodD = Common::product(srcDArr, nDims, (jint) 1); i < nSrcIndirections; i++) {
 
             jint indirection = srcIndirections[i];
 
@@ -298,7 +298,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
             jint mapLen = 1;
 
-            for (jint dim = 0; dim < ndims; dim++) {
+            for (jint dim = 0; dim < nDims; dim++) {
 
                 jint logicalIndex = physical / srcSArr[dim];
 
@@ -311,11 +311,11 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
             indirectionOffset += mapLen;
         }
 
-        indirectionOffsets[nsrcIndirections] = indirectionOffset;
+        indirectionOffsets[nSrcIndirections] = indirectionOffset;
 
         //
 
-        MallocHandler all3H(sizeof(jint) * (4 * indirectionOffset + ndims));
+        MallocHandler all3H(sizeof(jint) * (4 * indirectionOffset + nDims));
         jint *all3 = (jint *) all3H.get();
         jint *newIndirections = all3;
         jint *newIndices = all3 + indirectionOffset;
@@ -323,7 +323,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint *resNewIndices = all3 + 3 * indirectionOffset;
         jint *logical = all3 + 4 * indirectionOffset;
 
-        for (jint i = 0; i < nsrcIndirections; i++) {
+        for (jint i = 0; i < nSrcIndirections; i++) {
 
             jint indirection = srcIndirections[i];
             jint physical = srcIArr[indirection];
@@ -332,7 +332,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
             newIndices[indirectionOffset] = 0;
 
-            for (jint dim = 0; dim < ndims; dim++) {
+            for (jint dim = 0; dim < nDims; dim++) {
 
                 logical[dim] = physical / srcSArr[dim];
 
@@ -347,7 +347,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
                     newIndirections + indirectionOffsets[i + 1], //
                     indirection);
 
-            for (jint dim = ndims - 1, blockSize = 1, size; dim >= 0; blockSize *= size, dim--) {
+            for (jint dim = nDims - 1, blockSize = 1, size; dim >= 0; blockSize *= size, dim--) {
 
                 jint start = lookupOffsets[srcDOArr[dim] + logical[dim]];
                 size = lookupCounts[srcDOArr[dim] + logical[dim]];
@@ -367,7 +367,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         //
 
-        if (ndstIndirections > 0) {
+        if (nDstIndirections > 0) {
 
             jint count = 0;
 
@@ -377,7 +377,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
                 oldIndirections[count] = i;
             }
 
-            for (jint i = 0, n = ndstIndirections - 1; i < n; i++) {
+            for (jint i = 0, n = nDstIndirections - 1; i < n; i++) {
 
                 for (jint j = dstIndirections[i] + 1, m = dstIndirections[i + 1]; j < m; j++, count++) {
 
@@ -386,7 +386,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
                 }
             }
 
-            for (jint i = dstIndirections[ndstIndirections - 1] + 1, n = dstLen; i < n; i++, count++) {
+            for (jint i = dstIndirections[nDstIndirections - 1] + 1, n = dstLen; i < n; i++, count++) {
 
                 oldIndices[count] = dstIArr[i];
                 oldIndirections[count] = i;
@@ -405,12 +405,12 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         jint resLen;
 
-        merge(newIndices, newIndirections, indirectionOffsets[nsrcIndirections], //
+        merge(newIndices, newIndirections, indirectionOffsets[nSrcIndirections], //
                 resNewIndices, resNewIndirections, resLen);
 
-        mergeResult = merge(oldIndices, oldIndirections, dstLen - ndstIndirections, //
+        mergeResult = merge(oldIndices, oldIndirections, dstLen - nDstIndirections, //
                 resNewIndices, resNewIndirections, resLen, //
-                dstDArr, dstSArr, dstDOArr, ndims);
+                dstDArr, dstSArr, dstDOArr, nDims);
 
         return mergeResult;
 
@@ -449,30 +449,30 @@ jint SparseOps::normalize(jint *values, jint start, jint end) {
 
 void SparseOps::getSlicedIndirections( //
         jint *sliceOffsets, jint *sliceCounts, jint *slices, //
-        jint *dimOffsets, jint *indirectionOffsets, jint *indirections, jint nindirections, //
-        jint *dims, jint ndims, //
+        jint *dimOffsets, jint *indirectionOffsets, jint *indirections, jint nIndirections, //
+        jint *dims, jint nDims, //
         jint *result, jint &len) {
 
     jint *intersection = NULL;
     len = 0;
 
-    for (jint dim = 0; dim < ndims; dim++) {
+    for (jint dim = 0; dim < nDims; dim++) {
 
         jint dimOffset = dimOffsets[dim];
 
         jint sliceStart = sliceOffsets[dim];
         jint sliceEnd = sliceOffsets[dim] + sliceCounts[dim];
 
-        jint nslices = sliceEnd - sliceStart;
+        jint nSlices = sliceEnd - sliceStart;
 
-        MallocHandler all0H(sizeof(jint) * (2 * nslices));
+        MallocHandler all0H(sizeof(jint) * (2 * nSlices));
         jint *all0 = (jint *) all0H.get();
         jint *indirectionLowers = all0;
-        jint *indirectionUppers = all0 + nslices;
+        jint *indirectionUppers = all0 + nSlices;
 
-        jint nelts = 0;
+        jint nElts = 0;
 
-        for (jint i = 0; i < nslices; i++) {
+        for (jint i = 0; i < nSlices; i++) {
 
             jint index = slices[i + sliceStart];
 
@@ -482,21 +482,21 @@ void SparseOps::getSlicedIndirections( //
             if (!(start >= 0 //
                     && start <= end //
                     && end >= 0 //
-                    && end <= nindirections)) {
+                    && end <= nIndirections)) {
                 throw std::runtime_error("Invalid arguments");
             }
 
             indirectionLowers[i] = start;
             indirectionUppers[i] = end;
 
-            nelts += end - start;
+            nElts += end - start;
         }
 
-        MallocHandler all1H(sizeof(jint) * nelts);
+        MallocHandler all1H(sizeof(jint) * nElts);
         jint *all1 = (jint *) all1H.get();
         jint *res = all1;
 
-        for (jint i = 0, resCount = 0; i < nslices; i++) {
+        for (jint i = 0, resCount = 0; i < nSlices; i++) {
 
             jint index = slices[i + sliceStart];
 
@@ -504,11 +504,11 @@ void SparseOps::getSlicedIndirections( //
             jint end = indirectionOffsets[dimOffset + index + 1];
 
             for (jint j = start; j < end; j++) {
-                res[resCount++] = indirections[nindirections * dim + j];
+                res[resCount++] = indirections[nIndirections * dim + j];
             }
         }
 
-        std::sort(res, res + nelts);
+        std::sort(res, res + nElts);
 
         if (intersection != NULL) {
 
@@ -516,7 +516,7 @@ void SparseOps::getSlicedIndirections( //
             jint intersectionUpper = len;
 
             jint resLower = 0;
-            jint resUpper = nelts;
+            jint resUpper = nElts;
 
             jint propagate = 0;
 
@@ -547,7 +547,7 @@ void SparseOps::getSlicedIndirections( //
         } else {
 
             intersection = result;
-            len = nelts;
+            len = nElts;
 
             memcpy(intersection, res, sizeof(jint) * len);
         }

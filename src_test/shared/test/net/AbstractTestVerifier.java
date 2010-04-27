@@ -104,7 +104,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         /**
          * Gets the number of messages.
          */
-        public int nmessages();
+        public int nMessages();
     }
 
     /**
@@ -122,20 +122,20 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
 
     long seqNo;
     long seqNoForward;
-    int nmessages;
+    int nMessages;
 
     VerifierStatus status;
 
     /**
      * Default constructor.
      */
-    protected AbstractTestVerifier(long seqNo, int nmessages) {
+    protected AbstractTestVerifier(long seqNo, int nMessages) {
 
         this.semaphore = new Semaphore(0);
 
         this.seqNo = seqNo;
         this.seqNoForward = seqNo + 1;
-        this.nmessages = nmessages;
+        this.nMessages = nMessages;
 
         this.status = VerifierStatus.VIRGIN;
     }
@@ -190,7 +190,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
                 SequenceEventDefinition sEvt = (SequenceEventDefinition) evt;
 
                 arv.seqNo = sEvt.getSeqNo();
-                arv.nmessages = sEvt.nmessages();
+                arv.nMessages = sEvt.nMessages();
 
                 evt.getSource().onRemote(evt);
             }
@@ -211,7 +211,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
 
                 evt.getSource().onRemote(createSequenceEvent( //
                         arv.seqNo++, //
-                        arv.nmessages--));
+                        arv.nMessages--));
             }
         };
 
@@ -226,7 +226,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
 
                 AbstractReceiverVerifier<T> arv = AbstractReceiverVerifier.this;
 
-                arv.status = (arv.nmessages == 0) ? VerifierStatus.SUCCESS : VerifierStatus.FAILURE;
+                arv.status = (arv.nMessages == 0) ? VerifierStatus.SUCCESS : VerifierStatus.FAILURE;
                 arv.semaphore.release();
             }
         };
@@ -248,7 +248,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         /**
          * Creates a sequence event.
          */
-        abstract protected T createSequenceEvent(long seqNo, int nmessages);
+        abstract protected T createSequenceEvent(long seqNo, int nMessages);
     }
 
     /**
@@ -269,7 +269,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
                 SequenceEventDefinition sEvt = (SequenceEventDefinition) evt;
 
                 Control.checkTrue(sEvt.getSeqNo() == asv.seqNo //
-                        && sEvt.nmessages() == asv.nmessages, //
+                        && sEvt.nMessages() == asv.nMessages, //
                         "Invalid sequence event");
 
                 evt.getSource().onRemote(createDataEvent( //
@@ -289,10 +289,10 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
                 SequenceEventDefinition sEvt = (SequenceEventDefinition) evt;
 
                 Control.checkTrue(sEvt.getSeqNo() == asv.seqNo++ //
-                        && sEvt.nmessages() == asv.nmessages--, //
+                        && sEvt.nMessages() == asv.nMessages--, //
                         "Invalid sequence event");
 
-                if (asv.nmessages == 0) {
+                if (asv.nMessages == 0) {
 
                     // We finished sending everything.
                     Control.close(evt.getSource());
@@ -307,7 +307,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
 
                     // Simulate bursty behavior by transmitting events as either singletons or
                     // pairs.
-                    for (int i = 0, n = Math.min(asv.nmessages, Arithmetic.nextInt(2) + 1); i < n; i++, asv.seqNoForward++) {
+                    for (int i = 0, n = Math.min(asv.nMessages, Arithmetic.nextInt(2) + 1); i < n; i++, asv.seqNoForward++) {
                         evt.getSource().onRemote( //
                                 createDataEvent(createData(asv.seqNo + i, len)));
                     }
@@ -336,8 +336,8 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         /**
          * Default constructor.
          */
-        protected AbstractSenderVerifier(long seqNo, int nmessages, int meanMessageSize) {
-            super(seqNo, nmessages);
+        protected AbstractSenderVerifier(long seqNo, int nMessages, int meanMessageSize) {
+            super(seqNo, nMessages);
 
             this.meanMessageSize = meanMessageSize;
 

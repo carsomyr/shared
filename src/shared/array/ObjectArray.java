@@ -165,10 +165,10 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
         int[] dims = this.dims;
         int[] strides = this.strides;
 
-        int ndims = dims.length;
-        int nrows = (ndims == 1) ? 1 : size(ndims - 2);
-        int ncols = size(ndims - 1);
-        int sliceSize = nrows * ncols;
+        int nDims = dims.length;
+        int nRows = (nDims == 1) ? 1 : size(nDims - 2);
+        int nCols = size(nDims - 1);
+        int sliceSize = nRows * nCols;
 
         Formatter f = new Formatter();
 
@@ -184,12 +184,12 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
 
         strides = IndexingOrder.FAR.strides(dims);
 
-        if (ndims <= 2) {
+        if (nDims <= 2) {
 
             f.format("%n");
 
             formatSlice(f, " \"%s\"", //
-                    values, indices, 0, nrows, ncols, false);
+                    values, indices, 0, nRows, nCols, false);
 
             return f.toString();
         }
@@ -198,14 +198,14 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
 
             f.format("%n[slice (");
 
-            for (int i = 0, n = ndims - 2, offsetAcc = offset; i < n; offsetAcc %= strides[i], i++) {
+            for (int i = 0, n = nDims - 2, offsetAcc = offset; i < n; offsetAcc %= strides[i], i++) {
                 f.format("%d, ", offsetAcc / strides[i]);
             }
 
             f.format(":, :)]%n");
 
             formatSlice(f, " \"%s\"", //
-                    values, indices, offset, nrows, ncols, false);
+                    values, indices, offset, nRows, nCols, false);
         }
 
         return f.toString();

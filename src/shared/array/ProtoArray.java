@@ -205,10 +205,10 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         T src = (T) this;
 
-        int ndims = srcSlices.length;
-        int[] dstDims = new int[ndims];
+        int nDims = srcSlices.length;
+        int[] dstDims = new int[nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             dstDims[dim] = srcSlices[dim].length;
         }
 
@@ -219,19 +219,19 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         ProtoArray<T, V, E> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, srcSlices.length, //
+        int nDims = Control.checkEquals(src.dims.length, srcSlices.length, //
                 "Dimensionality mismatch");
 
-        int nslices = 0;
-        int[] dstDims = new int[ndims];
+        int nSlices = 0;
+        int[] dstDims = new int[nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
-            nslices += (dstDims[dim] = srcSlices[dim].length);
+        for (int dim = 0; dim < nDims; dim++) {
+            nSlices += (dstDims[dim] = srcSlices[dim].length);
         }
 
         T dst = wrap(src.order, dstDims, src.order.strides(dstDims));
 
-        OpKernel.slice(canonicalizeSlices(nslices, src.dims, srcSlices), //
+        OpKernel.slice(canonicalizeSlices(nSlices, src.dims, srcSlices), //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -242,20 +242,20 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         ProtoArray<T, V, E> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, repetitions.length, //
+        int nDims = Control.checkEquals(src.dims.length, repetitions.length, //
                 "Dimensionality mismatch");
 
         int[] newDims = src.dims.clone();
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             newDims[dim] *= repetitions[dim];
         }
 
         T dst = wrap(src.order, newDims, src.order.strides(newDims));
 
-        int[] mappingBounds = new int[3 * ndims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
             mappingBounds[offset + 2] = dst.dims[dim];
         }
 
@@ -270,15 +270,15 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         ProtoArray<T, V, E> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, permutation.length, //
+        int nDims = Control.checkEquals(src.dims.length, permutation.length, //
                 "Dimensionality mismatch");
 
-        int[] newDims = new int[ndims];
+        int[] newDims = new int[nDims];
         int[] copy = permutation.clone();
 
         Arrays.sort(copy);
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             newDims[permutation[dim]] = src.dims[dim];
 
@@ -288,13 +288,13 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         T dst = wrap(src.order, newDims, src.order.strides(newDims));
 
-        int[] mappingBounds = new int[3 * ndims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
             mappingBounds[offset + 2] = src.dims[dim];
         }
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             copy[dim] = dst.strides[permutation[dim]];
         }
 
@@ -309,12 +309,12 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         ProtoArray<T, V, E> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, shifts.length, //
+        int nDims = Control.checkEquals(src.dims.length, shifts.length, //
                 "Dimensionality mismatch");
 
-        int[] mappingBounds = new int[3 * ndims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
 
             mappingBounds[offset + 1] = shifts[dim];
             mappingBounds[offset + 2] = src.dims[dim];
@@ -333,15 +333,15 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         ProtoArray<T, V, E> src = this;
 
-        int ndims = src.dims.length;
+        int nDims = src.dims.length;
 
-        Control.checkTrue(ndims * 2 == bounds.length, //
+        Control.checkTrue(nDims * 2 == bounds.length, //
                 "Invalid subarray bounds");
 
-        int[] newDims = new int[ndims];
-        int[] mappingBounds = new int[3 * ndims];
+        int[] newDims = new int[nDims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             int lower = bounds[2 * dim];
             int upper = bounds[2 * dim + 1];
@@ -393,9 +393,9 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         ProtoArray<T, V, E> src = this;
 
-        int ndims = src.dims.length;
+        int nDims = src.dims.length;
 
-        Control.checkTrue(opDim >= 0 && opDim < ndims, //
+        Control.checkTrue(opDim >= 0 && opDim < nDims, //
                 "Invalid dimension");
 
         srcs = Arrays.copyOf(srcs, srcs.length + 1);
@@ -413,7 +413,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
                         "Dimension mismatch");
             }
 
-            for (int dim = opDim + 1; dim < ndims; dim++) {
+            for (int dim = opDim + 1; dim < nDims; dim++) {
                 Control.checkTrue(src.dims[dim] == srcs[i].dims[dim], //
                         "Dimension mismatch");
             }
@@ -424,9 +424,9 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         int[] newDims = src.dims.clone();
         newDims[opDim] = offset;
 
-        int[] mappingBounds = new int[3 * ndims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             mappingBounds[3 * dim + 2] = src.dims[dim];
         }
 
@@ -456,11 +456,11 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         IndexingOrder newOrder = src.order.reverse();
         T dst = wrap(newOrder, src.dims, newOrder.strides(src.dims));
 
-        int ndims = src.dims.length;
+        int nDims = src.dims.length;
 
-        int[] mappingBounds = new int[3 * ndims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
             mappingBounds[offset + 2] = src.dims[dim];
         }
 
@@ -495,7 +495,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return this.strides[i];
     }
 
-    public int ndims() {
+    public int nDims() {
         return this.dims.length;
     }
 

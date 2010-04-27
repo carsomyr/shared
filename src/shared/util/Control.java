@@ -1024,9 +1024,9 @@ public class Control {
     /**
      * Creates a pool of daemon worker threads.
      * 
-     * @param ncoreThreads
+     * @param nCoreThreads
      *            the number of core threads.
-     * @param nmaxThreads
+     * @param nMaxThreads
      *            the maximum number of threads.
      * @param workQueue
      *            the {@link BlockingQueue} to which work is submitted.
@@ -1034,11 +1034,11 @@ public class Control {
      *            the handler to invoke when a worker thread dies horribly.
      * @return the pool.
      */
-    final public static ThreadPoolExecutor createPool(int ncoreThreads, int nmaxThreads, //
+    final public static ThreadPoolExecutor createPool(int nCoreThreads, int nMaxThreads, //
             BlockingQueue<Runnable> workQueue, final UncaughtExceptionHandler h) {
 
-        return new ThreadPoolExecutor(ncoreThreads, nmaxThreads, //
-                (ncoreThreads < nmaxThreads) ? 60000L : 0L, //
+        return new ThreadPoolExecutor(nCoreThreads, nMaxThreads, //
+                (nCoreThreads < nMaxThreads) ? 60000L : 0L, //
                 TimeUnit.MILLISECONDS, workQueue, //
 
                 new ThreadFactory() {
@@ -1060,12 +1060,12 @@ public class Control {
     /**
      * Creates a pool of daemon worker threads.
      * 
-     * @param ncoreThreads
+     * @param nCoreThreads
      *            the number of core threads.
      * @return the pool.
      */
-    final public static ThreadPoolExecutor createPool(int ncoreThreads) {
-        return createPool(ncoreThreads, ncoreThreads, //
+    final public static ThreadPoolExecutor createPool(int nCoreThreads) {
+        return createPool(nCoreThreads, nCoreThreads, //
                 new LinkedBlockingQueue<Runnable>(), null);
     }
 
@@ -1076,8 +1076,8 @@ public class Control {
      */
     final public static ThreadPoolExecutor createPool() {
 
-        int ncoreThreads = Runtime.getRuntime().availableProcessors();
-        return createPool(ncoreThreads, ncoreThreads, //
+        int nCoreThreads = Runtime.getRuntime().availableProcessors();
+        return createPool(nCoreThreads, nCoreThreads, //
                 new LinkedBlockingQueue<Runnable>(), null);
     }
 

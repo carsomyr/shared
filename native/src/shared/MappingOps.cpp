@@ -25,11 +25,11 @@
 
 void MappingOps::assignMappingIndices( //
         jint *indices, const jint *dims, const jint *strides, //
-        jint ndims) {
+        jint nDims) {
 
     indices[0] = 0;
 
-    for (jint k = ndims - 1, blockSize = 1, stride, size; k >= 0; blockSize *= size, k--) {
+    for (jint k = nDims - 1, blockSize = 1, stride, size; k >= 0; blockSize *= size, k--) {
 
         stride = strides[k];
         size = dims[k];
@@ -45,16 +45,16 @@ void MappingOps::assignMappingIndices( //
 
 void MappingOps::assignSlicingIndices( //
         jint *indices, const jint *dims, const jint *strides, //
-        jint ndims, //
+        jint nDims, //
         jint **sliceIndices) {
 
     indices[0] = 0;
 
-    for (jint dim = 0; dim < ndims; dim++) {
+    for (jint dim = 0; dim < nDims; dim++) {
         indices[0] += strides[dim] * sliceIndices[dim][0];
     }
 
-    for (jint k = ndims - 1, blockSize = 1, strideOffset, size; k >= 0; blockSize *= size, k--) {
+    for (jint k = nDims - 1, blockSize = 1, strideOffset, size; k >= 0; blockSize *= size, k--) {
 
         jint *dimSlices = sliceIndices[k];
         size = dims[k];
@@ -72,11 +72,11 @@ void MappingOps::assignSlicingIndices( //
 
 void MappingOps::checkDimensions( //
         const jint *dims, const jint *strides, //
-        jint ndims, jint len) {
+        jint nDims, jint len) {
 
     jint acc = 0;
 
-    for (jint dim = 0; dim < ndims; dim++) {
+    for (jint dim = 0; dim < nDims; dim++) {
 
         if (dims[dim] < 0 || strides[dim] < 0) {
             throw std::runtime_error("Invalid dimensions and/or strides");
@@ -93,7 +93,7 @@ void MappingOps::checkDimensions( //
 void MappingOps::assign(JNIEnv *env, ArrayPinHandler::jarray_type type, //
         jarray srcV, jint *srcIndices, //
         jarray dstV, jint *dstIndices, //
-        jint nindices) {
+        jint nIndices) {
 
     switch (type) {
 
@@ -106,7 +106,7 @@ void MappingOps::assign(JNIEnv *env, ArrayPinHandler::jarray_type type, //
         jdouble *srcVArr = (jdouble *) srcVH.get();
         jdouble *dstVArr = (jdouble *) dstVH.get();
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
             dstVArr[dstIndices[i]] = srcVArr[srcIndices[i]];
         }
     }
@@ -122,7 +122,7 @@ void MappingOps::assign(JNIEnv *env, ArrayPinHandler::jarray_type type, //
         jint *srcVArr = (jint *) srcVH.get();
         jint *dstVArr = (jint *) dstVH.get();
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
             dstVArr[dstIndices[i]] = srcVArr[srcIndices[i]];
         }
     }
@@ -132,7 +132,7 @@ void MappingOps::assign(JNIEnv *env, ArrayPinHandler::jarray_type type, //
     case ArrayPinHandler::OBJECT:
 
     {
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
             env->SetObjectArrayElement((jobjectArray) dstV, dstIndices[i], //
                     env->GetObjectArrayElement((jobjectArray) srcV, srcIndices[i]));
         }

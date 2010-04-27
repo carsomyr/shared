@@ -127,7 +127,7 @@ public:
      *      the strides.
      * @param srcSArrModified
      *      the modified strides.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      * @param dim
      *      the dimension to exclude.
@@ -135,7 +135,7 @@ public:
     static void assignBaseIndices( //
             jint *srcIndices, //
             const jint *srcDArr, jint *srcDArrModified, const jint *srcSArr, jint *srcSArrModified, //
-            jint ndims, jint dim);
+            jint nDims, jint dim);
 
     /**
      * Defines a real reduce operation.

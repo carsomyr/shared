@@ -68,10 +68,10 @@ void DimensionOps::riOp(JNIEnv *env, jobject thisObj, jint type, //
 
         jint srcLen = env->GetArrayLength(srcV);
         jint dstLen = env->GetArrayLength(dstV);
-        jint ndims = env->GetArrayLength(srcD);
+        jint nDims = env->GetArrayLength(srcD);
 
-        if (!(dim >= -1 && dim < ndims) //
-                || (ndims != env->GetArrayLength(srcS)) //
+        if (!(dim >= -1 && dim < nDims) //
+                || (nDims != env->GetArrayLength(srcS)) //
                 || (srcLen != dstLen)) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -90,7 +90,7 @@ void DimensionOps::riOp(JNIEnv *env, jobject thisObj, jint type, //
         jint *srcSArr = (jint *) srcSH.get();
         jint *dstVArr = (jint *) dstVH.get();
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, srcLen);
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
 
         // Proceed only if non-zero length.
         if (!srcLen) {
@@ -99,22 +99,22 @@ void DimensionOps::riOp(JNIEnv *env, jobject thisObj, jint type, //
 
         if (dim != -1) {
 
-            jint nindices = dstLen / srcDArr[dim];
+            jint nIndices = dstLen / srcDArr[dim];
 
-            MallocHandler mallocH(sizeof(jint) * (nindices + 2 * (ndims - 1)));
+            MallocHandler mallocH(sizeof(jint) * (nIndices + 2 * (nDims - 1)));
             void *all = mallocH.get();
 
             jint *srcIndices = (jint *) all;
-            jint *srcDArrModified = (jint *) all + nindices;
-            jint *srcSArrModified = (jint *) all + nindices + (ndims - 1);
+            jint *srcDArrModified = (jint *) all + nIndices;
+            jint *srcSArrModified = (jint *) all + nIndices + (nDims - 1);
 
             // Assign indices while pretending that the dimension of interest doesn't exist.
             DimensionOps::assignBaseIndices(srcIndices, srcDArr, srcDArrModified, srcSArr, srcSArrModified, //
-                    ndims, dim);
+                    nDims, dim);
 
             // Execute the index operation.
 
-            op(srcVArr, srcIndices, dstVArr, nindices, srcDArr[dim], srcSArr[dim]);
+            op(srcVArr, srcIndices, dstVArr, nIndices, srcDArr[dim], srcSArr[dim]);
 
         } else {
 
@@ -128,13 +128,13 @@ void DimensionOps::riOp(JNIEnv *env, jobject thisObj, jint type, //
 }
 
 inline void DimensionOps::riMax(jdouble *src, const jint *srcIndices, jint *dst, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
     if (srcIndices) {
 
         jint maxStride = stride * size;
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
 
             jdouble acc = -java_lang_Double_MAX_VALUE;
 
@@ -160,22 +160,22 @@ inline void DimensionOps::riMax(jdouble *src, const jint *srcIndices, jint *dst,
 
     } else {
 
-        jdouble maxValue = *std::max_element(src, src + nindices);
+        jdouble maxValue = *std::max_element(src, src + nIndices);
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
             dst[i] = (src[i] == maxValue) ? 1 : 0;
         }
     }
 }
 
 inline void DimensionOps::riMin(jdouble *src, const jint *srcIndices, jint *dst, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
     if (srcIndices) {
 
         jint maxStride = stride * size;
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
 
             jdouble acc = java_lang_Double_MAX_VALUE;
 
@@ -201,22 +201,22 @@ inline void DimensionOps::riMin(jdouble *src, const jint *srcIndices, jint *dst,
 
     } else {
 
-        jdouble minValue = *std::min_element(src, src + nindices);
+        jdouble minValue = *std::min_element(src, src + nIndices);
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
             dst[i] = (src[i] == minValue) ? 1 : 0;
         }
     }
 }
 
 inline void DimensionOps::riZero(jdouble *src, const jint *srcIndices, jint *dst, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
     if (srcIndices) {
 
         jint maxStride = stride * size;
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
 
             jint count = 0;
 
@@ -236,20 +236,20 @@ inline void DimensionOps::riZero(jdouble *src, const jint *srcIndices, jint *dst
 
     } else {
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
             dst[i] = (src[i] == 0.0) ? 1 : 0;
         }
     }
 }
 
 inline void DimensionOps::riGZero(jdouble *src, const jint *srcIndices, jint *dst, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
     if (srcIndices) {
 
         jint maxStride = stride * size;
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
 
             jint count = 0;
 
@@ -269,20 +269,20 @@ inline void DimensionOps::riGZero(jdouble *src, const jint *srcIndices, jint *ds
 
     } else {
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
             dst[i] = (src[i] > 0.0) ? 1 : 0;
         }
     }
 }
 
 inline void DimensionOps::riLZero(jdouble *src, const jint *srcIndices, jint *dst, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
     if (srcIndices) {
 
         jint maxStride = stride * size;
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
 
             jint count = 0;
 
@@ -302,21 +302,21 @@ inline void DimensionOps::riLZero(jdouble *src, const jint *srcIndices, jint *ds
 
     } else {
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
             dst[i] = (src[i] < 0.0) ? 1 : 0;
         }
     }
 }
 
 inline void DimensionOps::riSort(jdouble *src, const jint *srcIndices, jint *dst, //
-        jint nindices, jint size, jint stride) {
+        jint nIndices, jint size, jint stride) {
 
-    MallocHandler mallocH(sizeof(permutation_entry<jdouble, jint> ) * (srcIndices ? size : nindices));
+    MallocHandler mallocH(sizeof(permutation_entry<jdouble, jint> ) * (srcIndices ? size : nIndices));
     permutation_entry<jdouble, jint> *entries = (permutation_entry<jdouble, jint> *) mallocH.get();
 
     if (srcIndices) {
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
 
             for (jint offset = 0, j = 0; j < size; offset += stride, j++) {
 
@@ -335,15 +335,15 @@ inline void DimensionOps::riSort(jdouble *src, const jint *srcIndices, jint *dst
 
     } else {
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
 
             entries[i].value = src[i];
             entries[i].payload = i;
         }
 
-        std::sort(entries, entries + nindices);
+        std::sort(entries, entries + nIndices);
 
-        for (jint i = 0; i < nindices; i++) {
+        for (jint i = 0; i < nIndices; i++) {
 
             src[i] = entries[i].value;
             dst[i] = entries[i].payload;

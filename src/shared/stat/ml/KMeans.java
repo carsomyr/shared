@@ -55,15 +55,15 @@ public class KMeans {
      */
     final public static RealArray distances(RealArray aPts, RealArray bPts) {
 
-        int ndims = Control.checkEquals(aPts.size(1), bPts.size(1));
-        int naPts = aPts.size(0), nbPts = bPts.size(0);
+        int nDims = Control.checkEquals(aPts.size(1), bPts.size(1));
+        int nAPts = aPts.size(0), nBPts = bPts.size(0);
 
-        RealArray acc = new RealArray(naPts, nbPts);
+        RealArray acc = new RealArray(nAPts, nBPts);
 
-        for (int dim = 0; dim < ndims; dim++) {
-            acc = acc.lAdd(aPts.subarray(0, aPts.size(0), dim, dim + 1).tile(1, nbPts) //
+        for (int dim = 0; dim < nDims; dim++) {
+            acc = acc.lAdd(aPts.subarray(0, aPts.size(0), dim, dim + 1).tile(1, nBPts) //
                     .lSub(bPts.subarray(0, bPts.size(0), dim, dim + 1) //
-                            .transpose(1, 0).tile(naPts, 1)).uSqr());
+                            .transpose(1, 0).tile(nAPts, 1)).uSqr());
         }
 
         return acc.uSqrt();
@@ -72,77 +72,77 @@ public class KMeans {
     /**
      * Groups a set of points into the given number of clusters.
      * 
-     * @param nclusters
+     * @param nClusters
      *            the number of clusters.
      * @param points
      *            the input.
      * @return a {@link List} of clusters.
      */
-    final public static List<RealArray> cluster(int nclusters, RealArray points) {
+    final public static List<RealArray> cluster(int nClusters, RealArray points) {
 
-        int npoints = points.size(0);
-        int ndims = points.size(1);
+        int nPoints = points.size(0);
+        int nDims = points.size(1);
 
-        Control.checkTrue(npoints >= nclusters);
+        Control.checkTrue(nPoints >= nClusters);
 
         // Subset furthest first initialization of centers.
-        RealArray centers = subsetFurthestFirst(nclusters, points);
+        RealArray centers = subsetFurthestFirst(nClusters, points);
 
-        int[] memberships = shared.util.Arrays.newArray(npoints, -1), newMemberships;
+        int[] memberships = shared.util.Arrays.newArray(nPoints, -1), newMemberships;
 
         for (;;) {
 
             newMemberships = distances(centers, points).iMin(0).subarray(0, 1, 0, points.size(0)).values();
 
-            int ncenters = centers.size(0);
+            int nCenters = centers.size(0);
 
             // Create the clusters.
 
-            int[] counts = new int[ncenters];
+            int[] counts = new int[nCenters];
 
-            for (int i = 0; i < npoints; i++) {
+            for (int i = 0; i < nPoints; i++) {
                 counts[newMemberships[i]]++;
             }
 
-            RealArray[] clusters = new RealArray[ncenters];
+            RealArray[] clusters = new RealArray[nCenters];
 
-            for (int i = 0; i < ncenters; i++) {
-                clusters[i] = new RealArray(counts[i], ndims);
+            for (int i = 0; i < nCenters; i++) {
+                clusters[i] = new RealArray(counts[i], nDims);
             }
 
             // Build clusters and increment counts.
-            counts = new int[ncenters];
+            counts = new int[nCenters];
 
-            for (int i = 0; i < npoints; i++) {
+            for (int i = 0; i < nPoints; i++) {
 
                 points.map(clusters[newMemberships[i]], //
                         i, counts[newMemberships[i]], 1, //
-                        0, 0, ndims);
+                        0, 0, nDims);
 
                 counts[newMemberships[i]]++;
             }
 
             // Compute new centers.
 
-            int nnonzero = 0;
+            int nNonzero = 0;
 
-            for (int i = 0; i < ncenters; i++) {
+            for (int i = 0; i < nCenters; i++) {
 
                 if (clusters[i].size(0) > 0) {
 
                     clusters[i].rMean(0).map(centers, //
-                            0, nnonzero, 1, //
-                            0, 0, ndims);
+                            0, nNonzero, 1, //
+                            0, 0, nDims);
 
-                    nnonzero++;
+                    nNonzero++;
                 }
             }
 
             // This should happen VERY rarely.
-            for (int i = nnonzero; i < ncenters; i++) {
+            for (int i = nNonzero; i < nCenters; i++) {
                 centers.subarray(0, i, 0, centers.size(1)).rMean(0).map(centers, //
                         0, i, 1, //
-                        0, 0, ndims);
+                        0, 0, nDims);
             }
 
             // Check for convergence and return if necessary.
@@ -161,42 +161,42 @@ public class KMeans {
     /**
      * Performs subset furthest first initialization.
      * 
-     * @param ncenters
+     * @param nCenters
      *            the number of centers.
      * @param points
      *            the collection of points.
      * @return a collection of centers.
      */
-    final protected static RealArray subsetFurthestFirst(int ncenters, RealArray points) {
+    final protected static RealArray subsetFurthestFirst(int nCenters, RealArray points) {
 
-        int ndims = points.size(1);
-        int nsamples = Math.min(points.size(0), 2 * ncenters * (int) (Math.log(ncenters + 1) + 1));
+        int nDims = points.size(1);
+        int nSamples = Math.min(points.size(0), 2 * nCenters * (int) (Math.log(nCenters + 1) + 1));
 
         // Make the permutation predictable and sample from a subset.
         int[] perm = Arithmetic.range(points.size(0));
         Collections.shuffle(Arrays.asList(perm), new Random(Arrays.hashCode(points.values())));
 
-        RealArray samples = new RealArray(nsamples, ndims);
+        RealArray samples = new RealArray(nSamples, nDims);
 
-        for (int i = 0; i < nsamples; i++) {
+        for (int i = 0; i < nSamples; i++) {
             points.map(samples, //
                     perm[i], i, 1, //
-                    0, 0, ndims);
+                    0, 0, nDims);
         }
 
         //
 
-        RealArray res = samples.map(new RealArray(ncenters, ndims), //
+        RealArray res = samples.map(new RealArray(nCenters, nDims), //
                 0, 0, 1, //
-                0, 0, ndims);
+                0, 0, nDims);
 
-        for (int i = 1; i < ncenters; i++) {
+        for (int i = 1; i < nCenters; i++) {
 
             RealArray d = distances(res.subarray(0, i, 0, res.size(1)), samples);
 
             samples.map(res, //
                     d.rMin(0).iMax(1).get(0, 0), i, 1, //
-                    0, 0, ndims);
+                    0, 0, nDims);
         }
 
         return res;

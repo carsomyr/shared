@@ -59,32 +59,32 @@ public class IntegralImageTest {
         int baseSize = 64;
         int maxDims = 3;
 
-        int ntrials = 3;
-        int nqueries = 128;
+        int nTrials = 3;
+        int nQueries = 128;
 
-        for (int trialIndex = 0; trialIndex < ntrials; trialIndex++) {
+        for (int trialIndex = 0; trialIndex < nTrials; trialIndex++) {
 
-            for (int ndims = 1; ndims <= maxDims; ndims++) {
+            for (int nDims = 1; nDims <= maxDims; nDims++) {
 
-                int[] dims = new int[ndims];
+                int[] dims = new int[nDims];
 
-                for (int dim = 0; dim < ndims; dim++) {
+                for (int dim = 0; dim < nDims; dim++) {
                     dims[dim] = baseSize + Arithmetic.nextInt(baseSize);
                 }
 
-                int nvalues = Arithmetic.product(dims);
+                int nValues = Arithmetic.product(dims);
 
-                RealArray mat = new RealArray(Arithmetic.doubleRange(nvalues), //
+                RealArray mat = new RealArray(Arithmetic.doubleRange(nValues), //
                         Arithmetic.nextInt(2) == 0 ? IndexingOrder.FAR : IndexingOrder.NEAR, //
-                        dims).uMul(1.0 / nvalues);
+                        dims).uMul(1.0 / nValues);
 
                 IntegralImage ii = new IntegralImage(mat);
 
-                for (int i = 0; i < nqueries; i++) {
+                for (int i = 0; i < nQueries; i++) {
 
-                    int[] bounds = new int[2 * ndims];
+                    int[] bounds = new int[2 * nDims];
 
-                    for (int dim = 0; dim < ndims; dim++) {
+                    for (int dim = 0; dim < nDims; dim++) {
 
                         bounds[dim << 1] = Arithmetic.nextInt(dims[dim]);
                         bounds[(dim << 1) + 1] = //

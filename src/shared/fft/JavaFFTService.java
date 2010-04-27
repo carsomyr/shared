@@ -64,11 +64,11 @@ public class JavaFFTService implements FFTService {
 
     public void rifft(int[] dims, double[] in, double[] out) {
 
-        int ndims = dims.length;
-        int[] subdims = Arrays.copyOf(dims, ndims + 1);
+        int nDims = dims.length;
+        int[] subdims = Arrays.copyOf(dims, nDims + 1);
 
-        subdims[ndims - 1] = (subdims[ndims - 1] >>> 1) + 1;
-        subdims[ndims] = 2;
+        subdims[nDims - 1] = (subdims[nDims - 1] >>> 1) + 1;
+        subdims[nDims] = 2;
 
         ComplexArray proxyIn = reducedToFull(new ComplexArray(in, subdims), dims);
         ComplexArray proxyOut = proxyIn.clone();
@@ -109,18 +109,18 @@ public class JavaFFTService implements FFTService {
     public ComplexArray reducedToFull(ComplexArray reduced, int[] logicalDims) {
 
         int[] reducedDims = reduced.dims();
-        int ndims = reducedDims.length;
+        int nDims = reducedDims.length;
 
-        int[] fullDims = Arrays.copyOf(logicalDims, ndims);
-        fullDims[ndims - 1] = 2;
+        int[] fullDims = Arrays.copyOf(logicalDims, nDims);
+        fullDims[nDims - 1] = 2;
 
         ComplexArray full = new ComplexArray(fullDims);
 
         //
 
-        int[] mapBounds = new int[3 * ndims];
+        int[] mapBounds = new int[3 * nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             mapBounds[3 * dim] = 0;
             mapBounds[3 * dim + 1] = 0;
@@ -132,9 +132,9 @@ public class JavaFFTService implements FFTService {
         //
 
         int[] slices = new int[3 * Arithmetic.sum(reducedDims)];
-        int[] sliceOffsets = new int[ndims];
+        int[] sliceOffsets = new int[nDims];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++) {
 
             sliceOffsets[dim] = offset;
 
@@ -146,7 +146,7 @@ public class JavaFFTService implements FFTService {
             }
         }
 
-        for (int dim = ndims - 2; dim >= 0; dim--) {
+        for (int dim = nDims - 2; dim >= 0; dim--) {
 
             int sliceOffset = sliceOffsets[dim];
 
@@ -169,9 +169,9 @@ public class JavaFFTService implements FFTService {
 
         //
 
-        mapBounds[3 * (ndims - 2)] = 2 * reducedDims[ndims - 2] - fullDims[ndims - 2];
-        mapBounds[3 * (ndims - 2) + 1] = reducedDims[ndims - 2];
-        mapBounds[3 * (ndims - 2) + 2] = fullDims[ndims - 2] - reducedDims[ndims - 2];
+        mapBounds[3 * (nDims - 2)] = 2 * reducedDims[nDims - 2] - fullDims[nDims - 2];
+        mapBounds[3 * (nDims - 2) + 1] = reducedDims[nDims - 2];
+        mapBounds[3 * (nDims - 2) + 2] = fullDims[nDims - 2] - reducedDims[nDims - 2];
 
         return reduced.uConj().map(full, mapBounds);
     }
@@ -186,16 +186,16 @@ public class JavaFFTService implements FFTService {
     public ComplexArray fullToReduced(ComplexArray full) {
 
         int[] fullDims = full.dims();
-        int ndims = fullDims.length;
+        int nDims = fullDims.length;
 
-        int[] subbounds = new int[ndims << 1];
+        int[] subbounds = new int[nDims << 1];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 2) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 2) {
             subbounds[offset + 1] = fullDims[dim];
         }
 
-        subbounds[((ndims - 2) << 1) + 1] >>>= 1;
-        subbounds[((ndims - 2) << 1) + 1]++;
+        subbounds[((nDims - 2) << 1) + 1] >>>= 1;
+        subbounds[((nDims - 2) << 1) + 1]++;
 
         return full.subarray(subbounds);
     }

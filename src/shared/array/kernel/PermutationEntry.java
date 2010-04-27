@@ -103,7 +103,7 @@ public class PermutationEntry<C extends Comparable<? super C>> implements Compar
 
         if (srcIndices != null) {
 
-            for (int i = 0, nindices = srcIndices.length; i < nindices; i++) {
+            for (int i = 0, nIndices = srcIndices.length; i < nIndices; i++) {
 
                 for (int offset = 0, j = 0; j < size; offset += stride, j++) {
 

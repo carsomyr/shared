@@ -71,14 +71,14 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
     try {
 
-        jint ndims = env->GetArrayLength(oldD);
+        jint nDims = env->GetArrayLength(oldD);
         jint oldLen = env->GetArrayLength(oldV);
         jint newLen = env->GetArrayLength(newV);
 
-        if ((ndims != env->GetArrayLength(oldS)) //
+        if ((nDims != env->GetArrayLength(oldS)) //
                 || (oldLen != env->GetArrayLength(oldI)) //
                 || (newLen != env->GetArrayLength(newI)) //
-                || (ndims + 1 != env->GetArrayLength(oldDO))) {
+                || (nDims + 1 != env->GetArrayLength(oldDO))) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -94,11 +94,11 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint *oldIArr = (jint *) oldIH.get();
         jint *newIArr = (jint *) newIH.get();
 
-        jint prodD = Common::product(oldDArr, ndims, (jint) 1);
+        jint prodD = Common::product(oldDArr, nDims, (jint) 1);
 
-        MappingOps::checkDimensions(oldDArr, oldSArr, ndims, prodD);
+        MappingOps::checkDimensions(oldDArr, oldSArr, nDims, prodD);
 
-        for (jint dim = 0; dim < ndims; dim++) {
+        for (jint dim = 0; dim < nDims; dim++) {
 
             if (oldDOArr[dim + 1] - oldDOArr[dim] - 1 != oldDArr[dim]) {
                 throw std::runtime_error("Invalid arguments");
@@ -144,7 +144,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         mergeResult = merge( //
                 oldIArr, oldIndirections, oldLen, //
                 newIArr, newIndirections, newLen, //
-                oldDArr, oldSArr, oldDOArr, ndims);
+                oldDArr, oldSArr, oldDOArr, nDims);
 
         // Copy the new assignments into the permutation and then copy back.
 

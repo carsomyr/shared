@@ -110,12 +110,12 @@ public:
      *      the transform type.
      * @param dimsArr
      *      the dimensions.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      */
     inline static void getTransformParameters( //
             jint &inLen, jint &outLen, //
-            jdouble &scalingFactor, jint type, const jint *dimsArr, jint ndims);
+            jdouble &scalingFactor, jint type, const jint *dimsArr, jint nDims);
 
     /**
      * Creates a native plan.
@@ -124,7 +124,7 @@ public:
      *      the transform type.
      * @param dimsArr
      *      the dimensions.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      * @param logicalMode
      *      the transform mode.
@@ -135,7 +135,7 @@ public:
      * @return the native plan.
      */
     inline static fftw_plan createPlan( //
-            jint type, const jint *dimsArr, jint ndims, //
+            jint type, const jint *dimsArr, jint nDims, //
             jint logicalMode, jint inLen, jint outLen);
 
     /**

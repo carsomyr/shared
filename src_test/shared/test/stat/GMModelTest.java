@@ -66,16 +66,16 @@ public class GMModelTest {
                 }, 3, 9 //
         );
 
-        int ndims = input.size(1) / 2;
+        int nDims = input.size(1) / 2;
 
         RealArray generated = generatePoints(input, 8192);
 
         GMComponents gmc = new GMModel().train(generated, input.size(0), 0.0001, 0.000000000001);
 
         RealArray expected = new RealArray(input.size(0), input.size(1));
-        gmc.centers.map(expected, 0, 0, input.size(0), 0, 0, ndims);
-        gmc.covariances.clone().uSqrt().map(expected, 0, 0, input.size(0), 0, ndims, ndims);
-        gmc.weights.map(expected, 0, 0, input.size(0), 0, 2 * ndims, 1);
+        gmc.centers.map(expected, 0, 0, input.size(0), 0, 0, nDims);
+        gmc.covariances.clone().uSqrt().map(expected, 0, 0, input.size(0), 0, nDims, nDims);
+        gmc.weights.map(expected, 0, 0, input.size(0), 0, 2 * nDims, 1);
 
         assertTrue(KMeans.distances(input, expected).rMin(0).rMax(1).singleton() < 0.5);
     }
@@ -83,32 +83,32 @@ public class GMModelTest {
     /**
      * Draws random samples from a mixture of Gaussians.
      */
-    final protected static RealArray generatePoints(RealArray input, int npoints) {
+    final protected static RealArray generatePoints(RealArray input, int nPoints) {
 
         Random rnd = new Random(0xadeaddeb);
 
-        int ndims = input.size(1) / 2;
+        int nDims = input.size(1) / 2;
 
-        RealArray weights = input.subarray(0, input.size(0), 2 * ndims, 2 * ndims + 1);
+        RealArray weights = input.subarray(0, input.size(0), 2 * nDims, 2 * nDims + 1);
         weights = weights.uMul(1.0 / weights.aSum());
-        weights.map(input, 0, 0, weights.size(0), 0, 2 * ndims, 1);
+        weights.map(input, 0, 0, weights.size(0), 0, 2 * nDims, 1);
 
-        RealArray means = input.subarray(0, input.size(0), 0, ndims);
-        RealArray deviations = input.subarray(0, input.size(0), ndims, 2 * ndims);
+        RealArray means = input.subarray(0, input.size(0), 0, nDims);
+        RealArray deviations = input.subarray(0, input.size(0), nDims, 2 * nDims);
 
-        int ngenerated = 0;
+        int nGenerated = 0;
 
         for (int i = 0, n = weights.size(0); i < n; i++) {
-            ngenerated += (int) (npoints * weights.get(i, 0));
+            nGenerated += (int) (nPoints * weights.get(i, 0));
         }
 
-        RealArray generated = new RealArray(ngenerated, ndims);
+        RealArray generated = new RealArray(nGenerated, nDims);
 
         for (int i = 0, n = weights.size(0), ctr = 0; i < n; i++) {
 
-            for (int j = 0, m = (int) (npoints * weights.get(i, 0)); j < m; j++, ctr++) {
+            for (int j = 0, m = (int) (nPoints * weights.get(i, 0)); j < m; j++, ctr++) {
 
-                for (int k = 0; k < ndims; k++) {
+                for (int k = 0; k < nDims; k++) {
                     generated.set( //
                             rnd.nextGaussian() * deviations.get(i, k) + means.get(i, k), //
                             ctr, k);

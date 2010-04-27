@@ -239,12 +239,12 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
 
         StringBuilder sb = new StringBuilder();
 
-        int nrows = this.backingArray.size(0);
-        int ncols = this.backingArray.size(1);
+        int nRows = this.backingArray.size(0);
+        int nCols = this.backingArray.size(1);
 
-        for (int i = 0; i < nrows; i++) {
+        for (int i = 0; i < nRows; i++) {
 
-            for (int j = 0; j < ncols; j++) {
+            for (int j = 0; j < nCols; j++) {
 
                 StateHandler stateHandler = this.backingArray.get(i, j);
 

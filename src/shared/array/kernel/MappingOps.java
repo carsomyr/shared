@@ -43,7 +43,7 @@ public class MappingOps {
     /**
      * Creates an array of physical indices.
      * 
-     * @param nindices
+     * @param nIndices
      *            the number of indices.
      * @param dims
      *            the mapping dimensions.
@@ -51,9 +51,9 @@ public class MappingOps {
      *            the strides.
      * @return the physical indices.
      */
-    final public static int[] assignMappingIndices(int nindices, int[] dims, int[] strides) {
+    final public static int[] assignMappingIndices(int nIndices, int[] dims, int[] strides) {
 
-        int[] indices = new int[nindices];
+        int[] indices = new int[nIndices];
 
         for (int k = dims.length - 1, blockSize = 1, stride, size; k >= 0; blockSize *= size, k--) {
 
@@ -74,7 +74,7 @@ public class MappingOps {
     /**
      * Creates an array of physical slicing indices.
      * 
-     * @param nindices
+     * @param nIndices
      *            the number of indices.
      * @param strides
      *            the strides.
@@ -82,9 +82,9 @@ public class MappingOps {
      *            the indices to slice on arranged by dimension.
      * @return the physical indices.
      */
-    final public static int[] assignSlicingIndices(int nindices, int[] strides, int[][] sliceIndices) {
+    final public static int[] assignSlicingIndices(int nIndices, int[] strides, int[][] sliceIndices) {
 
-        int[] indices = new int[nindices];
+        int[] indices = new int[nIndices];
 
         for (int i = 0, n = strides.length; i < n; i++) {
             indices[0] += strides[i] * sliceIndices[i][0];
@@ -123,7 +123,7 @@ public class MappingOps {
 
         int acc = 0;
 
-        for (int dim = 0, ndims = dims.length; dim < ndims; dim++) {
+        for (int dim = 0, nDims = dims.length; dim < nDims; dim++) {
 
             Control.checkTrue(dims[dim] >= 0 && strides[dim] >= 0, //
                     "Invalid dimensions and/or strides");
@@ -151,7 +151,7 @@ public class MappingOps {
      */
     final public static void assign(Object srcV, int[] srcIndices, Object dstV, int[] dstIndices) {
 
-        int nindices = Control.checkEquals(srcIndices.length, dstIndices.length, //
+        int nIndices = Control.checkEquals(srcIndices.length, dstIndices.length, //
                 "Invalid arguments");
 
         if (srcV instanceof double[] && dstV instanceof double[]) {
@@ -159,7 +159,7 @@ public class MappingOps {
             double[] srcVArr = (double[]) srcV;
             double[] dstVArr = (double[]) dstV;
 
-            for (int i = 0; i < nindices; i++) {
+            for (int i = 0; i < nIndices; i++) {
                 dstVArr[dstIndices[i]] = srcVArr[srcIndices[i]];
             }
 
@@ -168,7 +168,7 @@ public class MappingOps {
             int[] srcVArr = (int[]) srcV;
             int[] dstVArr = (int[]) dstV;
 
-            for (int i = 0; i < nindices; i++) {
+            for (int i = 0; i < nIndices; i++) {
                 dstVArr[dstIndices[i]] = srcVArr[srcIndices[i]];
             }
 
@@ -180,7 +180,7 @@ public class MappingOps {
             Object[] srcVArr = (Object[]) srcV;
             Object[] dstVArr = (Object[]) dstV;
 
-            for (int i = 0; i < nindices; i++) {
+            for (int i = 0; i < nIndices; i++) {
                 dstVArr[dstIndices[i]] = srcVArr[srcIndices[i]];
             }
 
@@ -197,28 +197,28 @@ public class MappingOps {
             Object srcV, int[] srcD, int[] srcS, //
             Object dstV, int[] dstD, int[] dstS) {
 
-        int ndims = srcD.length;
+        int nDims = srcD.length;
 
-        Control.checkTrue(ndims == srcS.length //
-                && ndims == dstD.length //
-                && ndims == dstS.length //
-                && 3 * ndims == bounds.length, //
+        Control.checkTrue(nDims == srcS.length //
+                && nDims == dstD.length //
+                && nDims == dstS.length //
+                && 3 * nDims == bounds.length, //
                 "Invalid arguments");
 
         int srcLen = checkDimensions(Array.getLength(srcV), srcD, srcS);
         int dstLen = checkDimensions(Array.getLength(dstV), dstD, dstS);
 
-        int nslices = 0;
+        int nSlices = 0;
         int mapLen = 1;
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
 
             int size = bounds[offset + 2];
 
             Control.checkTrue(size >= 0, //
                     "Invalid mapping parameters");
 
-            nslices += size;
+            nSlices += size;
             mapLen *= size;
         }
 
@@ -226,10 +226,10 @@ public class MappingOps {
             return;
         }
 
-        int[][] ssi = new int[ndims][];
-        int[][] dsi = new int[ndims][];
+        int[][] ssi = new int[nDims][];
+        int[][] dsi = new int[nDims][];
 
-        for (int dim = 0, acc = 0, offset = 0; dim < ndims; dim++, acc += bounds[offset + 2], offset += 3) {
+        for (int dim = 0, acc = 0, offset = 0; dim < nDims; dim++, acc += bounds[offset + 2], offset += 3) {
 
             int mapSize = bounds[offset + 2];
 
@@ -273,23 +273,23 @@ public class MappingOps {
         Control.checkTrue(slices.length % 3 == 0, //
                 "Invalid slicing specification");
 
-        int nslices = slices.length / 3;
-        int ndims = srcD.length;
+        int nSlices = slices.length / 3;
+        int nDims = srcD.length;
 
-        Control.checkTrue(ndims == srcS.length //
-                && ndims == dstD.length //
-                && ndims == dstS.length);
+        Control.checkTrue(nDims == srcS.length //
+                && nDims == dstD.length //
+                && nDims == dstS.length);
 
         checkDimensions(Array.getLength(srcV), srcD, srcS);
         checkDimensions(Array.getLength(dstV), dstD, dstS);
 
-        for (int i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (int i = 0, n = 3 * nSlices; i < n; i += 3) {
 
             int srcIndex = slices[i];
             int dstIndex = slices[i + 1];
             int dim = slices[i + 2];
 
-            Control.checkTrue(dim >= 0 && dim < ndims, //
+            Control.checkTrue(dim >= 0 && dim < nDims, //
                     "Invalid dimension");
 
             Control.checkTrue((srcIndex >= 0 && srcIndex < srcD[dim]) //
@@ -297,28 +297,28 @@ public class MappingOps {
                     "Invalid index");
         }
 
-        int[] dimCounts = new int[ndims];
+        int[] dimCounts = new int[nDims];
 
-        for (int i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (int i = 0, n = 3 * nSlices; i < n; i += 3) {
             dimCounts[slices[i + 2]]++;
         }
 
-        int nindices = 1;
+        int nIndices = 1;
 
-        int[][] ssi = new int[ndims][];
-        int[][] dsi = new int[ndims][];
+        int[][] ssi = new int[nDims][];
+        int[][] dsi = new int[nDims][];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             ssi[dim] = new int[dimCounts[dim]];
             dsi[dim] = new int[dimCounts[dim]];
 
-            nindices *= dimCounts[dim];
+            nIndices *= dimCounts[dim];
         }
 
         Arrays.fill(dimCounts, 0);
 
-        for (int i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (int i = 0, n = 3 * nSlices; i < n; i += 3) {
 
             int dim = slices[i + 2];
             int idx = dimCounts[dim]++;
@@ -327,12 +327,12 @@ public class MappingOps {
             dsi[dim][idx] = slices[i + 1];
         }
 
-        if (nindices == 0) {
+        if (nIndices == 0) {
             return;
         }
 
-        int[] srcIndices = assignSlicingIndices(nindices, srcS, ssi);
-        int[] dstIndices = assignSlicingIndices(nindices, dstS, dsi);
+        int[] srcIndices = assignSlicingIndices(nIndices, srcS, ssi);
+        int[] dstIndices = assignSlicingIndices(nIndices, dstS, dsi);
 
         assign(srcV, srcIndices, dstV, dstIndices);
     }

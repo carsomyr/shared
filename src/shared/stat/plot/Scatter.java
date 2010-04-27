@@ -55,14 +55,14 @@ public class Scatter implements Plottable {
      */
     public Scatter(RealArray... datasets) {
 
-        int nclasses = datasets.length;
+        int nClasses = datasets.length;
 
         // Check for uniform dimensionality.
         PlotBase.inferDimensionality(datasets);
 
         this.datasets = datasets;
-        this.dataTitles = PlotBase.createDefaultTitles(nclasses);
-        this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nclasses, DataStyle.Points);
+        this.dataTitles = PlotBase.createDefaultTitles(nClasses);
+        this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.Points);
     }
 
     public RealArray[] getDatasets() {

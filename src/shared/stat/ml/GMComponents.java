@@ -60,24 +60,24 @@ public class GMComponents {
     /**
      * The number of rounds so far.
      */
-    public int nrounds;
+    public int nRounds;
 
     /**
      * Default constructor.
      * 
-     * @param ncomponents
+     * @param nComps
      *            the number of components.
-     * @param ndims
+     * @param nDims
      *            the dimensionality expected of the data.
      */
-    public GMComponents(int ncomponents, int ndims) {
+    public GMComponents(int nComps, int nDims) {
 
-        this.weights = new RealArray(ncomponents, 1);
-        this.centers = new RealArray(ncomponents, ndims);
-        this.covariances = new RealArray(ncomponents, ndims);
+        this.weights = new RealArray(nComps, 1);
+        this.centers = new RealArray(nComps, nDims);
+        this.covariances = new RealArray(nComps, nDims);
 
         this.likelihood = Double.NaN;
-        this.nrounds = -1;
+        this.nRounds = -1;
     }
 
     /**
@@ -110,6 +110,6 @@ public class GMComponents {
                 + "%s%n" //
                 + "likelihood = %4.4e%n%n" //
                 + "nrounds = %d%n", //
-                this.centers, this.covariances.clone().uSqrt(), this.weights, this.likelihood, this.nrounds);
+                this.centers, this.covariances.clone().uSqrt(), this.weights, this.likelihood, this.nRounds);
     }
 }

@@ -295,13 +295,13 @@ public class ArrayFFTTest {
         JavaFFTService jfs = new JavaFFTService();
 
         int baseSize = 5;
-        int ndims = 5;
+        int nDims = 5;
 
-        int[] dims = new int[ndims];
+        int[] dims = new int[nDims];
 
-        for (int i = 0, n = 1 << ndims; i < n; i++) {
+        for (int i = 0, n = 1 << nDims; i < n; i++) {
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
                 dims[dim] = baseSize + ((i >>> dim) & 0x1);
             }
 

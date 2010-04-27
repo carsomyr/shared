@@ -82,23 +82,23 @@ public class ArrayBase {
      */
     final public static int[] canonicalizeSlices(int[][] srcSlices, int[] srcDims, int[][] dstSlices, int[] dstDims) {
 
-        int ndims = srcSlices.length;
+        int nDims = srcSlices.length;
 
-        Control.checkTrue(ndims == dstSlices.length //
-                && ndims == srcDims.length //
-                && ndims == dstDims.length, //
+        Control.checkTrue(nDims == dstSlices.length //
+                && nDims == srcDims.length //
+                && nDims == dstDims.length, //
                 "Dimensionality mismatch");
 
-        int nslices = 0;
+        int nSlices = 0;
 
-        for (int dim = 0; dim < ndims; dim++) {
-            nslices += Control.checkEquals(srcSlices[dim].length, dstSlices[dim].length, //
+        for (int dim = 0; dim < nDims; dim++) {
+            nSlices += Control.checkEquals(srcSlices[dim].length, dstSlices[dim].length, //
                     "Dimension mismatch");
         }
 
-        int[] slices = new int[3 * nslices];
+        int[] slices = new int[3 * nSlices];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++) {
 
             int[] srcSlice = srcSlices[dim];
             int[] dstSlice = dstSlices[dim];
@@ -119,22 +119,22 @@ public class ArrayBase {
      */
     final public static int[] canonicalizeSlices(int[] srcDims, int[] dstDims, int[][] dstSlices) {
 
-        int ndims = dstSlices.length;
+        int nDims = dstSlices.length;
 
-        Control.checkTrue(ndims == srcDims.length //
-                && ndims == dstDims.length, //
+        Control.checkTrue(nDims == srcDims.length //
+                && nDims == dstDims.length, //
                 "Dimensionality mismatch");
 
-        int nslices = 0;
+        int nSlices = 0;
 
-        for (int dim = 0; dim < ndims; dim++) {
-            nslices += Control.checkEquals(srcDims[dim], dstSlices[dim].length, //
+        for (int dim = 0; dim < nDims; dim++) {
+            nSlices += Control.checkEquals(srcDims[dim], dstSlices[dim].length, //
                     "Dimension mismatch");
         }
 
-        int[] slices = new int[3 * nslices];
+        int[] slices = new int[3 * nSlices];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++) {
 
             int[] dstSlice = dstSlices[dim];
 
@@ -152,11 +152,11 @@ public class ArrayBase {
     /**
      * Canonicalizes the alternate slicing specification.
      */
-    final public static int[] canonicalizeSlices(int nslices, int[] srcDims, int[][] srcSlices) {
+    final public static int[] canonicalizeSlices(int nSlices, int[] srcDims, int[][] srcSlices) {
 
-        int[] slices = new int[3 * nslices];
+        int[] slices = new int[3 * nSlices];
 
-        for (int dim = 0, offset = 0, ndims = srcDims.length; dim < ndims; dim++) {
+        for (int dim = 0, offset = 0, nDims = srcDims.length; dim < nDims; dim++) {
 
             int[] srcSlice = srcSlices[dim];
 
@@ -176,19 +176,19 @@ public class ArrayBase {
      */
     final public static int[] createReverseSlices(int[] srcDims, int[] opDims) {
 
-        int ndims = srcDims.length;
-        int nindices = opDims.length;
+        int nDims = srcDims.length;
+        int nIndices = opDims.length;
 
-        int nslices = Arithmetic.sum(srcDims);
-        int[] slices = new int[3 * nslices];
+        int nSlices = Arithmetic.sum(srcDims);
+        int[] slices = new int[3 * nSlices];
 
-        boolean[] sentinel = new boolean[ndims];
+        boolean[] sentinel = new boolean[nDims];
 
-        for (int i = 0; i < nindices; i++) {
+        for (int i = 0; i < nIndices; i++) {
             sentinel[opDims[i]] = true;
         }
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++) {
 
             int dimSize = srcDims[dim];
 
@@ -245,22 +245,22 @@ public class ArrayBase {
      *            the physical indices.
      * @param offset
      *            the physical index offset.
-     * @param nrows
+     * @param nRows
      *            the number of rows in the slice.
-     * @param ncols
+     * @param nCols
      *            the number of columns in the slice.
      * @param isComplex
      *            whether the values are complex.
      */
     final public static void formatSlice(Formatter f, String format, //
             Object values, int[] indices, //
-            int offset, int nrows, int ncols, boolean isComplex) {
+            int offset, int nRows, int nCols, boolean isComplex) {
 
         if (!isComplex) {
 
-            for (int j = 0, k = 0; j < nrows; j++) {
+            for (int j = 0, k = 0; j < nRows; j++) {
 
-                for (int i = 0; i < ncols; i++, k++) {
+                for (int i = 0; i < nCols; i++, k++) {
                     f.format(format, Array.get(values, indices[offset + k]));
                 }
 
@@ -269,9 +269,9 @@ public class ArrayBase {
 
         } else {
 
-            for (int j = 0, k = 0; j < nrows; j++) {
+            for (int j = 0, k = 0; j < nRows; j++) {
 
-                for (int i = 0; i < ncols; i++, k += 2) {
+                for (int i = 0; i < nCols; i++, k += 2) {
                     f.format(format, //
                             Array.get(values, indices[offset + k]), //
                             Array.get(values, indices[offset + k + 1]));
@@ -292,15 +292,15 @@ public class ArrayBase {
      */
     final public static void formatEmptyArray(Formatter f, int[] dims) {
 
-        int ndims = dims.length;
+        int nDims = dims.length;
 
         f.format(LineSeparator).format("[empty (");
 
-        for (int i = 0, n = ndims - 1; i < n; i++) {
+        for (int i = 0, n = nDims - 1; i < n; i++) {
             f.format("%d, ", dims[i]);
         }
 
-        f.format("%d)]", dims[ndims - 1]).format(LineSeparator);
+        f.format("%d)]", dims[nDims - 1]).format(LineSeparator);
     }
 
     /**
@@ -356,7 +356,7 @@ public class ArrayBase {
     final public static void formatSparseArray(Formatter f, String valueFormat, String indexFormat, //
             Object values, int[] indices, int[] strides) {
 
-        int ndims = strides.length;
+        int nDims = strides.length;
 
         for (int i = 0, n = Control.checkEquals(Array.getLength(values), indices.length); i < n; i++) {
 
@@ -364,7 +364,7 @@ public class ArrayBase {
 
             f.format("(");
 
-            for (int j = 0, m = ndims - 1; j < m; j++) {
+            for (int j = 0, m = nDims - 1; j < m; j++) {
 
                 f.format(indexFormat, physical / strides[j]);
                 f.format(",");
@@ -372,7 +372,7 @@ public class ArrayBase {
                 physical %= strides[j];
             }
 
-            f.format(indexFormat, physical / strides[ndims - 1]);
+            f.format(indexFormat, physical / strides[nDims - 1]);
             f.format(")");
             f.format(valueFormat, Array.get(values, i));
             f.format(LineSeparator);
@@ -392,7 +392,7 @@ public class ArrayBase {
      */
     final public static int[] logical(int physical, int[] strides, int[] logical) {
 
-        for (int dim = 0, ndims = Control.checkEquals(strides.length, logical.length); dim < ndims; dim++) {
+        for (int dim = 0, nDims = Control.checkEquals(strides.length, logical.length); dim < nDims; dim++) {
 
             logical[dim] = physical / strides[dim];
             physical %= strides[dim];

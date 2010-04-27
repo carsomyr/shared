@@ -141,8 +141,8 @@ public class JavaArrayKernel implements ArrayKernel {
 
     public void svd(double[] srcV, int srcStrideRow, int srcStrideCol, //
             double[] uV, double[] sV, double[] vV, //
-            int nrows, int ncols) {
-        LinearAlgebraOps.svd(srcV, srcStrideRow, srcStrideCol, uV, sV, vV, nrows, ncols);
+            int nRows, int nCols) {
+        LinearAlgebraOps.svd(srcV, srcStrideRow, srcStrideCol, uV, sV, vV, nRows, nCols);
     }
 
     public void eigs(double[] srcV, double[] vecV, double[] valV, int size) {

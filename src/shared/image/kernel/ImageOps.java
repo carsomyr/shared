@@ -48,18 +48,18 @@ public class ImageOps {
     /**
      * Creates an index lookup table for speedy index calculations.
      */
-    final public static int[] createILUT(int ndims) {
+    final public static int[] createILUT(int nDims) {
 
-        int stride = ndims + 1;
-        int[] ilut = new int[(1 << ndims) * stride];
+        int stride = nDims + 1;
+        int[] ilut = new int[(1 << nDims) * stride];
 
-        for (int i = 0, n = (1 << ndims), offset = 0, parity = ndims % 2; i < n; i++, offset += stride) {
+        for (int i = 0, n = (1 << nDims), offset = 0, parity = nDims % 2; i < n; i++, offset += stride) {
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
                 ilut[offset + dim] = (dim << 1) + ((i >>> dim) & 0x1);
             }
 
-            ilut[offset + ndims] = 1 - (((Integer.bitCount(i) + parity) % 2) << 1);
+            ilut[offset + nDims] = 1 - (((Integer.bitCount(i) + parity) % 2) << 1);
         }
 
         return ilut;
@@ -72,18 +72,18 @@ public class ImageOps {
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS) {
 
-        int ndims = srcD.length;
+        int nDims = srcD.length;
 
-        Control.checkTrue(ndims == srcS.length //
-                && ndims == dstD.length //
-                && ndims == dstS.length);
+        Control.checkTrue(nDims == srcS.length //
+                && nDims == dstD.length //
+                && nDims == dstS.length);
 
         int srcLen = MappingOps.checkDimensions(srcV.length, srcD, srcS);
         int dstLen = MappingOps.checkDimensions(dstV.length, dstD, dstS);
 
         int dstOffset = 0;
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             Control.checkTrue(srcD[dim] + 1 == dstD[dim], //
                     "Dimension mismatch");
@@ -106,7 +106,7 @@ public class ImageOps {
 
         dstIndices = MappingOps.assignMappingIndices(dstLen, dstD, dstS);
 
-        for (int dim = 0, indexBlockIncrement = dstLen; dim < ndims; indexBlockIncrement /= dstD[dim++]) {
+        for (int dim = 0, indexBlockIncrement = dstLen; dim < nDims; indexBlockIncrement /= dstD[dim++]) {
 
             int size = dstD[dim];
             int stride = dstS[dim];
@@ -137,22 +137,22 @@ public class ImageOps {
             double[] dstV, int[] dstD, int[] dstS) {
 
         int memLen = memV.length;
-        int ndims = srcD.length;
+        int nDims = srcD.length;
 
-        Control.checkTrue(ndims == srcS.length //
-                && ndims + 1 == dstD.length //
-                && ndims + 1 == dstS.length //
+        Control.checkTrue(nDims == srcS.length //
+                && nDims + 1 == dstD.length //
+                && nDims + 1 == dstS.length //
                 && memLen == srcV.length);
 
-        int[] dstDModified = Arrays.copyOf(dstD, ndims);
-        int[] dstSModified = Arrays.copyOf(dstS, ndims);
+        int[] dstDModified = Arrays.copyOf(dstD, nDims);
+        int[] dstSModified = Arrays.copyOf(dstS, nDims);
 
         int srcLen = MappingOps.checkDimensions(srcV.length, srcD, srcS);
         int dstLen = MappingOps.checkDimensions(dstV.length, dstD, dstS);
 
         int dstOffset = 0;
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             Control.checkTrue(srcD[dim] + 1 == dstD[dim], //
                     "Dimension mismatch");
@@ -167,15 +167,15 @@ public class ImageOps {
         int[] srcIndices = MappingOps.assignMappingIndices(srcLen, srcD, srcS);
         int[] dstIndices = MappingOps.assignMappingIndices(srcLen, srcD, dstSModified);
 
-        int nbins = dstD[ndims];
-        int binStride = dstS[ndims];
-        int dstLenModified = dstLen / nbins;
+        int nBins = dstD[nDims];
+        int binStride = dstS[nDims];
+        int dstLenModified = dstLen / nBins;
 
         for (int i = 0; i < srcLen; i++) {
 
             int index = memV[srcIndices[i]];
 
-            Control.checkTrue(index >= 0 && index < nbins, //
+            Control.checkTrue(index >= 0 && index < nBins, //
                     "Invalid membership index");
 
             dstV[dstIndices[i] + dstOffset + index * binStride] = srcV[srcIndices[i]];
@@ -185,7 +185,7 @@ public class ImageOps {
 
         dstIndices = MappingOps.assignMappingIndices(dstLenModified, dstDModified, dstSModified);
 
-        for (int dim = 0, indexBlockIncrement = dstLenModified; dim < ndims; indexBlockIncrement /= dstDModified[dim++]) {
+        for (int dim = 0, indexBlockIncrement = dstLenModified; dim < nDims; indexBlockIncrement /= dstDModified[dim++]) {
 
             int size = dstDModified[dim];
             int stride = dstSModified[dim];
@@ -196,7 +196,7 @@ public class ImageOps {
 
                 for (int indexIndex = lower; indexIndex < upper; indexIndex++) {
 
-                    for (int binIndex = 0, binOffset = 0; binIndex < nbins; binIndex++, binOffset += binStride) {
+                    for (int binIndex = 0, binOffset = 0; binIndex < nBins; binIndex++, binOffset += binStride) {
 
                         double acc = 0.0;
 

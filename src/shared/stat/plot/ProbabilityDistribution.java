@@ -87,11 +87,11 @@ public class ProbabilityDistribution extends Histogram {
      *            the range minimum.
      * @param max
      *            the range maximum.
-     * @param nintervals
+     * @param nIntervals
      *            the number of sampling intervals.
      */
-    public ProbabilityDistribution(Mode mode, double min, double max, int nintervals, double[] values) {
-        super(min, max, nintervals, values);
+    public ProbabilityDistribution(Mode mode, double min, double max, int nIntervals, double[] values) {
+        super(min, max, nIntervals, values);
 
         double maxDensity = 0.0;
 
@@ -117,11 +117,11 @@ public class ProbabilityDistribution extends Histogram {
      *            the range minimum.
      * @param max
      *            the range maximum.
-     * @param nintervals
+     * @param nIntervals
      *            the number of sampling intervals.
      */
-    public ProbabilityDistribution(double min, double max, int nintervals, double[] values) {
-        this(Mode.CDF, min, max, nintervals, values);
+    public ProbabilityDistribution(double min, double max, int nIntervals, double[] values) {
+        this(Mode.CDF, min, max, nIntervals, values);
     }
 
     @Override

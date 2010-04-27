@@ -51,7 +51,7 @@ void MappingOps::map(JNIEnv *env, jobject thisObj, //
         assign(env, type, //
                 (jarray) srcV, mappingResult->srcIndices, //
                 (jarray) dstV, mappingResult->dstIndices, //
-                mappingResult->nindices);
+                mappingResult->nIndices);
 
     } catch (std::exception &e) {
 
@@ -70,12 +70,12 @@ MappingResult *MappingOps::mapProxy(JNIEnv *env, //
 
     jint srcLen = env->GetArrayLength(srcV);
     jint dstLen = env->GetArrayLength(dstV);
-    jint ndims = env->GetArrayLength(srcD);
+    jint nDims = env->GetArrayLength(srcD);
 
-    if ((ndims != env->GetArrayLength(srcS)) //
-            || (ndims != env->GetArrayLength(dstD)) //
-            || (ndims != env->GetArrayLength(dstS)) //
-            || (3 * ndims != env->GetArrayLength(bounds))) {
+    if ((nDims != env->GetArrayLength(srcS)) //
+            || (nDims != env->GetArrayLength(dstD)) //
+            || (nDims != env->GetArrayLength(dstS)) //
+            || (3 * nDims != env->GetArrayLength(bounds))) {
         throw std::runtime_error("Invalid arguments");
     }
 
@@ -95,14 +95,14 @@ MappingResult *MappingOps::mapProxy(JNIEnv *env, //
     return map(boundsArr, //
             srcDArr, srcSArr, srcLen, //
             dstDArr, dstSArr, dstLen, //
-            ndims);
+            nDims);
 }
 
 MappingResult *MappingOps::map( //
         const jint *boundsArr, //
         const jint *srcDArr, const jint *srcSArr, jint srcLen, //
         const jint *dstDArr, const jint *dstSArr, jint dstLen, //
-        jint ndims) {
+        jint nDims) {
 
     MappingResult *res = NULL;
 
@@ -110,15 +110,15 @@ MappingResult *MappingOps::map( //
 
         // Perform checks.
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, srcLen);
-        MappingOps::checkDimensions(dstDArr, dstSArr, ndims, dstLen);
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
+        MappingOps::checkDimensions(dstDArr, dstSArr, nDims, dstLen);
 
         //
 
-        jint nslices = 0;
+        jint nSlices = 0;
         jint mapLen = 1;
 
-        for (jint dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (jint dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
 
             jint size = boundsArr[offset + 2];
 
@@ -126,7 +126,7 @@ MappingResult *MappingOps::map( //
                 throw std::runtime_error("Invalid mapping parameters");
             }
 
-            nslices += size;
+            nSlices += size;
             mapLen *= size;
         }
 
@@ -139,18 +139,18 @@ MappingResult *MappingOps::map( //
 
         // Execute the map operation.
 
-        MallocHandler allH(sizeof(jint) * (2 * nslices + ndims) + sizeof(jint *) * (2 * ndims));
+        MallocHandler allH(sizeof(jint) * (2 * nSlices + nDims) + sizeof(jint *) * (2 * nDims));
         void *all = (void *) allH.get();
 
         jint *ssiBacking = (jint *) all;
-        jint *dsiBacking = (jint *) all + nslices;
-        jint *mapDimsArr = (jint *) all + 2 * nslices;
-        jint **ssiArr = (jint **) ((jint *) all + 2 * nslices + ndims);
-        jint **dsiArr = (jint **) ((jint *) all + 2 * nslices + ndims) + ndims;
+        jint *dsiBacking = (jint *) all + nSlices;
+        jint *mapDimsArr = (jint *) all + 2 * nSlices;
+        jint **ssiArr = (jint **) ((jint *) all + 2 * nSlices + nDims);
+        jint **dsiArr = (jint **) ((jint *) all + 2 * nSlices + nDims) + nDims;
 
         // Assign slice array values.
 
-        for (jint dim = 0, acc = 0, offset = 0; dim < ndims; dim++, acc += boundsArr[offset + 2], offset += 3) {
+        for (jint dim = 0, acc = 0, offset = 0; dim < nDims; dim++, acc += boundsArr[offset + 2], offset += 3) {
 
             jint mapSize = boundsArr[offset + 2];
 
@@ -181,8 +181,8 @@ MappingResult *MappingOps::map( //
 
         res->createIndices(mapLen);
 
-        MappingOps::assignSlicingIndices(res->srcIndices, mapDimsArr, srcSArr, ndims, ssiArr);
-        MappingOps::assignSlicingIndices(res->dstIndices, mapDimsArr, dstSArr, ndims, dsiArr);
+        MappingOps::assignSlicingIndices(res->srcIndices, mapDimsArr, srcSArr, nDims, ssiArr);
+        MappingOps::assignSlicingIndices(res->dstIndices, mapDimsArr, dstSArr, nDims, dsiArr);
 
         return res;
 

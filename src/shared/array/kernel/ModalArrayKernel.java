@@ -171,8 +171,8 @@ public class ModalArrayKernel implements ArrayKernel {
 
     public void svd(double[] srcV, int srcStrideRow, int srcStrideCol, //
             double[] uV, double[] sV, double[] vV, //
-            int nrows, int ncols) {
-        this.opKernel.svd(srcV, srcStrideRow, srcStrideCol, uV, sV, vV, nrows, ncols);
+            int nRows, int nCols) {
+        this.opKernel.svd(srcV, srcStrideRow, srcStrideCol, uV, sV, vV, nRows, nCols);
     }
 
     public void eigs(double[] srcV, double[] vecV, double[] valV, int size) {

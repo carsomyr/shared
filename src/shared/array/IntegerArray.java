@@ -149,10 +149,10 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
         int[] dims = this.dims;
         int[] strides = this.strides;
 
-        int ndims = dims.length;
-        int nrows = (ndims == 1) ? 1 : size(ndims - 2);
-        int ncols = size(ndims - 1);
-        int sliceSize = nrows * ncols;
+        int nDims = dims.length;
+        int nRows = (nDims == 1) ? 1 : size(nDims - 2);
+        int nCols = size(nDims - 1);
+        int sliceSize = nRows * nCols;
 
         int max = Math.max(Arithmetic.max(values), Math.abs(Arithmetic.min(values)));
         int exponent = max > 0 ? (int) Math.log10(max) : 0;
@@ -173,12 +173,12 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
         strides = IndexingOrder.FAR.strides(dims);
 
-        if (ndims <= 2) {
+        if (nDims <= 2) {
 
             f.format("%n");
 
             formatSlice(f, format, //
-                    values, indices, 0, nrows, ncols, false);
+                    values, indices, 0, nRows, nCols, false);
 
             return f.toString();
         }
@@ -187,14 +187,14 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
             f.format("%n[slice (");
 
-            for (int i = 0, n = ndims - 2, offsetAcc = offset; i < n; offsetAcc %= strides[i], i++) {
+            for (int i = 0, n = nDims - 2, offsetAcc = offset; i < n; offsetAcc %= strides[i], i++) {
                 f.format("%d, ", offsetAcc / strides[i]);
             }
 
             f.format(":, :)]%n");
 
             formatSlice(f, format, //
-                    values, indices, offset, nrows, ncols, false);
+                    values, indices, offset, nRows, nCols, false);
         }
 
         return f.toString();
@@ -416,12 +416,12 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
         Control.checkTrue(ranges.length % 3 == 0, //
                 "Invalid range specifications");
 
-        int ndims = ranges.length / 3;
-        int[] dims = new int[ndims];
+        int nDims = ranges.length / 3;
+        int[] dims = new int[nDims];
 
-        IntegerArray[] arrays = new IntegerArray[ndims];
+        IntegerArray[] arrays = new IntegerArray[nDims];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
 
             int start = ranges[offset];
             int end = ranges[offset + 1];
@@ -435,11 +435,11 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
             arrays[dim] = new IntegerArray(values, dims);
         }
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             dims[dim] = arrays[dim].size(dim);
         }
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             int dimSize = dims[dim];
 

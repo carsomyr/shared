@@ -43,10 +43,10 @@ public class IndexOps {
      */
     final public static int[] find(int[] srcV, int[] srcD, int[] srcS, int[] logical) {
 
-        int ndims = srcD.length;
+        int nDims = srcD.length;
 
-        Control.checkTrue(ndims == srcS.length //
-                && ndims == logical.length);
+        Control.checkTrue(nDims == srcS.length //
+                && nDims == logical.length);
 
         MappingOps.checkDimensions(srcV.length, srcD, srcS);
 
@@ -57,7 +57,7 @@ public class IndexOps {
 
         int offset = 0;
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             if (dim != activeDim) {
 

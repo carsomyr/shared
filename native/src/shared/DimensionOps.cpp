@@ -26,13 +26,13 @@
 void DimensionOps::assignBaseIndices( //
         jint *srcIndices, //
         const jint *srcDArr, jint *srcDArrModified, const jint *srcSArr, jint *srcSArrModified, //
-        jint ndims, jint dim) {
+        jint nDims, jint dim) {
 
     memcpy(srcDArrModified, srcDArr, sizeof(jint) * dim);
-    memcpy(srcDArrModified + dim, srcDArr + dim + 1, sizeof(jint) * ((ndims - 1) - dim));
+    memcpy(srcDArrModified + dim, srcDArr + dim + 1, sizeof(jint) * ((nDims - 1) - dim));
 
     memcpy(srcSArrModified, srcSArr, sizeof(jint) * dim);
-    memcpy(srcSArrModified + dim, srcSArr + dim + 1, sizeof(jint) * ((ndims - 1) - dim));
+    memcpy(srcSArrModified + dim, srcSArr + dim + 1, sizeof(jint) * ((nDims - 1) - dim));
 
-    MappingOps::assignMappingIndices(srcIndices, srcDArrModified, srcSArrModified, ndims - 1);
+    MappingOps::assignMappingIndices(srcIndices, srcDArrModified, srcSArrModified, nDims - 1);
 }

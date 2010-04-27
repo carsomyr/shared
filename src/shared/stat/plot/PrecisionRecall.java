@@ -75,16 +75,16 @@ public class PrecisionRecall extends ErrorDistribution {
     @Override
     protected void initDataset(RealArray dataset, boolean[] outcomes) {
 
-        int nexamples = dataset.size(0);
+        int nExamples = dataset.size(0);
 
-        for (int i = 0, ncorrect = 0; i < nexamples; i++) {
+        for (int i = 0, nCorrect = 0; i < nExamples; i++) {
 
             if (outcomes[i]) {
-                ncorrect++;
+                nCorrect++;
             }
 
-            dataset.set(i / (double) nexamples, i, 0);
-            dataset.set((i > 0) ? ncorrect / (double) i : 1.0, i, 1);
+            dataset.set(i / (double) nExamples, i, 0);
+            dataset.set((i > 0) ? nCorrect / (double) i : 1.0, i, 1);
         }
     }
 

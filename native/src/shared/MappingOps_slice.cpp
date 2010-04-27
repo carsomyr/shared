@@ -51,7 +51,7 @@ void MappingOps::slice(JNIEnv *env, jobject thisObj, //
         assign(env, type, //
                 (jarray) srcV, mappingResult->srcIndices, //
                 (jarray) dstV, mappingResult->dstIndices, //
-                mappingResult->nindices);
+                mappingResult->nIndices);
 
     } catch (std::exception &e) {
 
@@ -70,13 +70,13 @@ MappingResult *MappingOps::sliceProxy(JNIEnv *env, //
 
     jint srcLen = env->GetArrayLength(srcV);
     jint dstLen = env->GetArrayLength(dstV);
-    jint ndims = env->GetArrayLength(srcD);
-    jint nslices = env->GetArrayLength(slices);
+    jint nDims = env->GetArrayLength(srcD);
+    jint nSlices = env->GetArrayLength(slices);
 
-    if ((ndims != env->GetArrayLength(srcS)) //
-            || (ndims != env->GetArrayLength(dstD)) //
-            || (ndims != env->GetArrayLength(dstS)) //
-            || (nslices % 3)) {
+    if ((nDims != env->GetArrayLength(srcS)) //
+            || (nDims != env->GetArrayLength(dstD)) //
+            || (nDims != env->GetArrayLength(dstS)) //
+            || (nSlices % 3)) {
         throw std::runtime_error("Invalid arguments");
     }
 
@@ -92,17 +92,17 @@ MappingResult *MappingOps::sliceProxy(JNIEnv *env, //
     jint *dstDArr = (jint *) dstDH.get();
     jint *dstSArr = (jint *) dstSH.get();
 
-    return slice(slicesArr, nslices / 3, //
+    return slice(slicesArr, nSlices / 3, //
             srcDArr, srcSArr, srcLen, //
             dstDArr, dstSArr, dstLen, //
-            ndims);
+            nDims);
 }
 
 MappingResult *MappingOps::slice( //
-        const jint *slicesArr, jint nslices, //
+        const jint *slicesArr, jint nSlices, //
         const jint *srcDArr, const jint *srcSArr, jint srcLen, //
         const jint *dstDArr, const jint *dstSArr, jint dstLen, //
-        jint ndims) {
+        jint nDims) {
 
     MappingResult *res = NULL;
 
@@ -110,16 +110,16 @@ MappingResult *MappingOps::slice( //
 
         // Perform checks.
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, srcLen);
-        MappingOps::checkDimensions(dstDArr, dstSArr, ndims, dstLen);
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
+        MappingOps::checkDimensions(dstDArr, dstSArr, nDims, dstLen);
 
-        for (jint i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (jint i = 0, n = 3 * nSlices; i < n; i += 3) {
 
             jint srcIndex = slicesArr[i];
             jint dstIndex = slicesArr[i + 1];
             jint dim = slicesArr[i + 2];
 
-            if (!(dim >= 0 && dim < ndims)) {
+            if (!(dim >= 0 && dim < nDims)) {
                 throw std::runtime_error("Invalid dimension");
             }
 
@@ -131,41 +131,41 @@ MappingResult *MappingOps::slice( //
 
         // Execute the slice operation.
 
-        MallocHandler allH(sizeof(jint) * (2 * ndims + 2 * nslices) + sizeof(jint *) * (2 * ndims));
+        MallocHandler allH(sizeof(jint) * (2 * nDims + 2 * nSlices) + sizeof(jint *) * (2 * nDims));
         void *all = (void *) allH.get();
 
         jint *dimCounts = (jint *) all;
-        jint *dimAcc = (jint *) all + ndims;
-        jint *ssiBacking = (jint *) all + 2 * ndims;
-        jint *dsiBacking = (jint *) all + 2 * ndims + nslices;
-        jint **ssiArr = (jint **) ((jint *) all + 2 * ndims + 2 * nslices);
-        jint **dsiArr = (jint **) ((jint *) all + 2 * ndims + 2 * nslices) + ndims;
+        jint *dimAcc = (jint *) all + nDims;
+        jint *ssiBacking = (jint *) all + 2 * nDims;
+        jint *dsiBacking = (jint *) all + 2 * nDims + nSlices;
+        jint **ssiArr = (jint **) ((jint *) all + 2 * nDims + 2 * nSlices);
+        jint **dsiArr = (jint **) ((jint *) all + 2 * nDims + 2 * nSlices) + nDims;
 
         // Prepare the dimension counts array.
-        memset(dimCounts, 0, sizeof(jint) * ndims);
-        memset(dimAcc, 0, sizeof(jint) * ndims);
+        memset(dimCounts, 0, sizeof(jint) * nDims);
+        memset(dimAcc, 0, sizeof(jint) * nDims);
 
         // Count the number of slices for each dimension.
 
-        for (jint i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (jint i = 0, n = 3 * nSlices; i < n; i += 3) {
             dimCounts[slicesArr[i + 2]]++;
         }
 
         // Assign the slice array pointers.
 
-        jint nindices = 1;
+        jint nIndices = 1;
 
-        for (jint dim = 0, acc = 0; dim < ndims; acc += dimCounts[dim++]) {
+        for (jint dim = 0, acc = 0; dim < nDims; acc += dimCounts[dim++]) {
 
             ssiArr[dim] = ssiBacking + acc;
             dsiArr[dim] = dsiBacking + acc;
 
-            nindices *= dimCounts[dim];
+            nIndices *= dimCounts[dim];
         }
 
         // Assign the slice array values.
 
-        for (jint i = 0, n = 3 * nslices; i < n; i += 3) {
+        for (jint i = 0, n = 3 * nSlices; i < n; i += 3) {
 
             jint dim = slicesArr[i + 2];
             jint idx = dimAcc[dim]++;
@@ -177,14 +177,14 @@ MappingResult *MappingOps::slice( //
         res = new MappingResult();
 
         // Proceed only if there's something to slice.
-        if (!nindices) {
+        if (!nIndices) {
             return res;
         }
 
-        res->createIndices(nindices);
+        res->createIndices(nIndices);
 
-        MappingOps::assignSlicingIndices(res->srcIndices, dimCounts, srcSArr, ndims, ssiArr);
-        MappingOps::assignSlicingIndices(res->dstIndices, dimCounts, dstSArr, ndims, dsiArr);
+        MappingOps::assignSlicingIndices(res->srcIndices, dimCounts, srcSArr, nDims, ssiArr);
+        MappingOps::assignSlicingIndices(res->dstIndices, dimCounts, dstSArr, nDims, dsiArr);
 
         return res;
 

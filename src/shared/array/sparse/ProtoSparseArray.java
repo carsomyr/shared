@@ -101,17 +101,17 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
      */
     final protected static int[] createDimensionOffsets(int[] dims) {
 
-        int ndims = dims.length;
-        int[] dimOffsets = new int[ndims + 1];
+        int nDims = dims.length;
+        int[] dimOffsets = new int[nDims + 1];
         int dimOffset = 0;
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             dimOffsets[dim] = dimOffset;
             dimOffset += dims[dim] + 1;
         }
 
-        dimOffsets[ndims] = dimOffset;
+        dimOffsets[nDims] = dimOffset;
 
         return dimOffsets;
     }
@@ -179,10 +179,10 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         ProtoSparseArray<T, V, E, D> src = this;
 
-        int ndims = src.dims.length;
+        int nDims = src.dims.length;
         int newLen = length(values);
 
-        Control.checkTrue(ndims * newLen == logicals.length, //
+        Control.checkTrue(nDims * newLen == logicals.length, //
                 "Invalid arguments");
 
         int[] newI = new int[newLen];
@@ -191,8 +191,8 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
             int physical = 0;
 
-            for (int dim = 0; dim < ndims; dim++) {
-                physical += src.strides[dim] * logicals[ndims * i + dim];
+            for (int dim = 0; dim < nDims; dim++) {
+                physical += src.strides[dim] * logicals[nDims * i + dim];
             }
 
             newI[i] = physical;
@@ -218,24 +218,24 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         ProtoSparseArray<T, V, E, D> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, dst.dims.length, //
+        int nDims = Control.checkEquals(src.dims.length, dst.dims.length, //
                 "Dimensionality mismatch");
 
-        Control.checkTrue(3 * ndims == bounds.length, //
+        Control.checkTrue(3 * nDims == bounds.length, //
                 "Invalid arguments");
 
         //
 
-        int nslices = 0;
+        int nSlices = 0;
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
 
             int size = bounds[offset + 2];
 
             Control.checkTrue(size >= 0, //
                     "Invalid mapping parameters");
 
-            nslices += size;
+            nSlices += size;
         }
 
         if (Arithmetic.product(src.dims) == 0 || Arithmetic.product(dst.dims) == 0) {
@@ -244,9 +244,9 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         //
 
-        int[] slices = new int[3 * nslices];
+        int[] slices = new int[3 * nSlices];
 
-        for (int dim = 0, acc = 0, offset = 0, sliceOffset = 0; dim < ndims; dim++, acc += bounds[offset + 2], offset += 3) {
+        for (int dim = 0, acc = 0, offset = 0, sliceOffset = 0; dim < nDims; dim++, acc += bounds[offset + 2], offset += 3) {
 
             int size = bounds[offset + 2];
 
@@ -332,10 +332,10 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         T src = (T) this;
 
-        int ndims = srcSlices.length;
-        int[] dstDims = new int[ndims];
+        int nDims = srcSlices.length;
+        int[] dstDims = new int[nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             dstDims[dim] = srcSlices[dim].length;
         }
 
@@ -347,14 +347,14 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         ProtoSparseArray<T, V, E, D> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, srcSlices.length, //
+        int nDims = Control.checkEquals(src.dims.length, srcSlices.length, //
                 "Dimensionality mismatch");
 
-        int nslices = 0;
-        int[] dstDims = new int[ndims];
+        int nSlices = 0;
+        int[] dstDims = new int[nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
-            nslices += (dstDims[dim] = srcSlices[dim].length);
+        for (int dim = 0; dim < nDims; dim++) {
+            nSlices += (dstDims[dim] = srcSlices[dim].length);
         }
 
         T dst = wrap((E) null, dstDims, src.order().strides(dstDims), createDimensionOffsets(dstDims));
@@ -362,7 +362,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         SparseArrayState<V> srcState = src.state;
         SparseArrayState<V> dstState = dst.state;
 
-        dst.state = OpKernel.sliceSparse(canonicalizeSlices(nslices, src.dims, srcSlices), //
+        dst.state = OpKernel.sliceSparse(canonicalizeSlices(nSlices, src.dims, srcSlices), //
                 srcState.values, src.dims, src.strides, src.dimOffsets, //
                 srcState.indices, srcState.indirectionOffsets, srcState.indirections, //
                 dstState.values, dst.dims, dst.strides, dst.dimOffsets, //
@@ -375,20 +375,20 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         ProtoSparseArray<T, V, E, D> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, repetitions.length, //
+        int nDims = Control.checkEquals(src.dims.length, repetitions.length, //
                 "Dimensionality mismatch");
 
         int[] newDims = src.dims.clone();
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             newDims[dim] *= repetitions[dim];
         }
 
         T dst = wrap((E) null, newDims, src.order().strides(newDims), createDimensionOffsets(newDims));
 
-        int[] mappingBounds = new int[3 * ndims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
             mappingBounds[offset + 2] = dst.dims[dim];
         }
 
@@ -399,15 +399,15 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         ProtoSparseArray<T, V, E, D> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, permutation.length, //
+        int nDims = Control.checkEquals(src.dims.length, permutation.length, //
                 "Dimensionality mismatch");
 
-        int[] newDims = new int[ndims];
+        int[] newDims = new int[nDims];
         int[] copy = permutation.clone();
 
         Arrays.sort(copy);
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             newDims[permutation[dim]] = src.dims[dim];
 
@@ -417,17 +417,17 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         SparseArrayState<V> srcState = src.state;
 
-        int nindices = srcState.indices.length;
+        int nIndices = srcState.indices.length;
         int[] newStrides = src.order().strides(newDims);
         int[] newDimOffsets = createDimensionOffsets(newDims);
-        int[] newIndices = new int[nindices];
+        int[] newIndices = new int[nIndices];
 
-        for (int i = 0; i < nindices; i++) {
+        for (int i = 0; i < nIndices; i++) {
 
             int newPhysical = 0;
             int physical = srcState.indices[i];
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
 
                 newPhysical += newStrides[permutation[dim]] * (physical / src.strides[dim]);
                 physical %= src.strides[dim];
@@ -445,12 +445,12 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         ProtoSparseArray<T, V, E, D> src = this;
 
-        int ndims = Control.checkEquals(src.dims.length, shifts.length, //
+        int nDims = Control.checkEquals(src.dims.length, shifts.length, //
                 "Dimensionality mismatch");
 
-        int[] mappingBounds = new int[3 * ndims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0, offset = 0; dim < ndims; dim++, offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
 
             mappingBounds[offset + 1] = shifts[dim];
             mappingBounds[offset + 2] = src.dims[dim];
@@ -463,15 +463,15 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         ProtoSparseArray<T, V, E, D> src = this;
 
-        int ndims = src.dims.length;
+        int nDims = src.dims.length;
 
-        Control.checkTrue(ndims * 2 == bounds.length, //
+        Control.checkTrue(nDims * 2 == bounds.length, //
                 "Invalid subarray bounds");
 
-        int[] newDims = new int[ndims];
-        int[] mappingBounds = new int[3 * ndims];
+        int[] newDims = new int[nDims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             int lower = bounds[2 * dim];
             int upper = bounds[2 * dim + 1];
@@ -527,9 +527,9 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         ProtoSparseArray<T, V, E, D> src = this;
 
-        int ndims = src.dims.length;
+        int nDims = src.dims.length;
 
-        Control.checkTrue(opDim >= 0 && opDim < ndims, //
+        Control.checkTrue(opDim >= 0 && opDim < nDims, //
                 "Invalid dimension");
 
         srcs = Arrays.copyOf(srcs, srcs.length + 1);
@@ -547,7 +547,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
                         "Dimension mismatch");
             }
 
-            for (int dim = opDim + 1; dim < ndims; dim++) {
+            for (int dim = opDim + 1; dim < nDims; dim++) {
                 Control.checkTrue(src.dims[dim] == srcs[i].dims[dim], //
                         "Dimension mismatch");
             }
@@ -558,9 +558,9 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         int[] newDims = src.dims.clone();
         newDims[opDim] = offset;
 
-        int[] mappingBounds = new int[3 * ndims];
+        int[] mappingBounds = new int[3 * nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             mappingBounds[3 * dim + 2] = src.dims[dim];
         }
 
@@ -609,7 +609,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return this.strides[i];
     }
 
-    public int ndims() {
+    public int nDims() {
         return this.dims.length;
     }
 

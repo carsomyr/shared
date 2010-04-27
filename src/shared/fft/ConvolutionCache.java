@@ -74,10 +74,10 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
                 : createCacheable(ker, dimsT))).ifft();
 
         int[] dims = res.dims();
-        int ndims = dims.length;
-        int[] bounds = new int[ndims * 2];
+        int nDims = dims.length;
+        int[] bounds = new int[nDims * 2];
 
-        for (int i = 0, n = ndims - 1; i < n; i++) {
+        for (int i = 0, n = nDims - 1; i < n; i++) {
             Control.checkTrue((bounds[2 * i + 1] = dims[i] - ker.size(i) + 1) > 0, //
                     "Invalid kernel size");
         }
@@ -103,10 +103,10 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
                 : createCacheable(ker, dimsT))).rifft();
 
         int[] dims = res.dims();
-        int ndims = dims.length;
-        int[] bounds = new int[ndims * 2];
+        int nDims = dims.length;
+        int[] bounds = new int[nDims * 2];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             bounds[2 * dim + 1] = dims[dim] - ker.size(dim) + 1;
         }
 
@@ -116,10 +116,10 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
     @Override
     protected <A extends AbstractArray<?, ComplexArray, ?, ?>> ComplexArray createCacheable(A array, int[] dims) {
 
-        int ndims = dims.length;
-        int[] bounds = new int[ndims * 3];
+        int nDims = dims.length;
+        int[] bounds = new int[nDims * 3];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             bounds[3 * dim + 2] = array.size(dim);
         }
 
@@ -148,14 +148,14 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
      */
     final public static RealArray pad(RealArray im, int... margins) {
 
-        int ndims = im.ndims();
+        int nDims = im.nDims();
         int[] dims = im.dims();
         int[] newDims = dims.clone();
 
         Control.checkTrue(dims.length == margins.length, //
                 "Dimensionality mismatch");
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             newDims[dim] += 2 * margins[dim];
         }
 
@@ -163,20 +163,20 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
 
         // Slice for all partitions of dimensions into corners and edges.
 
-        Control.checkTrue(ndims <= 16, //
+        Control.checkTrue(nDims <= 16, //
                 "Too many dimensions");
 
-        for (int i = 0, n = (1 << ndims), cdi = 0, edi = 0; i < n; i++, cdi = 0, edi = 0) {
+        for (int i = 0, n = (1 << nDims), cdi = 0, edi = 0; i < n; i++, cdi = 0, edi = 0) {
 
-            int ncornerDims = Integer.bitCount(i);
-            int nedgeDims = ndims - ncornerDims;
+            int nCornerDims = Integer.bitCount(i);
+            int nEdgeDims = nDims - nCornerDims;
 
-            int[] cornerDimIndices = new int[ncornerDims];
-            int[] edgeDimIndices = new int[nedgeDims];
+            int[] cornerDimIndices = new int[nCornerDims];
+            int[] edgeDimIndices = new int[nEdgeDims];
 
-            int nedgeSlices = 0;
+            int nEdgeSlices = 0;
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
 
                 if (((i >>> dim) & 0x1) == 0x1) {
 
@@ -184,21 +184,21 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
 
                 } else {
 
-                    nedgeSlices += dims[edgeDimIndices[edi++] = dim];
+                    nEdgeSlices += dims[edgeDimIndices[edi++] = dim];
                 }
             }
 
             //
 
-            int nmarginIndices = 0;
+            int nMarginIndices = 0;
 
-            for (int j = 0; j < ncornerDims; j++) {
-                nmarginIndices += margins[cornerDimIndices[j]];
+            for (int j = 0; j < nCornerDims; j++) {
+                nMarginIndices += margins[cornerDimIndices[j]];
             }
 
-            int[] slices = new int[6 * nmarginIndices + 3 * nedgeSlices];
+            int[] slices = new int[6 * nMarginIndices + 3 * nEdgeSlices];
 
-            for (int j = 0, base = 0, offset = 3 * nmarginIndices; j < ncornerDims; j++) {
+            for (int j = 0, base = 0, offset = 3 * nMarginIndices; j < nCornerDims; j++) {
 
                 int dim = cornerDimIndices[j];
                 int size = dims[dim];
@@ -216,7 +216,7 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
                 }
             }
 
-            for (int j = 0, base = 0, offset = 6 * nmarginIndices; j < nedgeDims; j++) {
+            for (int j = 0, base = 0, offset = 6 * nMarginIndices; j < nEdgeDims; j++) {
 
                 int dim = edgeDimIndices[j];
                 int size = dims[dim];

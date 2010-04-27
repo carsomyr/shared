@@ -89,10 +89,10 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
         checkInvalidParity();
 
-        int ndims = this.dims.length;
-        int[] shift = new int[ndims];
+        int nDims = this.dims.length;
+        int[] shift = new int[nDims];
 
-        for (int i = 0, n = ndims - 1; i < n; i++) {
+        for (int i = 0, n = nDims - 1; i < n; i++) {
             shift[i] = direction * (this.dims[i] / 2);
         }
 
@@ -106,10 +106,10 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
         int[] dims = this.dims;
         int[] strides = this.strides;
 
-        int ndims = dims.length;
-        int nrows = (ndims == 2) ? 1 : size(ndims - 3);
-        int ncols = size(ndims - 2);
-        int sliceSize = nrows * ncols * 2;
+        int nDims = dims.length;
+        int nRows = (nDims == 2) ? 1 : size(nDims - 3);
+        int nCols = size(nDims - 2);
+        int sliceSize = nRows * nCols * 2;
 
         int exponent = (int) Math.log10(Arithmetic.max( //
                 Arithmetic.max(values), Math.abs(Arithmetic.min(values)), 1e-128));
@@ -133,12 +133,12 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
         strides = IndexingOrder.FAR.strides(dims);
 
-        if (ndims <= 3) {
+        if (nDims <= 3) {
 
             f.format("%n");
 
             formatSlice(f, format, //
-                    values, indices, 0, nrows, ncols, true);
+                    values, indices, 0, nRows, nCols, true);
 
             return f.toString();
         }
@@ -147,14 +147,14 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
             f.format("%n[slice (");
 
-            for (int i = 0, n = ndims - 3, offsetAcc = offset; i < n; offsetAcc %= strides[i], i++) {
+            for (int i = 0, n = nDims - 3, offsetAcc = offset; i < n; offsetAcc %= strides[i], i++) {
                 f.format("%d, ", offsetAcc / strides[i]);
             }
 
             f.format(":, :)]%n");
 
             formatSlice(f, format, //
-                    values, indices, offset, nrows, ncols, true);
+                    values, indices, offset, nRows, nCols, true);
         }
 
         return f.toString();

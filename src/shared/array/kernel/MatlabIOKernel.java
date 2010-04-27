@@ -388,18 +388,18 @@ public class MatlabIOKernel implements ArrayIOKernel {
     /**
      * Writes the data element header, given the {@link DataType} and the number of elements.
      */
-    final protected static void writeDataElementHeader(ByteBuffer bb, DataType type, int nelts) {
+    final protected static void writeDataElementHeader(ByteBuffer bb, DataType type, int nElts) {
 
-        int nbytes = type.sizeOf() * nelts;
+        int nBytes = type.sizeOf() * nElts;
 
-        if (nbytes > 4 || nbytes == 0) {
+        if (nBytes > 4 || nBytes == 0) {
 
             bb.putInt(type.getMatlabValue());
-            bb.putInt(nbytes);
+            bb.putInt(nBytes);
 
         } else {
 
-            bb.putShort((short) nbytes);
+            bb.putShort((short) nBytes);
             bb.putShort((short) type.getMatlabValue());
         }
     }
@@ -461,10 +461,10 @@ public class MatlabIOKernel implements ArrayIOKernel {
     /**
      * Gets the data element size, given the {@link DataType} and the number of elements.
      */
-    final protected static int getDataElementSize(DataType type, int nelts) {
+    final protected static int getDataElementSize(DataType type, int nElts) {
 
-        int nbytes = type.sizeOf() * nelts;
-        return (nbytes > 4) ? (8 + nbytes + (8 - nbytes % 8) % 8) : 8;
+        int nBytes = type.sizeOf() * nElts;
+        return (nBytes > 4) ? (8 + nBytes + (8 - nBytes % 8) % 8) : 8;
     }
 
     /**

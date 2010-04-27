@@ -58,7 +58,7 @@ public class IntegralImage extends RealArray {
                 src.values(), srcDims, src.order().strides(srcDims), //
                 dst.values(), dstDims, dst.order().strides(dstDims));
 
-        this.ilut = ImageOps.createILUT(ndims());
+        this.ilut = ImageOps.createILUT(nDims());
     }
 
     /**
@@ -72,19 +72,19 @@ public class IntegralImage extends RealArray {
         double sum = 0.0;
         double[] values = values();
 
-        int ndims = ndims();
-        int stride = ndims + 1;
+        int nDims = nDims();
+        int stride = nDims + 1;
         int[] ilut = this.ilut;
 
-        for (int i = 0, n = (1 << ndims), offset = 0; i < n; i++, offset += stride) {
+        for (int i = 0, n = (1 << nDims), offset = 0; i < n; i++, offset += stride) {
 
             int index = 0;
 
-            for (int dim = 0; dim < ndims; dim++) {
+            for (int dim = 0; dim < nDims; dim++) {
                 index += bounds[ilut[offset + dim]] * stride(dim);
             }
 
-            sum += values[index] * ilut[offset + ndims];
+            sum += values[index] * ilut[offset + nDims];
         }
 
         return sum;
@@ -95,11 +95,11 @@ public class IntegralImage extends RealArray {
      */
     final protected static int[] getDimensionsPlusOne(RealArray arr) {
 
-        int ndims = arr.ndims();
+        int nDims = arr.nDims();
 
-        int[] res = new int[ndims];
+        int[] res = new int[nDims];
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
             res[dim] = arr.size(dim) + 1;
         }
 

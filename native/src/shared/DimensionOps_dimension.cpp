@@ -52,10 +52,10 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
 
         jint srcLen = env->GetArrayLength(srcV);
         jint dstLen = env->GetArrayLength(dstV);
-        jint ndims = env->GetArrayLength(srcD);
-        jint nselectedDims = env->GetArrayLength(selectedDims);
+        jint nDims = env->GetArrayLength(srcD);
+        jint nSelectedDims = env->GetArrayLength(selectedDims);
 
-        if ((ndims != env->GetArrayLength(srcS)) //
+        if ((nDims != env->GetArrayLength(srcS)) //
                 || (srcLen != dstLen)) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -76,13 +76,13 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
         jdouble *dstVArr = (jdouble *) dstVH.get();
         jint *selectedDimsArr = (jint *) selectedDimsH.get();
 
-        MappingOps::checkDimensions(srcDArr, srcSArr, ndims, srcLen);
+        MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
 
-        for (jint i = 0; i < nselectedDims; i++) {
+        for (jint i = 0; i < nSelectedDims; i++) {
 
             jint dim = selectedDimsArr[i];
 
-            if (!(dim >= 0 && dim < ndims)) {
+            if (!(dim >= 0 && dim < nDims)) {
                 throw std::runtime_error("Invalid dimension");
             }
         }
@@ -94,7 +94,7 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
 
         // Execute the dimension operation.
 
-        op(srcVArr, srcDArr, srcSArr, dstVArr, selectedDimsArr, srcLen, ndims, nselectedDims);
+        op(srcVArr, srcDArr, srcSArr, dstVArr, selectedDimsArr, srcLen, nDims, nSelectedDims);
 
     } catch (std::exception &e) {
 
@@ -104,19 +104,19 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
 
 inline void DimensionOps::rdSum(jdouble *srcVArr, const jint *srcDArr, const jint *srcSArr, //
         jdouble *dstVArr, const jint *selectedDimsArr, //
-        jint len, jint ndims, jint nselectedDims) {
+        jint len, jint nDims, jint nSelectedDims) {
 
-    MallocHandler mallocH(sizeof(jint) * (len + ndims));
+    MallocHandler mallocH(sizeof(jint) * (len + nDims));
     void *all = mallocH.get();
 
     jint *srcIndices = (jint *) all;
     jint *indicator = ((jint *) all) + len;
 
-    memset(indicator, 0, sizeof(jint) * ndims);
+    memset(indicator, 0, sizeof(jint) * nDims);
 
     // Assign indicator values.
 
-    for (jint i = 0; i < nselectedDims; i++) {
+    for (jint i = 0; i < nSelectedDims; i++) {
         indicator[selectedDimsArr[i]] = 1;
     }
 
@@ -124,11 +124,11 @@ inline void DimensionOps::rdSum(jdouble *srcVArr, const jint *srcDArr, const jin
 
     memcpy(dstVArr, srcVArr, sizeof(jdouble) * len);
 
-    MappingOps::assignMappingIndices(srcIndices, srcDArr, srcSArr, ndims);
+    MappingOps::assignMappingIndices(srcIndices, srcDArr, srcSArr, nDims);
 
     //
 
-    for (jint dim = 0, indexBlockIncrement = len; dim < ndims; indexBlockIncrement /= srcDArr[dim++]) {
+    for (jint dim = 0, indexBlockIncrement = len; dim < nDims; indexBlockIncrement /= srcDArr[dim++]) {
 
         if (!indicator[dim]) {
             continue;
@@ -156,19 +156,19 @@ inline void DimensionOps::rdSum(jdouble *srcVArr, const jint *srcDArr, const jin
 
 inline void DimensionOps::rdProd(jdouble *srcVArr, const jint *srcDArr, const jint *srcSArr, //
         jdouble *dstVArr, const jint *selectedDimsArr, //
-        jint len, jint ndims, jint nselectedDims) {
+        jint len, jint nDims, jint nSelectedDims) {
 
-    MallocHandler mallocH(sizeof(jint) * (len + ndims));
+    MallocHandler mallocH(sizeof(jint) * (len + nDims));
     void *all = mallocH.get();
 
     jint *srcIndices = (jint *) all;
     jint *indicator = ((jint *) all) + len;
 
-    memset(indicator, 0, sizeof(jint) * ndims);
+    memset(indicator, 0, sizeof(jint) * nDims);
 
     // Assign indicator values.
 
-    for (jint i = 0; i < nselectedDims; i++) {
+    for (jint i = 0; i < nSelectedDims; i++) {
         indicator[selectedDimsArr[i]] = 1;
     }
 
@@ -176,11 +176,11 @@ inline void DimensionOps::rdProd(jdouble *srcVArr, const jint *srcDArr, const ji
 
     memcpy(dstVArr, srcVArr, sizeof(jdouble) * len);
 
-    MappingOps::assignMappingIndices(srcIndices, srcDArr, srcSArr, ndims);
+    MappingOps::assignMappingIndices(srcIndices, srcDArr, srcSArr, nDims);
 
     //
 
-    for (jint dim = 0, indexBlockIncrement = len; dim < ndims; indexBlockIncrement /= srcDArr[dim++]) {
+    for (jint dim = 0, indexBlockIncrement = len; dim < nDims; indexBlockIncrement /= srcDArr[dim++]) {
 
         if (!indicator[dim]) {
             continue;

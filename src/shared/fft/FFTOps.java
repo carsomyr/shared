@@ -54,7 +54,7 @@ public class FFTOps {
      */
     final public static void fft(int direction, int[] dims, double[] in, double[] out) {
 
-        int ndims = dims.length;
+        int nDims = dims.length;
         int len = Arithmetic.product(dims);
 
         double[] outTmp = new double[len << 1];
@@ -62,7 +62,7 @@ public class FFTOps {
 
         System.arraycopy(in, 0, out, 0, len << 1);
 
-        for (int dim = 0; dim < ndims; dim++) {
+        for (int dim = 0; dim < nDims; dim++) {
 
             int dimSize = dims[dim];
             int dimStride = len / dimSize;

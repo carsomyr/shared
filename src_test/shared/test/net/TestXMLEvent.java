@@ -185,16 +185,16 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     final protected static class SequenceXMLEvent extends TestXMLEvent implements SequenceEventDefinition {
 
         final long seqNo;
-        final int nmessages;
+        final int nMessages;
 
         /**
          * Default constructor.
          */
-        public SequenceXMLEvent(long seqNo, int nmessages, Source<TestXMLEvent, SourceType> source) {
+        public SequenceXMLEvent(long seqNo, int nMessages, Source<TestXMLEvent, SourceType> source) {
             super(SEQUENCE, source);
 
             this.seqNo = seqNo;
-            this.nmessages = nmessages;
+            this.nMessages = nMessages;
         }
 
         /**
@@ -206,7 +206,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
             NodeList children = contentNode.getChildNodes();
 
             this.seqNo = Long.parseLong(children.item(0).getTextContent());
-            this.nmessages = Integer.parseInt(children.item(1).getTextContent());
+            this.nMessages = Integer.parseInt(children.item(1).getTextContent());
         }
 
         @Override
@@ -218,15 +218,15 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
                     .setTextContent(Long.toString(this.seqNo));
 
             contentNode.appendChild(doc.createElement("nmessages")) //
-                    .setTextContent(Integer.toString(this.nmessages));
+                    .setTextContent(Integer.toString(this.nMessages));
         }
 
         public long getSeqNo() {
             return this.seqNo;
         }
 
-        public int nmessages() {
-            return this.nmessages;
+        public int nMessages() {
+            return this.nMessages;
         }
     }
 
@@ -281,8 +281,8 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         }
 
         @Override
-        protected TestXMLEvent createSequenceEvent(long seqNo, int nmessages) {
-            return new SequenceXMLEvent(seqNo, nmessages, null);
+        protected TestXMLEvent createSequenceEvent(long seqNo, int nMessages) {
+            return new SequenceXMLEvent(seqNo, nMessages, null);
         }
     }
 
@@ -294,8 +294,8 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         /**
          * Default constructor.
          */
-        protected SenderXMLVerifier(long seqNo, int nmessages, int meanMessageSize) {
-            super(seqNo, nmessages, meanMessageSize);
+        protected SenderXMLVerifier(long seqNo, int nMessages, int meanMessageSize) {
+            super(seqNo, nMessages, meanMessageSize);
         }
 
         @Override

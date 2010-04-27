@@ -75,29 +75,29 @@ void LinearAlgebraOps::invert(JNIEnv *env, jobject thisObj, //
     }
 }
 
-void LinearAlgebraOps::lup(jdouble *lu, jint *pivots, jint nrows, jint ncols) {
+void LinearAlgebraOps::lup(jdouble *lu, jint *pivots, jint nRows, jint nCols) {
 
-    MallocHandler allH(sizeof(jdouble) * nrows);
+    MallocHandler allH(sizeof(jdouble) * nRows);
     jdouble *all = (jdouble *) allH.get();
     jdouble *luColJ = all;
 
-    jint luStrideRow = ncols;
+    jint luStrideRow = nCols;
 
     // Use a "left-looking", dot-product, Crout/Doolittle algorithm.
 
     // Outer loop.
 
-    for (jint j = 0; j < ncols; j++) {
+    for (jint j = 0; j < nCols; j++) {
 
         // Make a copy of the j-th column to localize references.
 
-        for (jint i = 0; i < nrows; i++) {
+        for (jint i = 0; i < nRows; i++) {
             luColJ[i] = lu[luStrideRow * (i) + (j)];
         }
 
         // Apply previous transformations.
 
-        for (jint i = 0; i < nrows; i++) {
+        for (jint i = 0; i < nRows; i++) {
 
             // Most of the time is spent in the following dot product.
 
@@ -113,13 +113,13 @@ void LinearAlgebraOps::lup(jdouble *lu, jint *pivots, jint nrows, jint ncols) {
         // Find pivot and exchange if necessary.
 
         jint p = j;
-        for (jint i = j + 1; i < nrows; i++) {
+        for (jint i = j + 1; i < nRows; i++) {
             if (fabs(luColJ[i]) > fabs(luColJ[p])) {
                 p = i;
             }
         }
         if (p != j) {
-            for (jint k = 0; k < ncols; k++) {
+            for (jint k = 0; k < nCols; k++) {
                 jdouble t = lu[luStrideRow * (p) + (k)];
                 lu[luStrideRow * (p) + (k)] = lu[luStrideRow * (j) + (k)];
                 lu[luStrideRow * (j) + (k)] = t;
@@ -131,34 +131,34 @@ void LinearAlgebraOps::lup(jdouble *lu, jint *pivots, jint nrows, jint ncols) {
 
         // Compute multipliers.
 
-        if (j < nrows && lu[luStrideRow * (j) + (j)] != 0.0) {
-            for (jint i = j + 1; i < nrows; i++) {
+        if (j < nRows && lu[luStrideRow * (j) + (j)] != 0.0) {
+            for (jint i = j + 1; i < nRows; i++) {
                 lu[luStrideRow * (i) + (j)] /= lu[luStrideRow * (j) + (j)];
             }
         }
     }
 }
 
-void LinearAlgebraOps::luSolve(jdouble *lu, jint nluCols, jdouble *dstVArr, jint ndstVCols) {
+void LinearAlgebraOps::luSolve(jdouble *lu, jint nLUCols, jdouble *dstVArr, jint nDstVCols) {
 
-    jint luStrideRow = nluCols;
-    jint vStrideRow = ndstVCols;
+    jint luStrideRow = nLUCols;
+    jint vStrideRow = nDstVCols;
 
     // Solve L*Y = B(piv,:)
-    for (jint k = 0; k < nluCols; k++) {
-        for (jint i = k + 1; i < nluCols; i++) {
-            for (jint j = 0; j < ndstVCols; j++) {
+    for (jint k = 0; k < nLUCols; k++) {
+        for (jint i = k + 1; i < nLUCols; i++) {
+            for (jint j = 0; j < nDstVCols; j++) {
                 dstVArr[vStrideRow * (i) + (j)] -= dstVArr[vStrideRow * (k) + (j)] * lu[luStrideRow * (i) + (k)];
             }
         }
     }
     // Solve U*X = Y;
-    for (jint k = nluCols - 1; k >= 0; k--) {
-        for (jint j = 0; j < nluCols; j++) {
+    for (jint k = nLUCols - 1; k >= 0; k--) {
+        for (jint j = 0; j < nLUCols; j++) {
             dstVArr[vStrideRow * (k) + (j)] /= lu[luStrideRow * (k) + (k)];
         }
         for (jint i = 0; i < k; i++) {
-            for (jint j = 0; j < ndstVCols; j++) {
+            for (jint j = 0; j < nDstVCols; j++) {
                 dstVArr[vStrideRow * (i) + (j)] -= dstVArr[vStrideRow * (k) + (j)] * lu[luStrideRow * (i) + (k)];
             }
         }

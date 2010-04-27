@@ -77,8 +77,8 @@ public class SynchronousConnectionTest {
     final InetSocketAddress remoteAddress;
     final long delay;
     final int messageLength;
-    final int nmessages;
-    final int nconnections;
+    final int nMessages;
+    final int nConnections;
     final boolean useSSL;
 
     ConnectionManager rcm, scm;
@@ -91,8 +91,8 @@ public class SynchronousConnectionTest {
         this.remoteAddress = new InetSocketAddress(p.getProperty("remote"), Integer.parseInt(p.getProperty("port")));
         this.delay = Long.parseLong(p.getProperty("delay"));
         this.messageLength = Integer.parseInt(p.getProperty("message_length"));
-        this.nmessages = Integer.parseInt(p.getProperty("nmessages"));
-        this.nconnections = Integer.parseInt(p.getProperty("nsync_connections"));
+        this.nMessages = Integer.parseInt(p.getProperty("nmessages"));
+        this.nConnections = Integer.parseInt(p.getProperty("nsync_connections"));
         this.useSSL = p.getProperty("use_SSL").equals("yes");
     }
 
@@ -129,13 +129,13 @@ public class SynchronousConnectionTest {
 
         List<Verifier> verifiers = new ArrayList<Verifier>();
 
-        for (int i = 0, n = this.nconnections, port = basePort; i < n; i++, port++) {
+        for (int i = 0, n = this.nConnections, port = basePort; i < n; i++, port++) {
             verifiers.add(createReceiver(i, bufferSize, new InetSocketAddress(port)));
         }
 
         Control.sleep(this.delay);
 
-        for (int i = 0, n = this.nconnections, port = basePort; i < n; i++, port++) {
+        for (int i = 0, n = this.nConnections, port = basePort; i < n; i++, port++) {
             verifiers.add(createSender(i, bufferSize, new InetSocketAddress(hostName, port)));
         }
 
@@ -197,7 +197,7 @@ public class SynchronousConnectionTest {
 
                 byte[] arr = new byte[sct.messageLength << 3];
 
-                for (int i = 0, n = sct.nmessages, acc = 0; i < n; i++, acc += sct.messageLength) {
+                for (int i = 0, n = sct.nMessages, acc = 0; i < n; i++, acc += sct.messageLength) {
 
                     for (int size, length = arr.length, offset = 0; length > 0; length -= size, offset += size) {
 
@@ -292,7 +292,7 @@ public class SynchronousConnectionTest {
                     out.write(header.get());
                 }
 
-                for (int i = 0, n = sct.nmessages, acc = 0; i < n; i++, acc += sct.messageLength) {
+                for (int i = 0, n = sct.nMessages, acc = 0; i < n; i++, acc += sct.messageLength) {
 
                     ByteBuffer bb = createMessage(acc, sct.messageLength);
 

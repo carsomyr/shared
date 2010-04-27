@@ -36,7 +36,7 @@ public:
 
     explicit MappingResult() {
 
-        this->nindices = 0;
+        this->nIndices = 0;
         this->indices = NULL;
         this->srcIndices = NULL;
         this->dstIndices = NULL;
@@ -45,25 +45,25 @@ public:
     /**
      * Allocates space for source and destination indices.
      * 
-     * @param nindices
+     * @param nIndices
      *      the number of indices.
      */
-    virtual void createIndices(jint nindices) {
+    virtual void createIndices(jint nIndices) {
 
         if (this->indices) {
             throw std::runtime_error("Indices already created");
         }
 
-        void *indices = malloc(sizeof(jint) * 2 * nindices);
+        void *indices = malloc(sizeof(jint) * 2 * nIndices);
 
         if (!indices) {
             throw std::runtime_error("Allocation failed");
         }
 
-        this->nindices = nindices;
+        this->nIndices = nIndices;
         this->indices = indices;
         this->srcIndices = (jint *) indices;
-        this->dstIndices = (jint *) indices + nindices;
+        this->dstIndices = (jint *) indices + nIndices;
     }
 
     virtual ~MappingResult() {
@@ -76,7 +76,7 @@ public:
     /**
      * The mapping size.
      */
-    jint nindices;
+    jint nIndices;
 
     /**
      * The source indices.
@@ -113,12 +113,12 @@ public:
      *      the mapping dimensions.
      * @param strides
      *      the strides.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      */
     static void assignMappingIndices( //
             jint *indices, const jint *dims, const jint *strides, //
-            jint ndims);
+            jint nDims);
 
     /**
      * Creates an array of physical slicing indices.
@@ -129,14 +129,14 @@ public:
      *      the slicing dimensions.
      * @param strides
      *      the strides.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      * @param sliceIndices
      *      the indices to slice on arranged by dimension.
      */
     static void assignSlicingIndices( //
             jint *indices, const jint *dims, const jint *strides, //
-            jint ndims, //
+            jint nDims, //
             jint **sliceIndices);
 
     /**
@@ -148,12 +148,12 @@ public:
      *      the dimensions.
      * @param strides
      *      the strides.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      */
     static void checkDimensions( //
             const jint *dims, const jint *strides, //
-            jint ndims, jint len);
+            jint nDims, jint len);
 
     /**
      * Assigns source values to destination values based on arrays of physical indices.
@@ -170,13 +170,13 @@ public:
      *      the destination array.
      * @param dstIndices
      *      the destination indices.
-     * @param nindices
+     * @param nIndices
      *      the number of indices.
      */
     static void assign(JNIEnv *env, ArrayPinHandler::jarray_type type, //
             jarray srcV, jint *srcIndices, //
             jarray dstV, jint *dstIndices, //
-            jint nindices);
+            jint nIndices);
 
     //
 
@@ -224,7 +224,7 @@ public:
      *      the destination strides.
      * @param dstLen
      *      the number of destination values.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      * @return the MappingResult.
      */
@@ -232,7 +232,7 @@ public:
             const jint *boundsArr, //
             const jint *srcDArr, const jint *srcSArr, jint srcLen, //
             const jint *dstDArr, const jint *dstSArr, jint dstLen, //
-            jint ndims);
+            jint nDims);
 
     //
 
@@ -268,7 +268,7 @@ public:
      * 
      * @param slicesArr
      *      the slicing specification.
-     * @param nslices
+     * @param nSlices
      *      the number of slices.
      * @param srcDArr
      *      the source dimensions.
@@ -282,15 +282,15 @@ public:
      *      the destination strides.
      * @param dstLen
      *      the number of destination values.
-     * @param ndims
+     * @param nDims
      *      the number of dimensions.
      * @return the MappingResult.
      */
     static MappingResult *slice( //
-            const jint *slicesArr, jint nslices, //
+            const jint *slicesArr, jint nSlices, //
             const jint *srcDArr, const jint *srcSArr, jint srcLen, //
             const jint *dstDArr, const jint *dstSArr, jint dstLen, //
-            jint ndims);
+            jint nDims);
 
 private:
 

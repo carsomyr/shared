@@ -26,7 +26,7 @@
 void LinearAlgebraOps::svd(JNIEnv *env, jobject thisObj, //
         jdoubleArray srcV, jint srcStrideRow, jint srcStrideCol, //
         jdoubleArray uV, jdoubleArray sV, jdoubleArray vV, //
-        jint nrows, jint ncols) {
+        jint nRows, jint nCols) {
 
     try {
 
@@ -39,13 +39,13 @@ void LinearAlgebraOps::svd(JNIEnv *env, jobject thisObj, //
         jint sLen = env->GetArrayLength(sV);
         jint vLen = env->GetArrayLength(vV);
 
-        if ((nrows < ncols) //
-                || (srcLen != nrows * ncols) //
-                || (uLen != nrows * ncols) //
-                || (sLen != ncols) //
-                || (vLen != ncols * ncols) //
-                || !((srcStrideRow == ncols && srcStrideCol == 1) //
-                        || (srcStrideRow == 1 && srcStrideCol == nrows))) {
+        if ((nRows < nCols) //
+                || (srcLen != nRows * nCols) //
+                || (uLen != nRows * nCols) //
+                || (sLen != nCols) //
+                || (vLen != nCols * nCols) //
+                || !((srcStrideRow == nCols && srcStrideCol == 1) //
+                        || (srcStrideRow == 1 && srcStrideCol == nRows))) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -59,7 +59,7 @@ void LinearAlgebraOps::svd(JNIEnv *env, jobject thisObj, //
         jdouble *sVArr = (jdouble *) sVH.get();
         jdouble *vVArr = (jdouble *) vVH.get();
 
-        svd(srcVArr, srcStrideRow, srcStrideCol, srcLen, uVArr, sVArr, vVArr, nrows, ncols);
+        svd(srcVArr, srcStrideRow, srcStrideCol, srcLen, uVArr, sVArr, vVArr, nRows, nCols);
 
     } catch (std::exception &e) {
 
@@ -69,59 +69,59 @@ void LinearAlgebraOps::svd(JNIEnv *env, jobject thisObj, //
 
 void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCol, jint srcLen, //
         jdouble *uVArr, jdouble *sVArr, jdouble *vVArr, //
-        jint nrows, jint ncols) {
+        jint nRows, jint nCols) {
 
-    jint uStrideRow = ncols;
-    jint vStrideRow = ncols;
+    jint uStrideRow = nCols;
+    jint vStrideRow = nCols;
 
-    MallocHandler allH(sizeof(jdouble) * (ncols + nrows + srcLen));
+    MallocHandler allH(sizeof(jdouble) * (nCols + nRows + srcLen));
     jdouble *all = (jdouble *) allH.get();
     jdouble *e = all;
-    jdouble *work = all + ncols;
-    jdouble *a = all + ncols + nrows;
+    jdouble *work = all + nCols;
+    jdouble *a = all + nCols + nRows;
 
-    memset(e, 0, sizeof(jdouble) * ncols);
-    memset(work, 0, sizeof(jdouble) * nrows);
+    memset(e, 0, sizeof(jdouble) * nCols);
+    memset(work, 0, sizeof(jdouble) * nRows);
 
     memcpy(a, srcVArr, sizeof(jdouble) * srcLen);
 
     // Reduce A to bidiagonal form, storing the diagonal elements
     // in s and the super-diagonal elements in e.
 
-    jint nct = std::min(nrows - 1, ncols);
-    jint nrt = std::max((jint) 0, std::min(ncols - 2, nrows));
-    for (jint k = 0, l = std::max(nct, nrt); k < l; k++) {
-        if (k < nct) {
+    jint nc = std::min(nRows - 1, nCols);
+    jint nr = std::max((jint) 0, std::min(nCols - 2, nRows));
+    for (jint k = 0, l = std::max(nc, nr); k < l; k++) {
+        if (k < nc) {
 
             // Compute the transformation for the k-th column and
             // place the k-th diagonal in s[k].
             // Compute 2-norm of k-th column without under/overflow.
             sVArr[k] = 0;
-            for (jint i = k; i < nrows; i++) {
+            for (jint i = k; i < nRows; i++) {
                 sVArr[k] = jcomplex(sVArr[k], a[srcStrideRow * (i) + srcStrideCol * (k)]).abs();
             }
             if (sVArr[k] != 0.0) {
                 if (a[srcStrideRow * (k) + srcStrideCol * (k)] < 0.0) {
                     sVArr[k] = -sVArr[k];
                 }
-                for (jint i = k; i < nrows; i++) {
+                for (jint i = k; i < nRows; i++) {
                     a[srcStrideRow * (i) + srcStrideCol * (k)] /= sVArr[k];
                 }
                 a[srcStrideRow * (k) + srcStrideCol * (k)] += 1.0;
             }
             sVArr[k] = -sVArr[k];
         }
-        for (jint j = k + 1; j < ncols; j++) {
-            if ((k < nct) & (sVArr[k] != 0.0)) {
+        for (jint j = k + 1; j < nCols; j++) {
+            if ((k < nc) & (sVArr[k] != 0.0)) {
 
                 // Apply the transformation.
 
                 jdouble t = 0;
-                for (jint i = k; i < nrows; i++) {
+                for (jint i = k; i < nRows; i++) {
                     t += a[srcStrideRow * (i) + srcStrideCol * (k)] * a[srcStrideRow * (i) + srcStrideCol * (j)];
                 }
                 t = -t / a[srcStrideRow * (k) + srcStrideCol * (k)];
-                for (jint i = k; i < nrows; i++) {
+                for (jint i = k; i < nRows; i++) {
                     a[srcStrideRow * (i) + srcStrideCol * (j)] += t * a[srcStrideRow * (i) + srcStrideCol * (k)];
                 }
             }
@@ -131,49 +131,49 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
 
             e[j] = a[srcStrideRow * (k) + srcStrideCol * (j)];
         }
-        if (k < nct) {
+        if (k < nc) {
 
             // Place the transformation in U for subsequent back
             // multiplication.
 
-            for (jint i = k; i < nrows; i++) {
+            for (jint i = k; i < nRows; i++) {
                 uVArr[uStrideRow * (i) + (k)] = a[srcStrideRow * (i) + srcStrideCol * (k)];
             }
         }
-        if (k < nrt) {
+        if (k < nr) {
 
             // Compute the k-th row transformation and place the
             // k-th super-diagonal in e[k].
             // Compute 2-norm without under/overflow.
             e[k] = 0;
-            for (jint i = k + 1; i < ncols; i++) {
+            for (jint i = k + 1; i < nCols; i++) {
                 e[k] = jcomplex(e[k], e[i]).abs();
             }
             if (e[k] != 0.0) {
                 if (e[k + 1] < 0.0) {
                     e[k] = -e[k];
                 }
-                for (jint i = k + 1; i < ncols; i++) {
+                for (jint i = k + 1; i < nCols; i++) {
                     e[i] /= e[k];
                 }
                 e[k + 1] += 1.0;
             }
             e[k] = -e[k];
-            if ((k + 1 < nrows) & (e[k] != 0.0)) {
+            if ((k + 1 < nRows) & (e[k] != 0.0)) {
 
                 // Apply the transformation.
 
-                for (jint i = k + 1; i < nrows; i++) {
+                for (jint i = k + 1; i < nRows; i++) {
                     work[i] = 0.0;
                 }
-                for (jint j = k + 1; j < ncols; j++) {
-                    for (jint i = k + 1; i < nrows; i++) {
+                for (jint j = k + 1; j < nCols; j++) {
+                    for (jint i = k + 1; i < nRows; i++) {
                         work[i] += e[j] * a[srcStrideRow * (i) + srcStrideCol * (j)];
                     }
                 }
-                for (jint j = k + 1; j < ncols; j++) {
+                for (jint j = k + 1; j < nCols; j++) {
                     jdouble t = -e[j] / e[k + 1];
-                    for (jint i = k + 1; i < nrows; i++) {
+                    for (jint i = k + 1; i < nRows; i++) {
                         a[srcStrideRow * (i) + srcStrideCol * (j)] += t * work[i];
                     }
                 }
@@ -182,7 +182,7 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
             // Place the transformation in V for subsequent
             // back multiplication.
 
-            for (jint i = k + 1; i < ncols; i++) {
+            for (jint i = k + 1; i < nCols; i++) {
                 vVArr[vStrideRow * (i) + (k)] = e[i];
             }
         }
@@ -190,39 +190,39 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
 
     // Set up the final bidiagonal matrix or order p.
 
-    jint p = ncols;
-    if (nct < ncols) {
-        sVArr[nct] = a[srcStrideRow * (nct) + srcStrideCol * (nct)];
+    jint p = nCols;
+    if (nc < nCols) {
+        sVArr[nc] = a[srcStrideRow * (nc) + srcStrideCol * (nc)];
     }
-    if (nrows < p) {
+    if (nRows < p) {
         sVArr[p - 1] = 0.0;
     }
-    if (nrt + 1 < p) {
-        e[nrt] = a[srcStrideRow * (nrt) + srcStrideCol * (p - 1)];
+    if (nr + 1 < p) {
+        e[nr] = a[srcStrideRow * (nr) + srcStrideCol * (p - 1)];
     }
     e[p - 1] = 0.0;
 
     // If required, generate U.
 
-    for (jint j = nct; j < ncols; j++) {
-        for (jint i = 0; i < nrows; i++) {
+    for (jint j = nc; j < nCols; j++) {
+        for (jint i = 0; i < nRows; i++) {
             uVArr[uStrideRow * (i) + (j)] = 0.0;
         }
         uVArr[uStrideRow * (j) + (j)] = 1.0;
     }
-    for (jint k = nct - 1; k >= 0; k--) {
+    for (jint k = nc - 1; k >= 0; k--) {
         if (sVArr[k] != 0.0) {
-            for (jint j = k + 1; j < ncols; j++) {
+            for (jint j = k + 1; j < nCols; j++) {
                 jdouble t = 0;
-                for (jint i = k; i < nrows; i++) {
+                for (jint i = k; i < nRows; i++) {
                     t += uVArr[uStrideRow * (i) + (k)] * uVArr[uStrideRow * (i) + (j)];
                 }
                 t = -t / uVArr[uStrideRow * (k) + (k)];
-                for (jint i = k; i < nrows; i++) {
+                for (jint i = k; i < nRows; i++) {
                     uVArr[uStrideRow * (i) + (j)] += t * uVArr[uStrideRow * (i) + (k)];
                 }
             }
-            for (jint i = k; i < nrows; i++) {
+            for (jint i = k; i < nRows; i++) {
                 uVArr[uStrideRow * (i) + (k)] = -uVArr[uStrideRow * (i) + (k)];
             }
             uVArr[uStrideRow * (k) + (k)] = 1.0 + uVArr[uStrideRow * (k) + (k)];
@@ -230,7 +230,7 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 uVArr[uStrideRow * (i) + (k)] = 0.0;
             }
         } else {
-            for (jint i = 0; i < nrows; i++) {
+            for (jint i = 0; i < nRows; i++) {
                 uVArr[uStrideRow * (i) + (k)] = 0.0;
             }
             uVArr[uStrideRow * (k) + (k)] = 1.0;
@@ -239,20 +239,20 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
 
     // If required, generate V.
 
-    for (jint k = ncols - 1; k >= 0; k--) {
-        if ((k < nrt) & (e[k] != 0.0)) {
-            for (jint j = k + 1; j < ncols; j++) {
+    for (jint k = nCols - 1; k >= 0; k--) {
+        if ((k < nr) & (e[k] != 0.0)) {
+            for (jint j = k + 1; j < nCols; j++) {
                 jdouble t = 0;
-                for (jint i = k + 1; i < ncols; i++) {
+                for (jint i = k + 1; i < nCols; i++) {
                     t += vVArr[vStrideRow * (i) + (k)] * vVArr[vStrideRow * (i) + (j)];
                 }
                 t = -t / vVArr[vStrideRow * (k + 1) + (k)];
-                for (jint i = k + 1; i < ncols; i++) {
+                for (jint i = k + 1; i < nCols; i++) {
                     vVArr[vStrideRow * (i) + (j)] += t * vVArr[vStrideRow * (i) + (k)];
                 }
             }
         }
-        for (jint i = 0; i < ncols; i++) {
+        for (jint i = 0; i < nCols; i++) {
             vVArr[vStrideRow * (i) + (k)] = 0.0;
         }
         vVArr[vStrideRow * (k) + (k)] = 1.0;
@@ -331,7 +331,7 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                     f = -sn * e[j - 1];
                     e[j - 1] = cs * e[j - 1];
                 }
-                for (jint i = 0; i < ncols; i++) {
+                for (jint i = 0; i < nCols; i++) {
                     t = cs * vVArr[vStrideRow * (i) + (j)] + sn * vVArr[vStrideRow * (i) + (p - 1)];
                     vVArr[vStrideRow * (i) + (p - 1)] = -sn * vVArr[vStrideRow * (i) + (j)] + cs * vVArr[vStrideRow
                             * (i) + (p - 1)];
@@ -353,7 +353,7 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 sVArr[j] = t;
                 f = -sn * e[j];
                 e[j] = cs * e[j];
-                for (jint i = 0; i < nrows; i++) {
+                for (jint i = 0; i < nRows; i++) {
                     t = cs * uVArr[uStrideRow * (i) + (j)] + sn * uVArr[uStrideRow * (i) + (k - 1)];
                     uVArr[uStrideRow * (i) + (k - 1)] = -sn * uVArr[uStrideRow * (i) + (j)] + cs * uVArr[uStrideRow
                             * (i) + (k - 1)];
@@ -403,7 +403,7 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 e[j] = cs * e[j] - sn * sVArr[j];
                 g = sn * sVArr[j + 1];
                 sVArr[j + 1] = cs * sVArr[j + 1];
-                for (jint i = 0; i < ncols; i++) {
+                for (jint i = 0; i < nCols; i++) {
                     t = cs * vVArr[vStrideRow * (i) + (j)] + sn * vVArr[vStrideRow * (i) + (j + 1)];
                     vVArr[vStrideRow * (i) + (j + 1)] = -sn * vVArr[vStrideRow * (i) + (j)] + cs * vVArr[vStrideRow
                             * (i) + (j + 1)];
@@ -417,8 +417,8 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 sVArr[j + 1] = -sn * e[j] + cs * sVArr[j + 1];
                 g = sn * e[j + 1];
                 e[j + 1] = cs * e[j + 1];
-                if (j < nrows - 1) {
-                    for (jint i = 0; i < nrows; i++) {
+                if (j < nRows - 1) {
+                    for (jint i = 0; i < nRows; i++) {
                         t = cs * uVArr[uStrideRow * (i) + (j)] + sn * uVArr[uStrideRow * (i) + (j + 1)];
                         uVArr[uStrideRow * (i) + (j + 1)] = -sn * uVArr[uStrideRow * (i) + (j)] + cs * uVArr[uStrideRow
                                 * (i) + (j + 1)];
@@ -453,15 +453,15 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 jdouble t = sVArr[k];
                 sVArr[k] = sVArr[k + 1];
                 sVArr[k + 1] = t;
-                if (k < ncols - 1) {
-                    for (jint i = 0; i < ncols; i++) {
+                if (k < nCols - 1) {
+                    for (jint i = 0; i < nCols; i++) {
                         t = vVArr[vStrideRow * (i) + (k + 1)];
                         vVArr[vStrideRow * (i) + (k + 1)] = vVArr[vStrideRow * (i) + (k)];
                         vVArr[vStrideRow * (i) + (k)] = t;
                     }
                 }
-                if (k < nrows - 1) {
-                    for (jint i = 0; i < nrows; i++) {
+                if (k < nRows - 1) {
+                    for (jint i = 0; i < nRows; i++) {
                         t = uVArr[uStrideRow * (i) + (k + 1)];
                         uVArr[uStrideRow * (i) + (k + 1)] = uVArr[uStrideRow * (i) + (k)];
                         uVArr[uStrideRow * (i) + (k)] = t;

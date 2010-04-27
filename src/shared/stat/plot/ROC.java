@@ -70,48 +70,48 @@ public class ROC extends ErrorDistribution {
     @Override
     protected void initDataset(RealArray dataset, boolean[] outcomes) {
 
-        int nexamples = dataset.size(0);
+        int nExamples = dataset.size(0);
 
-        int ntrue = 0;
-        int nfalse = 0;
+        int nTrue = 0;
+        int nFalse = 0;
 
-        for (int i = 0; i < nexamples; i++) {
+        for (int i = 0; i < nExamples; i++) {
 
             if (outcomes[i]) {
 
-                ntrue++;
+                nTrue++;
 
             } else {
 
-                nfalse++;
+                nFalse++;
             }
 
-            dataset.set(nfalse, i, 0);
-            dataset.set(ntrue, i, 1);
+            dataset.set(nFalse, i, 0);
+            dataset.set(nTrue, i, 1);
         }
 
-        if (nfalse > 0) {
+        if (nFalse > 0) {
 
-            for (int i = 0; i < nexamples; i++) {
-                dataset.set(dataset.get(i, 0) / nfalse, i, 0);
+            for (int i = 0; i < nExamples; i++) {
+                dataset.set(dataset.get(i, 0) / nFalse, i, 0);
             }
 
         } else {
 
-            for (int i = 0; i < nexamples; i++) {
+            for (int i = 0; i < nExamples; i++) {
                 dataset.set(0.0, i, 0);
             }
         }
 
-        if (ntrue > 0) {
+        if (nTrue > 0) {
 
-            for (int i = 0; i < nexamples; i++) {
-                dataset.set(dataset.get(i, 1) / ntrue, i, 1);
+            for (int i = 0; i < nExamples; i++) {
+                dataset.set(dataset.get(i, 1) / nTrue, i, 1);
             }
 
         } else {
 
-            for (int i = 0; i < nexamples; i++) {
+            for (int i = 0; i < nExamples; i++) {
                 dataset.set(1.0, i, 1);
             }
         }

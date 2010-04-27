@@ -55,10 +55,10 @@ public:
     /**
      * Requests the given number of bytes.
      * 
-     * @param nbytes
+     * @param nBytes
      *      the number of bytes.
      */
-    explicit MallocHandler(jint nbytes);
+    explicit MallocHandler(jint nBytes);
 
     virtual void *get();
 
