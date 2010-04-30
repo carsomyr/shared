@@ -502,17 +502,17 @@ public class Arithmetic {
      * 
      * @param values
      *            the array.
-     * @param value
+     * @param target
      *            the value to count.
      * @return the count.
      */
-    final public static int count(int[] values, int value) {
+    final public static int count(int[] values, int target) {
 
         int count = 0;
 
-        for (int i = 0, n = values.length; i < n; i++) {
+        for (int value : values) {
 
-            if (values[i] == value) {
+            if (value == target) {
                 count++;
             }
         }

@@ -53,12 +53,12 @@ public:
      *      the source strides.
      * @param dstV
      *      the destination values.
-     * @param selectedDims
+     * @param opDims
      *      the dimensions of interest.
      */
     static void rdOp(JNIEnv *env, jobject thisObj, jint type, //
             jdoubleArray srcV, jintArray srcD, jintArray srcS, jdoubleArray dstV, //
-            jintArray selectedDims);
+            jintArray opDims);
 
     /**
      * Performs a real index operation.
@@ -106,13 +106,13 @@ public:
      *      the destination dimensions.
      * @param dstS
      *      the destination strides.
-     * @param selectedDims
+     * @param opDims
      *      the dimensions of interest.
      */
     static void rrOp(JNIEnv *env, jobject thisObj, jint type, //
             jdoubleArray srcV, jintArray srcD, jintArray srcS, //
             jdoubleArray dstV, jintArray dstD, jintArray dstS, //
-            jintArray selectedDims);
+            jintArray opDims);
 
     /**
      * Assigns base indices when excluding a dimension.

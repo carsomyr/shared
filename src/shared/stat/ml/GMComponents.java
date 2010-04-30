@@ -109,7 +109,7 @@ public class GMComponents {
                 + "weights =%n" //
                 + "%s%n" //
                 + "likelihood = %4.4e%n%n" //
-                + "nrounds = %d%n", //
+                + "n_rounds = %d%n", //
                 this.centers, this.covariances.clone().uSqrt(), this.weights, this.likelihood, this.nRounds);
     }
 }

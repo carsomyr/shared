@@ -97,8 +97,8 @@ public class AsynchronousConnectionTest {
         this.remoteAddress = new InetSocketAddress(p.getProperty("remote"), Integer.parseInt(p.getProperty("port")));
         this.delay = Long.parseLong(p.getProperty("delay"));
         this.messageLength = Integer.parseInt(p.getProperty("message_length"));
-        this.nMessages = Integer.parseInt(p.getProperty("nmessages"));
-        this.nConnections = Integer.parseInt(p.getProperty("nasync_connections"));
+        this.nMessages = Integer.parseInt(p.getProperty("n_messages"));
+        this.nConnections = Integer.parseInt(p.getProperty("n_async_conns"));
         this.useSSL = p.getProperty("use_SSL").equals("yes");
     }
 

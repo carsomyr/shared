@@ -26,7 +26,7 @@
 void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, //
         jdoubleArray dstV, jintArray dstD, jintArray dstS, //
-        jintArray selectedDims) {
+        jintArray opDims) {
 
     try {
 
@@ -58,14 +58,14 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
             throw std::runtime_error("Operation type not recognized");
         }
 
-        if (!srcV || !srcD || !srcS || !dstV || !dstD || !dstS || !selectedDims) {
+        if (!srcV || !srcD || !srcS || !dstV || !dstD || !dstS || !opDims) {
             throw std::runtime_error("Invalid arguments");
         }
 
         jint srcLen = env->GetArrayLength(srcV);
         jint dstLen = env->GetArrayLength(dstV);
         jint nDims = env->GetArrayLength(srcD);
-        jint nSelectedDims = env->GetArrayLength(selectedDims);
+        jint nOpDims = env->GetArrayLength(opDims);
 
         if ((nDims != env->GetArrayLength(srcS)) //
                 || (nDims != env->GetArrayLength(dstD)) //
@@ -81,8 +81,7 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
         ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
         ArrayPinHandler dstDH(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         ArrayPinHandler dstSH(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler selectedDimsH(env, //
-                selectedDims, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler opDimsH(env, opDims, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         // NO JNI AFTER THIS POINT!
 
         jdouble *srcVArr = (jdouble *) srcVH.get();
@@ -91,32 +90,32 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
         jdouble *dstVArr = (jdouble *) dstVH.get();
         jint *dstDArr = (jint *) dstDH.get();
         jint *dstSArr = (jint *) dstSH.get();
-        jint *selectedDimsArr = (jint *) selectedDimsH.get();
+        jint *opDimsArr = (jint *) opDimsH.get();
 
         MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
         MappingOps::checkDimensions(dstDArr, dstSArr, nDims, dstLen);
 
-        std::sort(selectedDimsArr, selectedDimsArr + nSelectedDims);
+        std::sort(opDimsArr, opDimsArr + nOpDims);
 
-        for (jint i = 1; i < nSelectedDims; i++) {
+        for (jint i = 1; i < nOpDims; i++) {
 
-            if (selectedDimsArr[i - 1] == selectedDimsArr[i]) {
-                throw std::runtime_error("Duplicate selected dimensions not allowed");
+            if (opDimsArr[i - 1] == opDimsArr[i]) {
+                throw std::runtime_error("Duplicate operating dimensions are not allowed");
             }
         }
 
         jint acc = dstLen;
 
-        for (jint i = 0; i < nSelectedDims; i++) {
+        for (jint i = 0; i < nOpDims; i++) {
 
-            jint dim = selectedDimsArr[i];
+            jint dim = opDimsArr[i];
 
             if (!(dim >= 0 && dim < nDims)) {
                 throw std::runtime_error("Invalid dimension");
             }
 
             if (dstDArr[dim] > 1) {
-                throw std::runtime_error("Selected dimension must have singleton or zero length");
+                throw std::runtime_error("Operating dimensions must have singleton or zero length");
             }
 
             acc *= srcDArr[dim];
@@ -147,9 +146,9 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
 
         acc = srcLen;
 
-        for (jint i = 0; i < nSelectedDims; i++) {
+        for (jint i = 0; i < nOpDims; i++) {
 
-            jint dim = selectedDimsArr[i];
+            jint dim = opDimsArr[i];
 
             acc /= srcDArr[dim];
 

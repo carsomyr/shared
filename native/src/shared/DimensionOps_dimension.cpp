@@ -25,7 +25,7 @@
 
 void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, jdoubleArray dstV, //
-        jintArray selectedDims) {
+        jintArray opDims) {
 
     try {
 
@@ -46,14 +46,14 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
             throw std::runtime_error("Operation type not recognized");
         }
 
-        if (!srcV || !srcD || !srcS || !dstV || !selectedDims) {
+        if (!srcV || !srcD || !srcS || !dstV || !opDims) {
             throw std::runtime_error("Invalid arguments");
         }
 
         jint srcLen = env->GetArrayLength(srcV);
         jint dstLen = env->GetArrayLength(dstV);
         jint nDims = env->GetArrayLength(srcD);
-        jint nSelectedDims = env->GetArrayLength(selectedDims);
+        jint nOpDims = env->GetArrayLength(opDims);
 
         if ((nDims != env->GetArrayLength(srcS)) //
                 || (srcLen != dstLen)) {
@@ -66,21 +66,20 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
         ArrayPinHandler srcDH(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         ArrayPinHandler srcSH(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
-        ArrayPinHandler selectedDimsH(env, //
-                selectedDims, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler opDimsH(env, opDims, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         // NO JNI AFTER THIS POINT!
 
         jdouble *srcVArr = (jdouble *) srcVH.get();
         jint *srcDArr = (jint *) srcDH.get();
         jint *srcSArr = (jint *) srcSH.get();
         jdouble *dstVArr = (jdouble *) dstVH.get();
-        jint *selectedDimsArr = (jint *) selectedDimsH.get();
+        jint *opDimsArr = (jint *) opDimsH.get();
 
         MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
 
-        for (jint i = 0; i < nSelectedDims; i++) {
+        for (jint i = 0; i < nOpDims; i++) {
 
-            jint dim = selectedDimsArr[i];
+            jint dim = opDimsArr[i];
 
             if (!(dim >= 0 && dim < nDims)) {
                 throw std::runtime_error("Invalid dimension");
@@ -94,7 +93,7 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
 
         // Execute the dimension operation.
 
-        op(srcVArr, srcDArr, srcSArr, dstVArr, selectedDimsArr, srcLen, nDims, nSelectedDims);
+        op(srcVArr, srcDArr, srcSArr, dstVArr, opDimsArr, srcLen, nDims, nOpDims);
 
     } catch (std::exception &e) {
 
@@ -103,8 +102,8 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
 }
 
 inline void DimensionOps::rdSum(jdouble *srcVArr, const jint *srcDArr, const jint *srcSArr, //
-        jdouble *dstVArr, const jint *selectedDimsArr, //
-        jint len, jint nDims, jint nSelectedDims) {
+        jdouble *dstVArr, const jint *opDimsArr, //
+        jint len, jint nDims, jint nOpDims) {
 
     MallocHandler mallocH(sizeof(jint) * (len + nDims));
     void *all = mallocH.get();
@@ -116,8 +115,8 @@ inline void DimensionOps::rdSum(jdouble *srcVArr, const jint *srcDArr, const jin
 
     // Assign indicator values.
 
-    for (jint i = 0; i < nSelectedDims; i++) {
-        indicator[selectedDimsArr[i]] = 1;
+    for (jint i = 0; i < nOpDims; i++) {
+        indicator[opDimsArr[i]] = 1;
     }
 
     // Take the sum along each dimension.
@@ -155,8 +154,8 @@ inline void DimensionOps::rdSum(jdouble *srcVArr, const jint *srcDArr, const jin
 }
 
 inline void DimensionOps::rdProd(jdouble *srcVArr, const jint *srcDArr, const jint *srcSArr, //
-        jdouble *dstVArr, const jint *selectedDimsArr, //
-        jint len, jint nDims, jint nSelectedDims) {
+        jdouble *dstVArr, const jint *opDimsArr, //
+        jint len, jint nDims, jint nOpDims) {
 
     MallocHandler mallocH(sizeof(jint) * (len + nDims));
     void *all = mallocH.get();
@@ -168,8 +167,8 @@ inline void DimensionOps::rdProd(jdouble *srcVArr, const jint *srcDArr, const ji
 
     // Assign indicator values.
 
-    for (jint i = 0; i < nSelectedDims; i++) {
-        indicator[selectedDimsArr[i]] = 1;
+    for (jint i = 0; i < nOpDims; i++) {
+        indicator[opDimsArr[i]] = 1;
     }
 
     // Take the product along each dimension.

@@ -549,7 +549,7 @@ public class DimensionOps {
 
         for (int i = 1; i < nOpDims; i++) {
             Control.checkTrue(opDims[i - 1] != opDims[i], //
-                    "Duplicate selected dimensions not allowed");
+                    "Duplicate operating dimensions are not allowed");
         }
 
         int acc = dstLen;
@@ -562,7 +562,7 @@ public class DimensionOps {
                     "Invalid dimension");
 
             Control.checkTrue(dstD[dim] <= 1, //
-                    "Selected dimension must have singleton or zero length");
+                    "Operating dimensions must have singleton or zero length");
 
             acc *= srcD[dim];
         }

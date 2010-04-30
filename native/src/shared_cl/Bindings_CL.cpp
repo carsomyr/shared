@@ -69,7 +69,7 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_slice(JNIEnv *env
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_rrOp(JNIEnv *env, jobject thisObj, jint type, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, //
         jdoubleArray dstV, jintArray dstD, jintArray dstS, //
-        jintArray selectedDims) {
+        jintArray opDims) {
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_riOp(JNIEnv *env, jobject thisObj, jint type, //
@@ -80,7 +80,7 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_riOp(JNIEnv *env,
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_rdOp(JNIEnv *env, jobject thisObj, jint type, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, jdoubleArray dstV, //
-        jintArray selectedDims) {
+        jintArray opDims) {
 }
 
 JNIEXPORT jdouble JNICALL Java_shared_array_jni_NativeArrayKernel_raOp(JNIEnv *env, jobject thisObj, jint type, //

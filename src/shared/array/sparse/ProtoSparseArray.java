@@ -538,17 +538,17 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         int offset = 0;
 
-        for (int i = 0, n = srcs.length; i < n; i++) {
+        for (T elt : srcs) {
 
-            int dimSize = srcs[i].size(opDim);
+            int dimSize = elt.size(opDim);
 
             for (int dim = 0; dim < opDim; dim++) {
-                Control.checkTrue(src.dims[dim] == srcs[i].dims[dim], //
+                Control.checkTrue(src.dims[dim] == elt.dims[dim], //
                         "Dimension mismatch");
             }
 
             for (int dim = opDim + 1; dim < nDims; dim++) {
-                Control.checkTrue(src.dims[dim] == srcs[i].dims[dim], //
+                Control.checkTrue(src.dims[dim] == elt.dims[dim], //
                         "Dimension mismatch");
             }
 
@@ -568,14 +568,14 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         offset = 0;
 
-        for (int i = 0, n = srcs.length; i < n; i++) {
+        for (T elt : srcs) {
 
-            int dimSize = srcs[i].size(opDim);
+            int dimSize = elt.size(opDim);
 
             mappingBounds[3 * opDim + 1] = offset;
             mappingBounds[3 * opDim + 2] = dimSize;
 
-            srcs[i].map(dst, mappingBounds);
+            elt.map(dst, mappingBounds);
 
             offset += dimSize;
         }

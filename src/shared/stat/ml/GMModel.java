@@ -114,8 +114,7 @@ public class GMModel extends AbstractGMModel {
 
         RealArray iCov = gmc.covariances.clone().uInv(1.0);
 
-        RealArray nrmTiled = //
-        (gmc.centers.clone().uSqr().lMul(iCov)) //
+        RealArray nrmTiled = (gmc.centers.clone().uSqr().lMul(iCov)) //
                 .lAdd(gmc.covariances.clone().uLog()) //
                 .rSum(1).tile(1, nPoints);
 
