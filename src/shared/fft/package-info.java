@@ -27,7 +27,7 @@
  */
 
 /**
- * A package for FFT's.
+ * A package for FFTs.
  */
 package shared.fft;
 

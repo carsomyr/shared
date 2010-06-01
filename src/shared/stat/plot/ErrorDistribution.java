@@ -96,7 +96,7 @@ abstract public class ErrorDistribution implements Plottable {
     }
 
     /**
-     * Gets the AUC's (area under curves).
+     * Gets the AUCs (area under curves).
      */
     public double[] getAUCs() {
 

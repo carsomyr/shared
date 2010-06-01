@@ -27,7 +27,7 @@
  */
 
 /**
- * A suite of tests for FFT's.
+ * A suite of tests for FFTs.
  */
 package shared.test.fft;
 

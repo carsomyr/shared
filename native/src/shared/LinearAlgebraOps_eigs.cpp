@@ -377,11 +377,11 @@ void LinearAlgebraOps::hessenbergToSchur(jdouble *h, jdouble *vecVArr, jdouble *
             // Double QR step involving rows l:n and columns m:n
 
             for (jint k = m; k <= n - 1; k++) {
-                jboolean notlast = (k != n - 1);
+                jboolean notLast = (k != n - 1);
                 if (k != m) {
                     p = h[hStrideRow * (k) + (k - 1)];
                     q = h[hStrideRow * (k + 1) + (k - 1)];
-                    r = (notlast ? h[hStrideRow * (k + 2) + (k - 1)] : 0.0);
+                    r = (notLast ? h[hStrideRow * (k + 2) + (k - 1)] : 0.0);
                     x = fabs(p) + fabs(q) + fabs(r);
                     if (x != 0.0) {
                         p = p / x;
@@ -413,7 +413,7 @@ void LinearAlgebraOps::hessenbergToSchur(jdouble *h, jdouble *vecVArr, jdouble *
 
                     for (jint j = k; j < nn; j++) {
                         p = h[hStrideRow * (k) + (j)] + q * h[hStrideRow * (k + 1) + (j)];
-                        if (notlast) {
+                        if (notLast) {
                             p = p + r * h[hStrideRow * (k + 2) + (j)];
                             h[hStrideRow * (k + 2) + (j)] = h[hStrideRow * (k + 2) + (j)] - p * z;
                         }
@@ -425,7 +425,7 @@ void LinearAlgebraOps::hessenbergToSchur(jdouble *h, jdouble *vecVArr, jdouble *
 
                     for (jint i = 0; i <= std::min(n, k + 3); i++) {
                         p = x * h[hStrideRow * (i) + (k)] + y * h[hStrideRow * (i) + (k + 1)];
-                        if (notlast) {
+                        if (notLast) {
                             p = p + z * h[hStrideRow * (i) + (k + 2)];
                             h[hStrideRow * (i) + (k + 2)] = h[hStrideRow * (i) + (k + 2)] - p * r;
                         }
@@ -437,7 +437,7 @@ void LinearAlgebraOps::hessenbergToSchur(jdouble *h, jdouble *vecVArr, jdouble *
 
                     for (jint i = low; i <= high; i++) {
                         p = x * vecVArr[vStrideRow * (i) + (k)] + y * vecVArr[vStrideRow * (i) + (k + 1)];
-                        if (notlast) {
+                        if (notLast) {
                             p = p + z * vecVArr[vStrideRow * (i) + (k + 2)];
                             vecVArr[vStrideRow * (i) + (k + 2)] = vecVArr[vStrideRow * (i) + (k + 2)] - p * r;
                         }

@@ -805,11 +805,11 @@ public class LinearAlgebraOps {
                 // Double QR step involving rows l:n and columns m:n
 
                 for (int k = m; k <= n - 1; k++) {
-                    boolean notlast = (k != n - 1);
+                    boolean notLast = (k != n - 1);
                     if (k != m) {
                         p = h[hStrideRow * (k) + (k - 1)];
                         q = h[hStrideRow * (k + 1) + (k - 1)];
-                        r = (notlast ? h[hStrideRow * (k + 2) + (k - 1)] : 0.0);
+                        r = (notLast ? h[hStrideRow * (k + 2) + (k - 1)] : 0.0);
                         x = Math.abs(p) + Math.abs(q) + Math.abs(r);
                         if (x != 0.0) {
                             p = p / x;
@@ -841,7 +841,7 @@ public class LinearAlgebraOps {
 
                         for (int j = k; j < nn; j++) {
                             p = h[hStrideRow * (k) + (j)] + q * h[hStrideRow * (k + 1) + (j)];
-                            if (notlast) {
+                            if (notLast) {
                                 p = p + r * h[hStrideRow * (k + 2) + (j)];
                                 h[hStrideRow * (k + 2) + (j)] = h[hStrideRow * (k + 2) + (j)] - p * z;
                             }
@@ -853,7 +853,7 @@ public class LinearAlgebraOps {
 
                         for (int i = 0; i <= Math.min(n, k + 3); i++) {
                             p = x * h[hStrideRow * (i) + (k)] + y * h[hStrideRow * (i) + (k + 1)];
-                            if (notlast) {
+                            if (notLast) {
                                 p = p + z * h[hStrideRow * (i) + (k + 2)];
                                 h[hStrideRow * (i) + (k + 2)] = h[hStrideRow * (i) + (k + 2)] - p * r;
                             }
@@ -865,7 +865,7 @@ public class LinearAlgebraOps {
 
                         for (int i = low; i <= high; i++) {
                             p = x * vecV[vStrideRow * (i) + (k)] + y * vecV[vStrideRow * (i) + (k + 1)];
-                            if (notlast) {
+                            if (notLast) {
                                 p = p + z * vecV[vStrideRow * (i) + (k + 2)];
                                 vecV[vStrideRow * (i) + (k + 2)] = vecV[vStrideRow * (i) + (k + 2)] - p * r;
                             }

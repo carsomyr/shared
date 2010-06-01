@@ -34,7 +34,7 @@ import shared.array.RealArray;
 import shared.util.Control;
 
 /**
- * An implementation of {@link AbstractGMModel} using EM updates on GMM's with diagonal covariances. Inspired by <a
+ * An implementation of {@link AbstractGMModel} using EM updates on GMMs with diagonal covariances. Inspired by <a
  * href="http://www.cs.ucsd.edu/~saul/">Lawrence Saul</a>'s EM code.
  * 
  * @apiviz.uses shared.stat.ml.KMeans
