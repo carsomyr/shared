@@ -348,8 +348,9 @@ public class LinearAlgebraOps {
 
                 // Calculate the shift.
 
-                double scale = Math.max(Math.max(Math.max(Math.max(Math.abs(sV[p - 1]), Math.abs(sV[p - 2])), Math
-                        .abs(e[p - 2])), Math.abs(sV[k])), Math.abs(e[k]));
+                double scale = Math.max(
+                        Math.max(Math.max(Math.max(Math.abs(sV[p - 1]), Math.abs(sV[p - 2])), Math.abs(e[p - 2])),
+                                Math.abs(sV[k])), Math.abs(e[k]));
                 double sp = sV[p - 1] / scale;
                 double spm1 = sV[p - 2] / scale;
                 double epm1 = e[p - 2] / scale;

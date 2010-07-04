@@ -214,7 +214,7 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
     /**
      * Sorts along the given dimension.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public IntegerArray iSort(int dim) {
 
         ObjectArray<T> src = this;

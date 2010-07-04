@@ -57,7 +57,7 @@ public class CombinatoricsTest {
 
         assertTrue(Arrays.deepEquals(Combinatorics.partition(5), //
                 new int[][] {
-                //
+                        //
                         { 5 }, //
                         { 1, 4 }, //
                         { 2, 3 }, //
@@ -70,7 +70,7 @@ public class CombinatoricsTest {
 
         assertTrue(Arrays.deepEquals(Combinatorics.partition(7, 3, 5), //
                 new int[][] {
-                //
+                        //
                         { 1, 1, 5 }, //
                         { 1, 2, 4 }, //
                         { 1, 3, 3 }, //
@@ -83,7 +83,7 @@ public class CombinatoricsTest {
 
         assertTrue(Arrays.deepEquals(Combinatorics.partition(8, 4, 5), //
                 new int[][] {
-                //
+                        //
                         { 1, 1, 1, 5 }, //
                         { 1, 1, 2, 4 }, //
                         { 1, 1, 3, 3 }, //
@@ -94,7 +94,7 @@ public class CombinatoricsTest {
 
         assertTrue(Arrays.deepEquals(Combinatorics.partition(9, 2, 3), //
                 new int[][] {
-                //
+                        //
                         { 1, 8 }, //
                         { 2, 7 }, //
                         { 3, 6 }, //
@@ -125,7 +125,7 @@ public class CombinatoricsTest {
 
         assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(3), //
                 new int[][] {
-                //
+                        //
                         { 3 }, //
                         { 0, 3 }, //
                         { 1, 2 }, //
@@ -146,7 +146,7 @@ public class CombinatoricsTest {
 
         assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(8, 2, 3), //
                 new int[][] {
-                //
+                        //
                         { 0, 8 }, //
                         { 1, 7 }, //
                         { 2, 6 }, //
@@ -161,7 +161,7 @@ public class CombinatoricsTest {
 
         assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(2, 4, 5), //
                 new int[][] {
-                //
+                        //
                         { 0, 0, 0, 2 }, //
                         { 0, 0, 1, 1 }, //
                         { 0, 0, 2, 0 }, //

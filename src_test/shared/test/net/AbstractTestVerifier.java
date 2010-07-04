@@ -216,7 +216,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         };
 
         @Transitions(transitions = {
-        //
+                //
                 @Transition(currentState = "*", eventType = "ERROR"), //
                 @Transition(currentState = "*", eventType = "END_OF_STREAM") //
         })
@@ -316,7 +316,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         };
 
         @Transitions(transitions = {
-        //
+                //
                 @Transition(currentState = "*", eventType = "ERROR"), //
                 @Transition(currentState = "*", eventType = "END_OF_STREAM") //
         })

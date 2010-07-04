@@ -40,8 +40,8 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import shared.array.RealArray;
 import shared.array.Array.IndexingOrder;
+import shared.array.RealArray;
 import shared.util.Control;
 
 /**

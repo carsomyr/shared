@@ -35,8 +35,8 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import shared.array.Array;
-import shared.array.IntegerArray;
 import shared.array.Array.IndexingOrder;
+import shared.array.IntegerArray;
 
 /**
  * A class of unit tests for {@link IntegerArray}.
@@ -58,7 +58,7 @@ public class IntegerArrayTest {
     public void testMap() {
 
         IntegerArray a = new IntegerArray(new int[] {
-        //
+                //
                 0, 1, 2, 3, //
                 4, 5, 6, 7, //
                 8, 9, 10, 11, //
@@ -94,7 +94,7 @@ public class IntegerArrayTest {
     public void testSlice() {
 
         IntegerArray a = new IntegerArray(new int[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //
@@ -128,7 +128,7 @@ public class IntegerArrayTest {
                 3, 3, 2);
 
         IntegerArray expected = new IntegerArray(new int[] {
-        //
+                //
                 26, 27, 27, 28, //
                 26, 27, 27, 28, //
                 0, 0, 0, 0, //
@@ -144,7 +144,7 @@ public class IntegerArrayTest {
         assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
 
         a = new IntegerArray(new int[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //
@@ -166,7 +166,7 @@ public class IntegerArrayTest {
                 4, 2, 1);
 
         expected = new IntegerArray(new int[] {
-        //
+                //
                 5, 7, 9, //
                 10, 12, 14, //
                 15, 17, 19 //
@@ -185,7 +185,7 @@ public class IntegerArrayTest {
     public void testFind() {
 
         IntegerArray a = new IntegerArray(new int[] {
-        //
+                //
                 0, 1, 2, 3, -1, //
                 5, 6, 7, -1, -1, //
                 10, 11, -1, -1, -1, //
@@ -228,7 +228,7 @@ public class IntegerArrayTest {
         IntegerArray[] arrays = IntegerArray.ndgrid(-3, 0, 1, 3, 0, -1, 6, 0, -2);
 
         assertTrue(Arrays.equals(arrays[0].values(), new int[] {
-        //
+                //
                 -3, -3, -3, //
                 -3, -3, -3, //
                 -3, -3, -3, //
@@ -244,7 +244,7 @@ public class IntegerArrayTest {
         );
 
         assertTrue(Arrays.equals(arrays[1].values(), new int[] {
-        //
+                //
                 3, 3, 3, //
                 2, 2, 2, //
                 1, 1, 1, //
@@ -260,7 +260,7 @@ public class IntegerArrayTest {
         );
 
         assertTrue(Arrays.equals(arrays[2].values(), new int[] {
-        //
+                //
                 6, 4, 2, //
                 6, 4, 2, //
                 6, 4, 2, //

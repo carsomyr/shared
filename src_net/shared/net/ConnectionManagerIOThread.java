@@ -150,7 +150,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     };
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "ACTIVE", eventType = "ERROR"), //
             @Transition(currentState = "CLOSING", eventType = "ERROR") //
     })

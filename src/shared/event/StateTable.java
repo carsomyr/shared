@@ -65,7 +65,7 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
     /**
      * Default constructor.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public StateTable(Object target, Class<X> stateClass, Class<Y> eventTypeClass, String group) {
 
         this.backingArray = new ObjectArray( //
@@ -73,8 +73,7 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
                 stateClass.getEnumConstants().length, //
                 eventTypeClass.getEnumConstants().length);
 
-        final Map<String, List<StateHandler>> handlersMap = //
-        new HashMap<String, List<StateHandler>>();
+        final Map<String, List<StateHandler>> handlersMap = new HashMap<String, List<StateHandler>>();
 
         for (String str : WildcardCombinations) {
             handlersMap.put(str, new ArrayList<StateHandler>());
@@ -212,7 +211,7 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
             for (StateHandler stateHandler : handlersMap.get(key)) {
 
                 int[][] slices = new int[][] {
-                //
+                        //
                         (stateHandler.state != null) ? new int[] { stateHandler.state //
                                 .ordinal() } : rowRange, //
                         (stateHandler.eventType != null) ? new int[] { stateHandler.eventType //

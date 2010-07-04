@@ -65,10 +65,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import shared.array.Array;
+import shared.array.Array.IndexingOrder;
 import shared.array.ComplexArray;
 import shared.array.IntegerArray;
 import shared.array.RealArray;
-import shared.array.Array.IndexingOrder;
 import shared.array.kernel.MatlabIO.DataType;
 import shared.util.Control;
 

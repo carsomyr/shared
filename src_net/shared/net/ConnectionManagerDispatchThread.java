@@ -334,7 +334,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     };
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "CONNECT", eventType = "EXECUTE"), //
             @Transition(currentState = "ACCEPT", eventType = "EXECUTE") //
     })
@@ -346,7 +346,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     };
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "CONNECT", eventType = "CLOSE"), //
             @Transition(currentState = "ACCEPT", eventType = "CLOSE") //
     })
@@ -358,7 +358,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     };
 
     @Transitions(transitions = {
-    //
+            //
             @Transition(currentState = "VIRGIN", eventType = "ERROR"), //
             @Transition(currentState = "CONNECT", eventType = "ERROR"), //
             @Transition(currentState = "ACCEPT", eventType = "ERROR") //

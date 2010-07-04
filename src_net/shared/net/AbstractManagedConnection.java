@@ -37,7 +37,6 @@ import static shared.net.InterestEvent.InterestEventType.EXECUTE;
 import static shared.net.InterestEvent.InterestEventType.OP;
 import static shared.net.InterestEvent.InterestEventType.REGISTER;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -69,7 +68,7 @@ import shared.util.Control;
  * @author Roy Liu
  */
 abstract public class AbstractManagedConnection<C extends AbstractManagedConnection<C>> //
-        implements Connection, Closeable, SocketInformation<C>, //
+        implements Connection, SocketInformation<C>, //
         EnumStatus<AbstractManagedConnection.AbstractManagedConnectionStatus>, Executor {
 
     /**

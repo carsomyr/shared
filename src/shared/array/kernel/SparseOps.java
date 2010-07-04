@@ -611,7 +611,7 @@ public class SparseOps {
         }
 
         return new int[][] {
-        //
+                //
                 oldAssignments, //
                 oldIndirections, //
                 newAssignments, //

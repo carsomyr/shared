@@ -58,7 +58,7 @@ public class ConvolutionCacheTest {
     public void testConvolve() {
 
         RealArray a = new RealArray(new double[] {
-        //
+                //
                 0, 1, 4, 9, 16, 25, //
                 9, 16, 25, 36, 49, 64, //
                 36, 49, 64, 0, 1, 4, //
@@ -70,7 +70,7 @@ public class ConvolutionCacheTest {
         );
 
         RealArray b = new RealArray(new double[] {
-        //
+                //
                 1, -2, 1, //
                 -2, 4, -2, //
                 1, -2, 1 //
@@ -79,7 +79,7 @@ public class ConvolutionCacheTest {
         );
 
         RealArray expected = new RealArray(new double[] {
-        //
+                //
                 0, -81, 63, 0, //
                 0, 162, -126, 0, //
                 0, -81, 63, 0, //
@@ -99,7 +99,7 @@ public class ConvolutionCacheTest {
     public void testPad() {
 
         RealArray a = new RealArray(new double[] {
-        //
+                //
                 0, 1, 2, //
                 3, 4, 5, //
                 6, 7, 8, //
@@ -116,7 +116,7 @@ public class ConvolutionCacheTest {
         );
 
         RealArray expected = new RealArray(new double[] {
-        //
+                //
                 0, 0, 1, 2, 2, //
                 0, 0, 1, 2, 2, //
                 3, 3, 4, 5, 5, //
@@ -153,7 +153,7 @@ public class ConvolutionCacheTest {
         assertTrue(Arrays.equals(ConvolutionCache.pad(a, 1, 1, 1).values(), expected.values()));
 
         a = new RealArray(new double[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14 //
@@ -162,7 +162,7 @@ public class ConvolutionCacheTest {
         );
 
         expected = new RealArray(new double[] {
-        //
+                //
                 5, 5, 6, 7, 8, 9, 9, //
                 0, 0, 1, 2, 3, 4, 4, //
                 0, 0, 1, 2, 3, 4, 4, //

@@ -417,14 +417,14 @@ public class SparseArrayTest {
 
         new RealSparseArray(10, 10, 10).slice( //
                 new int[][] {
-                //
+                        //
                         { 1, 2, 3, 4, 5, 6, 7, 8 }, //
                         {}, //
                         { 0, 1 } //
                 }, //
                 new RealSparseArray(10, 10, 10), //
                 new int[][] {
-                //
+                        //
                         { 0, 1, 2, 3, 4, 5, 6, 7 }, //
                         {}, //
                         { 1, 2 } //
@@ -453,8 +453,8 @@ public class SparseArrayTest {
     @Test(expected = RuntimeException.class)
     public void testThrowException() {
 
-        ObjectSparseArray runnableArray = new ObjectSparseArray<Runnable>(Runnable.class, 3, 3);
-        ObjectSparseArray threadArray = new ObjectSparseArray<Thread>(Thread.class, 3, 3);
+        ObjectSparseArray<Runnable> runnableArray = new ObjectSparseArray<Runnable>(Runnable.class, 3, 3);
+        ObjectSparseArray<Thread> threadArray = new ObjectSparseArray<Thread>(Thread.class, 3, 3);
 
         runnableArray.insert(shared.util.Arrays.newArray(Runnable.class, 9, NullRunnable), //
                 //
@@ -482,7 +482,7 @@ public class SparseArrayTest {
 
         try {
 
-            ((ObjectSparseArray<Runnable>) runnableArray).slice(threadArray, //
+            runnableArray.slice((ObjectSparseArray<Runnable>) ((ObjectSparseArray<?>) threadArray), //
                     new int[] { 0, 1, 2 }, //
                     new int[] { 0, 1, 2 });
 

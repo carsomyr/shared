@@ -68,7 +68,7 @@ public class MatrixTest {
     public void testMMul() {
 
         RealArray a = new RealArray(new double[] {
-        //
+                //
                 0, 1, 2, //
                 3, 4, 5, //
                 6, 7, 8, //
@@ -78,7 +78,7 @@ public class MatrixTest {
         );
 
         RealArray expected = new RealArray(new double[] {
-        //
+                //
                 5, 14, 23, 32, //
                 14, 50, 86, 122, //
                 23, 86, 149, 212, //
@@ -91,7 +91,7 @@ public class MatrixTest {
                 a.mMul(a.transpose(1, 0)).values(), expected.values()));
 
         ComplexArray c1 = new ComplexArray(new double[] {
-        //
+                //
                 1, 1, 4, 4, 7, 7, 10, 10, 13, 13, //
                 2, 2, 5, 5, 8, 8, 11, 11, 14, 14, //
                 3, 3, 6, 6, 9, 9, 12, 12, 15, 15 //
@@ -100,7 +100,7 @@ public class MatrixTest {
         );
 
         ComplexArray c2 = new ComplexArray(new double[] {
-        //
+                //
                 1, 1, 2, 2, 3, 3, //
                 4, 4, 5, 5, 6, 6, //
                 7, 7, 8, 8, 9, 9, //
@@ -111,7 +111,7 @@ public class MatrixTest {
         );
 
         ComplexArray cExpected = new ComplexArray(new double[] {
-        //
+                //
                 0, 670, 0, 740, 0, 810, //
                 0, 740, 0, 820, 0, 900, //
                 0, 810, 0, 900, 0, 990 //
@@ -130,7 +130,7 @@ public class MatrixTest {
     public void testMDiag() {
 
         RealArray a = new RealArray(new double[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //
@@ -141,7 +141,7 @@ public class MatrixTest {
         );
 
         RealArray expected = new RealArray(new double[] {
-        //
+                //
                 0, //
                 6, //
                 12, //
@@ -155,7 +155,7 @@ public class MatrixTest {
                 a.mDiag().values(), expected.values()));
 
         ComplexArray cA = new ComplexArray(new double[] {
-        //
+                //
                 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, //
                 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, //
                 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, //
@@ -166,7 +166,7 @@ public class MatrixTest {
         );
 
         ComplexArray cExpected = new ComplexArray(new double[] {
-        //
+                //
                 0, 0, //
                 6, 0, //
                 12, 0, //

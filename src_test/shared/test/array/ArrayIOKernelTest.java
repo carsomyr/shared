@@ -36,10 +36,10 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import shared.array.Array;
+import shared.array.Array.IndexingOrder;
 import shared.array.ComplexArray;
 import shared.array.IntegerArray;
 import shared.array.RealArray;
-import shared.array.Array.IndexingOrder;
 import shared.array.kernel.ArrayIOKernel;
 import shared.array.kernel.MatlabIOKernel;
 import shared.test.Tests;
@@ -70,7 +70,7 @@ public class ArrayIOKernelTest {
         MatlabIOKernel kernel = new MatlabIOKernel();
 
         RealArray expected = new RealArray(new double[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //
@@ -93,7 +93,7 @@ public class ArrayIOKernelTest {
                 RealArray.parse(expected.getBytes()).values()));
 
         expected = new RealArray(new double[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //
@@ -132,7 +132,7 @@ public class ArrayIOKernelTest {
         MatlabIOKernel kernel = new MatlabIOKernel();
 
         ComplexArray expected = new ComplexArray(new double[] {
-        //
+                //
                 1, 1, 2, 2, 3, 3, //
                 4, 4, 5, 5, 6, 6, //
                 7, 7, 8, 8, 9, 9, //
@@ -150,7 +150,7 @@ public class ArrayIOKernelTest {
                 ComplexArray.parse(expected.getBytes()).values()));
 
         expected = new ComplexArray(new double[] {
-        //
+                //
                 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, //
                 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, //
                 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, //
@@ -189,7 +189,7 @@ public class ArrayIOKernelTest {
         MatlabIOKernel kernel = new MatlabIOKernel();
 
         IntegerArray expected = new IntegerArray(new int[] {
-        //
+                //
                 0, 1, 2, 3, //
                 4, 5, 6, 7, //
                 8, 9, 10, 11, //
@@ -214,7 +214,7 @@ public class ArrayIOKernelTest {
                 IntegerArray.parse(expected.getBytes()).values()));
 
         expected = new IntegerArray(new int[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //

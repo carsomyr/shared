@@ -29,8 +29,8 @@
 package shared.array.kernel;
 
 import shared.array.Array;
-import shared.array.Matrix;
 import shared.array.Array.IndexingOrder;
+import shared.array.Matrix;
 import shared.array.sparse.SparseArrayState;
 import shared.util.Service;
 

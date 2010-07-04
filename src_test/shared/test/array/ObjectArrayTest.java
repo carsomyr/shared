@@ -36,9 +36,9 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import shared.array.Array;
+import shared.array.Array.IndexingOrder;
 import shared.array.IntegerArray;
 import shared.array.ObjectArray;
-import shared.array.Array.IndexingOrder;
 
 /**
  * A class of unit tests for {@link ObjectArray}.
@@ -60,7 +60,7 @@ public class ObjectArrayTest {
     public void testMap() {
 
         ObjectArray<String> a = new ObjectArray<String>(new String[] {
-        //
+                //
                 "0", "1", "2", "3", //
                 "4", "5", "6", "7", //
                 "8", "9", "10", "11", //
@@ -104,7 +104,7 @@ public class ObjectArrayTest {
     public void testSlice() {
 
         ObjectArray<Integer> original = new ObjectArray<Integer>(new Integer[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //
@@ -139,7 +139,7 @@ public class ObjectArrayTest {
                 3, 3, 2);
 
         ObjectArray<Integer> expected = new ObjectArray<Integer>(new Integer[] {
-        //
+                //
                 26, 27, 27, 28, //
                 26, 27, 27, 28, //
                 null, null, null, null, //
@@ -156,16 +156,15 @@ public class ObjectArrayTest {
 
         a = original.slice( //
                 new int[][] {
-                //
+                        //
                         new int[] { 1, 1 }, //
                         new int[] { 1, 1 }, //
                         new int[] { 1, 2, 2, 3 } //
                 }, //
-                //
                 new ObjectArray<Integer>(Integer.class, IndexingOrder.NEAR, 2, 3, 4), //
                 //
                 new int[][] {
-                //
+                        //
                         new int[] { 0, 1 }, //
                         new int[] { 0, 1 }, //
                         new int[] { 0, 1, 2, 3 } //
@@ -181,7 +180,7 @@ public class ObjectArrayTest {
     public void testISort() {
 
         ObjectArray<Integer> a = new ObjectArray<Integer>(new Integer[] {
-        //
+                //
                 0, 1, 2, 3, 0, //
                 1, 2, 3, 0, 1, //
                 2, 3, 0, 1, 2, //
@@ -201,7 +200,7 @@ public class ObjectArrayTest {
         );
 
         IntegerArray expected = new IntegerArray(new int[] {
-        //
+                //
                 0, 3, 2, 1, 0, //
                 1, 0, 3, 2, 1, //
                 2, 1, 0, 3, 2, //
@@ -221,7 +220,7 @@ public class ObjectArrayTest {
         );
 
         ObjectArray<Integer> valuesExpected = new ObjectArray<Integer>(new Integer[] {
-        //
+                //
                 0, 0, 0, 0, 0, //
                 1, 1, 1, 1, 1, //
                 2, 2, 2, 2, 2, //
@@ -247,7 +246,7 @@ public class ObjectArrayTest {
                 && Arrays.equals(indices.values(), expected.values()));
 
         a = new ObjectArray<Integer>(new Integer[] {
-        //
+                //
                 24, 23, 22, 21, 20, //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
@@ -258,7 +257,7 @@ public class ObjectArrayTest {
         );
 
         expected = new IntegerArray(new int[] {
-        //
+                //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //
                 19, 18, 17, 16, 15, //
@@ -269,7 +268,7 @@ public class ObjectArrayTest {
         );
 
         valuesExpected = new ObjectArray<Integer>(new Integer[] {
-        //
+                //
                 0, 1, 2, 3, 4, //
                 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, //
@@ -293,12 +292,12 @@ public class ObjectArrayTest {
     @Test(expected = RuntimeException.class)
     public void testThrowException() {
 
-        ObjectArray runnableArray = new ObjectArray<Runnable>(new Runnable[] { NullRunnable }, 1);
-        ObjectArray threadArray = new ObjectArray<Thread>(new Thread[] { Thread.currentThread() }, 1);
+        ObjectArray<Runnable> runnableArray = new ObjectArray<Runnable>(new Runnable[] { NullRunnable }, 1);
+        ObjectArray<Thread> threadArray = new ObjectArray<Thread>(new Thread[] { Thread.currentThread() }, 1);
 
         try {
 
-            ((ObjectArray<Runnable>) runnableArray).slice(threadArray, new int[] { 0 });
+            runnableArray.slice((ObjectArray<Runnable>) ((ObjectArray<?>) threadArray), new int[] { 0 });
 
         } catch (RuntimeException e) {
 

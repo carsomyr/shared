@@ -110,23 +110,23 @@ public class ArrayKernelTest {
         kernel.ruOp(ArrayKernel.RU_COS, Double.NaN, //
                 v = new double[] { 0, 1, 2, 3 });
         assertTrue(Tests.equals(v, new double[] {
-        //
+                //
                 1.0, 0.5403023058681398, -0.4161468365471424, -0.9899924966004454 }));
 
         kernel.ruOp(ArrayKernel.RU_SIN, Double.NaN, //
                 v = new double[] { 0, 1, 2, 3 });
         assertTrue(Tests.equals(v, new double[] {
-        //
+                //
                 0.0, 0.8414709848078965, 0.9092974268256817, 0.1411200080598672 }));
 
         kernel.ruOp(ArrayKernel.RU_ATAN, Double.NaN, //
                 v = new double[] { 0, 1, 2, 3 });
         assertTrue(Tests.equals(v, new double[] {
-        //
+                //
                 0.0, 0.7853981633974483, 1.1071487177940904, 1.2490457723982544 }));
 
         kernel.ruOp(ArrayKernel.RU_LOG, Double.NaN, v = new double[] {
-        //
+                //
                 Math.E, Math.E * Math.E, Math.E * Math.E * Math.E, //
                 Math.E, Math.E * Math.E, Math.E * Math.E * Math.E });
         assertTrue(Tests.equals(v, new double[] { 1, 2, 3, 1, 2, 3 }));
@@ -184,7 +184,7 @@ public class ArrayKernelTest {
         kernel.cuOp(ArrayKernel.CU_EXP, Double.NaN, Double.NaN, //
                 v = new double[] { 0, 0, -1, 1, 1, -1, 0, 0, -1, 1, 1, -1 });
         assertTrue(Tests.equals(v, new double[] {
-        //
+                //
                 1.0, 0.0, //
                 0.19876611034641298, 0.3095598756531122, //
                 1.4686939399158851, -2.2873552871788423, //
@@ -199,7 +199,7 @@ public class ArrayKernelTest {
         kernel.cuOp(ArrayKernel.CU_COS, Double.NaN, Double.NaN, //
                 v = new double[] { 0, 0, 1, 0, 0, 1, 1, 1 });
         assertTrue(Tests.equals(v, new double[] {
-        //
+                //
                 1.0, 0.0, //
                 0.5403023058681398, 0.0, //
                 1.543080634815244, 0.0, //
@@ -208,7 +208,7 @@ public class ArrayKernelTest {
         kernel.cuOp(ArrayKernel.CU_SIN, Double.NaN, Double.NaN, //
                 v = new double[] { 0, 0, 1, 0, 0, 1, 1, 1 });
         assertTrue(Tests.equals(v, new double[] {
-        //
+                //
                 0.0, 0.0, //
                 0.8414709848078965, 0.0, //
                 0.0, 1.1752011936438016, //

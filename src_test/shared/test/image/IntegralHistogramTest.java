@@ -32,9 +32,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import shared.array.Array.IndexingOrder;
 import shared.array.IntegerArray;
 import shared.array.RealArray;
-import shared.array.Array.IndexingOrder;
 import shared.image.IntegralHistogram;
 import shared.image.IntegralImage;
 import shared.test.Tests;

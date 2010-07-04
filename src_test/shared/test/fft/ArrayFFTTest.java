@@ -61,19 +61,19 @@ public class ArrayFFTTest {
     public void testOneDimensionalFFT() {
 
         ComplexArray a = new ComplexArray(new double[] {
-        //
+                //
                 1, 1, 2, 2, 3, 3 //
                 } //
         );
 
         ComplexArray b = new ComplexArray(new double[] {
-        //
+                //
                 3, 3, 2, 2, 1, 1 //
                 } //
         );
 
         ComplexArray expected = new ComplexArray(new double[] {
-        //
+                //
                 0, 22, 0, 22, 0, 28 //
                 } //
         );
@@ -82,7 +82,7 @@ public class ArrayFFTTest {
                 a.fft().eMul(b.fft()).ifft().values(), expected.values()));
 
         RealArray aReal = new RealArray(new double[] {
-        //
+                //
                 1, 2, 3, 4, 5, 6, 7, 8, 9, //
                 10, 11, 12, 13, 14, 15, 16, 17, 18, //
                 19, 20, 21, 22, 23, 24, 25, 26, 27 //
@@ -90,7 +90,7 @@ public class ArrayFFTTest {
         );
 
         RealArray bReal = new RealArray(new double[] {
-        //
+                //
                 1, 2, 3, 0, 0, 0, 0, 0, 0, //
                 0, 0, 0, 0, 0, 0, 0, 0, 0, //
                 0, 0, 0, 0, 0, 0, 0, 0, 0 //
@@ -98,7 +98,7 @@ public class ArrayFFTTest {
         );
 
         RealArray expectedReal = new RealArray(new double[] {
-        //
+                //
                 133, 85, 10, 16, 22, 28, 34, 40, 46, //
                 52, 58, 64, 70, 76, 82, 88, 94, 100, //
                 106, 112, 118, 124, 130, 136, 142, 148, 154 //
@@ -116,7 +116,7 @@ public class ArrayFFTTest {
     public void testTwoDimensionalFFT() {
 
         RealArray a = new RealArray(new double[] {
-        //
+                //
                 0, 1, 2, 3, 4, 5, 6, //
                 7, 8, 9, 10, 11, 12, 13, //
                 14, 15, 16, 17, 18, 19, 20, //
@@ -129,7 +129,7 @@ public class ArrayFFTTest {
         );
 
         RealArray b = new RealArray(new double[] {
-        //
+                //
                 -1, 2, 2, -1, 0, 0, 0, //
                 0, 1, 1, -4, 0, 0, 0, //
                 0, 0, 1, -2, 0, 0, 0, //
@@ -142,7 +142,7 @@ public class ArrayFFTTest {
         );
 
         RealArray expected = new RealArray(new double[] {
-        //
+                //
                 -14, -14, -14, -14, 28, 0, -21, //
                 -14, -14, -14, -14, 28, 0, -21, //
                 -14, -14, -14, -14, 28, 0, -21, //
@@ -169,7 +169,7 @@ public class ArrayFFTTest {
     public void testThreeDimensionalFFT() {
 
         RealArray a = new RealArray(new double[] {
-        //
+                //
                 1, 4, 7, //
                 2, 5, 8, //
                 3, 6, 9, //
@@ -186,7 +186,7 @@ public class ArrayFFTTest {
         );
 
         RealArray b = new RealArray(new double[] {
-        //
+                //
                 -2, -2, 1, //
                 1, 1, 1, //
                 0, 0, 0, //
@@ -203,7 +203,7 @@ public class ArrayFFTTest {
         );
 
         RealArray expected = new RealArray(new double[] {
-        //
+                //
                 -7, 20, -7, //
                 -10, 17, -10, //
                 -10, 17, -10, //
@@ -233,7 +233,7 @@ public class ArrayFFTTest {
     public void testFFTShift() {
 
         ComplexArray a = new ComplexArray(new double[] {
-        //
+                //
                 1, 0, 4, 0, 7, 0, 10, 0, //
                 2, 0, 5, 0, 8, 0, 11, 0, //
                 3, 0, 6, 0, 9, 0, 12, 0, //
@@ -258,7 +258,7 @@ public class ArrayFFTTest {
         );
 
         ComplexArray expected = new ComplexArray(new double[] {
-        //
+                //
                 45, 0, 48, 0, 39, 0, 42, 0, //
                 43, 0, 46, 0, 37, 0, 40, 0, //
                 44, 0, 47, 0, 38, 0, 41, 0, //

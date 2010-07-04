@@ -337,7 +337,6 @@ public class Filters {
      *            the output type.
      * @return the {@link OOBFilter} adapter, or the original {@link Filter} if it is already an instance.
      */
-    @SuppressWarnings("unchecked")
     final public static <I, O> OOBFilter<I, O> asOOBFilter(final Filter<I, O> filter) {
 
         return (filter instanceof OOBFilter) ? (OOBFilter<I, O>) filter : new OOBFilter<I, O>() {

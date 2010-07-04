@@ -154,12 +154,11 @@ public class AsynchronousConnectionTest {
                     .setBufferSize(bufferSize);
 
             if (this.useSSL) {
-                xmlRConn.setFilterFactory( //
-                        new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXMLConnection>() //
-                                .add(ServerSSLFilterFactory) //
-                                .add(fFF) //
-                                .add(XMLFilterFactory.getInstance()) //
-                                .add(xmlRConn));
+                xmlRConn.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXMLConnection>() //
+                        .add(ServerSSLFilterFactory) //
+                        .add(fFF) //
+                        .add(XMLFilterFactory.getInstance()) //
+                        .add(xmlRConn));
             }
 
             xmlRConn.accept(listenAddress);
@@ -180,12 +179,11 @@ public class AsynchronousConnectionTest {
                     .setBufferSize(bufferSize);
 
             if (this.useSSL) {
-                xmlSConn.setFilterFactory( //
-                        new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXMLConnection>() //
-                                .add(ClientSSLFilterFactory) //
-                                .add(fFF) //
-                                .add(XMLFilterFactory.getInstance()) //
-                                .add(xmlSConn));
+                xmlSConn.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXMLConnection>() //
+                        .add(ClientSSLFilterFactory) //
+                        .add(fFF) //
+                        .add(XMLFilterFactory.getInstance()) //
+                        .add(xmlSConn));
             }
 
             // The asynchronous sockets specification allows us to write data before connecting; we should

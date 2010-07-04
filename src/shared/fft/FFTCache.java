@@ -144,6 +144,7 @@ abstract public class FFTCache<C extends AbstractArray<C, C, R, ?>, R extends Ab
         /**
          * Checks for equality on the array and the padded dimensions.
          */
+        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object o) {
 

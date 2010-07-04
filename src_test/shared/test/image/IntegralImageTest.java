@@ -32,8 +32,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import shared.array.RealArray;
 import shared.array.Array.IndexingOrder;
+import shared.array.RealArray;
 import shared.image.IntegralImage;
 import shared.util.Arithmetic;
 

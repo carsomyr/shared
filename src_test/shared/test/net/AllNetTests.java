@@ -50,9 +50,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import shared.net.ConnectionManager;
 import shared.net.filter.FilteredConnection;
+import shared.net.filter.SSLEngineFactory.Mode;
 import shared.net.filter.SSLFilter;
 import shared.net.filter.SSLFilterFactory;
-import shared.net.filter.SSLEngineFactory.Mode;
 
 /**
  * A suite encompassing all networking tests.
@@ -83,7 +83,7 @@ public class AllNetTests {
      * The names of {@link org.apache.log4j.Logger}s used in this test.
      */
     final protected static String[] LoggerNames = new String[] {
-    //
+            //
             ConnectionManager.class.getName(), //
             SSLFilter.class.getName() //
     };
