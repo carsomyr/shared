@@ -2,7 +2,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = Shared
+PROJECT_NAME           = shared
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = ..
 CREATE_SUBDIRS         = NO

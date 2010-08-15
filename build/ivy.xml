@@ -35,10 +35,10 @@
     </publications>
 
     <dependencies>
-        <dependency org="org.apache.ant" name="ant-nodeps" rev="1.8.0" conf="ant->default">
+        <dependency org="org.apache.ant" name="ant-nodeps" rev="1.8.1" conf="ant->default">
             <exclude module="ant" />
         </dependency>
-        <dependency org="org.jboss.apiviz" name="apiviz" rev="1.3.1.GA" conf="ant->default" />
+        <dependency org="org.jboss.apiviz" name="apiviz" rev="1.3.2.GA" conf="ant->default" />
         <dependency org="checkstyle" name="checkstyle" rev="5.0" conf="checkstyle->default">
             <exclude module="commons-cli" />
             <exclude module="commons-collections" />
@@ -46,17 +46,9 @@
         <dependency org="commons-cli" name="commons-cli" rev="1.2" conf="commons->default" />
         <dependency org="commons-codec" name="commons-codec" rev="1.4" conf="commons->default" />
         <dependency org="junit" name="junit" rev="4.8.1" conf="lib->default" />
-        <dependency org="log4j" name="log4j" rev="1.2.15" conf="commons->default">
-            <exclude module="activation" />
-            <exclude module="jms" />
-            <exclude module="jmxri" />
-            <exclude module="jmxtools" />
-            <exclude module="mail" />
-        </dependency>
-        <dependency org="org.slf4j" name="slf4j-api" rev="1.5.11" conf="commons->default" />
-        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.11" conf="commons->default">
-            <exclude module="log4j" />
-        </dependency>
+        <dependency org="log4j" name="log4j" rev="1.2.16" conf="commons->default" />
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.6.1" conf="commons->default" />
+        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.1" conf="commons->default" />
     </dependencies>
 
 </ivy-module>

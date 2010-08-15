@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<project basedir="." default="build" name="Shared" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
+<project basedir="." default="build" name="shared" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
 
     <property environment="env" />
     <property file="src/shared/project.properties" />
 
     <property name="target" value="1.6" />
     <property name="source" value="1.6" />
-    <property name="ivy.install.version" value="2.1.0" />
+    <property name="ivy.install.version" value="2.2.0" />
 
     <!-- Source and class paths. -->
 
-    <path id="Shared.sourcepath">
+    <path id="shared.sourcepath">
         <pathelement location="src" />
         <pathelement location="src_commons" />
         <pathelement location="src_extensions" />
@@ -19,7 +19,7 @@
         <pathelement location="src_test" />
     </path>
 
-    <path id="Shared.classpath">
+    <path id="shared.classpath">
         <pathelement location="bin" />
         <pathelement location="build/ivy.jar" />
         <pathelement location="build/conf" />
@@ -36,7 +36,7 @@
         <mkdir dir="distrib/sources" />
         <mkdir dir="distrib/resources" />
         <available file=".dependencies" property="build.dependencies" />
-        <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="Shared.classpath" />
+        <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="shared.classpath" />
     </target>
 
     <target name="ivy-install" depends="init" unless="ivy.install">
@@ -44,7 +44,7 @@
     </target>
 
     <target name="ivy-prepare" depends="ivy-install" unless="ivy.settings.file">
-        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="Shared.classpath" />
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="shared.classpath" />
         <ivy:configure file="build/ivysettings.xml" />
     </target>
 
@@ -58,14 +58,14 @@
     </target>
 
     <target name="build-prepare" depends="ivy-retrieve">
-        <taskdef resource="checkstyletask.properties" uri="antlib:com.puppycrawl.tools.checkstyle" classpathref="Shared.classpath" />
-        <taskdef name="javah" classname="org.apache.tools.ant.taskdefs.optional.Javah" classpathref="Shared.classpath" />
+        <taskdef resource="checkstyletask.properties" uri="antlib:com.puppycrawl.tools.checkstyle" classpathref="shared.classpath" />
+        <taskdef name="javah" classname="org.apache.tools.ant.taskdefs.optional.Javah" classpathref="shared.classpath" />
     </target>
 
     <target name="build-project" depends="build-prepare">
         <javac debug="true" debuglevel="source,lines,vars" destdir="bin" source="${source}" target="${target}" includeAntRuntime="false">
-            <src refid="Shared.sourcepath" />
-            <classpath refid="Shared.classpath" />
+            <src refid="shared.sourcepath" />
+            <classpath refid="shared.classpath" />
         </javac>
     </target>
 
@@ -86,7 +86,7 @@
 
     <!-- Jar targets. -->
 
-    <fileset id="Shared.metainf" dir=".">
+    <fileset id="shared.metainf" dir=".">
         <include name="license.txt" />
         <include name="license/license_*.txt" />
     </fileset>
@@ -96,85 +96,85 @@
             <manifest>
                 <attribute name="Main-Class" value="shared.test.All" />
             </manifest>
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-base" depends="build-project, build-resource">
         <jar destfile="distrib/jars/sst-base-${build.version}.jar" basedir="bin" includes="shared/**, font/**" excludes="shared/test/**, shared/cli/**, shared/codec/**, shared/log/**, shared/net/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-base-src" depends="build-project, build-resource">
         <jar destfile="distrib/sources/sst-base-src-${build.version}.jar" basedir="src" includes="shared/**, font/**" excludes="shared/test/**, shared/cli/**, shared/codec/**, shared/log/**, shared/net/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-build-conf" depends="build-project, build-resource">
         <jar destfile="distrib/resources/sst-build-conf-${build.version}.jar" basedir="build" includes="conf/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-commons" depends="build-project, build-resource">
         <jar destfile="distrib/jars/sst-commons-${build.version}.jar" basedir="bin" includes="shared/cli/**, shared/codec/**, shared/log/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-commons-src" depends="build-project, build-resource">
         <jar destfile="distrib/sources/sst-commons-src-${build.version}.jar" basedir="src_commons" includes="shared/cli/**, shared/codec/**, shared/log/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-extensions" depends="build-project, build-resource">
         <jar destfile="distrib/jars/sst-extensions-${build.version}.jar" basedir="bin" includes="sharedx/**" excludes="sharedx/test/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-extensions-src" depends="build-project, build-resource">
         <jar destfile="distrib/sources/sst-extensions-src-${build.version}.jar" basedir="src_extensions" includes="sharedx/**" excludes="sharedx/test/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-native" depends="build-project, build-resource">
         <jar destfile="distrib/resources/sst-native-${build.version}.jar" basedir="build" includes="lib/**" excludes="lib/*.jar">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-nativex" depends="build-project, build-resource">
         <jar destfile="distrib/resources/sst-nativex-${build.version}.jar" basedir="build" includes="libx/**" excludes="libx/*.jar">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-net" depends="build-project, build-resource">
         <jar destfile="distrib/jars/sst-net-${build.version}.jar" basedir="bin" includes="shared/net/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-net-src" depends="build-project, build-resource">
         <jar destfile="distrib/sources/sst-net-src-${build.version}.jar" basedir="src_net" includes="shared/net/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-test" depends="build-project, build-resource">
         <jar destfile="distrib/jars/sst-test-${build.version}.jar" basedir="bin" includes="shared/test/**, sharedx/test/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-test-src" depends="build-project, build-resource">
         <jar destfile="distrib/sources/sst-test-src-${build.version}.jar" basedir="src_test" includes="shared/test/**, sharedx/test/**">
-            <metainf refid="Shared.metainf" />
+            <metainf refid="shared.metainf" />
         </jar>
     </target>
 
@@ -202,7 +202,7 @@
             <class name="shared.image.jni.NativeImageKernel" />
             <class name="shared.array.kernel.ArrayKernel" />
             <class name="shared.array.jni.NativeArrayKernel" />
-            <classpath refid="Shared.classpath" />
+            <classpath refid="shared.classpath" />
         </javah>
     </target>
 
@@ -211,7 +211,7 @@
             <class name="sharedx.fftw.Plan" />
             <class name="sharedx.test.BenchmarkNative" />
             <class name="sharedx.test.BenchmarkSpecification" />
-            <classpath refid="Shared.classpath" />
+            <classpath refid="shared.classpath" />
         </javah>
     </target>
 
@@ -219,10 +219,10 @@
 
     <target name="javadoc" depends="build-project">
         <javadoc access="protected" destdir="javadoc" packagenames="*" source="${source}" splitindex="true" failonerror="true" author="true" use="true" version="true">
-            <sourcepath refid="Shared.sourcepath" />
-            <classpath refid="Shared.classpath" />
+            <sourcepath refid="shared.sourcepath" />
+            <classpath refid="shared.classpath" />
             <link href="http://java.sun.com/javase/6/docs/api/" />
-            <doclet name="org.jboss.apiviz.APIviz" pathref="Shared.classpath" />
+            <doclet name="org.jboss.apiviz.APIviz" pathref="shared.classpath" />
         </javadoc>
         <touch file=".javadoc" />
     </target>
@@ -257,8 +257,8 @@
         <delete file="native/include/jni/jni_headersx.h" />
         <delete>
             <fileset dir="." includes="*.jar" />
-            <fileset dir="build" includes="lib/*.dll, lib/*.jnilib, lib/*.so" />
-            <fileset dir="build" includes="libx/*.dll, libx/*.jnilib, libx/*.so" />
+            <fileset dir="build" includes="lib/*.dll, lib/*.dylib, lib/*.so" />
+            <fileset dir="build" includes="libx/*.dll, libx/*.dylib, libx/*.so" />
         </delete>
     </target>
 

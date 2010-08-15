@@ -3,7 +3,7 @@ OS			:= $(shell uname)
 ifeq ($(OS), Darwin)
 
 LIB_PREFIX	= lib
-LIB_SUFFIX	= jnilib
+LIB_SUFFIX	= dylib
 
 else
 

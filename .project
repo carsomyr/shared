@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-    <name>Shared</name>
+    <name>shared</name>
     <comment></comment>
     <projects>
     </projects>
@@ -86,5 +86,6 @@
         <nature>org.eclipse.jdt.core.javanature</nature>
         <nature>org.eclipse.cdt.core.ccnature</nature>
         <nature>org.python.pydev.pythonNature</nature>
+        <nature>org.apache.ivyde.eclipse.ivynature</nature>
     </natures>
 </projectDescription>

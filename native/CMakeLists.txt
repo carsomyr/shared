@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION "2.8")
 
-project("Shared")
+project("shared")
 
 include("../build/conf/common.cmake")
 include("FindJNI")
@@ -119,14 +119,6 @@ if(CL_LIBRARY_FILENAME)
 endif(CL_LIBRARY_FILENAME)
 
 # Special suffix handling for Mac OS.
-
-if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-
-    foreach(BUILD_TARGET ${BUILD_TARGETS})
-        set_target_properties(${BUILD_TARGET} PROPERTIES SUFFIX ".jnilib")
-    endforeach(BUILD_TARGET ${BUILD_TARGETS})
-
-endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
 if(MINGW)
 
