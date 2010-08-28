@@ -163,18 +163,14 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         sendOutbound(evt);
     }
 
-    public void onReceiveInbound(Queue<T> evts) {
+    public void onReceive(Queue<T> evts) {
 
         for (T evt; (evt = evts.poll()) != null;) {
             onLocal(evt);
         }
     }
 
-    public void onCloseInbound(Queue<T> evts) {
-        onClose();
-    }
-
-    public void onEOSInbound(Queue<T> evts) {
+    public void onClosingEOS(Queue<T> evts) {
 
         onLocal(parse(null));
 
@@ -213,7 +209,11 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         };
     }
 
-    public void onBindInbound(Queue<T> inbounds) {
+    public void onBind(Queue<T> inbounds) {
+        // Do nothing.
+    }
+
+    public void onClosingUser(Queue<T> evts) {
         // Do nothing.
     }
 }

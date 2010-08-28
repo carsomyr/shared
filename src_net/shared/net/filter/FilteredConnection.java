@@ -68,7 +68,7 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
      * @param inbounds
      *            the inbound values.
      */
-    public void onReceiveInbound(Queue<T> inbounds);
+    public void onReceive(Queue<T> inbounds);
 
     /**
      * On successful binding.
@@ -76,21 +76,21 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
      * @param inbounds
      *            the inbound values.
      */
-    public void onBindInbound(Queue<T> inbounds);
+    public void onBind(Queue<T> inbounds);
 
     /**
-     * On user-requested close.
+     * On connection closure by end-of-stream.
      * 
      * @param inbounds
      *            the inbound values.
      */
-    public void onCloseInbound(Queue<T> inbounds);
+    public void onClosingEOS(Queue<T> inbounds);
 
     /**
-     * On end-of-stream.
+     * On connection closure by user request.
      * 
      * @param inbounds
      *            the inbound values.
      */
-    public void onEOSInbound(Queue<T> inbounds);
+    public void onClosingUser(Queue<T> inbounds);
 }

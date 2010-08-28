@@ -45,7 +45,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -69,7 +68,7 @@ import shared.util.Control;
  */
 abstract public class AbstractManagedConnection<C extends AbstractManagedConnection<C>> //
         implements Connection, SocketInformation<C>, //
-        EnumStatus<AbstractManagedConnection.AbstractManagedConnectionStatus>, Executor {
+        EnumStatus<AbstractManagedConnection.AbstractManagedConnectionStatus> {
 
     /**
      * An enumeration of connection states.

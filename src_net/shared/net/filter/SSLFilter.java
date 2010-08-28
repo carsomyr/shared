@@ -376,7 +376,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
             switch (evt.getType()) {
 
-            case CLOSE_USER:
+            case CLOSING_USER:
                 this.shutdownOutbound = true;
                 break;
             }

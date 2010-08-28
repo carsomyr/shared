@@ -130,22 +130,22 @@ public class ClientServerTest {
                     .add(this));
         }
 
-        public void onReceiveInbound(Queue<String> inbounds) {
+        public void onReceive(Queue<String> inbounds) {
 
             for (String str; (str = inbounds.poll()) != null;) {
                 this.log.info(String.format("Received: \"%s\".", str));
             }
         }
 
-        public void onBindInbound(Queue<String> inbounds) {
+        public void onBind(Queue<String> inbounds) {
             this.log.info("Connection is now bound.");
         }
 
-        public void onCloseInbound(Queue<String> inbounds) {
+        public void onClosingUser(Queue<String> inbounds) {
             this.log.info("Connection has encountered a user-requested close.");
         }
 
-        public void onEOSInbound(Queue<String> inbounds) {
+        public void onClosingEOS(Queue<String> inbounds) {
             this.log.info("Connection has encountered an end-of-stream.");
         }
 

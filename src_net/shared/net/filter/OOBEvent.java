@@ -57,14 +57,14 @@ public class OOBEvent implements Event<OOBEvent, OOBEvent.OOBEventType, SourceTy
         BIND, //
 
         /**
-         * Denotes a connection closure induced by an end-of-stream.
+         * Denotes a connection closure by end-of-stream.
          */
-        CLOSE_EOS, //
+        CLOSING_EOS, //
 
         /**
-         * Denotes a connection closure initiated by the user.
+         * Denotes a connection closure by user request.
          */
-        CLOSE_USER;
+        CLOSING_USER;
     }
 
     final OOBEventType type;

@@ -32,6 +32,7 @@ import java.io.Closeable;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 /**
@@ -39,7 +40,14 @@ import java.util.concurrent.Future;
  * 
  * @author Roy Liu
  */
-public interface Connection extends Closeable {
+public interface Connection extends Closeable, Executor {
+
+    // Callback methods are not necessarily thread-safe, and thus must execute on internal threads.
+
+    /**
+     * On successful binding.
+     */
+    public void onBind();
 
     /**
      * On receipt of data.
@@ -48,11 +56,6 @@ public interface Connection extends Closeable {
      *            the {@link ByteBuffer} containing data.
      */
     public void onReceive(ByteBuffer bb);
-
-    /**
-     * On successful binding.
-     */
-    public void onBind();
 
     /**
      * On end-of-stream.
@@ -85,6 +88,16 @@ public interface Connection extends Closeable {
      * {@link #onClosingUser(ByteBuffer)}, or {@link #onError(Throwable, ByteBuffer)}.
      */
     public void onClose();
+
+    /**
+     * Guarantees that the given code snippet executes serially with respect to callbacks.
+     * 
+     * @param r
+     *            the code snippet to execute.
+     */
+    public void execute(Runnable r);
+
+    // User methods must be thread-safe, and thus may execute on any thread.
 
     /**
      * Asynchronously sends data to the remote host.

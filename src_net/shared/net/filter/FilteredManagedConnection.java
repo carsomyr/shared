@@ -161,7 +161,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         this.in.add(input);
         this.filter.getInbound(this.inReadOnly, this.inFilteredWriteOnly);
 
-        onReceiveInbound(this.inFiltered);
+        onReceive(this.inFiltered);
     }
 
     public void onBind() {
@@ -169,27 +169,27 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         onOOBEvent(OOBEventType.BIND, null, new Handler<Queue<T>>() {
 
             public void handle(Queue<T> inbounds) {
-                onBindInbound(inbounds);
+                onBind(inbounds);
             }
         });
     }
 
     public void onClosingUser(ByteBuffer bb) {
 
-        onOOBEvent(OOBEventType.CLOSE_USER, bb, new Handler<Queue<T>>() {
+        onOOBEvent(OOBEventType.CLOSING_USER, bb, new Handler<Queue<T>>() {
 
             public void handle(Queue<T> inbounds) {
-                onCloseInbound(inbounds);
+                onClosingUser(inbounds);
             }
         });
     }
 
     public void onClosingEOS(ByteBuffer bb) {
 
-        onOOBEvent(OOBEventType.CLOSE_EOS, bb, new Handler<Queue<T>>() {
+        onOOBEvent(OOBEventType.CLOSING_EOS, bb, new Handler<Queue<T>>() {
 
             public void handle(Queue<T> inbounds) {
-                onEOSInbound(inbounds);
+                onClosingEOS(inbounds);
             }
         });
     }

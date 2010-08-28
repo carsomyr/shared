@@ -314,7 +314,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
     }
 
-    public void onBindInbound(Queue<ByteBuffer> inbounds) {
+    public void onBind(Queue<ByteBuffer> inbounds) {
 
         synchronized (this) {
 
@@ -324,7 +324,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
     }
 
-    public void onReceiveInbound(Queue<ByteBuffer> inbounds) {
+    public void onReceive(Queue<ByteBuffer> inbounds) {
 
         boolean disableReads = false;
 
@@ -363,7 +363,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
     }
 
-    public void onEOSInbound(Queue<ByteBuffer> inbounds) {
+    public void onClosingEOS(Queue<ByteBuffer> inbounds) {
 
         synchronized (this) {
 
@@ -377,7 +377,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
     }
 
-    public void onCloseInbound(Queue<ByteBuffer> inbounds) {
+    public void onClosingUser(Queue<ByteBuffer> inbounds) {
 
         synchronized (this) {
 
