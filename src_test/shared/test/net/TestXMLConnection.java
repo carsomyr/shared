@@ -68,8 +68,8 @@ public class TestXMLConnection extends XMLConnection<TestXMLConnection, TestXMLE
     }
 
     @Override
-    protected void onError(Throwable error) {
-        onLocal(new ErrorXMLEvent(error, this));
+    protected void onError() {
+        onLocal(new ErrorXMLEvent(getError(), this));
     }
 
     @Override

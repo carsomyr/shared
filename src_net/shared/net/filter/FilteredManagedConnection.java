@@ -174,22 +174,32 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         });
     }
 
-    public void onClosingUser(ByteBuffer bb) {
+    public void onClosing(final ClosingType type, ByteBuffer bb) {
 
-        onOOBEvent(OOBEventType.CLOSING_USER, bb, new Handler<Queue<T>>() {
+        final OOBEventType eventType;
+
+        switch (type) {
+
+        case EOS:
+            eventType = OOBEventType.CLOSING_EOS;
+            break;
+
+        case USER:
+            eventType = OOBEventType.CLOSING_USER;
+            break;
+
+        case ERROR:
+            eventType = OOBEventType.CLOSING_ERROR;
+            break;
+
+        default:
+            throw new AssertionError("Control should never reach here");
+        }
+
+        onOOBEvent(eventType, bb, new Handler<Queue<T>>() {
 
             public void handle(Queue<T> inbounds) {
-                onClosingUser(inbounds);
-            }
-        });
-    }
-
-    public void onClosingEOS(ByteBuffer bb) {
-
-        onOOBEvent(OOBEventType.CLOSING_EOS, bb, new Handler<Queue<T>>() {
-
-            public void handle(Queue<T> inbounds) {
-                onClosingEOS(inbounds);
+                onClosing(type, inbounds);
             }
         });
     }

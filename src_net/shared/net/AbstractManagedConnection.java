@@ -137,7 +137,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     /**
      * A {@link WriteHandler} used when writes are deferred. Enqueues data without further action.
      */
-    final protected WriteHandler syncHandler = new WriteHandler() {
+    final protected WriteHandler bufferedHandler = new WriteHandler() {
 
         public int write(ByteBuffer bb) {
 
@@ -151,9 +151,9 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     };
 
     /**
-     * A {@link WriteHandler} used when asynchronous writes are still allowed.
+     * A {@link WriteHandler} used when bytes can be written through directly to the underlying transport.
      */
-    final protected WriteHandler asyncHandler = new WriteHandler() {
+    final protected WriteHandler writeThroughHandler = new WriteHandler() {
 
         public int write(ByteBuffer bb) {
 
@@ -175,8 +175,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                     getThread().debug("Writes deferred [%s].", amc);
 
-                    setSyncHandler();
-                    setWriteEnabled(true);
+                    setBufferedHandler();
+                    setEnabled(OperationType.WRITE, true);
                 }
 
                 return remaining;
@@ -184,7 +184,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             } catch (Throwable t) {
 
                 setNullHandler();
-                error(t);
+                setError(t);
 
                 return 0;
             }
@@ -240,9 +240,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                         getThread().debug("Canceled write defer [%s].", amc);
 
-                        // Notify anyone waiting for restoration of the asynchronous write
-                        // handler.
-                        setAsyncHandler();
+                        // Notify anyone waiting for restoration of the write-through handler.
+                        setWriteThroughHandler();
                         amc.notifyAll();
                     }
                 }
@@ -299,55 +298,169 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     };
 
     /**
-     * Sets the {@link #onClosingEOS(ByteBuffer)} handler.
+     * External thread call -- Submits this connection to its associated {@link ConnectionManager}.
+     * 
+     * @param <T>
+     *            the argument type.
+     * @param type
+     *            the {@link Connection.InitializationType}.
+     * @param argument
+     *            the argument.
      */
-    final protected Runnable onClosingEOSHandler = new Runnable() {
-
-        public void run() {
-            onClosingEOS(AbstractManagedConnection.this.readBuffer);
-        }
-    };
-
-    /**
-     * Sets the {@link #onClosingUser(ByteBuffer)} handler.
-     */
-    final protected Runnable onClosingUserHandler = new Runnable() {
-
-        public void run() {
-            onClosingUser(AbstractManagedConnection.this.readBuffer);
-        }
-    };
-
-    public Future<InetSocketAddress> connect(InetSocketAddress address) {
-        return submit(CONNECT, address);
-    }
-
-    public Future<InetSocketAddress> accept(InetSocketAddress address) {
-        return submit(ACCEPT, address);
-    }
-
-    public Future<?> register(SocketChannel channel) {
-        return submit(REGISTER, channel);
-    }
-
-    public void setReadEnabled(boolean enabled) {
+    public <R, T> Future<R> init(InitializationType type, T argument) {
 
         synchronized (this) {
-            this.proxy.onLocal(createOpEvent(SelectionKey.OP_READ, enabled));
+
+            Control.checkTrue(!isSubmitted(), //
+                    "The connection has already been submitted");
+
+            setStateMask(this.stateMask | SUBMITTED_MASK);
+        }
+
+        final InterestEventType eventType;
+
+        switch (type) {
+
+        case CONNECT:
+            eventType = CONNECT;
+            break;
+
+        case ACCEPT:
+            eventType = ACCEPT;
+            break;
+
+        case REGISTER:
+            eventType = REGISTER;
+            break;
+
+        default:
+            throw new AssertionError("Control should never reach here");
+        }
+
+        this.manager.initConnection(this, eventType, argument);
+
+        return new Future<R>() {
+
+            public R get() throws InterruptedException, ExecutionException {
+
+                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
+
+                synchronized (amc) {
+
+                    for (; !isDone();) {
+                        amc.wait();
+                    }
+                }
+
+                if (amc.error != null) {
+                    throw new ExecutionException(amc.error);
+                }
+
+                return getResult();
+            }
+
+            public R get(long timeout, TimeUnit unit) //
+                    throws InterruptedException, ExecutionException, TimeoutException {
+
+                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
+
+                long timeoutMillis = unit.toMillis(timeout);
+
+                synchronized (amc) {
+
+                    for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
+                    remaining > 0 && !isDone(); //
+                    remaining = end - System.currentTimeMillis()) {
+                        amc.wait(remaining);
+                    }
+
+                    if (!isDone()) {
+                        throw new TimeoutException();
+                    }
+                }
+
+                if (amc.error != null) {
+                    throw new ExecutionException(amc.error);
+                }
+
+                return getResult();
+            }
+
+            public boolean isDone() {
+                return isBound() || isClosed();
+            }
+
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return false;
+            }
+
+            public boolean isCancelled() {
+                return false;
+            }
+
+            /**
+             * Gets the result tailored to the {@link Connection.InitializationType}.
+             */
+            @SuppressWarnings("unchecked")
+            protected R getResult() {
+
+                switch (eventType) {
+
+                case CONNECT:
+                    return (R) getLocalAddress();
+
+                case ACCEPT:
+                    return (R) getRemoteAddress();
+
+                case REGISTER:
+                    return null;
+
+                default:
+                    throw new AssertionError("Control should never reach here");
+                }
+            }
+        };
+    }
+
+    public int send(ByteBuffer bb) {
+
+        // All send operations are performed under the protection of the connection monitor.
+        synchronized (this) {
+            return this.writeHandler.write(bb);
         }
     }
 
-    public void setWriteEnabled(boolean enabled) {
+    public void setEnabled(OperationType type, boolean enabled) {
+
+        final int opType;
+
+        switch (type) {
+
+        case READ:
+            opType = SelectionKey.OP_READ;
+            break;
+
+        case WRITE:
+            opType = SelectionKey.OP_WRITE;
+            break;
+
+        default:
+            throw new AssertionError("Control should never reach here");
+        }
 
         synchronized (this) {
-            this.proxy.onLocal(createOpEvent(SelectionKey.OP_WRITE, enabled));
+            this.proxy.onLocal(createOpEvent(opType, enabled));
         }
     }
 
-    public void execute(Runnable r) {
+    public Throwable getError() {
+        return this.error;
+    }
+
+    public void setError(Throwable error) {
 
         synchronized (this) {
-            this.proxy.onLocal(new InterestEvent<Runnable>(EXECUTE, r, this.proxy));
+            this.proxy.onLocal(new InterestEvent<Throwable>(ERROR, error, this.proxy));
         }
     }
 
@@ -358,18 +471,10 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
     }
 
-    public void error(Throwable error) {
+    public void execute(Runnable r) {
 
         synchronized (this) {
-            this.proxy.onLocal(new InterestEvent<Throwable>(ERROR, error, this.proxy));
-        }
-    }
-
-    public int send(ByteBuffer bb) {
-
-        // All send operations are performed under the protection of the connection monitor.
-        synchronized (this) {
-            return this.writeHandler.write(bb);
+            this.proxy.onLocal(new InterestEvent<Runnable>(EXECUTE, r, this.proxy));
         }
     }
 
@@ -397,10 +502,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         this.bufferSize = bufferSize;
 
         return (C) this;
-    }
-
-    public Throwable getError() {
-        return this.error;
     }
 
     public boolean isSubmitted() {
@@ -468,7 +569,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         this.thread = manager.getThread();
 
         // The connection starts with writes deferred to the manager.
-        this.writeHandler = this.syncHandler;
+        this.writeHandler = this.bufferedHandler;
         this.internalHandler = this.deferredHandler;
         this.closeHandler = null;
 
@@ -524,17 +625,17 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * Sets {@link #syncHandler}.
+     * Sets {@link #bufferedHandler}.
      */
-    protected void setSyncHandler() {
-        this.writeHandler = this.syncHandler;
+    protected void setBufferedHandler() {
+        this.writeHandler = this.bufferedHandler;
     }
 
     /**
-     * Sets {@link #asyncHandler} -- Any thread can write to this connection.
+     * Sets {@link #writeThroughHandler}.
      */
-    protected void setAsyncHandler() {
-        this.writeHandler = this.asyncHandler;
+    protected void setWriteThroughHandler() {
+        this.writeHandler = this.writeThroughHandler;
     }
 
     /**
@@ -624,115 +725,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * External thread call -- Submits this connection to its associated {@link ConnectionManager}.
-     * 
-     * @param <T>
-     *            the argument type.
-     * @param opType
-     *            the {@link InterestEventType}.
-     * @param argument
-     *            the argument.
-     */
-    protected <T> Future<InetSocketAddress> submit(final InterestEventType opType, T argument) {
-
-        synchronized (this) {
-
-            Control.checkTrue(!isSubmitted(), //
-                    "The connection has already been submitted");
-
-            setStateMask(this.stateMask | SUBMITTED_MASK);
-        }
-
-        this.manager.initConnection(this, opType, argument);
-
-        return new Future<InetSocketAddress>() {
-
-            public InetSocketAddress get() throws InterruptedException, ExecutionException {
-
-                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
-
-                synchronized (amc) {
-
-                    for (; !isDone();) {
-                        amc.wait();
-                    }
-                }
-
-                if (amc.error != null) {
-                    throw new ExecutionException(amc.error);
-                }
-
-                switch (opType) {
-
-                case ACCEPT:
-                    return getRemoteAddress();
-
-                case CONNECT:
-                    return getLocalAddress();
-
-                case REGISTER:
-                    return null;
-
-                default:
-                    throw new AssertionError("Control should never reach here");
-                }
-            }
-
-            public InetSocketAddress get(long timeout, TimeUnit unit) //
-                    throws InterruptedException, ExecutionException, TimeoutException {
-
-                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
-
-                long timeoutMillis = unit.toMillis(timeout);
-
-                synchronized (amc) {
-
-                    for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
-                    remaining > 0 && !isDone(); //
-                    remaining = end - System.currentTimeMillis()) {
-                        amc.wait(remaining);
-                    }
-
-                    if (!isDone()) {
-                        throw new TimeoutException();
-                    }
-                }
-
-                if (amc.error != null) {
-                    throw new ExecutionException(amc.error);
-                }
-
-                switch (opType) {
-
-                case ACCEPT:
-                    return getRemoteAddress();
-
-                case CONNECT:
-                    return getLocalAddress();
-
-                case REGISTER:
-                    return null;
-
-                default:
-                    throw new AssertionError("Control should never reach here");
-                }
-            }
-
-            public boolean isDone() {
-                return isBound() || isClosed();
-            }
-
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return false;
-            }
-
-            public boolean isCancelled() {
-                return false;
-            }
-        };
-    }
-
-    /**
      * {@link ConnectionManagerThread} call -- Finishes connecting/accepting. Does <i>not</i> do own exception handling.
      */
     protected void doBind() {
@@ -764,7 +756,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Does a synchronous write. Does own exception handling.
+     * {@link ConnectionManagerThread} call -- Does a ready write. Does own exception handling.
      */
     protected void doWrite() {
 
@@ -832,11 +824,11 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     /**
      * {@link ConnectionManagerThread} call -- Initiates connection closure. Does <i>not</i> do own exception handling.
      */
-    protected void doClosing(Runnable closingHandler) {
+    protected void doClosing(ClosingType type) {
 
-        // All writes shall now be synchronous.
+        // All writes shall now be buffered.
         synchronized (this) {
-            setSyncHandler();
+            setBufferedHandler();
         }
 
         doOp(SelectionKey.OP_READ, false);
@@ -845,7 +837,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         this.internalHandler = this.closingHandler;
 
         this.readBuffer.flip();
-        closingHandler.run();
+        onClosing(type, this.readBuffer);
         this.readBuffer.compact();
     }
 
@@ -857,7 +849,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         this.error = error;
 
         this.readBuffer.flip();
-        onError(this.error, this.readBuffer);
+        onClosing(ClosingType.ERROR, this.readBuffer);
         this.readBuffer.compact();
     }
 

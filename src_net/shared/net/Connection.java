@@ -29,9 +29,7 @@
 package shared.net;
 
 import java.io.Closeable;
-import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
@@ -42,10 +40,68 @@ import java.util.concurrent.Future;
  */
 public interface Connection extends Closeable, Executor {
 
+    /**
+     * An enumeration of the ways in which a connection may be closed.
+     */
+    public static enum ClosingType {
+
+        /**
+         * Denotes closure by end-of-stream.
+         */
+        EOS, //
+
+        /**
+         * Denotes closure by user request.
+         */
+        USER, //
+
+        /**
+         * Denotes closure by error.
+         */
+        ERROR;
+    }
+
+    /**
+     * An enumeration of the ways in which a connection may be initialized.
+     */
+    public static enum InitializationType {
+
+        /**
+         * Denotes connecting to a remote address.
+         */
+        CONNECT, //
+
+        /**
+         * Denotes accepting from a local address.
+         */
+        ACCEPT, //
+
+        /**
+         * Denotes registration of an existing, unmanaged connection.
+         */
+        REGISTER;
+    }
+
+    /**
+     * An enumeration of the managed operations manipulable by the user.
+     */
+    public static enum OperationType {
+
+        /**
+         * Denotes asynchronous reads.
+         */
+        READ, //
+
+        /**
+         * Denotes asynchronous writes.
+         */
+        WRITE;
+    }
+
     // Callback methods are not necessarily thread-safe, and thus must execute on internal threads.
 
     /**
-     * On successful binding.
+     * On successful bind.
      */
     public void onBind();
 
@@ -58,46 +114,38 @@ public interface Connection extends Closeable, Executor {
     public void onReceive(ByteBuffer bb);
 
     /**
-     * On end-of-stream.
+     * On connection closure.
      * 
+     * @param type
+     *            the {@link ClosingType}.
      * @param bb
      *            the {@link ByteBuffer} containing data. It must be completely drained, as this is the final callback.
+     * @see ClosingType
      */
-    public void onClosingEOS(ByteBuffer bb);
+    public void onClosing(ClosingType type, ByteBuffer bb);
 
     /**
-     * On user-requested close.
-     * 
-     * @param bb
-     *            the {@link ByteBuffer} containing data. It must be completely drained, as this is the final callback.
-     */
-    public void onClosingUser(ByteBuffer bb);
-
-    /**
-     * On error.
-     * 
-     * @param error
-     *            the error that occurred.
-     * @param bb
-     *            the {@link ByteBuffer} containing data. It must be completely drained, as this is the final callback.
-     */
-    public void onError(Throwable error, ByteBuffer bb);
-
-    /**
-     * On completion of connection closure, which can result from {@link #onClosingEOS(ByteBuffer)},
-     * {@link #onClosingUser(ByteBuffer)}, or {@link #onError(Throwable, ByteBuffer)}.
+     * On completion of connection closure.
      */
     public void onClose();
 
-    /**
-     * Guarantees that the given code snippet executes serially with respect to callbacks.
-     * 
-     * @param r
-     *            the code snippet to execute.
-     */
-    public void execute(Runnable r);
-
     // User methods must be thread-safe, and thus may execute on any thread.
+
+    /**
+     * Initializes this connection.
+     * 
+     * @param type
+     *            the {@link InitializationType}.
+     * @param argument
+     *            the argument.
+     * @param <R>
+     *            the result type.
+     * @param <T>
+     *            the argument type.
+     * @return a completion {@link Future} for the result.
+     * @see InitializationType
+     */
+    public <R, T> Future<R> init(InitializationType type, T argument);
 
     /**
      * Asynchronously sends data to the remote host.
@@ -111,53 +159,47 @@ public interface Connection extends Closeable, Executor {
     public int send(ByteBuffer bb);
 
     /**
-     * Asynchronously requests a connection to the given IP address.
+     * Enables/disables various managed operations:
+     * <ul>
+     * <li>{@link OperationType#READ} -- The {@link #onReceive(ByteBuffer)} callback is enabled/disabled. With argument
+     * {@code true}, this method shall guarantee that {@link #onReceive(ByteBuffer)} will subsequently be called at
+     * least once.</li>
+     * <li>{@link OperationType#WRITE} -- Managed writes of data buffered by the {@link #send(ByteBuffer)} method are
+     * enabled/disabled.</li>
+     * </ul>
      * 
-     * @return a completion {@link Future} that yields the local endpoint {@link InetSocketAddress}.
-     */
-    public Future<InetSocketAddress> connect(InetSocketAddress addr);
-
-    /**
-     * Asynchronously binds to and listens on some network interface associated with the given IP address.
-     * 
-     * @return a completion {@link Future} that yields the remote endpoint {@link InetSocketAddress}.
-     */
-    public Future<InetSocketAddress> accept(InetSocketAddress addr);
-
-    /**
-     * Registers an existing {@link SocketChannel} with this connection.
-     * 
-     * @return a completion {@link Future}.
-     */
-    public Future<?> register(SocketChannel channel);
-
-    /**
-     * Sets whether synchronous reads are enabled. This method, with argument {@code true}, shall guarantee that
-     * {@link #onReceive(ByteBuffer)} will subsequently be called at least once.
-     * 
+     * @param type
+     *            the {@link OperationType}.
      * @param enabled
-     *            whether synchronous reads are enabled.
+     *            whether the given operation is enabled or disabled.
+     * @see OperationType
      */
-    public void setReadEnabled(boolean enabled);
+    public void setEnabled(OperationType type, boolean enabled);
 
     /**
-     * Sets whether synchronous writes are enabled.
-     * 
-     * @param enabled
-     *            whether synchronous writes are enabled.
+     * Gets the error that occurred.
      */
-    public void setWriteEnabled(boolean enabled);
+    public Throwable getError();
 
     /**
-     * Delivers an error to this connection.
+     * Sets the error and triggers connection closure.
      * 
      * @param error
      *            the error.
+     * @see ClosingType#ERROR
      */
-    public void error(Throwable error);
+    public void setError(Throwable error);
 
     /**
      * Closes this connection.
      */
     public void close();
+
+    /**
+     * Guarantees that the given code snippet executes serially with respect to callbacks.
+     * 
+     * @param r
+     *            the code snippet to execute.
+     */
+    public void execute(Runnable r);
 }

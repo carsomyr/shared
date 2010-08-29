@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import shared.net.Connection;
+import shared.net.Connection.InitializationType;
 import shared.net.ConnectionManager;
 import shared.net.filter.ChainFilterFactory;
 import shared.net.filter.Filter;
@@ -79,8 +80,8 @@ public class ClientServerTest {
 
         int port = 10101;
 
-        serverConnection.accept(new InetSocketAddress(port));
-        clientConnection.connect(new InetSocketAddress("localhost", port));
+        serverConnection.init(InitializationType.ACCEPT, new InetSocketAddress(port));
+        clientConnection.init(InitializationType.CONNECT, new InetSocketAddress("localhost", port));
 
         // Client sends stuff to the server.
         clientConnection.sendOutbound("hello");
@@ -141,16 +142,25 @@ public class ClientServerTest {
             this.log.info("Connection is now bound.");
         }
 
-        public void onClosingUser(Queue<String> inbounds) {
-            this.log.info("Connection has encountered a user-requested close.");
-        }
+        public void onClosing(ClosingType type, Queue<String> inbounds) {
 
-        public void onClosingEOS(Queue<String> inbounds) {
-            this.log.info("Connection has encountered an end-of-stream.");
-        }
+            switch (type) {
 
-        public void onError(Throwable error, ByteBuffer bb) {
-            this.log.info("Connection has encountered an error.", error);
+            case EOS:
+                this.log.info("Connection has encountered a user close request.");
+                break;
+
+            case USER:
+                this.log.info("Connection has encountered an end-of-stream.");
+                break;
+
+            case ERROR:
+                this.log.info("Connection has encountered an error.", getError());
+                break;
+
+            default:
+                throw new AssertionError("Control should never reach here");
+            }
         }
 
         public Filter<ByteBuffer, String> newFilter(UTF8Connection connection) {

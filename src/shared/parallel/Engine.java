@@ -186,8 +186,8 @@ public class Engine<T> {
     /**
      * Adds an output {@link Calculator} along with its dependencies.
      * 
-     * @see #add(Calculator, boolean, Collection)
      * @return a {@link Handle} from which potential output can be retrieved.
+     * @see #add(Calculator, boolean, Collection)
      */
     public <I, O> Handle<O> addOutput( //
             Calculator<I, O> calc, //

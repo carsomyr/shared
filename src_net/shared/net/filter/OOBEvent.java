@@ -64,7 +64,12 @@ public class OOBEvent implements Event<OOBEvent, OOBEvent.OOBEventType, SourceTy
         /**
          * Denotes a connection closure by user request.
          */
-        CLOSING_USER;
+        CLOSING_USER, //
+
+        /**
+         * Denotes a connection closure by error.
+         */
+        CLOSING_ERROR;
     }
 
     final OOBEventType type;

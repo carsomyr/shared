@@ -63,15 +63,7 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
     public int sendOutbound(T outbound);
 
     /**
-     * Receives the given inbound values.
-     * 
-     * @param inbounds
-     *            the inbound values.
-     */
-    public void onReceive(Queue<T> inbounds);
-
-    /**
-     * On successful binding.
+     * On successful bind.
      * 
      * @param inbounds
      *            the inbound values.
@@ -79,18 +71,21 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
     public void onBind(Queue<T> inbounds);
 
     /**
-     * On connection closure by end-of-stream.
+     * On receipt of data.
      * 
      * @param inbounds
      *            the inbound values.
      */
-    public void onClosingEOS(Queue<T> inbounds);
+    public void onReceive(Queue<T> inbounds);
 
     /**
-     * On connection closure by user request.
+     * On connection closure.
      * 
+     * @param type
+     *            the {@link shared.net.Connection.ClosingType}.
      * @param inbounds
      *            the inbound values.
+     * @see shared.net.Connection.ClosingType
      */
-    public void onClosingUser(Queue<T> inbounds);
+    public void onClosing(ClosingType type, Queue<T> inbounds);
 }

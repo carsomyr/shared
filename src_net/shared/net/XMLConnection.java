@@ -141,11 +141,8 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
     /**
      * On error.
-     * 
-     * @param error
-     *            the error.
      */
-    abstract protected void onError(Throwable error);
+    abstract protected void onError();
 
     public S getType() {
         return this.type;
@@ -170,19 +167,30 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         }
     }
 
-    public void onClosingEOS(Queue<T> evts) {
+    public void onClosing(ClosingType type, Queue<T> evts) {
 
-        onLocal(parse(null));
+        switch (type) {
 
-        Control.checkTrue(evts.isEmpty(), //
-                "No more events can remain in queue");
-    }
+        case EOS:
 
-    public void onError(Throwable error, ByteBuffer bb) {
+            onLocal(parse(null));
 
-        this.error = error;
+            Control.checkTrue(evts.isEmpty(), //
+                    "No more events can remain in queue");
 
-        onError(error);
+            break;
+
+        case ERROR:
+            onError();
+            break;
+
+        case USER:
+            // Do nothing.
+            break;
+
+        default:
+            throw new AssertionError("Control should never reach here");
+        }
     }
 
     public Filter<Element, T> newFilter(final C connection) {
@@ -210,10 +218,6 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
     }
 
     public void onBind(Queue<T> inbounds) {
-        // Do nothing.
-    }
-
-    public void onClosingUser(Queue<T> evts) {
         // Do nothing.
     }
 }

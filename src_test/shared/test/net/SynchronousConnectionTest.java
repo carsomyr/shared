@@ -48,6 +48,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import shared.net.Connection.InitializationType;
 import shared.net.ConnectionManager;
 import shared.net.SynchronousManagedConnection;
 import shared.net.filter.SSLFilterFactory;
@@ -176,7 +177,7 @@ public class SynchronousConnectionTest {
 
                 try {
 
-                    receiver.accept(localAddress).get();
+                    receiver.init(InitializationType.ACCEPT, localAddress).get();
 
                 } catch (Exception e) {
 
@@ -275,7 +276,7 @@ public class SynchronousConnectionTest {
 
                 try {
 
-                    sender.connect(remoteAddress).get();
+                    sender.init(InitializationType.CONNECT, remoteAddress).get();
 
                 } catch (Exception e) {
 

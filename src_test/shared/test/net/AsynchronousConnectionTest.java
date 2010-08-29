@@ -44,6 +44,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import shared.net.Connection.InitializationType;
 import shared.net.ConnectionManager;
 import shared.net.filter.ChainFilterFactory;
 import shared.net.filter.FrameFilterFactory;
@@ -161,7 +162,7 @@ public class AsynchronousConnectionTest {
                         .add(xmlRConn));
             }
 
-            xmlRConn.accept(listenAddress);
+            xmlRConn.init(InitializationType.ACCEPT, listenAddress);
 
             verifiers.add(xmlV);
         }
@@ -192,7 +193,7 @@ public class AsynchronousConnectionTest {
 
             try {
 
-                xmlSConn.connect(connectAddress).get();
+                xmlSConn.init(InitializationType.CONNECT, connectAddress).get();
 
             } catch (Exception e) {
 

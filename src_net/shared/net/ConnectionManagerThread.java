@@ -51,6 +51,7 @@ import shared.event.SourceLocal;
 import shared.event.StateTable;
 import shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus;
 import shared.net.AcceptRegistry.Entry;
+import shared.net.Connection.ClosingType;
 import shared.net.InterestEvent.InterestEventType;
 import shared.util.Control;
 import shared.util.CoreThread;
@@ -429,7 +430,7 @@ abstract public class ConnectionManagerThread //
 
         try {
 
-            conn.doClosing(conn.onClosingEOSHandler);
+            conn.doClosing(ClosingType.EOS);
 
             debug("EOS [%s].", conn);
 
@@ -450,7 +451,7 @@ abstract public class ConnectionManagerThread //
 
         try {
 
-            conn.doClosing(conn.onClosingUserHandler);
+            conn.doClosing(ClosingType.USER);
 
             debug("Close [%s].", conn);
 

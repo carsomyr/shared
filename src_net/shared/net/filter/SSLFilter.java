@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import shared.net.Buffers;
 import shared.net.Connection;
+import shared.net.Connection.OperationType;
 
 /**
  * An implementation of {@link Filter} that encrypts/decrypts traffic using the <a
@@ -414,7 +415,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
                     } finally {
 
                         // Force a read to get things going again.
-                        sslF.connection.setReadEnabled(true);
+                        sslF.connection.setEnabled(OperationType.READ, true);
 
                         debug("[%s] finish delegated task [%s].", //
                                 sslF.connection, rr);

@@ -139,7 +139,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                     getThread().debug("Reads enabled [%s].", smc);
 
                     setEnabledReader();
-                    setReadEnabled(true);
+                    setEnabled(OperationType.READ, true);
                 }
 
                 if (size > 0) {
@@ -250,8 +250,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     Resolver inReader;
     Resolver outWriter;
 
-    Throwable error;
-
     ManagedInputStream in;
     ManagedOutputStream out;
 
@@ -263,7 +261,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     public SynchronousManagedConnection(String name, ConnectionManager manager) {
         super(name, manager);
 
-        this.error = null;
         this.in = null;
         this.out = null;
 
@@ -358,55 +355,62 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 getThread().debug("Reads disabled [%s].", this);
 
                 setDisabledReader();
-                setReadEnabled(false);
+                setEnabled(OperationType.READ, false);
             }
         }
     }
 
-    public void onClosingEOS(Queue<ByteBuffer> inbounds) {
+    public void onClosing(ClosingType type, Queue<ByteBuffer> inbounds) {
+
+        final IOException x;
 
         synchronized (this) {
 
-            setEOSReader();
-            setErrorWriter(new IOException("Connection closed"));
+            switch (type) {
 
-            // Append the remainders onto the incoming buffer.
-            for (ByteBuffer bb; (bb = inbounds.poll()) != null;) {
-                this.in.inBuffer = (ByteBuffer) Buffers.append(this.in.inBuffer.compact(), bb).flip();
+            case EOS:
+
+                x = new IOException("Connection closed");
+
+                setEOSReader();
+                setErrorWriter(x);
+
+                // Append the remainders onto the incoming buffer.
+                for (ByteBuffer bb; (bb = inbounds.poll()) != null;) {
+                    this.in.inBuffer = (ByteBuffer) Buffers.append(this.in.inBuffer.compact(), bb).flip();
+                }
+
+                break;
+
+            case USER:
+
+                x = new IOException("Connection closed");
+
+                setErrorReader(x);
+                setErrorWriter(x);
+
+                // Append the remainders onto the incoming buffer.
+                for (ByteBuffer bb; (bb = inbounds.poll()) != null;) {
+                    this.in.inBuffer = (ByteBuffer) Buffers.append(this.in.inBuffer.compact(), bb).flip();
+                }
+
+                break;
+
+            case ERROR:
+
+                x = (IOException) new IOException("Connection encountered an error").initCause(getError());
+
+                setErrorReader(x);
+                setErrorWriter(x);
+
+                // Do NOT append the remainder onto the incoming buffer, since the very cause of the error could be a
+                // buffer discontinuity.
+
+                break;
+
+            default:
+                throw new AssertionError("Control should never reach here");
             }
-        }
-    }
-
-    public void onClosingUser(Queue<ByteBuffer> inbounds) {
-
-        synchronized (this) {
-
-            IOException x = new IOException("Connection closed");
-
-            setErrorReader(x);
-            setErrorWriter(x);
-
-            // Append the remainders onto the incoming buffer.
-            for (ByteBuffer bb; (bb = inbounds.poll()) != null;) {
-                this.in.inBuffer = (ByteBuffer) Buffers.append(this.in.inBuffer.compact(), bb).flip();
-            }
-        }
-    }
-
-    public void onError(Throwable error, ByteBuffer bb) {
-
-        synchronized (this) {
-
-            this.error = error;
-
-            IOException x = (IOException) new IOException("Connection encountered an error") //
-                    .initCause(error);
-
-            setErrorReader(x);
-            setErrorWriter(x);
-
-            // Do NOT append the remainder onto the incoming buffer, since the very cause of the error could
-            // be a buffer discontinuity.
         }
     }
 
@@ -424,8 +428,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         } catch (InterruptedException e) {
 
-            throw (IOException) new IOException("Operation was interrupted") //
-                    .initCause(e);
+            throw (IOException) new IOException("Operation was interrupted").initCause(e);
         }
     }
 
