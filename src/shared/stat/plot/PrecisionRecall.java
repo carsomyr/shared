@@ -68,6 +68,7 @@ public class PrecisionRecall extends ErrorDistribution {
         this(new double[][] { confidences }, new boolean[][] { outcomes });
     }
 
+    @Override
     public String getTitle() {
         return "Precision-Recall";
     }

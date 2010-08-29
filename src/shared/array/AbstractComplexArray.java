@@ -231,6 +231,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
         throw new UnsupportedOperationException("Cannot reverse storage orders of complex-valued arrays");
     }
 
+    @Override
     public Class<Complex> getComponentType() {
         return Complex.class;
     }
@@ -536,6 +537,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
         /**
          * Does a comparison on the basis of magnitude.
          */
+        @Override
         public int compareTo(Complex b) {
             return Double.compare(magnitude(), b.magnitude());
         }

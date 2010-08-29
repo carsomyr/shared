@@ -83,6 +83,7 @@ public class IntegerSparseArray extends ProtoSparseArray<IntegerSparseArray, int
         super(state, dims, strides, dimOffsets);
     }
 
+    @Override
     public Class<Integer> getComponentType() {
         return Integer.class;
     }

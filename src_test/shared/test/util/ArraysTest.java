@@ -53,6 +53,7 @@ public class ArraysTest {
      */
     final protected static Comparator<Double> ReverseDoubleComparator = new Comparator<Double>() {
 
+        @Override
         public int compare(Double lhs, Double rhs) {
             return -lhs.compareTo(rhs);
         }

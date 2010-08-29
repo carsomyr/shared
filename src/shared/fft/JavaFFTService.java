@@ -49,6 +49,7 @@ public class JavaFFTService implements FFTService {
     public JavaFFTService() {
     }
 
+    @Override
     public void rfft(int[] dims, double[] in, double[] out) {
 
         ComplexArray proxyIn = new RealArray(in, dims).tocRe();
@@ -62,6 +63,7 @@ public class JavaFFTService implements FFTService {
                 Control.checkEquals(proxyOut.values().length, out.length));
     }
 
+    @Override
     public void rifft(int[] dims, double[] in, double[] out) {
 
         int nDims = dims.length;
@@ -81,18 +83,22 @@ public class JavaFFTService implements FFTService {
                 Control.checkEquals(realProxyOut.values().length, out.length));
     }
 
+    @Override
     public void fft(int[] dims, double[] in, double[] out) {
         FFTOps.fft(+1, dims, in, out);
     }
 
+    @Override
     public void ifft(int[] dims, double[] in, double[] out) {
         FFTOps.fft(-1, dims, in, out);
     }
 
+    @Override
     public void setHint(String name, String value) {
         throw new IllegalArgumentException("Unknown hint");
     }
 
+    @Override
     public String getHint(String name) {
         throw new IllegalArgumentException("Unknown hint");
     }

@@ -312,6 +312,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     @Transition(currentState = "VIRGIN", eventType = "CONNECT")
     final Handler<InterestEvent<InetSocketAddress>> connectHandler = new Handler<InterestEvent<InetSocketAddress>>() {
 
+        @Override
         public void handle(InterestEvent<InetSocketAddress> evt) {
             handleConnect(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
@@ -320,6 +321,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     @Transition(currentState = "VIRGIN", eventType = "ACCEPT")
     final Handler<InterestEvent<InetSocketAddress>> acceptHandler = new Handler<InterestEvent<InetSocketAddress>>() {
 
+        @Override
         public void handle(InterestEvent<InetSocketAddress> evt) {
             handleAccept(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
@@ -328,6 +330,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     @Transition(currentState = "VIRGIN", eventType = "REGISTER")
     final Handler<InterestEvent<SocketChannel>> registerHandler = new Handler<InterestEvent<SocketChannel>>() {
 
+        @Override
         public void handle(InterestEvent<SocketChannel> evt) {
             handleRegister(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
@@ -340,6 +343,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     })
     final Handler<InterestEvent<Runnable>> executeHandler = new Handler<InterestEvent<Runnable>>() {
 
+        @Override
         public void handle(InterestEvent<Runnable> evt) {
             handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
@@ -352,6 +356,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     })
     final Handler<InterestEvent<?>> closeHandler = new Handler<InterestEvent<?>>() {
 
+        @Override
         public void handle(InterestEvent<?> evt) {
             handleClose(((ProxySource<?>) evt.getSource()).getConnection());
         }
@@ -365,6 +370,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     })
     final Handler<InterestEvent<Throwable>> errorHandler = new Handler<InterestEvent<Throwable>>() {
 
+        @Override
         public void handle(InterestEvent<Throwable> evt) {
             handleError(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
@@ -374,6 +380,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     final Handler<InterestEvent<RequestFuture<List<InetSocketAddress>>>> queryBoundAddressesHandler = //
     new Handler<InterestEvent<RequestFuture<List<InetSocketAddress>>>>() {
 
+        @Override
         public void handle(InterestEvent<RequestFuture<List<InetSocketAddress>>> evt) {
             handleQueryBoundAddresses(evt.getArgument());
         }
@@ -383,6 +390,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     final Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>> queryConnectionsHandler = //
     new Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>>() {
 
+        @Override
         public void handle(InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>> evt) {
             handleQueryConnections(evt.getArgument());
         }
@@ -391,6 +399,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     @Transition(currentState = "RUN", eventType = "SHUTDOWN", group = "internal")
     final Handler<InterestEvent<?>> shutdownHandler = new Handler<InterestEvent<?>>() {
 
+        @Override
         public void handle(InterestEvent<?> evt) {
             handleShutdown();
         }

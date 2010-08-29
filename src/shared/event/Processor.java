@@ -60,16 +60,19 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
     /**
      * Shuts down the internal thread.
      */
+    @Override
     public void close() {
 
         this.thread.run = false;
         this.thread.interrupt();
     }
 
+    @Override
     public void onLocal(T evt) {
         this.thread.eq.add(evt);
     }
 
+    @Override
     public Processor<T> setFinalizer(Runnable finalizer) {
 
         Control.checkTrue(finalizer != null, //

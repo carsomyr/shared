@@ -49,6 +49,7 @@ public class EngineTest {
 
     static class Subtractor implements Calculator<Integer, Integer> {
 
+        @Override
         public Integer calculate(List<? extends Handle<? extends Integer>> inputVector) {
             return inputVector.get(0).get().intValue() - inputVector.get(1).get().intValue();
         }
@@ -61,6 +62,7 @@ public class EngineTest {
 
     static class Multiplier implements Calculator<Integer, Integer> {
 
+        @Override
         public Integer calculate(List<? extends Handle<? extends Integer>> inputVector) {
             return inputVector.get(0).get().intValue() * inputVector.get(1).get().intValue();
         }
@@ -73,6 +75,7 @@ public class EngineTest {
 
     static class Doubler implements Calculator<Integer, Integer> {
 
+        @Override
         public Integer calculate(List<? extends Handle<? extends Integer>> inputVector) {
             return inputVector.get(0).get().intValue() << 1;
         }
@@ -85,6 +88,7 @@ public class EngineTest {
 
     static class Repeater implements Calculator<Integer, Integer> {
 
+        @Override
         public Integer calculate(List<? extends Handle<? extends Integer>> inputVector) {
             return inputVector.get(0).get();
         }
@@ -97,6 +101,7 @@ public class EngineTest {
 
     static class Summer implements Calculator<Integer, Integer> {
 
+        @Override
         public Integer calculate(List<? extends Handle<? extends Integer>> inputVector) {
 
             int sum = 0;
@@ -116,6 +121,7 @@ public class EngineTest {
 
     static class Outputter implements Calculator<Integer, Integer> {
 
+        @Override
         public Integer calculate(List<? extends Handle<? extends Integer>> inputVector) {
             return inputVector.get(0).get();
         }
@@ -128,6 +134,7 @@ public class EngineTest {
 
     static class Thrower implements Calculator<Integer, Integer> {
 
+        @Override
         public Integer calculate(List<? extends Handle<? extends Integer>> inputVector) {
             throw new IllegalStateException("This exception was artificially induced");
         }

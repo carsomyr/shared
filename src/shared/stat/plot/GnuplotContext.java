@@ -109,6 +109,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
         this.outputHeight = 600;
     }
 
+    @Override
     public Gnuplot addPlot(Plottable plottable) {
 
         final Gnuplot gp = new Gnuplot(plottable.getDatasets());
@@ -140,6 +141,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
         return gp;
     }
 
+    @Override
     public Gnuplot addPlot(RealArray... datasets) {
 
         final Gnuplot gp = new Gnuplot(datasets);
@@ -149,6 +151,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
         return gp;
     }
 
+    @Override
     public void toFile(File file) throws IOException {
 
         File errFile = new File(file.toString().concat(".log"));
@@ -351,6 +354,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
         return f.toString();
     }
 
+    @Override
     public GnuplotContext setFont(String fontName, int fontSize) {
 
         this.fontName = fontName;
@@ -359,6 +363,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
         return this;
     }
 
+    @Override
     public GnuplotContext setOutputFormat(String outputFormat) {
 
         this.outputFormat = outputFormat;
@@ -366,6 +371,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
         return this;
     }
 
+    @Override
     public GnuplotContext setOutputSize(int outputWidth, int outputHeight) {
 
         this.outputHeight = outputHeight;
@@ -477,6 +483,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             this.panelHeight = 1;
         }
 
+        @Override
         public Gnuplot setTitle(String title) {
 
             this.title = title;
@@ -484,6 +491,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setAxis(AxisType axisType, String axisTitle, double lower, double upper,
                 AxisScaleType axisScaleType) {
 
@@ -500,6 +508,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setAxisTitle(AxisType axisType, String axisTitle) {
 
             int dim = axisType.ordinal();
@@ -512,6 +521,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setAxisRange(AxisType axisType, double lower, double upper) {
 
             int dim = axisType.ordinal();
@@ -525,6 +535,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setAxisScale(AxisType axisType, AxisScaleType axisScaleType) {
 
             int dim = axisType.ordinal();
@@ -537,6 +548,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setDataTitles(String... dataTitles) {
 
             System.arraycopy(dataTitles, 0, this.dataTitles, 0, //
@@ -545,6 +557,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setDataStyles(DataStyle... dataStyles) {
 
             System.arraycopy(dataStyles, 0, this.dataStyles, 0, //
@@ -553,6 +566,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setViewport(double... viewportParameters) {
 
             Control.checkTrue(this.nDims == 3, //
@@ -566,6 +580,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setPropertyEnabled(String property, boolean isPropertyEnabled) {
 
             if (property.equals(PROPERTY_LEGEND)) {
@@ -592,6 +607,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setPanelLocation(int panelX, int panelY) {
 
             this.panelX = panelX;
@@ -600,6 +616,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
             return this;
         }
 
+        @Override
         public Gnuplot setPanelSize(int panelWidth, int panelHeight) {
 
             this.panelWidth = panelWidth;

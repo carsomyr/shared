@@ -105,6 +105,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     public MatlabIOKernel() {
     }
 
+    @Override
     public <T extends Array<T, E>, E> byte[] getBytes(T array) {
 
         final Integer count;
@@ -170,6 +171,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public <T extends Array<T, ?>> T parse(byte[] data) {
         return (T) new MatrixDataElement(ByteBuffer.wrap(data)).get();
     }

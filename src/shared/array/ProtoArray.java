@@ -142,6 +142,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return index;
     }
 
+    @Override
     public T map(T dst, int... bounds) {
 
         ProtoArray<T, V, E> src = this;
@@ -156,6 +157,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T splice(T dst, int... slices) {
 
         ProtoArray<T, V, E> src = this;
@@ -170,6 +172,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T slice(int[][] srcSlices, T dst, int[][] dstSlices) {
 
         ProtoArray<T, V, E> src = this;
@@ -186,6 +189,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T slice(T dst, int[]... dstSlices) {
 
         ProtoArray<T, V, E> src = this;
@@ -201,6 +205,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public T slice(E value, int[]... srcSlices) {
 
         T src = (T) this;
@@ -215,6 +220,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return wrap(value, src.order, dstDims, src.order.strides(dstDims)).slice(src, srcSlices);
     }
 
+    @Override
     public T slice(int[]... srcSlices) {
 
         ProtoArray<T, V, E> src = this;
@@ -238,6 +244,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T tile(int... repetitions) {
 
         ProtoArray<T, V, E> src = this;
@@ -266,6 +273,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T transpose(int... permutation) {
 
         ProtoArray<T, V, E> src = this;
@@ -305,6 +313,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T shift(int... shifts) {
 
         ProtoArray<T, V, E> src = this;
@@ -329,6 +338,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T subarray(int... bounds) {
 
         ProtoArray<T, V, E> src = this;
@@ -360,6 +370,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T reverse(int... opDims) {
 
         ProtoArray<T, V, E> src = this;
@@ -373,6 +384,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T reshape(int... dims) {
 
         ProtoArray<T, V, E> src = this;
@@ -389,6 +401,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public T concat(int opDim, T... srcs) {
 
         ProtoArray<T, V, E> src = this;
@@ -449,6 +462,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public T reverseOrder() {
 
         ProtoArray<T, V, E> src = this;
@@ -483,26 +497,32 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         return dst;
     }
 
+    @Override
     public IndexingOrder order() {
         return this.order;
     }
 
+    @Override
     public int size(int i) {
         return this.dims[i];
     }
 
+    @Override
     public int stride(int i) {
         return this.strides[i];
     }
 
+    @Override
     public int nDims() {
         return this.dims.length;
     }
 
+    @Override
     public int[] dims() {
         return this.dims.clone();
     }
 
+    @Override
     public int[] strides() {
         return this.strides.clone();
     }

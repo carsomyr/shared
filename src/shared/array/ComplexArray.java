@@ -106,6 +106,7 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
         return new RealArray(order, dims, strides);
     }
 
+    @Override
     public ComplexArray mMul(ComplexArray b) {
 
         ComplexArray a = this;
@@ -122,6 +123,7 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
         return res;
     }
 
+    @Override
     public ComplexArray mDiag() {
 
         ComplexArray a = this;
@@ -140,6 +142,7 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
         return res;
     }
 
+    @Override
     public ComplexArray mTranspose() {
 
         ComplexArray a = this;
@@ -173,15 +176,18 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
         return IOKernel.parse(data);
     }
 
+    @Override
     public ComplexArray[] mSVD() {
         throw new UnsupportedOperationException(
                 "Complex matrices currently do not support singular value decompositions");
     }
 
+    @Override
     public ComplexArray[] mEigs() {
         throw new UnsupportedOperationException("Complex matrices currently do not support eigenvalue decompositions");
     }
 
+    @Override
     public ComplexArray mInvert() {
         throw new UnsupportedOperationException("Complex matrices currently do not support inverses");
     }

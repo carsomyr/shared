@@ -116,22 +116,27 @@ abstract public class ErrorDistribution implements Plottable {
         return aucs;
     }
 
+    @Override
     public RealArray[] getDatasets() {
         return this.datasets;
     }
 
+    @Override
     public String[] getDataTitles() {
         return this.dataTitles;
     }
 
+    @Override
     public DataStyle[] getDataStyles() {
         return this.dataStyles;
     }
 
+    @Override
     public boolean getPropertyEnabled(String property) {
         return (property.equals("legend") || property.equals("grid"));
     }
 
+    @Override
     public String getAxisTitle(AxisType axisType) {
 
         switch (axisType) {
@@ -147,6 +152,7 @@ abstract public class ErrorDistribution implements Plottable {
         }
     }
 
+    @Override
     public double[] getAxisRange(AxisType axisType) {
 
         switch (axisType) {

@@ -78,6 +78,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
         this.context = null;
     }
 
+    @Override
     public SSLFilterFactory<C> setTrustManagers(TrustManager... trustManagers) {
 
         checkUninitialized();
@@ -87,6 +88,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
         return this;
     }
 
+    @Override
     public SSLFilterFactory<C> setKeyManagers(KeyManager... keyManagers) {
 
         checkUninitialized();
@@ -96,6 +98,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
         return this;
     }
 
+    @Override
     public SSLFilterFactory<C> setSecureRandom(SecureRandom random) {
 
         checkUninitialized();
@@ -105,6 +108,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
         return this;
     }
 
+    @Override
     public SSLFilterFactory<C> setRequireClientAuth(boolean requireClientAuth) {
 
         checkUninitialized();
@@ -114,6 +118,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
         return this;
     }
 
+    @Override
     public SSLFilterFactory<C> setMode(Mode mode) {
 
         checkUninitialized();
@@ -123,6 +128,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
         return this;
     }
 
+    @Override
     public SSLEngine newSSLEngine() {
 
         if (this.context == null) {
@@ -165,6 +171,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
         return res;
     }
 
+    @Override
     public SSLFilter<C> newFilter(C connection) {
         return new SSLFilter<C>(newSSLEngine(), connection, this.executor);
     }

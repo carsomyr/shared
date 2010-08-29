@@ -50,5 +50,6 @@ public interface Event<T extends Event<T, E, S>, E extends Enum<E>, S extends En
     /**
      * Gets the {@link Event} type.
      */
+    @Override
     public E getType();
 }

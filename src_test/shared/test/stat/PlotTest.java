@@ -149,6 +149,7 @@ public class PlotTest {
 
         a3D.map(new RealMap() {
 
+            @Override
             public double apply(double value, int[] logical) {
 
                 int xcoord = (size >>> 1) - (logical[0] / size);

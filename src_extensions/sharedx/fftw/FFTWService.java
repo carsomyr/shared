@@ -60,22 +60,27 @@ public class FFTWService implements FFTService {
         this.mode = Plan.FFTW_MEASURE;
     }
 
+    @Override
     public void rfft(int[] dims, double[] in, double[] out) {
         transform(Plan.R2C, dims, this.mode, in, out);
     }
 
+    @Override
     public void rifft(int[] dims, double[] in, double[] out) {
         transform(Plan.C2R, dims, this.mode, in, out);
     }
 
+    @Override
     public void fft(int[] dims, double[] in, double[] out) {
         transform(Plan.FORWARD, dims, this.mode, in, out);
     }
 
+    @Override
     public void ifft(int[] dims, double[] in, double[] out) {
         transform(Plan.BACKWARD, dims, this.mode, in, out);
     }
 
+    @Override
     public void setHint(String name, String value) {
 
         if (name.equals("wisdom")) {
@@ -111,6 +116,7 @@ public class FFTWService implements FFTService {
         }
     }
 
+    @Override
     public String getHint(String name) {
 
         if (name.equals("wisdom")) {
@@ -213,6 +219,7 @@ public class FFTWService implements FFTService {
 
             this.planMap.put(key, this.rr.wrap(ReferenceType.SOFT, plan, new Runnable() {
 
+                @Override
                 public void run() {
                     FFTWService.this.planMap.remove(key);
                 }

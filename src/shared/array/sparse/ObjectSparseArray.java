@@ -82,6 +82,7 @@ public class ObjectSparseArray<T> extends ProtoSparseArray<ObjectSparseArray<T>,
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Class<T> getComponentType() {
         return (Class<T>) this.state.values.getClass().getComponentType();
     }

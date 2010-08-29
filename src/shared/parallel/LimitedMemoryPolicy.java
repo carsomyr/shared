@@ -57,6 +57,7 @@ public class LimitedMemoryPolicy<V extends Traversable<V, E>, E extends Edge<V>>
     public LimitedMemoryPolicy() {
     }
 
+    @Override
     public int assign(V root) {
         return assignDepthFirst(longestPath( //
                 root, //
@@ -154,6 +155,7 @@ public class LimitedMemoryPolicy<V extends Traversable<V, E>, E extends Edge<V>>
         /**
          * Compares maximum distance from the source.
          */
+        @Override
         public int compareTo(PolicyNode rhs) {
             return this.maxDistance - rhs.maxDistance;
         }

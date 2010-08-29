@@ -71,6 +71,7 @@ public class MetaclassBase {
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
+            @Override
             public void run() {
 
                 Set<TemporaryFileSet> reapSets = new HashSet<TemporaryFileSet>();
@@ -209,6 +210,7 @@ public class MetaclassBase {
         /**
          * Deletes all contained temporary files.
          */
+        @Override
         public void run() {
 
             for (File f : this) {

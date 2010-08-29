@@ -52,6 +52,7 @@ public class FileSystemRegistry implements ResourceRegistry {
         this.folder = folder;
     }
 
+    @Override
     public URL getResource(String pathname) {
 
         File resourceFile = new File(this.folder, pathname);
@@ -72,12 +73,14 @@ public class FileSystemRegistry implements ResourceRegistry {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Enumeration<URL> getResources(String pathname) {
 
         URL url = getResource(pathname);
         return Collections.enumeration((url != null) ? Collections.singleton(url) : Collections.EMPTY_LIST);
     }
 
+    @Override
     public InputStream getResourceAsStream(String pathname) {
 
         URL url = getResource(pathname);

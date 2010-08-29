@@ -84,10 +84,12 @@ public class OOBEvent implements Event<OOBEvent, OOBEvent.OOBEventType, SourceTy
         this.source = source;
     }
 
+    @Override
     public OOBEventType getType() {
         return this.type;
     }
 
+    @Override
     public Source<OOBEvent, SourceType> getSource() {
         return this.source;
     }

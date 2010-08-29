@@ -83,6 +83,7 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public OOBFilter<I, O> newFilter(C connection) {
 
         final int nFilters = this.factories.length;
@@ -122,6 +123,7 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
 
         return new OOBFilter<I, O>() {
 
+            @Override
             public void getInbound(Queue<I> in, Queue<O> out) {
 
                 switch (filters.length) {
@@ -144,6 +146,7 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
                 }
             }
 
+            @Override
             public void getOutbound(Queue<O> in, Queue<I> out) {
 
                 switch (filters.length) {
@@ -166,6 +169,7 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
                 }
             }
 
+            @Override
             public void getInboundOOB(Queue<I> in, Queue<OOBEvent> inEvts, Queue<O> out, Queue<OOBEvent> outEvts) {
 
                 switch (filters.length) {
@@ -194,6 +198,7 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
                 }
             }
 
+            @Override
             public void getOutboundOOB(Queue<O> in, Queue<OOBEvent> inEvts, Queue<I> out, Queue<OOBEvent> outEvts) {
 
                 switch (filters.length) {

@@ -117,6 +117,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     @Transition(currentState = "ACTIVE", eventType = "DISPATCH")
     final Handler<InterestEvent<RequestFuture<Object>>> dispatchHandler = new Handler<InterestEvent<RequestFuture<Object>>>() {
 
+        @Override
         public void handle(InterestEvent<RequestFuture<Object>> evt) {
             handleDispatch(((ProxySource<?>) evt.getSource()).getConnection());
         }
@@ -125,6 +126,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     @Transition(currentState = "ACTIVE", eventType = "OP")
     final Handler<InterestEvent<Integer>> opHandler = new Handler<InterestEvent<Integer>>() {
 
+        @Override
         public void handle(InterestEvent<Integer> evt) {
 
             int opMask = evt.getArgument();
@@ -136,6 +138,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     @Transition(currentState = "ACTIVE", eventType = "EXECUTE")
     final Handler<InterestEvent<Runnable>> executeHandler = new Handler<InterestEvent<Runnable>>() {
 
+        @Override
         public void handle(InterestEvent<Runnable> evt) {
             handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
@@ -144,6 +147,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     @Transition(currentState = "ACTIVE", eventType = "CLOSE")
     final Handler<InterestEvent<?>> closeHandler = new Handler<InterestEvent<?>>() {
 
+        @Override
         public void handle(InterestEvent<?> evt) {
             handleClosingUser(((ProxySource<?>) evt.getSource()).getConnection());
         }
@@ -156,6 +160,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     })
     final Handler<InterestEvent<Throwable>> errorHandler = new Handler<InterestEvent<Throwable>>() {
 
+        @Override
         public void handle(InterestEvent<Throwable> evt) {
             handleError(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
@@ -165,6 +170,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     final Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>> queryConnectionsHandler = //
     new Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>>() {
 
+        @Override
         public void handle(InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>> evt) {
             handleQueryConnections(evt.getArgument());
         }
@@ -173,6 +179,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     @Transition(currentState = "RUN", eventType = "SHUTDOWN", group = "internal")
     final Handler<InterestEvent<?>> shutdownHandler = new Handler<InterestEvent<?>>() {
 
+        @Override
         public void handle(InterestEvent<?> evt) {
             handleShutdown();
         }

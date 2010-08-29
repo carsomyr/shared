@@ -63,6 +63,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         /**
          * Closes this stream.
          */
+        @Override
         public void close();
     }
 
@@ -96,6 +97,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         this.inReader = new Resolver() {
 
+            @Override
             public int resolve(int size) throws IOException {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
@@ -126,6 +128,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         this.inReader = new Resolver() {
 
+            @Override
             public int resolve(int size) throws IOException {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
@@ -163,6 +166,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         this.inReader = new Resolver() {
 
+            @Override
             public int resolve(int size) {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
@@ -182,6 +186,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         this.inReader = new Resolver() {
 
+            @Override
             public int resolve(int size) throws IOException {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
@@ -208,6 +213,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         this.outWriter = new Resolver() {
 
+            @Override
             public int resolve(int remaining) {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
@@ -227,6 +233,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         this.outWriter = new Resolver() {
 
+            @Override
             public int resolve(int remaining) throws IOException {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
@@ -311,6 +318,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
     }
 
+    @Override
     public void onBind(Queue<ByteBuffer> inbounds) {
 
         synchronized (this) {
@@ -321,6 +329,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
     }
 
+    @Override
     public void onReceive(Queue<ByteBuffer> inbounds) {
 
         boolean disableReads = false;
@@ -360,6 +369,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
     }
 
+    @Override
     public void onClosing(ClosingType type, Queue<ByteBuffer> inbounds) {
 
         final IOException x;
@@ -531,6 +541,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             }
         }
 
+        @Override
         public SynchronousManagedConnection getConnection() {
             return SynchronousManagedConnection.this;
         }
@@ -614,6 +625,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             Control.close(getConnection());
         }
 
+        @Override
         public SynchronousManagedConnection getConnection() {
             return SynchronousManagedConnection.this;
         }

@@ -63,6 +63,7 @@ public class TestXMLConnection extends XMLConnection<TestXMLConnection, TestXMLE
         this.receiver = receiver;
     }
 
+    @Override
     public void onLocal(TestXMLEvent evt) {
         this.receiver.onLocal(evt);
     }

@@ -94,6 +94,7 @@ abstract public class FFTCache<C extends AbstractArray<C, C, R, ?>, R extends Ab
 
             this.kernelMap.put(key, this.rr.wrap(ReferenceType.SOFT, kernel, new Runnable() {
 
+                @Override
                 public void run() {
                     FFTCache.this.kernelMap.remove(key);
                 }

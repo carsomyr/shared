@@ -53,6 +53,7 @@ abstract public class XMLEvent<T extends XMLEvent<T, E, S>, E extends Enum<E>, S
         this.type = type;
     }
 
+    @Override
     public E getType() {
         return this.type;
     }

@@ -71,6 +71,7 @@ public class DimensionOps {
 
     final static RealReduceOperation RRSumOp = new RealReduceOperation() {
 
+        @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
 
             for (int workingIndex : workingIndices) {
@@ -84,6 +85,7 @@ public class DimensionOps {
 
     final static RealReduceOperation RRProdOp = new RealReduceOperation() {
 
+        @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
 
             for (int workingIndex : workingIndices) {
@@ -97,6 +99,7 @@ public class DimensionOps {
 
     final static RealReduceOperation RRMaxOp = new RealReduceOperation() {
 
+        @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
 
             for (int workingIndex : workingIndices) {
@@ -110,6 +113,7 @@ public class DimensionOps {
 
     final static RealReduceOperation RRMinOp = new RealReduceOperation() {
 
+        @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
 
             for (int workingIndex : workingIndices) {
@@ -123,6 +127,7 @@ public class DimensionOps {
 
     final static RealReduceOperation RRVarOp = new RealReduceOperation() {
 
+        @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
 
             for (int workingIndex : workingIndices) {
@@ -163,6 +168,7 @@ public class DimensionOps {
 
     final static RealIndexOperation RIMaxOp = new RealIndexOperation() {
 
+        @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
 
             if (srcIndices != null) {
@@ -206,6 +212,7 @@ public class DimensionOps {
 
     final static RealIndexOperation RIMinOp = new RealIndexOperation() {
 
+        @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
 
             if (srcIndices != null) {
@@ -249,6 +256,7 @@ public class DimensionOps {
 
     final static RealIndexOperation RIZeroOp = new RealIndexOperation() {
 
+        @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
 
             if (srcIndices != null) {
@@ -284,6 +292,7 @@ public class DimensionOps {
 
     final static RealIndexOperation RIGZeroOp = new RealIndexOperation() {
 
+        @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
 
             if (srcIndices != null) {
@@ -319,6 +328,7 @@ public class DimensionOps {
 
     final static RealIndexOperation RILZeroOp = new RealIndexOperation() {
 
+        @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
 
             if (srcIndices != null) {
@@ -354,6 +364,7 @@ public class DimensionOps {
 
     final static RealIndexOperation RISortOp = new RealIndexOperation() {
 
+        @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
 
             Double[] srcVBoxed = shared.util.Arrays.box(srcV);
@@ -379,6 +390,7 @@ public class DimensionOps {
 
     final static RealDimensionOperation RDSumOp = new RealDimensionOperation() {
 
+        @Override
         public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims) {
 
             int len = Control.checkEquals(srcV.length, dstV.length);
@@ -426,6 +438,7 @@ public class DimensionOps {
 
     final static RealDimensionOperation RDProdOp = new RealDimensionOperation() {
 
+        @Override
         public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims) {
 
             int len = Control.checkEquals(srcV.length, dstV.length);

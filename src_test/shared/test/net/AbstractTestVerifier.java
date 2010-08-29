@@ -140,14 +140,17 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         this.status = VerifierStatus.VIRGIN;
     }
 
+    @Override
     public VerifierStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(VerifierStatus status) {
         this.status = status;
     }
 
+    @Override
     public void sync() {
 
         this.semaphore.acquireUninterruptibly();
@@ -183,6 +186,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         @Transition(currentState = "VIRGIN", eventType = "SEQUENCE", nextState = "RUN")
         final Handler<T> handleVirginToRun = new Handler<T>() {
 
+            @Override
             public void handle(T evt) {
 
                 AbstractReceiverVerifier<T> arv = AbstractReceiverVerifier.this;
@@ -199,6 +203,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         @Transition(currentState = "RUN", eventType = "DATA")
         final Handler<T> handleData = new Handler<T>() {
 
+            @Override
             public void handle(T evt) {
 
                 AbstractReceiverVerifier<T> arv = AbstractReceiverVerifier.this;
@@ -222,6 +227,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         })
         final Handler<T> handleEOS = new Handler<T>() {
 
+            @Override
             public void handle(T evt) {
 
                 AbstractReceiverVerifier<T> arv = AbstractReceiverVerifier.this;
@@ -241,6 +247,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
                     VerifierStatus.class, TestXMLEventType.class);
         }
 
+        @Override
         public void onLocal(T evt) {
             this.fsm.lookup(this, evt);
         }
@@ -262,6 +269,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         @Transition(currentState = "VIRGIN", eventType = "SEQUENCE", nextState = "RUN")
         final Handler<T> handleVirginToRun = new Handler<T>() {
 
+            @Override
             public void handle(T evt) {
 
                 AbstractSenderVerifier<T> asv = AbstractSenderVerifier.this;
@@ -282,6 +290,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         @Transition(currentState = "RUN", eventType = "SEQUENCE")
         final Handler<T> handleSequence = new Handler<T>() {
 
+            @Override
             public void handle(T evt) {
 
                 AbstractSenderVerifier<T> asv = AbstractSenderVerifier.this;
@@ -322,6 +331,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         })
         final Handler<T> handleEOS = new Handler<T>() {
 
+            @Override
             public void handle(T evt) {
 
                 AbstractSenderVerifier<T> asv = AbstractSenderVerifier.this;
@@ -345,6 +355,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
                     VerifierStatus.class, TestXMLEventType.class);
         }
 
+        @Override
         public void onLocal(T evt) {
             this.fsm.lookup(this, evt);
         }

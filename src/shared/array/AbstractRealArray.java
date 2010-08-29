@@ -76,6 +76,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
         return super.rfft();
     }
 
+    @Override
     public Class<Double> getComponentType() {
         return Double.class;
     }

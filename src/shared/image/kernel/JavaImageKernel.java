@@ -42,12 +42,14 @@ public class JavaImageKernel implements ImageKernel {
     public JavaImageKernel() {
     }
 
+    @Override
     public void createIntegralImage( //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS) {
         ImageOps.createIntegralImage(srcV, srcD, srcS, dstV, dstD, dstS);
     }
 
+    @Override
     public void createIntegralHistogram( //
             double[] srcV, int[] srcD, int[] srcS, int[] memV, //
             double[] dstV, int[] dstD, int[] dstS) {

@@ -226,6 +226,7 @@ public class SynchronousConnectionTest {
 
         return new Verifier() {
 
+            @Override
             public void sync() {
 
                 loop: for (;;) {
@@ -316,6 +317,7 @@ public class SynchronousConnectionTest {
 
         return new Verifier() {
 
+            @Override
             public void sync() {
 
                 loop: for (;;) {

@@ -129,6 +129,7 @@ public class DynamicObjectArray<T> implements DynamicArray<DynamicObjectArray<T>
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public DynamicObjectArray<T> clear() {
 
         this.values = (T[]) Array.newInstance(getComponentType(), INITIAL_CAPACITY);
@@ -137,6 +138,7 @@ public class DynamicObjectArray<T> implements DynamicArray<DynamicObjectArray<T>
         return this;
     }
 
+    @Override
     public DynamicObjectArray<T> ensureCapacity(int capacity) {
 
         this.values = (this.values.length < capacity) ? Arrays.copyOf(this.values, capacity) : this.values;
@@ -144,19 +146,23 @@ public class DynamicObjectArray<T> implements DynamicArray<DynamicObjectArray<T>
         return this;
     }
 
+    @Override
     public int size() {
         return this.size;
     }
 
+    @Override
     public int capacity() {
         return this.values.length;
     }
 
+    @Override
     public T[] values() {
         return Arrays.copyOf(this.values, this.size);
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Class<T> getComponentType() {
         return (Class<T>) this.values.getClass().getComponentType();
     }

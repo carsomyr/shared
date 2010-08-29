@@ -114,6 +114,7 @@ public class ElementOps {
 
     final static RealBinaryOperation REAddOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double b) {
             return a + b;
         }
@@ -121,6 +122,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RESubOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double b) {
             return a - b;
         }
@@ -128,6 +130,7 @@ public class ElementOps {
 
     final static RealBinaryOperation REMulOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double b) {
             return a * b;
         }
@@ -135,6 +138,7 @@ public class ElementOps {
 
     final static RealBinaryOperation REDivOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double b) {
             return a / b;
         }
@@ -142,6 +146,7 @@ public class ElementOps {
 
     final static RealBinaryOperation REMaxOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double b) {
             return Math.max(a, b);
         }
@@ -149,6 +154,7 @@ public class ElementOps {
 
     final static RealBinaryOperation REMinOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double b) {
             return Math.min(a, b);
         }
@@ -167,6 +173,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CEAddOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm) {
 
             res[0] = aRe + bRe;
@@ -176,6 +183,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CESubOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm) {
 
             res[0] = aRe - bRe;
@@ -185,6 +193,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CEMulOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm) {
 
             res[0] = aRe * bRe - aIm * bIm;
@@ -194,6 +203,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CEDivOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm) {
 
             res[0] = (aRe * bRe + aIm * bIm) / (bRe * bRe + bIm * bIm);
@@ -214,6 +224,7 @@ public class ElementOps {
 
     final static IntegerBinaryOperation IEAddOp = new IntegerBinaryOperation() {
 
+        @Override
         public int op(int a, int b) {
             return a + b;
         }
@@ -221,6 +232,7 @@ public class ElementOps {
 
     final static IntegerBinaryOperation IESubOp = new IntegerBinaryOperation() {
 
+        @Override
         public int op(int a, int b) {
             return a - b;
         }
@@ -228,6 +240,7 @@ public class ElementOps {
 
     final static IntegerBinaryOperation IEMulOp = new IntegerBinaryOperation() {
 
+        @Override
         public int op(int a, int b) {
             return a * b;
         }
@@ -235,6 +248,7 @@ public class ElementOps {
 
     final static IntegerBinaryOperation IEMaxOp = new IntegerBinaryOperation() {
 
+        @Override
         public int op(int a, int b) {
             return Math.max(a, b);
         }
@@ -242,6 +256,7 @@ public class ElementOps {
 
     final static IntegerBinaryOperation IEMinOp = new IntegerBinaryOperation() {
 
+        @Override
         public int op(int a, int b) {
             return Math.min(a, b);
         }
@@ -260,6 +275,7 @@ public class ElementOps {
 
     final static ComplexToRealOperation CTORAbsOp = new ComplexToRealOperation() {
 
+        @Override
         public double op(double aRe, double aIm) {
             return Math.sqrt(aRe * aRe + aIm * aIm);
         }
@@ -267,6 +283,7 @@ public class ElementOps {
 
     final static ComplexToRealOperation CTORReOp = new ComplexToRealOperation() {
 
+        @Override
         public double op(double aRe, double aIm) {
             return aRe;
         }
@@ -274,6 +291,7 @@ public class ElementOps {
 
     final static ComplexToRealOperation CTORImOp = new ComplexToRealOperation() {
 
+        @Override
         public double op(double aRe, double aIm) {
             return aIm;
         }
@@ -292,6 +310,7 @@ public class ElementOps {
 
     final static RealToComplexOperation RTOCReOp = new RealToComplexOperation() {
 
+        @Override
         public void op(double[] res, double a) {
 
             res[0] = a;
@@ -301,6 +320,7 @@ public class ElementOps {
 
     final static RealToComplexOperation RTOCImOp = new RealToComplexOperation() {
 
+        @Override
         public void op(double[] res, double a) {
 
             res[0] = 0;
@@ -310,6 +330,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUAbsOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Math.abs(v);
         }
@@ -317,6 +338,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUPowOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Math.pow(v, a);
         }
@@ -324,6 +346,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUExpOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Math.exp(v);
         }
@@ -331,6 +354,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RURndOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Arithmetic.nextDouble(a);
         }
@@ -338,6 +362,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RULogOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Math.log(v);
         }
@@ -345,6 +370,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUSqrtOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Math.sqrt(v);
         }
@@ -352,6 +378,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUSqrOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return v * v;
         }
@@ -359,6 +386,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUInvOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return a / v;
         }
@@ -366,6 +394,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUCosOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Math.cos(v);
         }
@@ -373,6 +402,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUSinOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Math.sin(v);
         }
@@ -380,6 +410,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUAtanOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return Math.atan(v);
         }
@@ -387,6 +418,7 @@ public class ElementOps {
 
     final static RealBinaryOperation RUFillOp = new RealBinaryOperation() {
 
+        @Override
         public double op(double a, double v) {
             return a;
         }
@@ -394,6 +426,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CUExpOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
 
             res[0] = Math.exp(vRe) * Math.cos(vIm);
@@ -403,6 +436,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CURndOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
 
             res[0] = Arithmetic.nextDouble(aRe);
@@ -412,6 +446,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CUConjOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
 
             res[0] = vRe;
@@ -421,6 +456,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CUCosOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
 
             CEMulOp.op(res, 0.0, 1.0, vRe, vIm);
@@ -442,6 +478,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CUSinOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
 
             CEMulOp.op(res, 0.0, 1.0, vRe, vIm);
@@ -463,6 +500,7 @@ public class ElementOps {
 
     final static ComplexBinaryOperation CUFillOp = new ComplexBinaryOperation() {
 
+        @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
 
             res[0] = aRe;
@@ -472,6 +510,7 @@ public class ElementOps {
 
     final static IntegerBinaryOperation IUFillOp = new IntegerBinaryOperation() {
 
+        @Override
         public int op(int a, int v) {
             return a;
         }
@@ -490,6 +529,7 @@ public class ElementOps {
 
     final static RealAccumulatorOperation RASumOp = new RealAccumulatorOperation() {
 
+        @Override
         public double op(double[] srcV) {
             return Arithmetic.sum(srcV);
         }
@@ -497,6 +537,7 @@ public class ElementOps {
 
     final static RealAccumulatorOperation RAProdOp = new RealAccumulatorOperation() {
 
+        @Override
         public double op(double[] srcV) {
             return Arithmetic.product(srcV);
         }
@@ -504,6 +545,7 @@ public class ElementOps {
 
     final static RealAccumulatorOperation RAMaxOp = new RealAccumulatorOperation() {
 
+        @Override
         public double op(double[] srcV) {
             return Arithmetic.max(srcV);
         }
@@ -511,6 +553,7 @@ public class ElementOps {
 
     final static RealAccumulatorOperation RAMinOp = new RealAccumulatorOperation() {
 
+        @Override
         public double op(double[] srcV) {
             return Arithmetic.min(srcV);
         }
@@ -518,6 +561,7 @@ public class ElementOps {
 
     final static RealAccumulatorOperation RAVarOp = new RealAccumulatorOperation() {
 
+        @Override
         public double op(double[] srcV) {
             return Arithmetic.variance(srcV);
         }
@@ -525,6 +569,7 @@ public class ElementOps {
 
     final static RealAccumulatorOperation RAEntOp = new RealAccumulatorOperation() {
 
+        @Override
         public double op(double[] srcV) {
             return Arithmetic.entropy(srcV);
         }
@@ -543,6 +588,7 @@ public class ElementOps {
 
     final static ComplexAccumulatorOperation CASumOp = new ComplexAccumulatorOperation() {
 
+        @Override
         public double[] op(double[] srcV) {
 
             double[] res = new double[2];
@@ -557,6 +603,7 @@ public class ElementOps {
 
     final static ComplexAccumulatorOperation CAProdOp = new ComplexAccumulatorOperation() {
 
+        @Override
         public double[] op(double[] srcV) {
 
             double[] res = new double[] { 1.0, 0.0 };

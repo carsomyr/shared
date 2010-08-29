@@ -92,6 +92,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         this.error = null;
         this.handler = new Handler<T>() {
 
+            @Override
             public void handle(T evt) {
                 throw new IllegalStateException("The handler is not initialized");
             }
@@ -144,22 +145,27 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
      */
     abstract protected void onError();
 
+    @Override
     public S getType() {
         return this.type;
     }
 
+    @Override
     public Handler<T> getHandler() {
         return this.handler;
     }
 
+    @Override
     public void setHandler(Handler<T> handler) {
         this.handler = handler;
     }
 
+    @Override
     public void onRemote(T evt) {
         sendOutbound(evt);
     }
 
+    @Override
     public void onReceive(Queue<T> evts) {
 
         for (T evt; (evt = evts.poll()) != null;) {
@@ -167,6 +173,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         }
     }
 
+    @Override
     public void onClosing(ClosingType type, Queue<T> evts) {
 
         switch (type) {
@@ -193,10 +200,12 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         }
     }
 
+    @Override
     public Filter<Element, T> newFilter(final C connection) {
 
         return new Filter<Element, T>() {
 
+            @Override
             public void getInbound(Queue<Element> in, Queue<T> out) {
 
                 assert !Thread.holdsLock(connection);
@@ -206,6 +215,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
                 }
             }
 
+            @Override
             public void getOutbound(Queue<T> in, Queue<Element> out) {
 
                 assert Thread.holdsLock(connection);
@@ -217,6 +227,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         };
     }
 
+    @Override
     public void onBind(Queue<T> inbounds) {
         // Do nothing.
     }

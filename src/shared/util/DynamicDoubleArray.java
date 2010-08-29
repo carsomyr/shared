@@ -124,6 +124,7 @@ public class DynamicDoubleArray implements DynamicArray<DynamicDoubleArray, doub
         return this;
     }
 
+    @Override
     public DynamicDoubleArray clear() {
 
         this.values = new double[INITIAL_CAPACITY];
@@ -132,6 +133,7 @@ public class DynamicDoubleArray implements DynamicArray<DynamicDoubleArray, doub
         return this;
     }
 
+    @Override
     public DynamicDoubleArray ensureCapacity(int capacity) {
 
         this.values = (this.values.length < capacity) ? Arrays.copyOf(this.values, capacity) : this.values;
@@ -139,18 +141,22 @@ public class DynamicDoubleArray implements DynamicArray<DynamicDoubleArray, doub
         return this;
     }
 
+    @Override
     public int size() {
         return this.size;
     }
 
+    @Override
     public int capacity() {
         return this.values.length;
     }
 
+    @Override
     public double[] values() {
         return Arrays.copyOf(this.values, this.size);
     }
 
+    @Override
     public Class<Double> getComponentType() {
         return Double.class;
     }

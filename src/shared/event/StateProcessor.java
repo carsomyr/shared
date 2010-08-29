@@ -50,14 +50,17 @@ abstract public class StateProcessor<T extends Event<T, E, S>, E extends Enum<E>
         super(name);
     }
 
+    @Override
     public Handler<T> getHandler() {
         return this;
     }
 
+    @Override
     public void onRemote(T evt) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setHandler(Handler<T> handler) {
         throw new UnsupportedOperationException();
     }

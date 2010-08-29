@@ -239,6 +239,7 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
          */
         final public static IndexingOrder NEAR = new IndexingOrder() {
 
+            @Override
             public int[] strides(int[] dims) {
 
                 final int nDims = dims.length;
@@ -253,6 +254,7 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
                 return strides;
             }
 
+            @Override
             public IndexingOrder reverse() {
                 return FAR;
             }
@@ -263,6 +265,7 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
          */
         final public static IndexingOrder FAR = new IndexingOrder() {
 
+            @Override
             public int[] strides(int[] dims) {
 
                 final int nDims = dims.length;
@@ -277,6 +280,7 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
                 return strides;
             }
 
+            @Override
             public IndexingOrder reverse() {
                 return NEAR;
             }

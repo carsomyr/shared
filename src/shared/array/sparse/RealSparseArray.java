@@ -86,6 +86,7 @@ public class RealSparseArray extends ProtoSparseArray<RealSparseArray, double[],
         super(state, dims, strides, dimOffsets);
     }
 
+    @Override
     public Class<Double> getComponentType() {
         return Double.class;
     }

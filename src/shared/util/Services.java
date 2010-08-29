@@ -107,6 +107,7 @@ public class Services {
 
         Instance.serviceMap.put(specClass, Instance.rr.wrap(ReferenceType.WEAK, implClass, new Runnable() {
 
+            @Override
             public void run() {
                 Instance.serviceMap.remove(specClass);
             }

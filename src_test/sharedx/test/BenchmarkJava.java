@@ -90,6 +90,7 @@ public class BenchmarkJava implements BenchmarkSpecification {
     }
 
     @Test
+    @Override
     public void testConvolve() {
 
         ComplexArray kernel = new ComplexArray(SIZE, SIZE, 2);

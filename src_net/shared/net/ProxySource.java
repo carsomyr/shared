@@ -55,26 +55,32 @@ public class ProxySource<C extends AbstractManagedConnection<C>> //
         return this.connection;
     }
 
+    @Override
     public void onLocal(InterestEvent<?> evt) {
         this.connection.getThread().onLocal(evt);
     }
 
+    @Override
     public void close() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public SourceType getType() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Handler<InterestEvent<?>> getHandler() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setHandler(Handler<InterestEvent<?>> handler) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void onRemote(InterestEvent<?> evt) {
         throw new UnsupportedOperationException();
     }

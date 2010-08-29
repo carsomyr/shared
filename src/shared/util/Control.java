@@ -105,6 +105,7 @@ public class Control {
      */
     final public static Runnable NullRunnable = new Runnable() {
 
+        @Override
         public void run() {
         }
     };
@@ -126,6 +127,7 @@ public class Control {
      */
     final public static EntityResolver ClasspathResolver = new EntityResolver() {
 
+        @Override
         public InputSource resolveEntity(String publicId, String systemId) {
 
             String classpathStr = "classpath://";
@@ -146,14 +148,17 @@ public class Control {
      */
     final public static ErrorHandler DefaultErrorHandler = new ErrorHandler() {
 
+        @Override
         public void error(SAXParseException exception) throws SAXException {
             throw exception;
         }
 
+        @Override
         public void fatalError(SAXParseException exception) throws SAXException {
             throw exception;
         }
 
+        @Override
         public void warning(SAXParseException exception) throws SAXException {
             throw exception;
         }
@@ -259,14 +264,17 @@ public class Control {
 
         return new Iterator<T>() {
 
+            @Override
             public boolean hasNext() {
                 return itr.hasNext();
             }
 
+            @Override
             public T next() {
                 return itr.next();
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("Iterator is unmodifiable");
             }
@@ -1045,6 +1053,7 @@ public class Control {
 
                     volatile int threadCount = 0;
 
+                    @Override
                     public Thread newThread(Runnable r) {
 
                         Thread t = new Thread(r, String.format("Thread Pool Worker #%d", this.threadCount++));

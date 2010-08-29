@@ -55,6 +55,7 @@ public class PermutationEntry<C extends Comparable<? super C>> implements Compar
     /**
      * Compares values.
      */
+    @Override
     public int compareTo(PermutationEntry<C> o) {
         return this.value.compareTo(o.value);
     }

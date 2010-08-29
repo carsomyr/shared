@@ -123,10 +123,12 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         this(type, null, source);
     }
 
+    @Override
     public InterestEventType getType() {
         return this.type;
     }
 
+    @Override
     public Source<InterestEvent<?>, SourceType> getSource() {
         return this.source;
     }

@@ -69,14 +69,17 @@ public class IdentityFilterFactory<T, C extends Connection> //
     public IdentityFilterFactory() {
     }
 
+    @Override
     public void getInbound(Queue<T> in, Queue<T> out) {
         Filters.transfer(in, out);
     }
 
+    @Override
     public void getOutbound(Queue<T> in, Queue<T> out) {
         Filters.transfer(in, out);
     }
 
+    @Override
     public void getInboundOOB( //
             Queue<T> in, Queue<OOBEvent> inEvts, //
             Queue<T> out, Queue<OOBEvent> outEvts) {
@@ -85,6 +88,7 @@ public class IdentityFilterFactory<T, C extends Connection> //
         getInbound(in, out);
     }
 
+    @Override
     public void getOutboundOOB( //
             Queue<T> in, Queue<OOBEvent> inEvts, //
             Queue<T> out, Queue<OOBEvent> outEvts) {
@@ -93,6 +97,7 @@ public class IdentityFilterFactory<T, C extends Connection> //
         getOutbound(in, out);
     }
 
+    @Override
     public IdentityFilterFactory<T, C> newFilter(C connection) {
         return this;
     }

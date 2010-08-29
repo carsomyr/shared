@@ -65,30 +65,37 @@ public class Scatter implements Plottable {
         this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.Points);
     }
 
+    @Override
     public RealArray[] getDatasets() {
         return this.datasets;
     }
 
+    @Override
     public String getTitle() {
         return "Scatter Plot";
     }
 
+    @Override
     public boolean getPropertyEnabled(String property) {
         return property.equals("legend");
     }
 
+    @Override
     public double[] getAxisRange(AxisType axisType) {
         return AxisRange;
     }
 
+    @Override
     public String getAxisTitle(AxisType axisType) {
         return axisType.toString();
     }
 
+    @Override
     public String[] getDataTitles() {
         return this.dataTitles;
     }
 
+    @Override
     public DataStyle[] getDataStyles() {
         return this.dataStyles;
     }

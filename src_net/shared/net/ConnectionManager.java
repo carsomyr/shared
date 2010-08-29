@@ -146,6 +146,7 @@ public class ConnectionManager implements Closeable {
     /**
      * Shuts down the underlying {@link ConnectionManagerThread}. Blocks until shutdown completion.
      */
+    @Override
     public void close() {
         Control.close(this.thread);
     }

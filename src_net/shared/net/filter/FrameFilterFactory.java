@@ -70,6 +70,7 @@ public class FrameFilterFactory<C extends Connection> //
         this(0, Integer.MAX_VALUE);
     }
 
+    @Override
     public Filter<ByteBuffer, ByteBuffer> newFilter(final C connection) {
 
         final FrameFilterFactory<C> xmlFF = FrameFilterFactory.this;
@@ -78,6 +79,7 @@ public class FrameFilterFactory<C extends Connection> //
 
             ByteBuffer frameBuffer = ByteBuffer.allocate(xmlFF.minimumSize);
 
+            @Override
             public void getInbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
 
                 assert !Thread.holdsLock(connection);
@@ -129,6 +131,7 @@ public class FrameFilterFactory<C extends Connection> //
                 }
             }
 
+            @Override
             public void getOutbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
 
                 assert Thread.holdsLock(connection);

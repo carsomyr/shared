@@ -131,6 +131,7 @@ public class ClientServerTest {
                     .add(this));
         }
 
+        @Override
         public void onReceive(Queue<String> inbounds) {
 
             for (String str; (str = inbounds.poll()) != null;) {
@@ -138,10 +139,12 @@ public class ClientServerTest {
             }
         }
 
+        @Override
         public void onBind(Queue<String> inbounds) {
             this.log.info("Connection is now bound.");
         }
 
+        @Override
         public void onClosing(ClosingType type, Queue<String> inbounds) {
 
             switch (type) {
@@ -163,10 +166,12 @@ public class ClientServerTest {
             }
         }
 
+        @Override
         public Filter<ByteBuffer, String> newFilter(UTF8Connection connection) {
             return this;
         }
 
+        @Override
         public void getInbound(Queue<ByteBuffer> in, Queue<String> out) {
 
             for (ByteBuffer bb; (bb = in.poll()) != null;) {
@@ -178,6 +183,7 @@ public class ClientServerTest {
             }
         }
 
+        @Override
         public void getOutbound(Queue<String> in, Queue<ByteBuffer> out) {
 
             for (String str; (str = in.poll()) != null;) {

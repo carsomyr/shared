@@ -50,16 +50,20 @@ public class NativeArrayKernel implements ArrayKernel {
 
     //
 
+    @Override
     final public native void randomize();
 
+    @Override
     final public native void derandomize();
 
     //
 
+    @Override
     final public native void map(int[] bounds, //
             Object srcV, int[] srcD, int[] srcS, //
             Object dstV, int[] dstD, int[] dstS);
 
+    @Override
     final public native void slice( //
             int[] slices, //
             Object srcV, int[] srcD, int[] srcS, //
@@ -67,63 +71,81 @@ public class NativeArrayKernel implements ArrayKernel {
 
     //
 
+    @Override
     final public native void rrOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS, //
             int... opDims);
 
+    @Override
     final public native void riOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, int[] dstV, //
             int dim);
 
+    @Override
     final public native void rdOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, double[] dstV, //
             int... opDims);
 
     //
 
+    @Override
     final public native double raOp(int type, double[] srcV);
 
+    @Override
     final public native double[] caOp(int type, double[] srcV);
 
+    @Override
     final public native void ruOp(int type, double a, double[] srcV);
 
+    @Override
     final public native void cuOp(int type, double aRe, double aIm, double[] srcV);
 
+    @Override
     final public native void iuOp(int type, int a, int[] srcV);
 
+    @Override
     final public native void eOp(int type, Object lhsV, Object rhsV, Object dstV, boolean isComplex);
 
+    @Override
     final public native void convert(int type, //
             Object srcV, boolean isSrcComplex, //
             Object dstV, boolean isDstComplex);
 
     //
 
+    @Override
     final public native void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean isComplex);
 
+    @Override
     final public native void diag(double[] srcV, double[] dstV, int size, boolean isComplex);
 
     //
 
+    @Override
     final public native void svd(double[] srcV, int srcStrideRow, int srcStrideCol, //
             double[] uV, double[] sV, double[] vV, //
             int nRows, int nCols);
 
+    @Override
     final public native void eigs(double[] srcV, double[] vecV, double[] valV, int size);
 
+    @Override
     final public native void invert(double[] srcV, double[] dstV, int size);
 
     //
 
+    @Override
     final public native int[] find(int[] srcV, int[] srcD, int[] srcS, int[] logical);
 
     //
 
+    @Override
     final public native <V> SparseArrayState<V> insertSparse( //
             V oldV, int[] oldD, int[] oldS, int[] oldDO, int[] oldI, //
             V newV, int[] newLI);
 
+    @Override
     final public native <V> SparseArrayState<V> sliceSparse(int[] slices, //
             V srcV, int[] srcD, int[] srcS, int[] srcDO, //
             int[] srcI, int[] srcIO, int[] srcII, //

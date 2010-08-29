@@ -69,10 +69,12 @@ public class XMLFilterFactory<C extends Connection> //
     public XMLFilterFactory() {
     }
 
+    @Override
     public Filter<ByteBuffer, Element> newFilter(final C connection) {
 
         return new Filter<ByteBuffer, Element>() {
 
+            @Override
             public void getInbound(Queue<ByteBuffer> in, Queue<Element> out) {
 
                 assert !Thread.holdsLock(connection);
@@ -92,6 +94,7 @@ public class XMLFilterFactory<C extends Connection> //
                 }
             }
 
+            @Override
             public void getOutbound(Queue<Element> in, Queue<ByteBuffer> out) {
 
                 assert Thread.holdsLock(connection);

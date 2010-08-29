@@ -130,6 +130,7 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Class<T> getComponentType() {
         return (Class<T>) this.values.getClass().getComponentType();
     }

@@ -78,26 +78,32 @@ public class ModalFFTService implements FFTService {
         this.service = new JavaFFTService();
     }
 
+    @Override
     public void rfft(int[] dims, double[] in, double[] out) {
         this.service.rfft(dims, in, out);
     }
 
+    @Override
     public void rifft(int[] dims, double[] in, double[] out) {
         this.service.rifft(dims, in, out);
     }
 
+    @Override
     public void fft(int[] dims, double[] in, double[] out) {
         this.service.fft(dims, in, out);
     }
 
+    @Override
     public void ifft(int[] dims, double[] in, double[] out) {
         this.service.ifft(dims, in, out);
     }
 
+    @Override
     public void setHint(String name, String value) {
         this.service.setHint(name, value);
     }
 
+    @Override
     public String getHint(String name) {
         return this.service.getHint(name);
     }

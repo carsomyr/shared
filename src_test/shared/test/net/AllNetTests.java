@@ -171,14 +171,17 @@ public class AllNetTests {
 
         return shared.util.Arrays.wrap(new X509TrustManager() {
 
+            @Override
             public void checkClientTrusted(X509Certificate[] chain, String authType) {
                 // Accept unconditionally.
             }
 
+            @Override
             public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                 // Accept unconditionally.
             }
 
+            @Override
             public X509Certificate[] getAcceptedIssuers() {
                 return new X509Certificate[] {};
             }

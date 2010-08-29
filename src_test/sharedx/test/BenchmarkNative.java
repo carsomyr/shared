@@ -53,5 +53,6 @@ public class BenchmarkNative implements BenchmarkSpecification {
     }
 
     @Test
+    @Override
     final public native void testConvolve();
 }

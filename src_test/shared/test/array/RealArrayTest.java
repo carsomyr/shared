@@ -1374,6 +1374,7 @@ public class RealArrayTest {
 
         RealArray expected = a.clone().map(new RealMap() {
 
+            @Override
             public double apply(double value, int[] logical) {
 
                 assertTrue(Math.abs(value - (size * logical[0] + logical[1])) < 1e-8);
@@ -1400,10 +1401,12 @@ public class RealArrayTest {
 
             double acc = 0.0;
 
+            @Override
             public void apply(double value, int[] logical) {
                 this.acc += value * (size * logical[0] + logical[1]);
             }
 
+            @Override
             public double get() {
                 return this.acc;
             }

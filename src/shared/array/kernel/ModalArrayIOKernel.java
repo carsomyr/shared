@@ -60,10 +60,12 @@ public class ModalArrayIOKernel implements ArrayIOKernel {
         this.opKernel = new MatlabIOKernel();
     }
 
+    @Override
     public <T extends Array<T, E>, E> byte[] getBytes(T array) {
         return this.opKernel.getBytes(array);
     }
 
+    @Override
     public <T extends Array<T, ?>> T parse(byte[] data) {
         return this.opKernel.parse(data);
     }

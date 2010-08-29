@@ -99,17 +99,20 @@ public class JarRegistry implements ResourceRegistry {
         return this.dataMap;
     }
 
+    @Override
     public URL getResource(String pathname) {
         return getResourceAsTemporaryFile(this, pathname);
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Enumeration<URL> getResources(String pathname) {
 
         URL url = getResource(pathname);
         return Collections.enumeration((url != null) ? Collections.singleton(url) : Collections.EMPTY_LIST);
     }
 
+    @Override
     public InputStream getResourceAsStream(String pathname) {
 
         byte[] data = this.dataMap.get(pathname);

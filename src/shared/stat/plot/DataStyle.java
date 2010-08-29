@@ -118,6 +118,7 @@ public class DataStyle implements EnumType<DataStyle.DataStyleType> {
                 "Invalid arguments");
     }
 
+    @Override
     public DataStyleType getType() {
         return this.type;
     }

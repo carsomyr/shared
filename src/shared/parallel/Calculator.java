@@ -53,5 +53,6 @@ public interface Calculator<I, O> {
     /**
      * Gets the label for this {@link Calculator} as it would appear in {@link Engine#toString()}.
      */
+    @Override
     public String toString();
 }

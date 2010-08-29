@@ -138,6 +138,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
         return IOKernel.getBytes(this);
     }
 
+    @Override
     public Class<Integer> getComponentType() {
         return Integer.class;
     }

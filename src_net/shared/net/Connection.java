@@ -193,6 +193,7 @@ public interface Connection extends Closeable, Executor {
     /**
      * Closes this connection.
      */
+    @Override
     public void close();
 
     /**
@@ -201,5 +202,6 @@ public interface Connection extends Closeable, Executor {
      * @param r
      *            the code snippet to execute.
      */
+    @Override
     public void execute(Runnable r);
 }

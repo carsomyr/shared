@@ -124,6 +124,7 @@ public class DynamicIntArray implements DynamicArray<DynamicIntArray, int[], Int
         return this;
     }
 
+    @Override
     public DynamicIntArray clear() {
 
         this.values = new int[INITIAL_CAPACITY];
@@ -132,6 +133,7 @@ public class DynamicIntArray implements DynamicArray<DynamicIntArray, int[], Int
         return this;
     }
 
+    @Override
     public DynamicIntArray ensureCapacity(int capacity) {
 
         this.values = (this.values.length < capacity) ? Arrays.copyOf(this.values, capacity) : this.values;
@@ -139,18 +141,22 @@ public class DynamicIntArray implements DynamicArray<DynamicIntArray, int[], Int
         return this;
     }
 
+    @Override
     public int size() {
         return this.size;
     }
 
+    @Override
     public int capacity() {
         return this.values.length;
     }
 
+    @Override
     public int[] values() {
         return Arrays.copyOf(this.values, this.size);
     }
 
+    @Override
     public Class<Integer> getComponentType() {
         return Integer.class;
     }

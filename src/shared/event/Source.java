@@ -55,5 +55,6 @@ public interface Source<T extends Event<T, ?, S>, S extends Enum<S>> extends Sou
     /**
      * Overrides {@link Closeable#close()} so that it doesn't throw an exception.
      */
+    @Override
     public void close();
 }

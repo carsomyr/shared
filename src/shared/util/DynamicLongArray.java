@@ -124,6 +124,7 @@ public class DynamicLongArray implements DynamicArray<DynamicLongArray, long[], 
         return this;
     }
 
+    @Override
     public DynamicLongArray clear() {
 
         this.values = new long[INITIAL_CAPACITY];
@@ -132,6 +133,7 @@ public class DynamicLongArray implements DynamicArray<DynamicLongArray, long[], 
         return this;
     }
 
+    @Override
     public DynamicLongArray ensureCapacity(int capacity) {
 
         this.values = (this.values.length < capacity) ? Arrays.copyOf(this.values, capacity) : this.values;
@@ -139,18 +141,22 @@ public class DynamicLongArray implements DynamicArray<DynamicLongArray, long[], 
         return this;
     }
 
+    @Override
     public int size() {
         return this.size;
     }
 
+    @Override
     public int capacity() {
         return this.values.length;
     }
 
+    @Override
     public long[] values() {
         return Arrays.copyOf(this.values, this.size);
     }
 
+    @Override
     public Class<Long> getComponentType() {
         return Long.class;
     }

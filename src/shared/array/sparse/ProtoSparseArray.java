@@ -214,6 +214,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return length(this.state.values);
     }
 
+    @Override
     public T map(T dst, int... bounds) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -270,6 +271,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return splice(dst, slices);
     }
 
+    @Override
     public T splice(T dst, int... slices) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -289,6 +291,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return dst;
     }
 
+    @Override
     public T slice(int[][] srcSlices, T dst, int[][] dstSlices) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -308,6 +311,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return dst;
     }
 
+    @Override
     public T slice(T dst, int[]... dstSlices) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -328,6 +332,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public T slice(E value, int[]... srcSlices) {
 
         T src = (T) this;
@@ -343,6 +348,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
                 .slice(src, srcSlices);
     }
 
+    @Override
     public T slice(int[]... srcSlices) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -371,6 +377,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return dst;
     }
 
+    @Override
     public T tile(int... repetitions) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -395,6 +402,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return map(dst, mappingBounds);
     }
 
+    @Override
     public T transpose(int... permutation) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -441,6 +449,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
                 srcState.values, newIndices), newDims, newStrides, newDimOffsets);
     }
 
+    @Override
     public T shift(int... shifts) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -459,6 +468,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return map(wrap((E) null, src.dims, src.strides, src.dimOffsets), mappingBounds);
     }
 
+    @Override
     public T subarray(int... bounds) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -485,6 +495,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
                 mappingBounds);
     }
 
+    @Override
     public T reverse(int... opDims) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -503,6 +514,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         return dst;
     }
 
+    @Override
     public T reshape(int... dims) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -523,6 +535,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public T concat(int opDim, T... srcs) {
 
         ProtoSparseArray<T, V, E, D> src = this;
@@ -597,30 +610,37 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         }
     }
 
+    @Override
     public IndexingOrder order() {
         return DEFAULT_ORDER;
     }
 
+    @Override
     public int size(int i) {
         return this.dims[i];
     }
 
+    @Override
     public int stride(int i) {
         return this.strides[i];
     }
 
+    @Override
     public int nDims() {
         return this.dims.length;
     }
 
+    @Override
     public int[] dims() {
         return this.dims.clone();
     }
 
+    @Override
     public int[] strides() {
         return this.strides.clone();
     }
 
+    @Override
     public T reverseOrder() {
         throw new UnsupportedOperationException("Sparse arrays always have row major indexing");
     }

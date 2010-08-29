@@ -144,6 +144,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         return rootElement;
     }
 
+    @Override
     public Source<TestXMLEvent, SourceType> getSource() {
         return this.source;
     }
@@ -174,6 +175,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
             this.error = error;
         }
 
+        @Override
         public Throwable getError() {
             return this.error;
         }
@@ -221,10 +223,12 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
                     .setTextContent(Integer.toString(this.nMessages));
         }
 
+        @Override
         public long getSeqNo() {
             return this.seqNo;
         }
 
+        @Override
         public int nMessages() {
             return this.nMessages;
         }
@@ -264,6 +268,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
                     .setTextContent(Base64.bytesToBase64(this.data));
         }
 
+        @Override
         public byte[] getData() {
             return this.data;
         }

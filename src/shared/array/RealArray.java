@@ -113,6 +113,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
         return new ComplexArray(parity, dims, strides);
     }
 
+    @Override
     public RealArray mMul(RealArray b) {
 
         RealArray a = this;
@@ -131,6 +132,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
         return res;
     }
 
+    @Override
     public RealArray mDiag() {
 
         RealArray a = this;
@@ -150,6 +152,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
         return res;
     }
 
+    @Override
     public RealArray mTranspose() {
 
         RealArray a = this;
@@ -162,6 +165,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
         return transpose(1, 0);
     }
 
+    @Override
     public RealArray[] mSVD() {
 
         RealArray a = this;
@@ -212,6 +216,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
         return !transpose ? new RealArray[] { u, s, v } : new RealArray[] { v, s, u };
     }
 
+    @Override
     public RealArray[] mEigs() {
 
         RealArray a = this;
@@ -257,6 +262,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
         return new RealArray[] { eigVectors, eigValueMatrix };
     }
 
+    @Override
     public RealArray mInvert() {
 
         RealArray a = this;

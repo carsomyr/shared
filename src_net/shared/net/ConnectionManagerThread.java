@@ -93,6 +93,7 @@ abstract public class ConnectionManagerThread //
     /**
      * Enqueues the given event and wakes this thread up from a possible {@link Selector#select()}.
      */
+    @Override
     public void onLocal(InterestEvent<?> evt) {
 
         this.queue.add(evt);
@@ -108,10 +109,12 @@ abstract public class ConnectionManagerThread //
                 getName(), this.status);
     }
 
+    @Override
     public ConnectionManagerThreadStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(ConnectionManagerThreadStatus status) {
         this.status = status;
     }
@@ -282,6 +285,7 @@ abstract public class ConnectionManagerThread //
     /**
      * Stops this thread and waits for it to terminate.
      */
+    @Override
     public void close() {
 
         onLocal(new InterestEvent<Object>(SHUTDOWN, null));

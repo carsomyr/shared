@@ -110,26 +110,32 @@ public class Histogram implements Plottable {
         this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.Bars);
     }
 
+    @Override
     public String getTitle() {
         return "Histogram";
     }
 
+    @Override
     public RealArray[] getDatasets() {
         return this.datasets;
     }
 
+    @Override
     public String[] getDataTitles() {
         return this.dataTitles;
     }
 
+    @Override
     public DataStyle[] getDataStyles() {
         return this.dataStyles;
     }
 
+    @Override
     public boolean getPropertyEnabled(String property) {
         return false;
     }
 
+    @Override
     public double[] getAxisRange(AxisType axisType) {
 
         switch (axisType) {
@@ -145,6 +151,7 @@ public class Histogram implements Plottable {
         }
     }
 
+    @Override
     public String getAxisTitle(AxisType axisType) {
 
         switch (axisType) {

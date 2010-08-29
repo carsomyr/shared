@@ -139,6 +139,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     final protected WriteHandler bufferedHandler = new WriteHandler() {
 
+        @Override
         public int write(ByteBuffer bb) {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
@@ -155,6 +156,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     final protected WriteHandler writeThroughHandler = new WriteHandler() {
 
+        @Override
         public int write(ByteBuffer bb) {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
@@ -196,6 +198,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     final protected WriteHandler nullHandler = new WriteHandler() {
 
+        @Override
         public int write(ByteBuffer bb) {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
@@ -213,6 +216,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     final protected Runnable deferredHandler = new Runnable() {
 
+        @Override
         public void run() {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
@@ -263,6 +267,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     final protected Runnable closingHandler = new Runnable() {
 
+        @Override
         public void run() {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
@@ -307,6 +312,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      * @param argument
      *            the argument.
      */
+    @Override
     public <R, T> Future<R> init(InitializationType type, T argument) {
 
         synchronized (this) {
@@ -341,6 +347,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         return new Future<R>() {
 
+            @Override
             public R get() throws InterruptedException, ExecutionException {
 
                 AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
@@ -359,6 +366,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                 return getResult();
             }
 
+            @Override
             public R get(long timeout, TimeUnit unit) //
                     throws InterruptedException, ExecutionException, TimeoutException {
 
@@ -386,14 +394,17 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                 return getResult();
             }
 
+            @Override
             public boolean isDone() {
                 return isBound() || isClosed();
             }
 
+            @Override
             public boolean cancel(boolean mayInterruptIfRunning) {
                 return false;
             }
 
+            @Override
             public boolean isCancelled() {
                 return false;
             }
@@ -422,6 +433,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         };
     }
 
+    @Override
     public int send(ByteBuffer bb) {
 
         // All send operations are performed under the protection of the connection monitor.
@@ -430,6 +442,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
     }
 
+    @Override
     public void setEnabled(OperationType type, boolean enabled) {
 
         final int opType;
@@ -453,10 +466,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
     }
 
+    @Override
     public Throwable getError() {
         return this.error;
     }
 
+    @Override
     public void setError(Throwable error) {
 
         synchronized (this) {
@@ -464,6 +479,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
     }
 
+    @Override
     public void close() {
 
         synchronized (this) {
@@ -471,6 +487,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
     }
 
+    @Override
     public void execute(Runnable r) {
 
         synchronized (this) {
@@ -478,6 +495,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
     }
 
+    @Override
     public InetSocketAddress getLocalAddress() {
 
         synchronized (this) {
@@ -485,6 +503,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
     }
 
+    @Override
     public InetSocketAddress getRemoteAddress() {
 
         synchronized (this) {
@@ -492,11 +511,13 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
     }
 
+    @Override
     public int getBufferSize() {
         return this.bufferSize;
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public C setBufferSize(int bufferSize) {
 
         this.bufferSize = bufferSize;
@@ -504,14 +525,17 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         return (C) this;
     }
 
+    @Override
     public boolean isSubmitted() {
         return (this.stateMask & SUBMITTED_MASK) != 0;
     }
 
+    @Override
     public boolean isBound() {
         return (this.stateMask & BOUND_MASK) != 0;
     }
 
+    @Override
     public boolean isClosed() {
         return (this.stateMask & CLOSED_MASK) != 0;
     }
@@ -524,10 +548,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         return String.format("%s[%s]", this.name, this.status);
     }
 
+    @Override
     public AbstractManagedConnectionStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(AbstractManagedConnectionStatus status) {
         this.status = status;
     }

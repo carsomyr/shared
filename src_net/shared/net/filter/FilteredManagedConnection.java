@@ -99,19 +99,23 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
 
         this.filter = new OOBFilter<ByteBuffer, T>() {
 
+            @Override
             public void getInbound(Queue<ByteBuffer> in, Queue<T> out) {
                 throw new IllegalArgumentException("Please initialize the filter factory");
             }
 
+            @Override
             public void getOutbound(Queue<T> in, Queue<ByteBuffer> out) {
                 throw new IllegalArgumentException("Please initialize the filter factory");
             }
 
+            @Override
             public void getInboundOOB(Queue<ByteBuffer> in, Queue<OOBEvent> inEvts, //
                     Queue<T> out, Queue<OOBEvent> outEvts) {
                 throw new IllegalArgumentException("Please initialize the filter factory");
             }
 
+            @Override
             public void getOutboundOOB(Queue<T> in, Queue<OOBEvent> inEvts, //
                     Queue<ByteBuffer> out, Queue<OOBEvent> outEvts) {
                 throw new IllegalArgumentException("Please initialize the filter factory");
@@ -120,6 +124,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory) {
 
         Filter<ByteBuffer, T> filter = filterFactory.newFilter((C) this);
@@ -135,6 +140,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         return (C) this;
     }
 
+    @Override
     public int sendOutbound(T output) {
 
         // All outbound filtering is done under the protection of the connection monitor.
@@ -156,6 +162,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         }
     }
 
+    @Override
     public void onReceive(ByteBuffer input) {
 
         this.in.add(input);
@@ -164,16 +171,19 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         onReceive(this.inFiltered);
     }
 
+    @Override
     public void onBind() {
 
         onOOBEvent(OOBEventType.BIND, null, new Handler<Queue<T>>() {
 
+            @Override
             public void handle(Queue<T> inbounds) {
                 onBind(inbounds);
             }
         });
     }
 
+    @Override
     public void onClosing(final ClosingType type, ByteBuffer bb) {
 
         final OOBEventType eventType;
@@ -198,6 +208,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
 
         onOOBEvent(eventType, bb, new Handler<Queue<T>>() {
 
+            @Override
             public void handle(Queue<T> inbounds) {
                 onClosing(type, inbounds);
             }
@@ -241,6 +252,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         }
     }
 
+    @Override
     public void onClose() {
         // No further action is required.
     }

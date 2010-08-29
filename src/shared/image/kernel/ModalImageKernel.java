@@ -80,12 +80,14 @@ public class ModalImageKernel implements ImageKernel {
         this.imKernel = new JavaImageKernel();
     }
 
+    @Override
     public void createIntegralImage( //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS) {
         this.imKernel.createIntegralImage(srcV, srcD, srcS, dstV, dstD, dstS);
     }
 
+    @Override
     public void createIntegralHistogram( //
             double[] srcV, int[] srcD, int[] srcS, int[] memV, //
             double[] dstV, int[] dstD, int[] dstS) {

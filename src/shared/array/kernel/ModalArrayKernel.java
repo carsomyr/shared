@@ -83,22 +83,26 @@ public class ModalArrayKernel implements ArrayKernel {
 
     //
 
+    @Override
     public void randomize() {
         this.opKernel.randomize();
     }
 
+    @Override
     public void derandomize() {
         this.opKernel.derandomize();
     }
 
     //
 
+    @Override
     public void map(int[] bounds, //
             Object srcV, int[] srcD, int[] srcS, //
             Object dstV, int[] dstD, int[] dstS) {
         this.opKernel.map(bounds, srcV, srcD, srcS, dstV, dstD, dstS);
     }
 
+    @Override
     public void slice( //
             int[] slices, //
             Object srcV, int[] srcD, int[] srcS, //
@@ -108,6 +112,7 @@ public class ModalArrayKernel implements ArrayKernel {
 
     //
 
+    @Override
     public void rrOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS, //
@@ -115,42 +120,51 @@ public class ModalArrayKernel implements ArrayKernel {
         this.opKernel.rrOp(type, srcV, srcD, srcS, dstV, dstD, dstS, opDims);
     }
 
+    @Override
     public void riOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, int[] dstV, //
             int dim) {
         this.opKernel.riOp(type, srcV, srcD, srcS, dstV, dim);
     }
 
+    @Override
     public void rdOp(int type, //
             double[] srcV, int[] srcD, int[] srcS, double[] dstV, //
             int... opDims) {
         this.opKernel.rdOp(type, srcV, srcD, srcS, dstV, opDims);
     }
 
+    @Override
     public double raOp(int type, double[] srcV) {
         return this.opKernel.raOp(type, srcV);
     }
 
+    @Override
     public double[] caOp(int type, double[] srcV) {
         return this.opKernel.caOp(type, srcV);
     }
 
+    @Override
     public void ruOp(int type, double a, double[] srcV) {
         this.opKernel.ruOp(type, a, srcV);
     }
 
+    @Override
     public void cuOp(int type, double aRe, double aIm, double[] srcV) {
         this.opKernel.cuOp(type, aRe, aIm, srcV);
     }
 
+    @Override
     public void iuOp(int type, int a, int[] srcV) {
         this.opKernel.iuOp(type, a, srcV);
     }
 
+    @Override
     public void eOp(int type, Object lhsV, Object rhsV, Object dstV, boolean isComplex) {
         this.opKernel.eOp(type, lhsV, rhsV, dstV, isComplex);
     }
 
+    @Override
     public void convert(int type, //
             Object srcV, boolean isSrcComplex, //
             Object dstV, boolean isDstComplex) {
@@ -159,44 +173,52 @@ public class ModalArrayKernel implements ArrayKernel {
 
     //
 
+    @Override
     public void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean isComplex) {
         this.opKernel.mul(lhsV, rhsV, lr, rc, dstV, isComplex);
     }
 
+    @Override
     public void diag(double[] srcV, double[] dstV, int size, boolean isComplex) {
         this.opKernel.diag(srcV, dstV, size, isComplex);
     }
 
     //
 
+    @Override
     public void svd(double[] srcV, int srcStrideRow, int srcStrideCol, //
             double[] uV, double[] sV, double[] vV, //
             int nRows, int nCols) {
         this.opKernel.svd(srcV, srcStrideRow, srcStrideCol, uV, sV, vV, nRows, nCols);
     }
 
+    @Override
     public void eigs(double[] srcV, double[] vecV, double[] valV, int size) {
         this.opKernel.eigs(srcV, vecV, valV, size);
     }
 
+    @Override
     public void invert(double[] srcV, double[] dstV, int size) {
         this.opKernel.invert(srcV, dstV, size);
     }
 
     //
 
+    @Override
     public int[] find(int[] srcV, int[] srcD, int[] srcS, int[] logical) {
         return this.opKernel.find(srcV, srcD, srcS, logical);
     }
 
     //
 
+    @Override
     public <V> SparseArrayState<V> insertSparse( //
             V oldV, int[] oldD, int[] oldS, int[] oldDO, int[] oldI, //
             V newV, int[] newI) {
         return this.opKernel.insertSparse(oldV, oldD, oldS, oldDO, oldI, newV, newI);
     }
 
+    @Override
     public <V> SparseArrayState<V> sliceSparse(int[] slices, //
             V srcV, int[] srcD, int[] srcS, int[] srcDO, //
             int[] srcI, int[] srcIO, int[] srcII, //

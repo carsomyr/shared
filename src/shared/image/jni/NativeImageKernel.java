@@ -48,10 +48,12 @@ public class NativeImageKernel implements ImageKernel {
                 "Could not instantiate native bindings -- Linking failed");
     }
 
+    @Override
     final public native void createIntegralImage( //
             double[] srcV, int[] srcD, int[] srcS, //
             double[] dstV, int[] dstD, int[] dstS);
 
+    @Override
     final public native void createIntegralHistogram( //
             double[] srcV, int[] srcD, int[] srcS, int[] memV, //
             double[] dstV, int[] dstD, int[] dstS);
