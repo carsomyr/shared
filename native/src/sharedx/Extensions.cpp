@@ -24,9 +24,9 @@
 #include <Extensions.hpp>
 
 void Library::init(JNIEnv *env) {
-    return Plan::init(env);
+    Plan::init(env);
 }
 
 void Library::destroy(JNIEnv *env) {
-    return Plan::destroy(env);
+    Plan::destroy(env);
 }

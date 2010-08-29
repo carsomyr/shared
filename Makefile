@@ -1,11 +1,11 @@
 include build/*.mk
 
-ANT					= java -cp 'build/ant-launcher.jar' \
-					org.apache.tools.ant.launch.Launcher
-
 #------------------------------------------------------------------------------#
 # Declare variables.                                                           #
 #------------------------------------------------------------------------------#
+
+ANT					= java -cp 'build/ant-launcher.jar' \
+					org.apache.tools.ant.launch.Launcher
 
 # Java Sources
 

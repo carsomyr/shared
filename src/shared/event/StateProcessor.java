@@ -40,8 +40,9 @@ package shared.event;
  *            the {@link Source} enumeration type.
  * @author Roy Liu
  */
-abstract public class StateProcessor<T extends Event<T, E, S>, E extends Enum<E>, S extends Enum<S>> extends
-        Processor<T> implements Source<T, S>, Handler<T> {
+abstract public class StateProcessor<T extends Event<T, E, S>, E extends Enum<E>, S extends Enum<S>> //
+        extends Processor<T> //
+        implements Source<T, S>, Handler<T> {
 
     /**
      * Default constructor.

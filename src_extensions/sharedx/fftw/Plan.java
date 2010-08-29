@@ -78,12 +78,12 @@ public class Plan extends PlanKey {
     final public static int C2R = 1;
 
     /**
-     * Complex-to-complex forwards (FFT).
+     * Complex-to-complex forward (FFT).
      */
     final public static int FORWARD = 2;
 
     /**
-     * Complex-to-complex backwards (IFFT).
+     * Complex-to-complex backward (IFFT).
      */
     final public static int BACKWARD = 3;
 

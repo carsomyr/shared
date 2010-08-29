@@ -208,7 +208,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
     }
 
     /**
-     * Gets the number of non-zero elements.
+     * Gets the number of nonzero elements.
      */
     public int size() {
         return length(this.state.values);
@@ -247,7 +247,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         int[] slices = new int[3 * nSlices];
 
-        for (int dim = 0, acc = 0, offset = 0, sliceOffset = 0; dim < nDims; dim++, acc += bounds[offset + 2], offset += 3) {
+        for (int dim = 0, offset = 0, sliceOffset = 0; dim < nDims; dim++, offset += 3) {
 
             int size = bounds[offset + 2];
 

@@ -92,7 +92,7 @@ void DimensionOps::riOp(JNIEnv *env, jobject thisObj, jint type, //
 
         MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
 
-        // Proceed only if non-zero length.
+        // Proceed only if nonzero length.
         if (!srcLen) {
             return;
         }

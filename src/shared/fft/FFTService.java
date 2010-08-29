@@ -38,7 +38,7 @@ import shared.util.Service;
 public interface FFTService extends Service {
 
     /**
-     * Computes a reduced forwards transform.
+     * Computes a reduced forward transform.
      * 
      * @param dims
      *            the dimensions of the transform.
@@ -50,7 +50,7 @@ public interface FFTService extends Service {
     public void rfft(int[] dims, double[] in, double[] out);
 
     /**
-     * Computes a reduced backwards transform.
+     * Computes a reduced backward transform.
      * 
      * @param dims
      *            the dimensions of the transform.
@@ -62,7 +62,7 @@ public interface FFTService extends Service {
     public void rifft(int[] dims, double[] in, double[] out);
 
     /**
-     * Computes a forwards transform.
+     * Computes a forward transform.
      * 
      * @param dims
      *            the dimensions of the transform.
@@ -74,7 +74,7 @@ public interface FFTService extends Service {
     public void fft(int[] dims, double[] in, double[] out);
 
     /**
-     * Computes a backwards transform.
+     * Computes a backward transform.
      * 
      * @param dims
      *            the dimensions of the transform.

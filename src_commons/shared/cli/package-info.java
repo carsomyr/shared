@@ -27,7 +27,7 @@
  */
 
 /**
- * A package for annotation-driven command line parsing.
+ * A package for annotation-driven command-line parsing.
  */
 @Policy(recursive = false)
 package shared.cli;

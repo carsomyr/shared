@@ -208,7 +208,6 @@ public class MappingOps {
         int srcLen = checkDimensions(Array.getLength(srcV), srcD, srcS);
         int dstLen = checkDimensions(Array.getLength(dstV), dstD, dstS);
 
-        int nSlices = 0;
         int mapLen = 1;
 
         for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
@@ -218,7 +217,6 @@ public class MappingOps {
             Control.checkTrue(size >= 0, //
                     "Invalid mapping parameters");
 
-            nSlices += size;
             mapLen *= size;
         }
 
@@ -229,7 +227,7 @@ public class MappingOps {
         int[][] ssi = new int[nDims][];
         int[][] dsi = new int[nDims][];
 
-        for (int dim = 0, acc = 0, offset = 0; dim < nDims; dim++, acc += bounds[offset + 2], offset += 3) {
+        for (int dim = 0, offset = 0; dim < nDims; dim++, offset += 3) {
 
             int mapSize = bounds[offset + 2];
 

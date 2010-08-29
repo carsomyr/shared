@@ -180,7 +180,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         Control.checkTrue(src != dst, //
                 "Source and destination cannot be the same");
 
-        int[] slices = ArrayBase.canonicalizeSlices(srcSlices, src.dims, dstSlices, dst.dims);
+        int[] slices = canonicalizeSlices(srcSlices, src.dims, dstSlices, dst.dims);
 
         OpKernel.slice(slices, //
                 src.values, src.dims, src.strides, //

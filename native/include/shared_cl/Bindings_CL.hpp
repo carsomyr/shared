@@ -32,7 +32,7 @@
 
 #include <JNIHeadersWrap.hpp>
 
-#if defined(__APPLE__)
+#ifdef __APPLE__
 #include <OpenCL/cl.h>
 #else
 #include <CL/cl.h>

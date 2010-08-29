@@ -557,12 +557,12 @@ void SparseOps::getSlicedIndirections( //
 void SparseOps::merge(jint *indices, jint *indirections, jint len, //
         jint *resIndices, jint *resIndirections, jint &resLen) {
 
-    MallocHandler allH(sizeof(permutation_entry<jint, jint> ) * len);
+    MallocHandler allH(sizeof(permutation_entry<jint, jint>) * len);
     permutation_entry<jint, jint> *all = (permutation_entry<jint, jint> *) allH.get();
     permutation_entry<jint, jint> *entries = all;
 
     for (jint i = 0; i < len; i++) {
-        entries[i] = permutation_entry<jint, jint> (indices[i], indirections[i]);
+        entries[i] = permutation_entry<jint, jint>(indices[i], indirections[i]);
     }
 
     std::stable_sort(entries, entries + len);

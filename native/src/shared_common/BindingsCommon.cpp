@@ -28,5 +28,5 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
 }
 
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *jvm, void *reserved) {
-    return Library::JNI_OnUnload(jvm, reserved);
+    Library::JNI_OnUnload(jvm, reserved);
 }

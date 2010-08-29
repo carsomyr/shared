@@ -21,9 +21,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
-#include <stdarg.h>
-
 #ifndef _Included_JNIWrap
 #define _Included_JNIWrap
 

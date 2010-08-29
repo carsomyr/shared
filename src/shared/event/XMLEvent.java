@@ -41,8 +41,8 @@ import org.w3c.dom.Element;
  *            the {@link Source} enumeration type.
  * @author Roy Liu
  */
-abstract public class XMLEvent<T extends XMLEvent<T, E, S>, E extends Enum<E>, S extends Enum<S>> implements
-        Event<T, E, S> {
+abstract public class XMLEvent<T extends XMLEvent<T, E, S>, E extends Enum<E>, S extends Enum<S>> //
+        implements Event<T, E, S> {
 
     final E type;
 

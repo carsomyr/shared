@@ -298,7 +298,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
      * {@link ConnectionManagerIOThread}s.
      */
     @SuppressWarnings("unchecked")
-    protected void handleQueryConnections(RequestFuture<List<AbstractManagedConnection<?>>> evt) {
+    protected void handleQueryConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
 
         List<AbstractManagedConnection<?>> res = new ArrayList<AbstractManagedConnection<?>>();
 
@@ -306,7 +306,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             res.addAll((List<AbstractManagedConnection<?>>) ioThread.query(QUERY_CONNECTIONS));
         }
 
-        evt.set(res);
+        future.set(res);
     }
 
     @Transition(currentState = "VIRGIN", eventType = "CONNECT")

@@ -30,8 +30,8 @@ package shared.net.filter;
 
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -49,10 +49,9 @@ import shared.util.Control;
  * @author Roy Liu
  */
 public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
-        implements FilterFactory<SSLFilter<C>, ByteBuffer, ByteBuffer, C>, //
-        SSLEngineFactory<SSLFilterFactory<C>> {
+        implements FilterFactory<SSLFilter<C>, ByteBuffer, ByteBuffer, C>, SSLEngineFactory<SSLFilterFactory<C>> {
 
-    final ThreadPoolExecutor executor;
+    final ExecutorService executor;
 
     KeyManager[] keyManagers;
     TrustManager[] trustManagers;

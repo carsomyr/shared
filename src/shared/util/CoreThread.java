@@ -75,7 +75,7 @@ abstract public class CoreThread extends Thread {
     abstract protected void runUnchecked() throws Exception;
 
     /**
-     * Runs the exception handler. The default behavior is wrap the given {@link Throwable} in a
+     * Runs the exception handler. The default behavior is to wrap the given {@link Throwable} in a
      * {@link RuntimeException} and throw that.
      */
     protected void runCatch(Throwable t) {

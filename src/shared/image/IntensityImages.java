@@ -52,7 +52,7 @@ import shared.util.Control;
 public class IntensityImages {
 
     /**
-     * A mapping of color names to interpolating color maps.
+     * A mapping of color names to interpolating colormaps.
      */
     final protected static Map<String, int[]> ColorMaps;
 
@@ -79,7 +79,7 @@ public class IntensityImages {
      * @param m
      *            the intensity image.
      * @param cmName
-     *            the name of the color map to display with.
+     *            the name of the colormap to display with.
      * @param rangeMin
      *            the minimum intensity.
      * @param rangeMax
@@ -209,7 +209,7 @@ public class IntensityImages {
     }
 
     /**
-     * Creates a color map by interpolating between start, end, and intermediate colors.
+     * Creates a colormap by interpolating between start, end, and intermediate colors.
      */
     final protected static int[] createInterpolatingColorMap(int... args) {
 

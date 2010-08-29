@@ -107,7 +107,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         //
 
-        MallocHandler mallocH(sizeof(permutation_entry<jint, jint> ) * newLen //
+        MallocHandler mallocH(sizeof(permutation_entry<jint, jint>) * newLen //
                 + sizeof(jint) * (2 * newLen + oldLen));
 
         void *all = (void *) mallocH.get();
@@ -117,7 +117,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint *oldIndirections = (jint *) ((permutation_entry<jint, jint> *) all + newLen) + 2 * newLen;
 
         for (jint i = 0; i < newLen; i++) {
-            entries[i] = permutation_entry<jint, jint> (newIArr[i], i);
+            entries[i] = permutation_entry<jint, jint>(newIArr[i], i);
         }
 
         std::sort(entries, entries + newLen);

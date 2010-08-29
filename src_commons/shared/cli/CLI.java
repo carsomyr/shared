@@ -57,7 +57,7 @@ public class CLI {
      * @param clazz
      *            the class annotated with {@link CLIOptions}.
      * @throws ParseException
-     *             when the command line arguments couldn't be parsed.
+     *             when the command-line arguments couldn't be parsed.
      */
     public static CommandLine createCommandLine(Class<?> clazz, String[] args) throws ParseException {
         return new PosixParser().parse(createOptions(clazz), args);

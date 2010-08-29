@@ -115,10 +115,10 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     }
 
     @Transition(currentState = "ACTIVE", eventType = "DISPATCH")
-    final Handler<InterestEvent<RequestFuture<Object>>> dispatchHandler = new Handler<InterestEvent<RequestFuture<Object>>>() {
+    final Handler<InterestEvent<?>> dispatchHandler = new Handler<InterestEvent<?>>() {
 
         @Override
-        public void handle(InterestEvent<RequestFuture<Object>> evt) {
+        public void handle(InterestEvent<?> evt) {
             handleDispatch(((ProxySource<?>) evt.getSource()).getConnection());
         }
     };

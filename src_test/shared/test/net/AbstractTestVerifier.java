@@ -178,8 +178,8 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
     /**
      * A subclass of {@link AbstractTestVerifier} that maintains receiver state.
      */
-    abstract protected static class AbstractReceiverVerifier<T extends Event<T, TestXMLEventType, SourceType>> extends
-            AbstractTestVerifier<T> {
+    abstract protected static class AbstractReceiverVerifier<T extends Event<T, TestXMLEventType, SourceType>> //
+            extends AbstractTestVerifier<T> {
 
         final StateTable<VerifierStatus, TestXMLEventType, T> fsm;
 
@@ -261,8 +261,8 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
     /**
      * A subclass of {@link AbstractTestVerifier} that maintains sender state.
      */
-    abstract protected static class AbstractSenderVerifier<T extends Event<T, TestXMLEventType, SourceType>> extends
-            AbstractTestVerifier<T> {
+    abstract protected static class AbstractSenderVerifier<T extends Event<T, TestXMLEventType, SourceType>> //
+            extends AbstractTestVerifier<T> {
 
         final StateTable<VerifierStatus, TestXMLEventType, T> fsm;
 

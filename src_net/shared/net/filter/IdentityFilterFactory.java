@@ -48,7 +48,7 @@ public class IdentityFilterFactory<T, C extends Connection> //
     /**
      * The global {@link IdentityFilterFactory} instance.
      */
-    final protected static IdentityFilterFactory<Object, Connection> Instance = new IdentityFilterFactory<Object, Connection>();
+    final protected static IdentityFilterFactory<?, ?> Instance = new IdentityFilterFactory<Object, Connection>();
 
     /**
      * Gets the global instance.

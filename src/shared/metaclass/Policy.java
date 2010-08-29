@@ -45,10 +45,10 @@ public @interface Policy {
     /**
      * Whether this policy applies recursively to all subpackages.
      */
-    boolean recursive() default true;
+    public boolean recursive() default true;
 
     /**
      * Gets the names of external classes and packages to include.
      */
-    String[] includes() default {};
+    public String[] includes() default {};
 }

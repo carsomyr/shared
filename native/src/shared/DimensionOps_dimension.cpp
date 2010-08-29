@@ -86,7 +86,7 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
             }
         }
 
-        // Proceed only if non-zero length.
+        // Proceed only if nonzero length.
         if (!srcLen) {
             return;
         }

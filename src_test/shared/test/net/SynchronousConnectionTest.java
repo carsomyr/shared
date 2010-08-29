@@ -126,7 +126,7 @@ public class SynchronousConnectionTest {
 
         int bufferSize = this.messageLength << 2;
         int basePort = this.remoteAddress.getPort();
-        String hostName = this.remoteAddress.getHostName();
+        String hostname = this.remoteAddress.getHostName();
 
         List<Verifier> verifiers = new ArrayList<Verifier>();
 
@@ -137,7 +137,7 @@ public class SynchronousConnectionTest {
         Control.sleep(this.delay);
 
         for (int i = 0, n = this.nConnections, port = basePort; i < n; i++, port++) {
-            verifiers.add(createSender(i, bufferSize, new InetSocketAddress(hostName, port)));
+            verifiers.add(createSender(i, bufferSize, new InetSocketAddress(hostname, port)));
         }
 
         // Reverse the verifier list so that we synchronize on senders first and detect any errors that may

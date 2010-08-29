@@ -147,7 +147,7 @@ abstract public class ConnectionManagerThread //
 
                 SelectionKey key = itr.next();
 
-                int readyOps;
+                final int readyOps;
 
                 try {
 

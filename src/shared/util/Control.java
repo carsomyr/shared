@@ -113,7 +113,7 @@ public class Control {
     /**
      * A timestamp local to the current thread in support of {@link #tick()} and {@link #tock()}.
      */
-    final protected static ThreadLocal<Long> TimeStampLocal = new ThreadLocal<Long>();
+    final protected static ThreadLocal<Long> TimestampLocal = new ThreadLocal<Long>();
 
     /**
      * A mapping of environment variables local to the current thread in support of {@link #beginEnvironment()} and
@@ -286,10 +286,10 @@ public class Control {
      */
     final public static void tick() {
 
-        Control.checkTrue(TimeStampLocal.get() == null, //
+        checkTrue(TimestampLocal.get() == null, //
                 "Must call tock() before tick()");
 
-        TimeStampLocal.set(System.currentTimeMillis());
+        TimestampLocal.set(System.currentTimeMillis());
     }
 
     /**
@@ -299,14 +299,14 @@ public class Control {
      */
     final public static long tock() {
 
-        Long timeStamp = TimeStampLocal.get();
+        Long timestamp = TimestampLocal.get();
 
-        Control.checkTrue(timeStamp != null, //
+        checkTrue(timestamp != null, //
                 "Must call tick() before tock()");
 
-        TimeStampLocal.set(null);
+        TimestampLocal.set(null);
 
-        return System.currentTimeMillis() - timeStamp;
+        return System.currentTimeMillis() - timestamp;
     }
 
     /**
@@ -826,9 +826,9 @@ public class Control {
 
         ProcessBuilder pb = new ProcessBuilder(execArgs);
 
-        Process p = null;
-
         final AtomicReference<IOException> childThreadException = new AtomicReference<IOException>(null);
+
+        Process p = null;
 
         try {
 
@@ -860,7 +860,7 @@ public class Control {
                     } finally {
 
                         // Close the child's input.
-                        Control.close(out);
+                        close(out);
                     }
                 }
             };
@@ -998,7 +998,7 @@ public class Control {
      * @throws IOException
      *             when something goes awry.
      */
-    final public static int execAndWaitFor(InputStream parentIn, OutputStream parentOut, String... execArgs)
+    final public static int execAndWaitFor(InputStream parentIn, OutputStream parentOut, String... execArgs) //
             throws IOException {
         return execAndWaitFor(parentIn, parentOut, parentOut, execArgs);
     }
@@ -1008,7 +1008,7 @@ public class Control {
      */
     final public static Map<String, String> beginEnvironment() {
 
-        Control.checkTrue(EnvironmentLocal.get() == null, //
+        checkTrue(EnvironmentLocal.get() == null, //
                 "Must call endEnvironment() before beginEnvironment()");
 
         Map<String, String> env = new HashMap<String, String>();
@@ -1023,7 +1023,7 @@ public class Control {
      */
     final public static void endEnvironment() {
 
-        Control.checkTrue(EnvironmentLocal.get() != null, //
+        checkTrue(EnvironmentLocal.get() != null, //
                 "Must call beginEnvironment() before endEnvironment()");
 
         EnvironmentLocal.set(null);

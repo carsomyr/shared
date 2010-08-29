@@ -406,7 +406,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
     }
 }
 
-template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T(*op)(const T *, jint), //
+template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T (*op)(const T *, jint), //
         jarray srcV, jboolean isComplex) {
 
     if (!srcV) {
@@ -427,7 +427,7 @@ template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T(*op)(co
     return op((T *) srcVH.get(), logicalLen);
 }
 
-template<class T> inline void ElementOps::unaryOpProxy(JNIEnv *env, void(*op)(T, T *, jint), //
+template<class T> inline void ElementOps::unaryOpProxy(JNIEnv *env, void (*op)(T, T *, jint), //
         jarray srcV, T argument, jboolean isComplex) {
 
     if (!srcV) {
@@ -586,7 +586,7 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
     }
 }
 
-template<class S, class T> inline void ElementOps::convertProxy(JNIEnv *env, void(*op)(const S *, T *, jint), //
+template<class S, class T> inline void ElementOps::convertProxy(JNIEnv *env, void (*op)(const S *, T *, jint), //
         jarray srcV, jboolean srcIsComplex, //
         jarray dstV, jboolean dstIsComplex) {
 

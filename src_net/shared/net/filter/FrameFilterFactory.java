@@ -73,11 +73,11 @@ public class FrameFilterFactory<C extends Connection> //
     @Override
     public Filter<ByteBuffer, ByteBuffer> newFilter(final C connection) {
 
-        final FrameFilterFactory<C> xmlFF = FrameFilterFactory.this;
+        final FrameFilterFactory<C> fFF = FrameFilterFactory.this;
 
         return new Filter<ByteBuffer, ByteBuffer>() {
 
-            ByteBuffer frameBuffer = ByteBuffer.allocate(xmlFF.minimumSize);
+            ByteBuffer frameBuffer = ByteBuffer.allocate(fFF.minimumSize);
 
             @Override
             public void getInbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
@@ -110,8 +110,8 @@ public class FrameFilterFactory<C extends Connection> //
                         assert (this.frameBuffer.limit() == this.frameBuffer.capacity()) //
                                 && (this.frameBuffer.position() == 0);
 
-                        if (this.frameBuffer.capacity() > xmlFF.minimumSize) {
-                            this.frameBuffer = ByteBuffer.allocate(xmlFF.minimumSize);
+                        if (this.frameBuffer.capacity() > fFF.minimumSize) {
+                            this.frameBuffer = ByteBuffer.allocate(fFF.minimumSize);
                         }
 
                         // Continue the loop and see if anything more can be read.
@@ -155,7 +155,7 @@ public class FrameFilterFactory<C extends Connection> //
 
             void ensureCapacity(int len) {
 
-                Control.checkTrue(len <= xmlFF.maximumSize - this.frameBuffer.position(), //
+                Control.checkTrue(len <= fFF.maximumSize - this.frameBuffer.position(), //
                         "Maximum message size exceeded");
 
                 if (len > this.frameBuffer.remaining()) {
@@ -163,7 +163,7 @@ public class FrameFilterFactory<C extends Connection> //
                     assert (this.frameBuffer.limit() == this.frameBuffer.capacity());
 
                     this.frameBuffer = ByteBuffer.allocate(Math.min( //
-                            xmlFF.maximumSize, (this.frameBuffer.position() + len) << 1)) //
+                            fFF.maximumSize, (this.frameBuffer.position() + len) << 1)) //
                             .put((ByteBuffer) this.frameBuffer.flip());
                 }
             }

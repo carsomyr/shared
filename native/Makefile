@@ -1,5 +1,4 @@
-CMAKE			= cmake
-CMAKE_TOOLCHAIN	= ../../build/conf/mingw.cmake
+include ../src/shared/project.properties
 
 #------------------------------------------------------------------------------#
 # Declare variables.                                                           #
@@ -24,7 +23,8 @@ ICON_ICO		= include/win32/icon.ico
 
 # CMake Flags
 
-include ../src/shared/project.properties
+CMAKE			= cmake
+CMAKE_TOOLCHAIN	= ../../build/conf/mingw.cmake
 
 CMAKE_FLAGS		= -DCMAKE_BUILD_TYPE="Release"
 

@@ -393,7 +393,7 @@ public class Filters {
      */
     final public static <I, O> OOBFilter<I, O> asOOBFilter(final Filter<I, O> filter) {
 
-        return (filter instanceof OOBFilter) ? (OOBFilter<I, O>) filter : new OOBFilter<I, O>() {
+        return (filter instanceof OOBFilter<?, ?>) ? (OOBFilter<I, O>) filter : new OOBFilter<I, O>() {
 
             @Override
             public void getInbound(Queue<I> in, Queue<O> out) {

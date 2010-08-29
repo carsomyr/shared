@@ -569,7 +569,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     SelectionKey key;
     SocketChannel channel;
     int bufferSize;
-    ByteBuffer readBuffer, writeBuffer;
+    ByteBuffer readBuffer;
+    ByteBuffer writeBuffer;
     int stateMask;
     Throwable error;
     AbstractManagedConnectionStatus status;

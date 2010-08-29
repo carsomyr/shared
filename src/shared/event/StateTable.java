@@ -123,7 +123,7 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
                     field.setAccessible(false);
                 }
 
-                Control.checkTrue(obj instanceof Handler, //
+                Control.checkTrue(obj instanceof Handler<?>, //
                         "Field does not reference an event handler");
 
                 final Handler<Z> handler = (Handler<Z>) obj;

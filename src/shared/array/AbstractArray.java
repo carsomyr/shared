@@ -50,9 +50,9 @@ import shared.util.Control;
  * @param <T>
  *            the base parameterization.
  * @param <U>
- *            the "up" parameterization representing the forwards FFT type.
+ *            the "up" parameterization representing the forward FFT type.
  * @param <D>
- *            the "down" parameterization representing the backwards FFT type.
+ *            the "down" parameterization representing the backward FFT type.
  * @param <E>
  *            the array element type.
  * @author Roy Liu
@@ -85,12 +85,12 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
     abstract protected T wrap(int parity, IndexingOrder order, int[] dims, int[] strides);
 
     /**
-     * Creates an instance of the "up" type after a forwards FFT.
+     * Creates an instance of the "up" type after a forward FFT.
      */
     abstract protected U wrapUp(int parity, IndexingOrder order, int[] dims, int[] strides);
 
     /**
-     * Creates an instance of the "down" type after a backwards FFT.
+     * Creates an instance of the "down" type after a backward FFT.
      */
     abstract protected D wrapDown(int parity, IndexingOrder order, int[] dims, int[] strides);
 
@@ -293,7 +293,7 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
     }
 
     /**
-     * Transforms this array in the forwards/backwards FFT direction.
+     * Transforms this array in the forward/backward FFT direction.
      * 
      * @param direction
      *            the FFT direction.

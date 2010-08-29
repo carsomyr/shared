@@ -132,7 +132,7 @@ MappingResult *MappingOps::map( //
 
         res = new MappingResult();
 
-        // Proceed only if non-zero length.
+        // Proceed only if nonzero length.
         if (!srcLen || !dstLen) {
             return res;
         }

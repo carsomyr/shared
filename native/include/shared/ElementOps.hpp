@@ -422,16 +422,16 @@ public:
 
 private:
 
-    template<class T> inline static T accumulatorOpProxy(JNIEnv *, T(*op)(const T *, jint), //
+    template<class T> inline static T accumulatorOpProxy(JNIEnv *, T (*op)(const T *, jint), //
             jarray, jboolean);
 
-    template<class T> inline static void unaryOpProxy(JNIEnv *, void(*op)(T, T *, jint), //
+    template<class T> inline static void unaryOpProxy(JNIEnv *, void (*op)(T, T *, jint), //
             jarray, T, jboolean);
 
     template<class T> inline static void binaryOpProxy(JNIEnv *, jint, //
             jarray, jarray, jarray, element_type);
 
-    template<class S, class T> inline static void convertProxy(JNIEnv *, void(*op)(const S *, T *, jint), //
+    template<class S, class T> inline static void convertProxy(JNIEnv *, void (*op)(const S *, T *, jint), //
             jarray, jboolean, //
             jarray, jboolean);
 };

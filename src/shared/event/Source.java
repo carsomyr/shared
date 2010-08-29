@@ -39,8 +39,8 @@ import java.io.Closeable;
  *            the {@link Source} enumeration type.
  * @author Roy Liu
  */
-public interface Source<T extends Event<T, ?, S>, S extends Enum<S>> extends SourceLocal<T>, SourceRemote<T>,
-        EnumType<S>, Closeable {
+public interface Source<T extends Event<T, ?, S>, S extends Enum<S>> //
+        extends SourceLocal<T>, SourceRemote<T>, EnumType<S>, Closeable {
 
     /**
      * Gets the {@link Handler} that will process incoming {@link Event}s.

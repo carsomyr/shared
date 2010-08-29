@@ -634,8 +634,8 @@ public class Engine<T> {
      * uncaught {@link Throwable} occurs.
      */
     @SuppressWarnings("serial")
-    protected static class ThrowableReferenceHandler extends AtomicReference<Throwable> implements
-            UncaughtExceptionHandler {
+    protected static class ThrowableReferenceHandler extends AtomicReference<Throwable> //
+            implements UncaughtExceptionHandler {
 
         /**
          * Default constructor.

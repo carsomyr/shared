@@ -59,21 +59,21 @@ public @interface Transitions {
         /**
          * The current state.
          */
-        String currentState();
+        public String currentState();
 
         /**
          * The {@link Event} type.
          */
-        String eventType();
+        public String eventType();
 
         /**
          * The next state.
          */
-        String nextState() default "";
+        public String nextState() default "";
 
         /**
          * The group name.
          */
-        String group() default "";
+        public String group() default "";
     }
 }

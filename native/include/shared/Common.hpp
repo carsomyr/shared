@@ -21,11 +21,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <math.h>
-
 #include <algorithm>
-#include <stdexcept>
+#include <cmath>
+#include <cstdlib>
 #include <cstring>
+#include <stdexcept>
 
 #include <JNIWrap.hpp>
 

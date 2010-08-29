@@ -125,7 +125,7 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
             throw std::runtime_error("Invalid arguments");
         }
 
-        // Proceed only if non-zero length.
+        // Proceed only if nonzero length.
         if (!srcLen) {
             return;
         }
