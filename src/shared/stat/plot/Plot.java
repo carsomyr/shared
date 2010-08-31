@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 The Regents of the University of California<br />
+ * Copyright (c) 2009 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -31,10 +31,10 @@ package shared.stat.plot;
 /**
  * Defines a plotting abstraction.
  * 
- * @apiviz.owns shared.stat.plot.Plottable
+ * @apiviz.owns shared.stat.plot.DataStyle
  * @apiviz.owns shared.stat.plot.Plot.AxisType
  * @apiviz.owns shared.stat.plot.Plot.AxisScaleType
- * @apiviz.owns shared.stat.plot.DataStyle
+ * @apiviz.owns shared.stat.plot.Plottable
  * @param <T>
  *            the parameterization lower bounded by {@link Plot} itself.
  */
@@ -46,17 +46,17 @@ public interface Plot<T extends Plot<T>> {
     public enum AxisType {
 
         /**
-         * Indicates the <tt>x</tt>-axis.
+         * Indicates the <code>x</code>-axis.
          */
         X, //
 
         /**
-         * Indicates the <tt>y</tt>-axis.
+         * Indicates the <code>y</code>-axis.
          */
         Y, //
 
         /**
-         * Indicates the <tt>z</tt>-axis.
+         * Indicates the <code>z</code>-axis.
          */
         Z;
     };
@@ -169,9 +169,9 @@ public interface Plot<T extends Plot<T>> {
      * Sets the panel location.
      * 
      * @param panelX
-     *            the panel <tt>x</tt>-coordinate.
+     *            the panel <code>x</code>-coordinate.
      * @param panelY
-     *            the panel <tt>y</tt>-coordinate.
+     *            the panel <code>y</code>-coordinate.
      */
     public T setPanelLocation(int panelX, int panelY);
 

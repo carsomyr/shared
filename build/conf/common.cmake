@@ -12,13 +12,13 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
-# Restore the variable 'APPLE' if cross compiling on Mac OS.
+# Restore the APPLE variable if cross compiling on Mac OS.
 
 if(CMAKE_CROSSCOMPILING AND CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
     set(APPLE "1")
 endif(CMAKE_CROSSCOMPILING AND CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
 
-# Add the 'doxygen' build target.
+# Add the doxygen build target.
 
 if(DOXYGEN_FOUND)
 

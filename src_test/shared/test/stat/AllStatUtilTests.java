@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 The Regents of the University of California<br />
+ * Copyright (c) 2009 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>

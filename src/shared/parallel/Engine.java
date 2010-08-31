@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -49,9 +49,9 @@ import shared.util.Control;
  * An execution engine class for pushing data through the guts of some parallel computation given as a directed, acyclic
  * graph.
  * 
- * @apiviz.composedOf shared.parallel.Engine.ThrowableReferenceHandler
  * @apiviz.composedOf shared.parallel.Engine.EngineEdge
  * @apiviz.composedOf shared.parallel.Engine.EngineNode
+ * @apiviz.composedOf shared.parallel.Engine.ThrowableReferenceHandler
  * @apiviz.owns shared.parallel.TraversalPolicy
  * @param <T>
  *            the input type.

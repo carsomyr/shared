@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Roy Liu
+ * Copyright (c) 2007 Roy Liu
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -73,7 +73,7 @@ public:
      * @param rc
      *      the right hand side column count.
      * @param zero
-     *      the concept of '0'.
+     *      the representation of 0.
      */
     template<class T> inline static void mul(const T *lArr, const T *rArr, jint inner, //
             T *outArr, jint lr, jint rc, T zero);

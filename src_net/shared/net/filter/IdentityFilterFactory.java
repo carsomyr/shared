@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009-2010 Roy Liu<br />
+ * Copyright (c) 2009-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -37,7 +37,7 @@ import shared.net.Connection;
  * queue and push them onto the output queue.
  * 
  * @param <T>
- *            the input and output type.
+ *            the inbound and outbound type.
  * @param <C>
  *            the {@link Connection} type.
  * @author Roy Liu
@@ -54,7 +54,7 @@ public class IdentityFilterFactory<T, C extends Connection> //
      * Gets the global instance.
      * 
      * @param <T>
-     *            the input and output type.
+     *            the inbound and outbound type.
      * @param <C>
      *            the {@link Connection} type.
      */

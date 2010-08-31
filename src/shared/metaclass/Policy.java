@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -48,7 +48,7 @@ public @interface Policy {
     public boolean recursive() default true;
 
     /**
-     * Gets the names of external classes and packages to include.
+     * The names of external classes and packages to include.
      */
     public String[] includes() default {};
 }

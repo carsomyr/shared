@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Roy Liu
+ * Copyright (c) 2007 Roy Liu
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -86,17 +86,17 @@ public:
     enum jarray_type {
 
         /**
-         * Indicates an array of 'double'.
+         * Indicates an array of doubles.
          */
         DOUBLE, //
 
         /**
-         * Indicates an array of 'int'.
+         * Indicates an array of ints.
          */
         INT, //
 
         /**
-         * Indicates an array of 'byte'.
+         * Indicates an array of bytes.
          */
         BYTE, //
 
@@ -121,7 +121,7 @@ public:
         STRING_PRIMITIVE, //
 
         /**
-         * Indicates an array of 'Object'.
+         * Indicates an array of Objects.
          */
         OBJECT
     };
@@ -132,12 +132,12 @@ public:
     enum release_mode {
 
         /**
-         * Indicates read-write.
+         * Indicates a read-write operation.
          */
         READ_WRITE = 0, //
 
         /**
-         * Indicates read-only.
+         * Indicates a read-only operation.
          */
         READ_ONLY = JNI_ABORT
     };
@@ -246,6 +246,7 @@ template<class V, class P> struct permutation_entry {
      *      the left hand side.
      * @param b
      *      the right hand side.
+     * @return true if and only if the LHS is less than the RHS.
      */
     inline friend bool operator<(const permutation_entry &a, const permutation_entry &b) {
         return a.value < b.value;
@@ -297,6 +298,7 @@ struct jcomplex {
      *      the left hand side.
      * @param b
      *      the right hand side.
+     * @return the operation result.
      */
     inline friend jcomplex operator+(const jcomplex &a, const jcomplex &b) {
         return jcomplex(a.re + b.re, a.im + b.im);
@@ -309,6 +311,7 @@ struct jcomplex {
      *      the left hand side.
      * @param b
      *      the right hand side.
+     * @return the operation result.
      */
     inline friend jcomplex operator-(const jcomplex &a, const jcomplex &b) {
         return jcomplex(a.re - b.re, a.im - b.im);
@@ -321,6 +324,7 @@ struct jcomplex {
      *      the left hand side.
      * @param b
      *      the right hand side.
+     * @return the operation result.
      */
     inline friend jcomplex operator*(const jcomplex &a, const jcomplex &b) {
         return jcomplex(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
@@ -333,6 +337,7 @@ struct jcomplex {
      *      the left hand side.
      * @param b
      *      the right hand side.
+     * @return the operation result.
      */
     inline friend jcomplex operator/(const jcomplex &a, const jcomplex &b) {
         return jcomplex( //
@@ -347,6 +352,7 @@ struct jcomplex {
      *      the left hand side.
      * @param b
      *      the right hand side.
+     * @return the operation result.
      */
     inline friend jcomplex &operator+=(jcomplex &a, const jcomplex &b) {
 
@@ -363,6 +369,7 @@ struct jcomplex {
      *      the left hand side.
      * @param b
      *      the right hand side.
+     * @return the operation result.
      */
     inline friend jcomplex &operator*=(jcomplex &a, const jcomplex &b) {
 
@@ -382,6 +389,7 @@ struct jcomplex {
      *      the left hand side.
      * @param b
      *      the right hand side.
+     * @return the operation result.
      */
     inline friend bool operator<(const jcomplex &a, const jcomplex &b) {
         return (a.re * a.re + a.im * a.im) < (b.re * b.re + b.im * b.im);
@@ -396,7 +404,7 @@ struct jcomplex {
 };
 
 /**
- * A class of commonly used static methods.
+ * A static utility class for common operations.
  */
 class Common {
 
@@ -410,7 +418,8 @@ public:
      * @param len
      *      the length.
      * @param zero
-     *      the concept of '0'.
+     *      the representation of 0.
+     * @return the sum.
      */
     template<class T> static T sum(T *values, jint len, T zero) {
 
@@ -431,7 +440,8 @@ public:
      * @param len
      *      the length.
      * @param one
-     *      the concept of '1'.
+     *      the representation of 1.
+     * @return the product.
      */
     template<class T> static T product(T *values, jint len, T one) {
 
@@ -461,6 +471,7 @@ public:
      *      the JNI environment.
      * @param name
      *      the class name.
+     * @return the class.
      */
     static jclass findClass(JNIEnv *env, const char *name);
 
@@ -475,6 +486,7 @@ public:
      *      the class name.
      * @param type
      *      the type.
+     * @return the field identifier.
      */
     static jfieldID getFieldID(JNIEnv *env, //
             jclass clazz, const char *name, const char *type);
@@ -490,6 +502,7 @@ public:
      *      the class name.
      * @param type
      *      the type.
+     * @return the static field identifier.
      */
     static jfieldID getStaticFieldID(JNIEnv *env, //
             jclass clazz, const char *name, const char *type);
@@ -505,6 +518,7 @@ public:
      *      the class name.
      * @param type
      *      the type.
+     * @return the method identifier.
      */
     static jmethodID getMethodID(JNIEnv *env, //
             jclass clazz, const char *name, const char *type);
@@ -520,6 +534,7 @@ public:
      *      the class name.
      * @param type
      *      the type.
+     * @return the static method identifier.
      */
     static jmethodID getStaticMethodID(JNIEnv *env, //
             jclass clazz, const char *name, const char *type);
@@ -531,6 +546,7 @@ public:
      *      the JNI environment.
      * @param object
      *      the referent.
+     * @return the global weak reference.
      */
     static jweak newWeakGlobalRef(JNIEnv *env, jobject object);
 
@@ -545,32 +561,35 @@ public:
     static void deleteWeakGlobalRef(JNIEnv *env, jweak weak);
 
     /**
-     * Creates a Java array of type 'double[]'.
+     * Creates a Java array of type double[].
      * 
      * @param env
      *      the JNI environment.
      * @param len
      *      the length.
+     * @return the newly allocated double array.
      */
     static jdoubleArray newDoubleArray(JNIEnv *env, jint len);
 
     /**
-     * Creates a Java array of type 'int[]'.
+     * Creates a Java array of type int[].
      * 
      * @param env
      *      the JNI environment.
      * @param len
      *      the length.
+     * @return the newly allocated int array.
      */
     static jintArray newIntArray(JNIEnv *env, jint len);
 
     /**
-     * Creates a Java array of type 'byte[]'.
+     * Creates a Java array of type byte[].
      * 
      * @param env
      *      the JNI environment.
      * @param len
      *      the length.
+     * @return the newly allocated byte array.
      */
     static jbyteArray newByteArray(JNIEnv *env, jint len);
 
@@ -583,6 +602,7 @@ public:
      *      the length.
      * @param clazz
      *      the component type.
+     * @return the newly allocated Object array.
      */
     static jobjectArray newObjectArray(JNIEnv *env, jint len, jclass clazz);
 
@@ -593,6 +613,7 @@ public:
      *      the JNI environment.
      * @param utf
      *      the null-terminated string.
+     * @return the Java string.
      */
     static jstring newStringUTF(JNIEnv *env, const char *utf);
 };

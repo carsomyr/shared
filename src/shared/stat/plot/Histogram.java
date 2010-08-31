@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -54,12 +54,12 @@ public class Histogram implements Plottable {
     final protected DataStyle[] dataStyles;
 
     /**
-     * The <tt>x</tt> range.
+     * The <code>x</code> range.
      */
     final protected double[] xrange;
 
     /**
-     * The <tt>y</tt> range.
+     * The <code>y</code> range.
      */
     final protected double[] yrange;
 

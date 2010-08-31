@@ -1,5 +1,5 @@
 ^/\*$
-^ \* Copyright \(C\) \d\d\d\d(?:-\d\d\d\d){0,1} .*$
+^ \* Copyright \(c\) \d\d\d\d(?:-\d\d\d\d){0,1} .*$
 ^ \* All rights reserved\.$
 ^ \* $
 ^ \* Redistribution and use in source and binary forms, with or without modification, are permitted provided that the$

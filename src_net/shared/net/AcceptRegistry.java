@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -156,13 +156,13 @@ public class AcceptRegistry {
 
             channel.configureBlocking(false);
 
+            // Normalize the recently bound local address.
             this.address = new InetSocketAddress(address.getAddress(), //
                     ((InetSocketAddress) socket.getLocalSocketAddress()).getPort());
 
-            // Create a selection key for the server socket.
+            // Create a SelectionKey for the server socket.
             this.key = channel.register(AcceptRegistry.this.selector, SelectionKey.OP_ACCEPT);
 
-            // Connections are sorted by their sequence numbers.
             this.pending = new LinkedHashSet<AbstractManagedConnection<?>>();
         }
 

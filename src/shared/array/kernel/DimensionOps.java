@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -50,9 +50,9 @@ import shared.util.Control;
 /**
  * A class for dimension operations in pure Java.
  * 
- * @apiviz.has shared.array.kernel.DimensionOps.RealReduceOperation - - - argument
- * @apiviz.has shared.array.kernel.DimensionOps.RealIndexOperation - - - argument
  * @apiviz.has shared.array.kernel.DimensionOps.RealDimensionOperation - - - argument
+ * @apiviz.has shared.array.kernel.DimensionOps.RealIndexOperation - - - argument
+ * @apiviz.has shared.array.kernel.DimensionOps.RealReduceOperation - - - argument
  * @apiviz.uses shared.array.kernel.PermutationEntry
  * @author Roy Liu
  */

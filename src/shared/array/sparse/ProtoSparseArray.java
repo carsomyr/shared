@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -169,7 +169,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
      * Inserts values at the given logical indices, which are given in row major order.
      * 
      * @param values
-     *            the values to be inserted.
+     *            the values.
      * @param logicals
      *            the logical indices.
      * @return this array.

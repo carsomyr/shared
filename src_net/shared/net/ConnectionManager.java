@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -99,7 +99,7 @@ public class ConnectionManager implements Closeable {
      * @param name
      *            the name.
      * @param backlog
-     *            the backlog size.
+     *            the listen backlog size.
      */
     public ConnectionManager(String name, int backlog) {
 
@@ -112,7 +112,7 @@ public class ConnectionManager implements Closeable {
      * Alternate constructor.
      * 
      * @param backlog
-     *            the backlog size.
+     *            the listen backlog size.
      */
     public ConnectionManager(int backlog) {
         this("", backlog);

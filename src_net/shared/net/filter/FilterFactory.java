@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -37,9 +37,9 @@ import shared.net.Connection;
  * @param <F>
  *            the {@link Filter} type.
  * @param <I>
- *            the nominal input type.
+ *            the inbound type.
  * @param <O>
- *            the nominal output type.
+ *            the outbound type.
  * @param <C>
  *            the {@link Connection} type.
  * @author Roy Liu

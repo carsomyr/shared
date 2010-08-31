@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009-2010 Roy Liu<br />
+ * Copyright (c) 2009-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -40,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import shared.net.Buffers;
-import shared.net.Connection;
 import shared.net.Connection.OperationType;
 
 /**
@@ -77,7 +76,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
      * @param engine
      *            the {@link SSLEngine} for encryption/decryption of traffic.
      * @param connection
-     *            the associated {@link Connection}.
+     *            the associated {@link FilteredConnection}.
      * @param executor
      *            the {@link Executor} for carrying out delegated tasks.
      */
@@ -147,8 +146,6 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
                     debug("[%s] inbound %s.", this.connection, result);
 
-                    // We got a "close_notify".
-
                     if (!this.engine.isInboundDone()) {
                         this.engine.closeInbound();
                     }
@@ -160,8 +157,8 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
                     // Clear the read buffer for good measure.
                     this.readBuffer.clear().flip();
 
-                    // Break the loop: Although a final wrap() is possible with bidirectional
-                    // shutdown, we stick with the unidirectional case.
+                    // Break the loop: Although a final SSLEngine#wrap is possible with bidirectional shutdown, we stick
+                    // with the unidirectional case.
                     break loop;
 
                 case OK:
@@ -180,35 +177,37 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
                     debug("[%s] inbound %s.", this.connection, result);
 
-                    // Continue the loop: The first step is conveniently calling unwrap().
+                    // Continue the loop: The first step is conveniently calling SSLEngine#unwrap.
                     continue loop;
 
                 case NEED_WRAP:
 
                     debug("[%s] inbound %s.", this.connection, result);
 
-                    // Continue the loop: We can immediately do a write.
                     this.connection.sendOutbound(null);
+
+                    // Continue the loop: We can immediately do a write.
                     continue loop;
 
                 case NEED_TASK:
 
                     debug("[%s] inbound %s.", this.connection, result);
 
-                    // Break the loop: We can't proceed until external tasks are completed.
                     synchronized (this.connection) {
                         runDelegatedTasks();
                     }
 
+                    // Break the loop: We can't proceed until external tasks have finished.
                     break loop;
 
                 case FINISHED:
 
                     debug("[%s] inbound %s.", this.connection, result);
 
-                    // Continue the loop: We just finished handshaking and should write pending
-                    // outbound data.
+                    // Write pending outbound data.
                     this.connection.sendOutbound(null);
+
+                    // Continue the loop: We just finished handshaking.
                     continue loop;
 
                 case NOT_HANDSHAKING:
@@ -290,7 +289,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
                         debug("[%s] shut down outbound.", this.connection);
 
-                        // Write out a "close_notify".
+                        // Write out a close_notify.
                         this.engine.closeOutbound();
                         this.shutdownOutbound = false;
 
@@ -313,22 +312,23 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
                     debug("[%s] outbound %s.", this.connection, result);
 
-                    // Break the loop: Let the inbound handle this.
+                    // Break the loop: We can't proceed until the remote host responds.
                     break loop;
 
                 case NEED_WRAP:
 
                     debug("[%s] outbound %s.", this.connection, result);
 
-                    // Continue the loop: The first step is conveniently calling wrap().
+                    // Continue the loop: The first step is conveniently calling SSLEngine#wrap.
                     continue loop;
 
                 case NEED_TASK:
 
                     debug("[%s] outbound %s.", this.connection, result);
 
-                    // Break the loop: We can't proceed until external tasks are completed.
                     runDelegatedTasks();
+
+                    // Break the loop: We can't proceed until external tasks have finished.
                     break loop;
 
                 case FINISHED:

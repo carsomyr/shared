@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 The Regents of the University of California
+ * Copyright (c) 2006 The Regents of the University of California
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -366,7 +366,7 @@ inline fftw_plan Plan::createPlan( //
         break;
 
     case sharedx_fftw_Plan_C2R:
-        // NOTE: C2R transforms may destroy their input.
+        // NOTE: Complex-to-real transforms may destroy their input.
         plan = fftw_plan_dft_c2r(nDims, (const int *) dimsArr, //
                 (fftw_complex *) inArr, outArr, mode | FFTW_DESTROY_INPUT | FFTW_UNALIGNED);
         break;

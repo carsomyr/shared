@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -43,7 +43,7 @@ import shared.util.Finalizable;
  * 
  * @apiviz.composedOf shared.event.Processor.ProcessorThread
  * @param <T>
- *            the parameterization lower bounded by {@link Event} itself.
+ *            the {@link Event} type.
  * @author Roy Liu
  */
 public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Finalizable<Processor<T>>, Closeable {
@@ -104,7 +104,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
      * A worker thread class for processing events.
      * 
      * @param <T>
-     *            the parameterization lower bounded by {@link Event} itself.
+     *            the {@link Event} type.
      */
     final protected static class ProcessorThread<T extends Event<T, ?, ?>> extends CoreThread {
 
@@ -142,6 +142,8 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
                     evt.getSource().getHandler().handle(evt);
 
                 } catch (InterruptedException e) {
+
+                    // Do nothing.
                 }
             }
         }

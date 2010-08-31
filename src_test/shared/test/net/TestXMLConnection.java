@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -54,7 +54,6 @@ public class TestXMLConnection extends XMLConnection<TestXMLConnection, TestXMLE
      * 
      * @param receiver
      *            the local receiver to which events will be forwarded.
-     * @see XMLConnection#XMLConnection(String, Enum, int, ConnectionManager)
      */
     public TestXMLConnection(String name, int minimumSize, int maximumSize, ConnectionManager manager,
             SourceLocal<TestXMLEvent> receiver) {

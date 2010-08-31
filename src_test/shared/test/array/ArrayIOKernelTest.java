@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -59,7 +59,7 @@ public class ArrayIOKernelTest {
     }
 
     /**
-     * Tests {@link RealArray} reading from and writing to "mat" files.
+     * Tests {@link RealArray} reading from and writing to MAT-files.
      * 
      * @throws IOException
      *             when something goes awry.
@@ -121,7 +121,7 @@ public class ArrayIOKernelTest {
     }
 
     /**
-     * Tests {@link ComplexArray} reading from and writing to "mat" files.
+     * Tests {@link ComplexArray} reading from and writing to MAT-files.
      * 
      * @throws IOException
      *             when something goes awry.
@@ -178,7 +178,7 @@ public class ArrayIOKernelTest {
     }
 
     /**
-     * Tests {@link IntegerArray} reading from and writing to "mat" files.
+     * Tests {@link IntegerArray} reading from and writing to MAT-files.
      * 
      * @throws IOException
      *             when something goes awry.

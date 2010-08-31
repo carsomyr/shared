@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -227,7 +227,7 @@ abstract public class ConnectionManagerThread //
             }
         }
 
-        // Perform a dummy select() to get rid of canceled keys.
+        // Perform a dummy Selector#select to get rid of canceled keys.
         try {
 
             this.selector.selectNow();
@@ -268,7 +268,7 @@ abstract public class ConnectionManagerThread //
 
         onStop();
 
-        // Notify anyone calling close().
+        // Notify anyone calling #close.
         synchronized (this) {
 
             for (RequestFuture<?> future : this.futures) {
@@ -338,12 +338,12 @@ abstract public class ConnectionManagerThread //
     }
 
     /**
-     * Queries the internal state. Blocks until query completion.
+     * Retrieves this thread's internal state. Blocks until query completion.
      * 
      * @param type
      *            the {@link InterestEventType}.
      * @param <T>
-     *            the query result type.
+     *            the result type.
      */
     protected <T> T query(InterestEventType type) {
 
@@ -409,7 +409,7 @@ abstract public class ConnectionManagerThread //
     }
 
     /**
-     * Handles an asynchronous execution request.
+     * Handles a request to execute code on this thread.
      */
     protected void handleExecute(AbstractManagedConnection<?> conn, Runnable r) {
 
@@ -426,7 +426,7 @@ abstract public class ConnectionManagerThread //
     }
 
     /**
-     * Handles a connection end-of-stream.
+     * Handles a connection end-of-stream notification.
      */
     protected void handleClosingEOS(AbstractManagedConnection<?> conn) {
 
@@ -468,7 +468,7 @@ abstract public class ConnectionManagerThread //
     }
 
     /**
-     * Handles a connection closure.
+     * Handles a connection closure notification.
      */
     protected void handleClose(AbstractManagedConnection<?> conn) {
 
@@ -491,7 +491,7 @@ abstract public class ConnectionManagerThread //
     }
 
     /**
-     * Handles a connection error.
+     * Handles a connection error notification.
      */
     protected void handleError(AbstractManagedConnection<?> conn, Throwable error) {
 
@@ -530,7 +530,7 @@ abstract public class ConnectionManagerThread //
     }
 
     /**
-     * Handles a shutdown request.
+     * Handles a request to shut down this thread.
      */
     protected void handleShutdown() {
 
@@ -552,7 +552,7 @@ abstract public class ConnectionManagerThread //
     final protected Queue<InterestEvent<?>> queue;
 
     /**
-     * A weak {@link Set} of {@link RequestFuture}s associated with external, asynchronous requests.
+     * A weak {@link Set} of {@link RequestFuture}s for cleanup purposes.
      */
     final protected Set<RequestFuture<?>> futures;
 

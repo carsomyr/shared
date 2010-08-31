@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -35,7 +35,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * A collection of useful static methods for manipulating arrays.
+ * A static utility class for manipulating arrays.
  * 
  * @author Roy Liu
  */
@@ -379,7 +379,7 @@ public class Arrays {
      *            the key.
      * @param rm
      *            the {@link RoundingMode}.
-     * @return the "nearest" index.
+     * @return the nearest index.
      */
     final public static int binarySearchNearest(int[] values, int from, int to, int key, RoundingMode rm) {
 
@@ -457,7 +457,7 @@ public class Arrays {
      *            the key.
      * @param rm
      *            the {@link RoundingMode}.
-     * @return the "nearest" index.
+     * @return the nearest index.
      */
     final public static int binarySearchNearest(double[] values, int from, int to, double key, RoundingMode rm) {
 
@@ -537,7 +537,7 @@ public class Arrays {
      *            the {@link RoundingMode}.
      * @param <T>
      *            the component type.
-     * @return the "nearest" index.
+     * @return the nearest index.
      */
     final public static <T extends Comparable<? super T>> int binarySearchNearest(T[] values, int from, int to, //
             T key, RoundingMode rm) {
@@ -617,7 +617,7 @@ public class Arrays {
      *            the {@link Comparator} to use.
      * @param <T>
      *            the component type.
-     * @return the "nearest" index.
+     * @return the nearest index.
      */
     final public static <T> int binarySearchNearest(T[] values, T key, Comparator<? super T> c, RoundingMode rm) {
 
@@ -673,7 +673,7 @@ public class Arrays {
      *            the {@link RoundingMode}.
      * @param <T>
      *            the component type.
-     * @return the "nearest" index.
+     * @return the nearest index.
      */
     final public static <T extends Comparable<? super T>> int binarySearchNearest(List<? extends T> values, T key, //
             RoundingMode rm) {
@@ -732,7 +732,7 @@ public class Arrays {
      *            the {@link Comparator} to use.
      * @param <T>
      *            the component type.
-     * @return the "nearest" index.
+     * @return the nearest index.
      */
     final public static <T> int binarySearchNearest(List<? extends T> values, T key, Comparator<? super T> c, //
             RoundingMode rm) {

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -49,7 +49,7 @@ public class Mean extends RealArray implements Cacheable {
     }
 
     /**
-     * Fulfills the {@link Object#equals(Object)} contract.
+     * Fulfills the {@link #equals(Object)} contract.
      */
     @Override
     public boolean equals(Object o) {
@@ -64,7 +64,7 @@ public class Mean extends RealArray implements Cacheable {
     }
 
     /**
-     * Fulfills the {@link Object#hashCode()} contract.
+     * Fulfills the {@link #hashCode()} contract.
      */
     @Override
     public int hashCode() {

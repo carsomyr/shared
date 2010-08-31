@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009-2010 Roy Liu<br />
+ * Copyright (c) 2009-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -38,13 +38,13 @@ import shared.net.filter.OOBEvent.OOBEventType;
 import shared.util.Control;
 
 /**
- * A subclass of {@link AbstractManagedConnection} that also implements {@link FilteredConnection}.
+ * An abstract base class implementing much of {@link FilteredConnection}.
  * 
  * @apiviz.uses shared.net.filter.Filters
  * @param <C>
  *            the parameterization lower bounded by {@link FilteredManagedConnection} itself.
  * @param <T>
- *            the {@link Filter} output type.
+ *            the {@link Filter} inbound type.
  * @author Roy Liu
  */
 abstract public class FilteredManagedConnection<C extends FilteredManagedConnection<C, T>, T> //
@@ -74,8 +74,6 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
 
     /**
      * Default constructor.
-     * 
-     * @see AbstractManagedConnection#AbstractManagedConnection(String, ConnectionManager)
      */
     public FilteredManagedConnection(String name, ConnectionManager manager) {
         super(name, manager);

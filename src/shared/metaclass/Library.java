@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -36,12 +36,12 @@ package shared.metaclass;
 public class Library {
 
     /**
-     * A flag set on load of the native library.
+     * Whether the native library is loaded. Native code sets this to {@code true}.
      */
     protected static boolean INITIALIZED = false;
 
     /**
-     * Checks to see if the native library has been loaded.
+     * Gets whether the native library has been loaded.
      */
     final public static boolean isInitialized() {
         return INITIALIZED;

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 The Regents of the University of California<br />
+ * Copyright (c) 2009 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -32,7 +32,7 @@ import shared.array.RealArray;
 import shared.util.Control;
 
 /**
- * A collection of useful static methods for plotting.
+ * A static utility class for plotting.
  */
 public class PlotBase {
 
@@ -70,7 +70,7 @@ public class PlotBase {
      * 
      * @param length
      *            the desired length.
-     * @return an array consisting of {@code 1}, {@code 2}, <tt>...</tt>, {@code length}.
+     * @return an array consisting of {@code 1}, {@code 2}, <code>...</code>, {@code length}.
      */
     final public static String[] createDefaultTitles(int length) {
 

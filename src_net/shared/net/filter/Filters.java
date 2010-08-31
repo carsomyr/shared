@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009-2010 Roy Liu<br />
+ * Copyright (c) 2009-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -36,7 +36,7 @@ import java.util.Queue;
 import shared.util.Control;
 
 /**
- * A collection of static utility methods in support of filtering.
+ * A static utility class in support of filtering.
  * 
  * @author Roy Liu
  */
@@ -386,9 +386,9 @@ public class Filters {
      * @param filter
      *            the {@link Filter}.
      * @param <I>
-     *            the input type.
+     *            the inbound type.
      * @param <O>
-     *            the output type.
+     *            the outbound type.
      * @return the {@link OOBFilter} adapter, or the original {@link Filter} if it is already an instance.
      */
     final public static <I, O> OOBFilter<I, O> asOOBFilter(final Filter<I, O> filter) {

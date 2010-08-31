@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -27,7 +27,7 @@
  */
 
 /**
- * The location, by convention, of extension Jar and native libraries.
+ * The location, by convention, of extension Jars and native libraries.
  */
 package libx;
 

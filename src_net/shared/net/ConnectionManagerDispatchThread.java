@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -287,14 +287,14 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     }
 
     /**
-     * Handles a query for the list of bound addresses.
+     * Handles a request to get the list of bound addresses.
      */
     protected void handleQueryBoundAddresses(RequestFuture<List<InetSocketAddress>> future) {
         future.set(new ArrayList<InetSocketAddress>(this.acceptRegistry.getAddresses()));
     }
 
     /**
-     * Handles a query for the list of connections, which is an aggregate of the lists reported by helper
+     * Handles a request to get the list of connections, which is an aggregate of the lists reported by helper
      * {@link ConnectionManagerIOThread}s.
      */
     @SuppressWarnings("unchecked")

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -29,7 +29,7 @@
 package shared.array.kernel;
 
 /**
- * Contains constant values pertaining to the reading and writing of Matlab's "mat" file format.
+ * Contains constant values pertaining to the reading and writing of MATLAB's MAT-file format.
  * 
  * @apiviz.exclude
  * @author Roy Liu
@@ -43,92 +43,92 @@ public class MatlabIO {
     final public static short ENDIANNESS = 0x4D49;
 
     /**
-     * Matlab's value for a signed {@code byte}.
+     * MATLAB's value for a signed {@code byte}.
      */
     final public static int MATLAB_MI_INT8 = 1;
 
     /**
-     * Matlab's value for an unsigned {@code byte}.
+     * MATLAB's value for an unsigned {@code byte}.
      */
     final public static int MATLAB_MI_UINT8 = 2;
 
     /**
-     * Matlab's value for a signed {@code short}.
+     * MATLAB's value for a signed {@code short}.
      */
     final public static int MATLAB_MI_INT16 = 3;
 
     /**
-     * Matlab's value for an unsigned {@code short}.
+     * MATLAB's value for an unsigned {@code short}.
      */
     final public static int MATLAB_MI_UINT16 = 4;
 
     /**
-     * Matlab's value for a signed {@code int}.
+     * MATLAB's value for a signed {@code int}.
      */
     final public static int MATLAB_MI_INT32 = 5;
 
     /**
-     * Matlab's value for an unsigned {@code int}.
+     * MATLAB's value for an unsigned {@code int}.
      */
     final public static int MATLAB_MI_UINT32 = 6;
 
     /**
-     * Matlab's value for a {@code float}.
+     * MATLAB's value for a {@code float}.
      */
     final public static int MATLAB_MI_SINGLE = 7;
 
     /**
-     * Matlab's value for a {@code double}.
+     * MATLAB's value for a {@code double}.
      */
     final public static int MATLAB_MI_DOUBLE = 9;
 
     /**
-     * Matlab's value for an array of {@code double}s.
+     * MATLAB's value for an array of {@code double}s.
      */
     final public static int MATLAB_MX_DOUBLE_CLASS = 6;
 
     /**
-     * Matlab's value for an array of {@code float}s.
+     * MATLAB's value for an array of {@code float}s.
      */
     final public static int MATLAB_MX_SINGLE_CLASS = 7;
 
     /**
-     * Matlab's value for an array of signed {@code byte}s.
+     * MATLAB's value for an array of signed {@code byte}s.
      */
     final public static int MATLAB_MX_INT8_CLASS = 8;
 
     /**
-     * Matlab's value for an array of unsigned {@code byte}s.
+     * MATLAB's value for an array of unsigned {@code byte}s.
      */
     final public static int MATLAB_MX_UINT8_CLASS = 9;
 
     /**
-     * Matlab's value for an array of signed {@code short}s.
+     * MATLAB's value for an array of signed {@code short}s.
      */
     final public static int MATLAB_MX_INT16_CLASS = 10;
 
     /**
-     * Matlab's value for an array of unsigned {@code short}s.
+     * MATLAB's value for an array of unsigned {@code short}s.
      */
     final public static int MATLAB_MX_UINT16_CLASS = 11;
 
     /**
-     * Matlab's value for an array of signed {@code int}s.
+     * MATLAB's value for an array of signed {@code int}s.
      */
     final public static int MATLAB_MX_INT32_CLASS = 12;
 
     /**
-     * Matlab's value for an array of unsigned {@code int}s.
+     * MATLAB's value for an array of unsigned {@code int}s.
      */
     final public static int MATLAB_MX_UINT32_CLASS = 13;
 
     /**
-     * Matlab's value for a matrix.
+     * MATLAB's value for a matrix.
      */
     final public static int MATLAB_MI_MATRIX = 14;
 
     /**
-     * An enumeration of Matlab data types.
+     * An enumeration of MATLAB data types.
      */
     public enum DataType {
 
@@ -261,7 +261,7 @@ public class MatlabIO {
         };
 
         /**
-         * Gets the physical Matlab value.
+         * Gets the physical MATLAB value.
          */
         abstract public int getMatlabValue();
 
@@ -272,12 +272,12 @@ public class MatlabIO {
     }
 
     /**
-     * An enumeration of Matlab object types.
+     * An enumeration of MATLAB object types.
      */
     public enum ObjectType {
 
         /**
-         * Denotes a Matlab array of {@code double}s.
+         * Denotes a MATLAB array of {@code double}s.
          */
         MX_DOUBLE_CLASS {
 
@@ -288,7 +288,7 @@ public class MatlabIO {
         }, //
 
         /**
-         * Denotes a Matlab array of {@code float}s.
+         * Denotes a MATLAB array of {@code float}s.
          */
         MX_SINGLE_CLASS {
 
@@ -299,7 +299,7 @@ public class MatlabIO {
         }, //
 
         /**
-         * Denotes a Matlab array of signed {@code byte}s.
+         * Denotes a MATLAB array of signed {@code byte}s.
          */
         MX_INT8_CLASS {
 
@@ -310,7 +310,7 @@ public class MatlabIO {
         }, //
 
         /**
-         * Denotes a Matlab array of unsigned {@code byte}s.
+         * Denotes a MATLAB array of unsigned {@code byte}s.
          */
         MX_UINT8_CLASS {
 
@@ -321,7 +321,7 @@ public class MatlabIO {
         }, //
 
         /**
-         * Denotes a Matlab array of signed {@code short}s.
+         * Denotes a MATLAB array of signed {@code short}s.
          */
         MX_INT16_CLASS {
 
@@ -332,7 +332,7 @@ public class MatlabIO {
         }, //
 
         /**
-         * Denotes a Matlab array of unsigned {@code short}s.
+         * Denotes a MATLAB array of unsigned {@code short}s.
          */
         MX_UINT16_CLASS {
 
@@ -343,7 +343,7 @@ public class MatlabIO {
         }, //
 
         /**
-         * Denotes a Matlab array of signed {@code int}s.
+         * Denotes a MATLAB array of signed {@code int}s.
          */
         MX_INT32_CLASS {
 
@@ -354,7 +354,7 @@ public class MatlabIO {
         }, //
 
         /**
-         * Denotes a Matlab array of unsigned {@code int}s.
+         * Denotes a MATLAB array of unsigned {@code int}s.
          */
         MX_UINT32_CLASS {
 
@@ -365,7 +365,7 @@ public class MatlabIO {
         }, //
 
         /**
-         * Denotes a Matlab matrix.
+         * Denotes a MATLAB matrix.
          */
         MI_MATRIX {
 
@@ -376,7 +376,7 @@ public class MatlabIO {
         };
 
         /**
-         * Gets the physical Matlab value.
+         * Gets the physical MATLAB value.
          */
         abstract public int getMatlabValue();
     }

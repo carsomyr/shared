@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007-2010 Roy Liu<br />
+ * Copyright (c) 2007-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>

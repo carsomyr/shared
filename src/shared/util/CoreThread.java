@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -67,16 +67,16 @@ abstract public class CoreThread extends Thread {
     }
 
     /**
-     * Runs the main body of code and passes any uncaught exceptions up to the {@link Runnable#run()} method.
+     * Runs the main body of code and passes any uncaught exceptions up to the {@link #run()} method.
      * 
      * @throws Exception
-     *             the deferred exception.
+     *             the exception to pass upwards.
      */
     abstract protected void runUnchecked() throws Exception;
 
     /**
-     * Runs the exception handler. The default behavior is to wrap the given {@link Throwable} in a
-     * {@link RuntimeException} and throw that.
+     * Runs the exception handler. The default behavior is to rethrow the given exception if unchecked and to throw a
+     * {@link RuntimeException} wrapping it if checked.
      */
     protected void runCatch(Throwable t) {
         Control.rethrow(t);

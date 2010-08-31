@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -43,14 +43,14 @@ import shared.util.Control;
  * A finite state machine class.
  * 
  * @apiviz.composedOf shared.event.StateTable.StateHandler
- * @apiviz.has shared.event.Transitions - - - argument
  * @apiviz.has shared.event.Event - - - event
+ * @apiviz.has shared.event.Transitions - - - argument
  * @param <X>
  *            the state enumeration type.
  * @param <Y>
  *            the {@link Event} enumeration type.
  * @param <Z>
- *            the parameterization lower bounded by {@link Event} itself.
+ *            the {@link Event} type.
  * @author Roy Liu
  */
 public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z, Y, ?>> {

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -52,7 +52,7 @@ import shared.util.Control;
  * @param <C>
  *            the parameterization lower bounded by {@link XMLConnection} itself.
  * @param <T>
- *            the parameterization lower bounded by {@link XMLEvent} itself.
+ *            the {@link XMLEvent} type.
  * @param <S>
  *            the {@link Source} enumeration type.
  * @author Roy Liu
@@ -106,8 +106,6 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
     /**
      * Alternate constructor.
-     * 
-     * @see #XMLConnection(String, Enum, int, int, ConnectionManager)
      */
     public XMLConnection(String name, S type, int maximumSize, ConnectionManager manager) {
         this(name, type, maximumSize, maximumSize, manager);
@@ -115,8 +113,6 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
     /**
      * Alternate constructor.
-     * 
-     * @see #XMLConnection(String, Enum, int, int, ConnectionManager)
      */
     public XMLConnection(String name, S type, int minimumSize, int maximumSize) {
         this(name, type, minimumSize, maximumSize, ConnectionManager.getInstance());
@@ -124,19 +120,17 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
     /**
      * Alternate constructor.
-     * 
-     * @see #XMLConnection(String, Enum, int, int, ConnectionManager)
      */
     public XMLConnection(String name, S type, int maximumSize) {
         this(name, type, maximumSize, maximumSize, ConnectionManager.getInstance());
     }
 
     /**
-     * Parses the given root DOM {@link Element}.
+     * Parses an {@link XMLEvent} from the given root DOM {@link Element}.
      * 
      * @param rootElement
      *            the root DOM {@link Element}. A {@code null} value signifies an end-of-stream.
-     * @return the parsed event.
+     * @return the {@link XMLEvent}.
      */
     abstract protected T parse(Element rootElement);
 

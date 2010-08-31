@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -36,8 +36,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * A suite encompassing all convenience class tests.
  * 
  * @apiviz.owns shared.test.util.ArraysTest
- * @apiviz.owns shared.test.util.DynamicArrayTest
  * @apiviz.owns shared.test.util.CodecTest
+ * @apiviz.owns shared.test.util.DynamicArrayTest
  * @author Roy Liu
  */
 @RunWith(Suite.class)

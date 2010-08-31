@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -74,7 +74,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     }
 
     /**
-     * Handles a connection dispatch.
+     * Handles a connection dispatch notification.
      */
     protected void handleDispatch(AbstractManagedConnection<?> conn) {
 
@@ -96,7 +96,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     }
 
     /**
-     * Handles a query for the list of connections.
+     * Handles a request to get the list of connections.
      */
     protected void handleQueryConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
 

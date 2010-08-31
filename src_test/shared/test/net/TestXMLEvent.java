@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -106,7 +106,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         };
 
         /**
-         * Given a root DOM {@link Node}, parses a {@link TestXMLEvent} from this type.
+         * Parses a {@link TestXMLEvent} from the given DOM {@link Node}.
          */
         abstract protected TestXMLEvent parseXML(Node rootNode, Source<TestXMLEvent, SourceType> source);
     }

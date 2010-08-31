@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -48,7 +48,7 @@ import org.apache.commons.cli.Options;
 public @interface CLIOptions {
 
     /**
-     * Gets the {@link CLIOption}s.
+     * The {@link CLIOption}s.
      */
     public CLIOption[] options();
 

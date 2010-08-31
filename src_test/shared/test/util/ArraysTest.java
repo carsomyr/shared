@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -66,7 +66,7 @@ public class ArraysTest {
     }
 
     /**
-     * Tests all "nearest" binary search variants.
+     * Tests all nearest binary search variants.
      */
     @Test
     public void testBinarySearchNearest() {

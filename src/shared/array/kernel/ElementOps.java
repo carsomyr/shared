@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -90,13 +90,13 @@ import shared.util.Control;
 /**
  * A class for elementwise operations in pure Java.
  * 
- * @apiviz.has shared.array.kernel.ElementOps.RealBinaryOperation - - - argument
- * @apiviz.has shared.array.kernel.ElementOps.RealAccumulatorOperation - - - argument
- * @apiviz.has shared.array.kernel.ElementOps.RealToComplexOperation - - - argument
- * @apiviz.has shared.array.kernel.ElementOps.IntegerBinaryOperation - - - argument
- * @apiviz.has shared.array.kernel.ElementOps.ComplexBinaryOperation - - - argument
  * @apiviz.has shared.array.kernel.ElementOps.ComplexAccumulatorOperation - - - argument
+ * @apiviz.has shared.array.kernel.ElementOps.ComplexBinaryOperation - - - argument
  * @apiviz.has shared.array.kernel.ElementOps.ComplexToRealOperation - - - argument
+ * @apiviz.has shared.array.kernel.ElementOps.IntegerBinaryOperation - - - argument
+ * @apiviz.has shared.array.kernel.ElementOps.RealAccumulatorOperation - - - argument
+ * @apiviz.has shared.array.kernel.ElementOps.RealBinaryOperation - - - argument
+ * @apiviz.has shared.array.kernel.ElementOps.RealToComplexOperation - - - argument
  * @author Roy Liu
  */
 public class ElementOps {

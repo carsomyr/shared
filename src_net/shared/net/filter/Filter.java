@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -34,15 +34,15 @@ import java.util.Queue;
  * Defines a networking I/O filter.
  * 
  * @param <I>
- *            the nominal input type.
+ *            the inbound type.
  * @param <O>
- *            the nominal output type.
+ *            the outbound type.
  * @author Roy Liu
  */
 public interface Filter<I, O> {
 
     /**
-     * Filters inbound traffic.
+     * Filters traffic in the inbound direction.
      * 
      * @param in
      *            the input {@link Queue}.
@@ -52,7 +52,7 @@ public interface Filter<I, O> {
     public void getInbound(Queue<I> in, Queue<O> out);
 
     /**
-     * Filters outbound traffic.
+     * Filters traffic in the outbound direction.
      * 
      * @param in
      *            the input {@link Queue}.

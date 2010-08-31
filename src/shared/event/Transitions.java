@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -45,7 +45,7 @@ import java.lang.annotation.Target;
 public @interface Transitions {
 
     /**
-     * Gets the {@link Transition}s.
+     * The {@link Transition}s.
      */
     public Transition[] transitions();
 

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -57,7 +57,7 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         ACCEPT, //
 
         /**
-         * Denotes a connection dispatch.
+         * Denotes a connection dispatch notification.
          */
         DISPATCH, //
 
@@ -72,7 +72,7 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         OP, //
 
         /**
-         * Denotes an asynchronous execution request.
+         * Denotes a request to execute code on the manager thread.
          */
         EXECUTE, //
 
@@ -82,22 +82,22 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         CLOSE, //
 
         /**
-         * Denotes a connection error.
+         * Denotes a connection error notification.
          */
         ERROR, //
 
         /**
-         * Denotes a manager thread shutdown request.
+         * Denotes a request to shut down the manager thread.
          */
         SHUTDOWN, //
 
         /**
-         * Denotes a query for the list of bound addresses.
+         * Denotes a request to get the list of bound addresses.
          */
         QUERY_BOUND_ADDRESSES, //
 
         /**
-         * Denotes a query for the list of connections.
+         * Denotes a request to get the list of connections.
          */
         QUERY_CONNECTIONS;
     }

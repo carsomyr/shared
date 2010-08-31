@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007-2010 The Regents of the University of California<br />
+ * Copyright (c) 2007-2010 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -33,15 +33,15 @@ import shared.array.ComplexArray;
 import shared.array.RealArray;
 
 /**
- * A collection of static methods in support of two-dimensional filters.
+ * A static utility class in support of two-dimensional filters.
  * 
  * @author Roy Liu
  */
 public class Filters {
 
     /**
-     * Mutatively normalizes a {@link RealArray} by its <tt>L1</tt> norm or, alternatively, a {@link ComplexArray} by
-     * its complex magnitudes.
+     * Mutatively normalizes a {@link RealArray} by its <code>L1</code> norm or, alternatively, a {@link ComplexArray}
+     * by its complex magnitudes.
      */
     final public static <T extends AbstractArray<?, ?, ?, ?>> void normalize(T array) {
 
@@ -68,9 +68,10 @@ public class Filters {
     }
 
     /**
-     * Creates the <tt>2&#215;2</tt> rotation matrix <br />
-     * <tt>-cos(theta) -sin(theta)</tt> <br />
-     * <tt>-sin(theta) cos(theta)</tt>. <br />
+     * Creates the <code>{@code 2}&#x00D7;{@code 2}</code> rotation matrix<br>
+     * <code style="white-space: pre;">
+     * -cos(&#x03B8;) -sin(&#x03B8;)
+     * -sin(&#x03B8;)  cos(&#x03B8;)</code>.
      * 
      * @param theta
      *            the angle of rotation.
@@ -89,7 +90,7 @@ public class Filters {
     }
 
     /**
-     * Creates a pair of <tt>x</tt> and <tt>y</tt> axis aligned DooG kernels for gradient calculations.
+     * Creates a pair of <code>x</code>- and <code>y</code>-axis aligned DooG kernels for gradient calculations.
      * 
      * @param supportRadius
      *            the kernel support radius.
@@ -106,8 +107,8 @@ public class Filters {
     }
 
     /**
-     * Creates a point support matrix. The top row consists of <tt>x</tt> coordinates, and the bottom row consists of
-     * <tt>y</tt> coordinates. The points range in a square where the origin is at the center.
+     * Creates a point support matrix. The top row consists of <code>x</code>-coordinates, and the bottom row consists
+     * of <code>y</code>-coordinates. The points range in a square where the origin is at the center.
      * 
      * @param supportRadius
      *            the support radius.

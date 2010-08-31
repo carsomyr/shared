@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -179,22 +179,22 @@ abstract public class ErrorDistribution implements Plottable {
     abstract protected void initDataset(RealArray dataset, boolean[] outcomes);
 
     /**
-     * Gets the <tt>x</tt>-axis title.
+     * Gets the <code>x</code>-axis title.
      */
     abstract protected String getXAxisTitle();
 
     /**
-     * Gets the <tt>y</tt>-axis title.
+     * Gets the <code>y</code>-axis title.
      */
     abstract protected String getYAxisTitle();
 
     /**
-     * Gets the <tt>x</tt>-axis range.
+     * Gets the <code>x</code>-axis range.
      */
     abstract protected double[] getXAxisRange();
 
     /**
-     * Gets the <tt>y</tt>-axis range.
+     * Gets the <code>y</code>-axis range.
      */
     abstract protected double[] getYAxisRange();
 }

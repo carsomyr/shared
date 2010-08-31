@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -404,13 +404,13 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
     /**
      * Generates arrays representing integral coordinates along each dimension of a multidimensional function's domain.
-     * Intended to mimic the behavior of the Matlab function of the same name.
+     * Intended to mimic the behavior of the MATLAB function of the same name.
      * 
      * @param ranges
-     *            the range specifications as an array of three-tuples. Given the <tt>i</tt>th tuple, the first
+     *            the range specifications as an array of three-tuples. Given the <code>i</code>th tuple, the first
      *            component denotes the start value, the second component denotes the end value, and the third component
      *            denotes the step size.
-     * @return an array of <tt>n</tt> {@link IntegerArray}s, where <tt>n</tt> is the number of dimensions.
+     * @return an array of <code>n</code> {@link IntegerArray}s, where <code>n</code> is the number of dimensions.
      */
     final public static IntegerArray[] ndgrid(int... ranges) {
 

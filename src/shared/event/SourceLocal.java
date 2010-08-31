@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -32,7 +32,7 @@ package shared.event;
  * Defines the local manifestation of an originator {@link Event}s.
  * 
  * @param <T>
- *            the parameterization lower bounded by {@link Event} itself.
+ *            the {@link Event} type.
  * @author Roy Liu
  */
 public interface SourceLocal<T extends Event<T, ?, ?>> {

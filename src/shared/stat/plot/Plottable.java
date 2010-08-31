@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 The Regents of the University of California<br />
+ * Copyright (c) 2009 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -77,7 +77,7 @@ public interface Plottable {
      * 
      * @param property
      *            the given property.
-     * @return whether the given property is enabled.
+     * @return {@code true} if and only if the given property is enabled.
      */
     public boolean getPropertyEnabled(String property);
 }

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -86,7 +86,7 @@ abstract public class AbstractGMModel {
      *            the mixture components.
      * @param points
      *            the input.
-     * @return the posterior distribution <tt>p(components | points)</tt>.
+     * @return the posterior distribution <code>p(components | points)</code>.
      */
     public RealArray computePosterior(GMComponents gmc, RealArray points) {
 
@@ -115,7 +115,7 @@ abstract public class AbstractGMModel {
      * @param gmc
      *            the mixture components.
      * @param posterior
-     *            the posterior distribution <tt>p(components | points)</tt>.
+     *            the posterior distribution <code>p(components | points)</code>.
      * @param points
      *            the input.
      * @param regularization
@@ -143,7 +143,7 @@ abstract public class AbstractGMModel {
      *            the mixture components.
      * @param points
      *            the input.
-     * @return the log of <tt>p(points | components)</tt>.
+     * @return the log of <code>p(points | components)</code>.
      */
     abstract protected RealArray computeLogWeightedDensities(GMComponents gmc, RealArray points);
 }

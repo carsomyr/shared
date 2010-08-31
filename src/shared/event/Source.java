@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -34,7 +34,7 @@ import java.io.Closeable;
  * Defines an originator of {@link Event}s.
  * 
  * @param <T>
- *            the parameterization lower bounded by {@link Event} itself.
+ *            the {@link Event} type.
  * @param <S>
  *            the {@link Source} enumeration type.
  * @author Roy Liu

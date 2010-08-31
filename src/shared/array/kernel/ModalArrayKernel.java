@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -56,7 +56,9 @@ public class ModalArrayKernel implements ArrayKernel {
     }
 
     /**
-     * Uses the underlying {@link NativeArrayKernel} obtained from {@link Services#createService(Class)}.
+     * Attempts to use the {@link ArrayKernel} obtained from {@link Services#createService(Class)}.
+     * 
+     * @return {@code true} if and only if an implementation could be obtained without resorting to the default kernel.
      */
     public boolean useNative() {
 

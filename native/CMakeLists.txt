@@ -48,7 +48,7 @@ include_directories(
     ${JAVA_INCLUDE_PATH}
     ${JAVA_INCLUDE_PATH2})
 
-# Add the 'sst' build target.
+# Add the sst build target.
 
 set(BUILD_TARGETS "sst")
 add_library("sst" SHARED ${SRC_SHARED} ${SRC_SHARED_COMMON})
@@ -57,7 +57,7 @@ set_target_properties("sst" PROPERTIES VERSION ${VERSION})
 set_target_properties("sst" PROPERTIES COMPILE_FLAGS "")
 set_target_properties("sst" PROPERTIES LINK_FLAGS "")
 
-# Add the 'sstx' build target if FFTW3 is found.
+# Add the sstx build target if FFTW3 is found.
 
 find_library(FFTW3_LIBRARY_FILENAME "fftw3")
 get_filename_component(FFTW3_LIBRARY_PATH ${FFTW3_LIBRARY_FILENAME} PATH)
@@ -73,7 +73,7 @@ if(FFTW3_LIBRARY_PATH AND FFTW3_INCLUDE_PATH)
     set_target_properties("sstx" PROPERTIES VERSION ${VERSION})
     set_target_properties("sstx" PROPERTIES COMPILE_FLAGS "")
 
-    # Be conservative with flags on Mac OS.
+    # Be conservative with linker flags on Mac OS.
 
     if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
@@ -87,7 +87,7 @@ if(FFTW3_LIBRARY_PATH AND FFTW3_INCLUDE_PATH)
 
 endif(FFTW3_LIBRARY_PATH AND FFTW3_INCLUDE_PATH)
 
-# Add the 'sst_cl' build target if OpenCL is found.
+# Add the sst_cl build target if OpenCL is found.
 
 find_library(CL_LIBRARY_FILENAME "OpenCL")
 

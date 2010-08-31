@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -33,7 +33,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import shared.util.Control;
 
 /**
- * A collection of static methods for setting up logging frameworks.
+ * A static utility class for setting up logging frameworks.
  * 
  * @author Roy Liu
  */

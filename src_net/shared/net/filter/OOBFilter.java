@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2010 Roy Liu<br />
+ * Copyright (c) 2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -34,15 +34,15 @@ import java.util.Queue;
  * Defines a {@link Filter} that requires special processing on {@link OOBEvent}s.
  * 
  * @param <I>
- *            the nominal input type.
+ *            the inbound type.
  * @param <O>
- *            the nominal output type.
+ *            the outbound type.
  * @author Roy Liu
  */
 public interface OOBFilter<I, O> extends Filter<I, O> {
 
     /**
-     * Processes an {@link OOBEvent} as it would apply to inbound traffic.
+     * Processes an {@link OOBEvent} as it would apply to the inbound direction.
      * 
      * @param in
      *            the input {@link Queue}.
@@ -56,7 +56,7 @@ public interface OOBFilter<I, O> extends Filter<I, O> {
     public void getInboundOOB(Queue<I> in, Queue<OOBEvent> inEvts, Queue<O> out, Queue<OOBEvent> outEvts);
 
     /**
-     * Processes an {@link OOBEvent} as it would apply to outbound traffic.
+     * Processes an {@link OOBEvent} as it would apply to the outbound direction.
      * 
      * @param in
      *            the input {@link Queue}.

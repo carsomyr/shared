@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -45,12 +45,11 @@ import java.util.jar.JarInputStream;
 
 /**
  * A facility providing a way for programs to take advantage of Jars and native libraries found on the class path. To
- * use it, one annotates a target class with resource descriptions specifying the Jars and native libraries to be
- * loaded.
+ * use it, one annotates a target class with resource descriptions specifying the Jars and native libraries to load.
  * 
  * @apiviz.owns shared.metaclass.RegistryClassLoader
- * @apiviz.has shared.metaclass.Loader.LoadableResources - - - argument
  * @apiviz.has shared.metaclass.Loader.EntryPoint - - - argument
+ * @apiviz.has shared.metaclass.Loader.LoadableResources - - - argument
  * @author Roy Liu
  */
 public class Loader {
@@ -63,12 +62,12 @@ public class Loader {
     public @interface LoadableResources {
 
         /**
-         * Gets the resource descriptions.
+         * The resource descriptions.
          */
         public String[] resources();
 
         /**
-         * Gets the names of packages whose classes require said resources for linking.
+         * The names of packages whose classes require said resources for linking.
          */
         public String[] packages();
     }
@@ -97,7 +96,7 @@ public class Loader {
     }
 
     /**
-     * Delegates to {@link #run(String, Object, boolean)} with the class loader delegation flag set to {@code true}.
+     * Delegates to {@link #run(String, Object, boolean)} with the class loader delegation option set to {@code true}.
      * 
      * @exception Exception
      *                when something goes awry.

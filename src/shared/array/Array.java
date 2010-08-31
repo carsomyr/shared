@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007-2010 Roy Liu<br />
+ * Copyright (c) 2007-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -76,7 +76,7 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
      * @param dst
      *            the destination array.
      * @param bounds
-     *            the mapping bounds as an array of three-tuples. Given the <tt>i</tt>th tuple, the first component
+     *            the mapping bounds as an array of three-tuples. Given the <code>i</code>th tuple, the first component
      *            denotes the source start, the second component denotes the destination start, and the third component
      *            denotes the mapping size. Is very much the multidimensional analogy to
      *            {@link System#arraycopy(Object, int, Object, int, int)}.
@@ -90,7 +90,7 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
      * @param dst
      *            the destination array.
      * @param slices
-     *            the slicing specifications as an array of three-tuples. Given the <tt>i</tt>th tuple, the first
+     *            the slicing specifications as an array of three-tuples. Given the <code>i</code>th tuple, the first
      *            component denotes the source index, the second component denotes the destination index, and the third
      *            component denotes the dimension of interest. The sliced portion is the Cartesian product subarray
      *            delineated by these specifications.
@@ -146,8 +146,8 @@ public interface Array<T extends Array<T, E>, E> extends Cloneable {
      * Gets a subarray delimited by the given bounds.
      * 
      * @param bounds
-     *            the subarray bounds as an array of two-tuples. Given the <tt>i</tt>th tuple, the first component is
-     *            the (inclusive) lower range and the second component is the (exclusive) upper range.
+     *            the subarray bounds as an array of two-tuples. Given the <code>i</code>th tuple, the first component
+     *            is the (inclusive) lower range and the second component is the (exclusive) upper range.
      * @return the subarray.
      */
     public T subarray(int... bounds);

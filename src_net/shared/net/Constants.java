@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -36,7 +36,7 @@ package shared.net;
 public class Constants {
 
     /**
-     * The default backlog size for newly accepted connections.
+     * The default backlog size for listening sockets.
      */
     final public static int DEFAULT_BACKLOG_SIZE = 64;
 

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -58,8 +58,8 @@ import java.util.Set;
  * chain.
  * 
  * @apiviz.composedOf shared.metaclass.RegistryClassLoader.PrefixNode
- * @apiviz.owns shared.metaclass.JarRegistry
  * @apiviz.owns shared.metaclass.FileSystemRegistry
+ * @apiviz.owns shared.metaclass.JarRegistry
  * @apiviz.has shared.metaclass.Policy - - - argument
  * @apiviz.uses shared.metaclass.Library
  * @apiviz.uses shared.metaclass.MetaclassBase
@@ -461,7 +461,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
         }
 
         /**
-         * Checks if the given series of prefixes is contained in the policy hierarchy.
+         * Gets whether the given series of prefixes is contained in the policy hierarchy.
          */
         protected boolean containsPrefixes(String[] prefixes, int index, boolean recursive) {
 

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import shared.util.Control;
 
 /**
- * Contains useful support routines for <a href="http://www.junit.org/">JUnit</a> testing purposes.
+ * A static utility class for <a href="http://www.junit.org/">JUnit</a> testing purposes.
  * 
  * @author Roy Liu
  */
@@ -100,7 +100,7 @@ public class Tests {
     }
 
     /**
-     * Tests if two arrays are equal within a small error tolerance.
+     * Gets whether two arrays are equal within a small error tolerance.
      * 
      * @param aVal
      *            the left hand side.

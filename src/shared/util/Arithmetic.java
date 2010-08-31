@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007-2010 Roy Liu<br />
+ * Copyright (c) 2007-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -291,7 +291,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code int}s with step increment {@code k}.
+     * Creates a <code>[{@code m}, {@code n})</code> range of {@code int}s with step increment {@code k}.
      * 
      * @param m
      *            the (inclusive) start value.
@@ -329,7 +329,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code int}s.
+     * Creates a <code>[{@code m}, {@code n})</code> range of {@code int}s.
      * 
      * @param m
      *            the (inclusive) lower bound.
@@ -342,7 +342,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[0, n)</tt> range of {@code int}s.
+     * Creates a <code>[{@code 0}, {@code n})</code> range of {@code int}s.
      * 
      * @param n
      *            the size of the range.
@@ -353,7 +353,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code double}s with step increment {@code k}.
+     * Creates a <code>[{@code m}, {@code n})</code> range of {@code double}s with step increment {@code k}.
      * 
      * @param m
      *            the (inclusive) start value.
@@ -391,7 +391,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code double}s.
+     * Creates a <code>[{@code m}, {@code n})</code> range of {@code double}s.
      * 
      * @param m
      *            the (inclusive) lower bound.
@@ -404,7 +404,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[0, n)</tt> range of {@code double}s.
+     * Creates a <code>[{@code 0}, {@code n})</code> range of {@code double}s.
      * 
      * @param n
      *            the size of the range.
@@ -415,7 +415,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code long}s with step increment {@code k}.
+     * Creates a <code>[{@code m}, {@code n})</code> range of {@code long}s with step increment {@code k}.
      * 
      * @param m
      *            the (inclusive) start value.
@@ -453,7 +453,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[m, n)</tt> range of {@code long}s.
+     * Creates a <code>[{@code m}, {@code n})</code> range of {@code long}s.
      * 
      * @param m
      *            the (inclusive) lower bound.
@@ -466,7 +466,7 @@ public class Arithmetic {
     }
 
     /**
-     * Creates a <tt>[0, n)</tt> range of {@code long}s.
+     * Creates a <code>[{@code 0}, {@code n})</code> range of {@code long}s.
      * 
      * @param n
      *            the size of the range.
@@ -534,7 +534,7 @@ public class Arithmetic {
      * 
      * @param n
      *            the upper bound.
-     * @return an integer in <tt>[0, n)</tt>.
+     * @return an {@code int} in <code>[{@code 0}, {@code n})</code>.
      */
     final public static int nextInt(int n) {
         return RandomKernel.nextInt(n);
@@ -543,7 +543,7 @@ public class Arithmetic {
     /**
      * A wrapper for {@link Random#nextInt()}.
      * 
-     * @return an integer chosen uniformly at random.
+     * @return an {@code int} chosen uniformly at random.
      */
     final public static int nextInt() {
         return RandomKernel.nextInt();
@@ -552,7 +552,7 @@ public class Arithmetic {
     /**
      * A wrapper for {@link Random#nextLong()}.
      * 
-     * @return a long chosen uniformly at random.
+     * @return a {@code long} chosen uniformly at random.
      */
     final public static long nextLong() {
         return RandomKernel.nextLong();
@@ -563,7 +563,7 @@ public class Arithmetic {
      * 
      * @param a
      *            the upper bound.
-     * @return a {@code double} in <tt>[0, a)</tt>.
+     * @return a {@code double} in <code>[{@code 0}, {@code a})</code>.
      */
     final public static double nextDouble(double a) {
         return a * RandomKernel.nextDouble();

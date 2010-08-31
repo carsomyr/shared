@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -33,7 +33,7 @@ package shared.event;
  * 
  * @apiviz.owns shared.event.StateTable
  * @param <T>
- *            the parameterization lower bounded by {@link Event} itself.
+ *            the {@link Event} type.
  * @param <E>
  *            the {@link Event} enumeration type.
  * @param <S>

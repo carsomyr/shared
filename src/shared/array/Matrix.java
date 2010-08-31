@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -72,7 +72,7 @@ public interface Matrix<T extends Matrix<T, E>, E> extends Array<T, E> {
     /**
      * Gets the singular value decomposition of this matrix.
      * 
-     * @return the matrices "U", "S", and "V".
+     * @return the matrices U, S, and V.
      */
     public T[] mSVD();
 

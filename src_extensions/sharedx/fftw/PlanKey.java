@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2006 The Regents of the University of California<br />
+ * Copyright (c) 2006 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -58,7 +58,7 @@ public class PlanKey {
     }
 
     /**
-     * Fulfills the {@link Object#equals(Object)} contract.
+     * Fulfills the {@link #equals(Object)} contract.
      */
     @Override
     public boolean equals(Object o) {
@@ -75,7 +75,7 @@ public class PlanKey {
     }
 
     /**
-     * Fulfills the {@link Object#hashCode()} contract.
+     * Fulfills the {@link #hashCode()} contract.
      */
     @Override
     public int hashCode() {

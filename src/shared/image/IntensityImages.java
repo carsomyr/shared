@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -45,7 +45,7 @@ import shared.array.RealArray;
 import shared.util.Control;
 
 /**
- * A collection of static methods for reading and writing intensity images represented as {@link RealArray}s.
+ * A static utility class for reading and writing intensity images represented as {@link RealArray}s.
  * 
  * @author Roy Liu
  */

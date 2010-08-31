@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -38,12 +38,12 @@ import shared.array.RealArray;
 public class ROC extends ErrorDistribution {
 
     /**
-     * The <tt>x</tt>-axis range.
+     * The <code>x</code>-axis range.
      */
     final protected static double[] XRange = new double[] { 0.0, 1.0 };
 
     /**
-     * The <tt>y</tt>-axis range.
+     * The <code>y</code>-axis range.
      */
     final protected static double[] YRange = new double[] { 0.0, 1.0 };
 

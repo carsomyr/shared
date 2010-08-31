@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -80,7 +80,7 @@ public class AllNetTests {
     final protected static String KEYSTORE_PATHNAME = "shared/test/net/keystore.jks";
 
     /**
-     * The names of {@link org.apache.log4j.Logger}s used in this test.
+     * The names of {@link Logger}s used in this test.
      */
     final protected static String[] LoggerNames = new String[] {
             //
@@ -94,8 +94,7 @@ public class AllNetTests {
     final protected static Collection<Object[]> Parameterizations;
 
     /**
-     * A flag indicating whether {@link Logger} {@link Level} should be set low enough so as to enable debugging
-     * messages to appear.
+     * Whether the logging {@link Level} should be set low enough so as to enable debugging messages to appear.
      */
     final protected static boolean DEBUG;
 

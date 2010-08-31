@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -53,7 +53,7 @@ public class GMComponents {
     final public RealArray covariances;
 
     /**
-     * The likelihood. Updates every time one obtains a new likelihood from the <tt>M</tt> step.
+     * The likelihood. Updates every time one obtains a new likelihood from the <code>M</code> step.
      */
     public double likelihood;
 

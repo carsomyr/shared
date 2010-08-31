@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -513,7 +513,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
         }
 
         /**
-         * Checks if the real and imaginary parts are equal.
+         * Fulfills the {@link #equals(Object)} contract.
          */
         @Override
         public boolean equals(Object o) {
@@ -527,7 +527,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
         }
 
         /**
-         * Fulfills the {@link Object#hashCode()} contract.
+         * Fulfills the {@link #hashCode()} contract.
          */
         @Override
         public int hashCode() {

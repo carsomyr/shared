@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2010 Roy Liu<br />
+ * Copyright (c) 2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -52,22 +52,22 @@ public class OOBEvent implements Event<OOBEvent, OOBEvent.OOBEventType, SourceTy
         CUSTOM, //
 
         /**
-         * Denotes a connection bind.
+         * Denotes connection binding.
          */
         BIND, //
 
         /**
-         * Denotes a connection closure by end-of-stream.
+         * Denotes connection closure by end-of-stream.
          */
         CLOSING_EOS, //
 
         /**
-         * Denotes a connection closure by user request.
+         * Denotes connection closure by user request.
          */
         CLOSING_USER, //
 
         /**
-         * Denotes a connection closure by error.
+         * Denotes connection closure by error.
          */
         CLOSING_ERROR;
     }

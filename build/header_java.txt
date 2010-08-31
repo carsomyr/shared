@@ -1,6 +1,6 @@
 ^/\*\*$
 ^ \* <p>$
-^ \* Copyright \(C\) \d\d\d\d(?:-\d\d\d\d){0,1} .*<br />$
+^ \* Copyright \(c\) \d\d\d\d(?:-\d\d\d\d){0,1} .*<br>$
 ^ \* All rights reserved\.$
 ^ \* </p>$
 ^ \* <p>$

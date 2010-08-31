@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005-2010 Roy Liu<br />
+ * Copyright (c) 2005-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -618,8 +618,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
     /**
      * Alternate constructor.
-     * 
-     * @see #AbstractManagedConnection(String, ConnectionManager)
      */
     protected AbstractManagedConnection(String name) {
         this(name, ConnectionManager.getInstance());
@@ -710,7 +708,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         Socket socket = channel.socket();
 
-        // Set some magical TCP options to improve responsiveness.
+        // Set some magical TCP socket options to improve responsiveness.
         socket.setTcpNoDelay(true);
         socket.setKeepAlive(true);
         socket.setSendBufferSize(socketBufferSize);
@@ -765,8 +763,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
     /**
      * {@link ConnectionManagerThread} call -- Reads exclusively from this connection's receive buffer. Does <i>not</i>
-     * do own exception handling. <br />
-     * <br />
+     * do own exception handling.<br>
+     * <br>
      * IMPORTANT NOTE: This method complies with the behavior specified in
      * {@link ConnectionManagerThread#handleOp(AbstractManagedConnection, int, boolean)}.
      * 
@@ -890,7 +888,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             setNullHandler();
         }
 
-        // SocketChannel operations are thread-safe.
         Control.close(this.channel);
         deregisterKey();
 

@@ -21,7 +21,7 @@ ICON_PNGS		= $(patsubst src/icon/icon_%.svg, icon_%.png, \
 				$(wildcard src/icon/icon_*.svg))
 ICON_ICO		= include/win32/icon.ico
 
-# CMake Flags
+# CMake
 
 CMAKE			= cmake
 CMAKE_TOOLCHAIN	= ../../build/conf/mingw.cmake

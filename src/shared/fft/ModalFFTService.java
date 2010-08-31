@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 The Regents of the University of California<br />
+ * Copyright (c) 2008 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -53,7 +53,9 @@ public class ModalFFTService implements FFTService {
     }
 
     /**
-     * Uses the service provider obtained from {@link Services#createService(Class)}.
+     * Attempts to use the {@link FFTService} obtained from {@link Services#createService(Class)}.
+     * 
+     * @return {@code true} if and only if an implementation could be obtained without resorting to the default service.
      */
     public boolean useProvider() {
 

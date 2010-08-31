@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -31,7 +31,7 @@ package shared.util;
 import java.util.concurrent.FutureTask;
 
 /**
- * A subclass of {@link FutureTask} specially geared toward asynchronous request-response patterns.
+ * A subclass of {@link FutureTask} specially geared toward request-response patterns.
  * 
  * @param <T>
  *            the result type.
@@ -47,7 +47,7 @@ public class RequestFuture<T> extends FutureTask<T> {
     }
 
     /**
-     * Gives public visibility to the {@link FutureTask#set(Object)} method.
+     * Gives public visibility to the {@link #set(Object)} method.
      */
     @Override
     public void set(T v) {
@@ -55,7 +55,7 @@ public class RequestFuture<T> extends FutureTask<T> {
     }
 
     /**
-     * Gives public visibility to the {@link FutureTask#setException(Throwable)} method.
+     * Gives public visibility to the {@link #setException(Throwable)} method.
      */
     @Override
     public void setException(Throwable t) {

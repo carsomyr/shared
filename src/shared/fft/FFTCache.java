@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007-2010 The Regents of the University of California<br />
+ * Copyright (c) 2007-2010 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -135,7 +135,7 @@ abstract public class FFTCache<C extends AbstractArray<C, C, R, ?>, R extends Ab
         }
 
         /**
-         * Computes the <tt>xor</tt> of the hash codes of the array and the padded dimensions.
+         * Fulfills the {@link #hashCode()} contract.
          */
         @Override
         public int hashCode() {
@@ -143,7 +143,7 @@ abstract public class FFTCache<C extends AbstractArray<C, C, R, ?>, R extends Ab
         }
 
         /**
-         * Checks for equality on the array and the padded dimensions.
+         * Fulfills the {@link #equals(Object)} contract.
          */
         @SuppressWarnings("unchecked")
         @Override

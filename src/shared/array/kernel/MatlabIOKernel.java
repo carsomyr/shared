@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -73,7 +73,7 @@ import shared.array.kernel.MatlabIO.DataType;
 import shared.util.Control;
 
 /**
- * An implementation of {@link ArrayIOKernel} that reads and writes Matlab "mat" files.
+ * An implementation of {@link ArrayIOKernel} that reads and writes MATLAB MAT-files.
  * 
  * @apiviz.composedOf shared.array.kernel.MatlabIOKernel.DoubleArrayDataElement
  * @apiviz.composedOf shared.array.kernel.MatlabIOKernel.IntArrayDataElement
@@ -177,7 +177,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     }
 
     /**
-     * Gets the binary representation of the "mat" file header.
+     * Gets the binary representation of the MAT-file header.
      */
     final public static byte[] getHeaderBytes(String text) {
 
@@ -319,7 +319,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     }
 
     /**
-     * Converts the given {@link Array}s into "mat" format.
+     * Converts the given {@link Array}s into MAT-file format.
      * 
      * @param <T>
      *            the {@link Array} type.
@@ -359,7 +359,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     }
 
     /**
-     * Parses a series of {@link Array}s from "mat" format.
+     * Parses a series of {@link Array}s from MAT-file format.
      */
     public Array<?, ?>[] parseMat(byte[] data) {
 
@@ -470,7 +470,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     }
 
     /**
-     * A Matlab data element.
+     * A MATLAB data element.
      * 
      * @param <T>
      *            the result type.
@@ -523,7 +523,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     }
 
     /**
-     * A Matlab data element that is an array of {@code int}s.
+     * A MATLAB data element that is an array of {@code int}s.
      */
     protected static class IntArrayDataElement extends DataElement<int[]> {
 
@@ -611,7 +611,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     }
 
     /**
-     * A Matlab data element that is an array of {@code double}s.
+     * A MATLAB data element that is an array of {@code double}s.
      */
     protected static class DoubleArrayDataElement extends DataElement<double[]> {
 
@@ -725,7 +725,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
     }
 
     /**
-     * A Matlab matrix data element.
+     * A MATLAB matrix data element.
      */
     protected static class MatrixDataElement extends DataElement<Array<?, ?>> {
 

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -58,6 +58,9 @@ public interface SocketInformation<T extends SocketInformation<T>> {
 
     /**
      * Sets the read/write buffer size.
+     * 
+     * @param size
+     *            the buffer size.
      */
     public T setBufferSize(int size);
 

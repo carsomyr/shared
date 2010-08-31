@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -41,7 +41,7 @@ import shared.util.Arithmetic;
 import shared.util.Control;
 
 /**
- * A collection of useful static methods and data structures common to all {@link Array} implementations.
+ * A static utility class for common {@link Array} operations.
  * 
  * @author Roy Liu
  */
@@ -63,7 +63,7 @@ public class ArrayBase {
     final public static ModalFFTService FFTService = new ModalFFTService();
 
     /**
-     * The default storage order shall be {@link shared.array.Array.IndexingOrder#FAR}.
+     * The default storage order shall be {@link IndexingOrder#FAR}.
      */
     final public static IndexingOrder DEFAULT_ORDER = IndexingOrder.FAR;
 

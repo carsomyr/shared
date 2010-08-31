@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009-2010 Roy Liu<br />
+ * Copyright (c) 2009-2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -39,9 +39,9 @@ import shared.net.Connection;
  * @apiviz.owns shared.net.filter.FilterFactory
  * @apiviz.uses shared.net.filter.Filters
  * @param <I>
- *            the nominal input type.
+ *            the inbound type.
  * @param <O>
- *            the nominal output type.
+ *            the outbound type.
  * @param <C>
  *            the {@link Connection} type.
  * @author Roy Liu
@@ -74,8 +74,8 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
      * Adds the given {@link FilterFactory} to the end of this chain.
      * 
      * @param <T>
-     *            the nominal output type of the resulting chain.
-     * @return the resulting longer chain.
+     *            the outbound type of the resulting chain.
+     * @return the resulting, longer chain.
      */
     public <T> ChainFilterFactory<I, T, C> add( //
             FilterFactory<? extends Filter<? super O, T>, ? super O, T, ? super C> factory) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Roy Liu
+ * Copyright (c) 2007 Roy Liu
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -34,27 +34,29 @@ class NativeArrayKernel {
 public:
 
     /**
-     * Checks if the given object is of type 'int[]'.
+     * Gets whether the given object is of type int[].
      * 
      * @param env
      *      the JNI environment.
      * @param obj
      *      the object.
+     * @return true if and only if the object is of type int[].
      */
     static jboolean isJintArray(JNIEnv *env, jobject obj);
 
     /**
-     * Checks if the given object is of type 'double[]'.
+     * Gets whether the given object is of type double[].
      * 
      * @param env
      *      the JNI environment.
      * @param obj
      *      the object.
+     * @return true if and only if the object is of type double[].
      */
     static jboolean isJdoubleArray(JNIEnv *env, jobject obj);
 
     /**
-     * Checks whether one type is assignable from another.
+     * Gets whether one type is assignable from another.
      * 
      * @param env
      *      the JNI environment.
@@ -62,6 +64,7 @@ public:
      *      the assignee.
      * @param from
      *      the assigner.
+     * @return true if and only if the LHS is a superclass of the RHS.
      */
     static jboolean isAssignableFrom(JNIEnv *env, jclass to, jclass from);
 
@@ -77,7 +80,7 @@ public:
     static jclass getComponentType(JNIEnv *env, jclass clazz);
 
     /**
-     * Creates a Java array of type 'Object[]'.
+     * Creates a Java array of type Object[].
      * 
      * @param env
      *      the JNI environment.
@@ -85,6 +88,7 @@ public:
      *      the component type.
      * @param len
      *      the length.
+     * @return the newly allocated Object array.
      */
     static jobjectArray newArray(JNIEnv *env, jclass clazz, jint len);
 

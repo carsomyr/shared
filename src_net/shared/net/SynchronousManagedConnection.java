@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2008 Roy Liu<br />
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -68,7 +68,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     }
 
     /**
-     * Defines a gadget that supports {@link ManagedInputStream}.
+     * Defines a gadget that supports {@link ManagedInputStream} and {@link ManagedOutputStream}.
      */
     protected interface Resolver {
 
@@ -262,8 +262,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
     /**
      * Default constructor.
-     * 
-     * @see AbstractManagedConnection#AbstractManagedConnection(String, ConnectionManager)
      */
     public SynchronousManagedConnection(String name, ConnectionManager manager) {
         super(name, manager);
@@ -283,8 +281,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
     /**
      * Alternate constructor.
-     * 
-     * @see #SynchronousManagedConnection(String, ConnectionManager)
      */
     public SynchronousManagedConnection(String name) {
         this(name, ConnectionManager.getInstance());

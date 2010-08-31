@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -50,7 +50,7 @@ public class Gabor extends ComplexArray implements Cacheable {
     }
 
     /**
-     * Fulfills the {@link Object#equals(Object)} contract.
+     * Fulfills the {@link #equals(Object)} contract.
      */
     @Override
     public boolean equals(Object o) {
@@ -68,7 +68,7 @@ public class Gabor extends ComplexArray implements Cacheable {
     }
 
     /**
-     * Fulfills the {@link Object#hashCode()} contract.
+     * Fulfills the {@link #hashCode()} contract.
      */
     @Override
     public int hashCode() {

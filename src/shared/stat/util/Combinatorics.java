@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 The Regents of the University of California<br />
+ * Copyright (c) 2007 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -32,7 +32,7 @@ import shared.util.Control;
 import shared.util.DynamicObjectArray;
 
 /**
- * A collection of useful static methods for combinatorics.
+ * A static utility class for combinatorics.
  * 
  * @author Roy Liu
  */

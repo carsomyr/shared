@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2006 The Regents of the University of California<br />
+ * Copyright (c) 2006 The Regents of the University of California<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -31,7 +31,7 @@ package sharedx.fftw;
 import java.util.Arrays;
 
 /**
- * The Java peer to <a href="http://www.fftw.org/">FFTW3</a> <tt>plan</tt> structures.
+ * The Java peer to <a href="http://www.fftw.org/">FFTW3</a> {@code plan} structures.
  * 
  * @author Roy Liu
  */

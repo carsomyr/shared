@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010 Roy Liu
+ * Copyright (c) 2008-2010 Roy Liu
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
@@ -73,7 +73,7 @@ jint Library::JNI_OnLoad(JavaVM *jvm, void *reserved) {
 
 #endif
 
-        // Set the initialization flag field to be true.
+        // Set the initialization flag to true.
         env->SetStaticBooleanField(libraryClass, initializedFieldID, JNI_TRUE);
 
     } catch (std::exception &e) {
@@ -105,7 +105,7 @@ void Library::JNI_OnUnload(JavaVM *jvm, void *reserved) {
 
     //
 
-    // Set the initialization flag field to be false.
+    // Set the initialization flag to false.
     env->SetStaticBooleanField(libraryClass, initializedFieldID, JNI_FALSE);
 
     Common::deleteWeakGlobalRef(env, servicesClass);

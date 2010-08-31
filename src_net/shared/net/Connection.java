@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2005 Roy Liu<br />
+ * Copyright (c) 2005 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -34,7 +34,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 /**
- * Defines an asynchronous, callback-based socket.
+ * Defines a managed connection.
  * 
  * @author Roy Liu
  */
@@ -88,12 +88,12 @@ public interface Connection extends Closeable, Executor {
     public static enum OperationType {
 
         /**
-         * Denotes asynchronous reads.
+         * Denotes managed reads.
          */
         READ, //
 
         /**
-         * Denotes asynchronous writes.
+         * Denotes managed writes.
          */
         WRITE;
     }
@@ -101,7 +101,7 @@ public interface Connection extends Closeable, Executor {
     // Callback methods are not necessarily thread-safe, and thus must execute on internal threads.
 
     /**
-     * On successful bind.
+     * On binding.
      */
     public void onBind();
 
@@ -114,7 +114,7 @@ public interface Connection extends Closeable, Executor {
     public void onReceive(ByteBuffer bb);
 
     /**
-     * On connection closure.
+     * On closure.
      * 
      * @param type
      *            the {@link ClosingType}.
@@ -125,7 +125,7 @@ public interface Connection extends Closeable, Executor {
     public void onClosing(ClosingType type, ByteBuffer bb);
 
     /**
-     * On completion of connection closure.
+     * On completion of closure.
      */
     public void onClose();
 
@@ -148,7 +148,7 @@ public interface Connection extends Closeable, Executor {
     public <R, T> Future<R> init(InitializationType type, T argument);
 
     /**
-     * Asynchronously sends data to the remote host.
+     * Sends data to the remote host.
      * 
      * @param bb
      *            the {@link ByteBuffer} containing data. It must be in ready-to-read mode.
@@ -197,7 +197,7 @@ public interface Connection extends Closeable, Executor {
     public void close();
 
     /**
-     * Guarantees that the given code snippet executes serially with respect to callbacks.
+     * Executes the given code snippet on this connection's manager thread.
      * 
      * @param r
      *            the code snippet to execute.

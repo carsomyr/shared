@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -40,7 +40,7 @@ import shared.net.Connection;
  * @param <C>
  *            the parameterization lower bounded by {@link FilteredConnection} itself.
  * @param <T>
- *            the {@link Filter} output type.
+ *            the {@link Filter} inbound type.
  * @author Roy Liu
  */
 public interface FilteredConnection<C extends FilteredConnection<C, T>, T> extends Connection {
@@ -54,7 +54,7 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
     public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory);
 
     /**
-     * Sends the given outbound value.
+     * Sends the given outbound value to the remote host.
      * 
      * @param outbound
      *            the outbound value.
@@ -63,10 +63,10 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
     public int sendOutbound(T outbound);
 
     /**
-     * On successful bind.
+     * On binding.
      * 
      * @param inbounds
-     *            the inbound values.
+     *            the inbound {@link Queue}.
      */
     public void onBind(Queue<T> inbounds);
 
@@ -74,17 +74,17 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
      * On receipt of data.
      * 
      * @param inbounds
-     *            the inbound values.
+     *            the inbound {@link Queue}.
      */
     public void onReceive(Queue<T> inbounds);
 
     /**
-     * On connection closure.
+     * On closure.
      * 
      * @param type
      *            the {@link shared.net.Connection.ClosingType}.
      * @param inbounds
-     *            the inbound values.
+     *            the inbound {@link Queue}.
      * @see shared.net.Connection.ClosingType
      */
     public void onClosing(ClosingType type, Queue<T> inbounds);

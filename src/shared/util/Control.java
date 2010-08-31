@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2007 Roy Liu<br />
+ * Copyright (c) 2007 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -68,7 +68,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * A collection of useful static methods for control flow.
+ * A static utility class for control flow.
  * 
  * @author Roy Liu
  */
@@ -248,6 +248,8 @@ public class Control {
             Thread.sleep(millis);
 
         } catch (InterruptedException e) {
+
+            // Do nothing.
         }
     }
 
@@ -315,7 +317,7 @@ public class Control {
      * 
      * @param f
      *            the file or directory.
-     * @return whether the file or directory was deleted.
+     * @return {@code true} if and only if the file or directory was deleted.
      */
     final public static boolean delete(File f) {
 
@@ -342,7 +344,7 @@ public class Control {
      *            the source file or directory.
      * @param dst
      *            the destination file or directory.
-     * @return whether the copy operation went smoothly.
+     * @return {@code true} if and only if the copy operation went smoothly.
      */
     final public static boolean copy(File src, File dst) {
 
@@ -390,7 +392,7 @@ public class Control {
     }
 
     /**
-     * Tests whether the given file is a symbolic link.
+     * Gets whether the given file is a symbolic link.
      */
     final public static boolean isSymbolicLink(File f) {
 
@@ -1091,28 +1093,28 @@ public class Control {
     }
 
     /**
-     * Creates a {@link Document}.
+     * Creates a new {@link Document}.
      */
     final public static Document createDocument() {
         return BuilderLocal.get().newDocument();
     }
 
     /**
-     * Creates a {@link Document} from the given {@code byte} array.
+     * Parses a {@link Document} from the given {@code byte} array.
      */
     final public static Document createDocument(byte[] array) {
         return createDocument(new ByteArrayInputStream(array));
     }
 
     /**
-     * Creates a {@link Document} from the given string.
+     * Parses a {@link Document} from the given string.
      */
     final public static Document createDocument(String data) {
         return createDocument(new ByteArrayInputStream(data.getBytes()));
     }
 
     /**
-     * Creates a {@link Document} from the given file.
+     * Parses a {@link Document} from the given file.
      */
     final public static Document createDocument(File file) {
 
@@ -1131,7 +1133,7 @@ public class Control {
     }
 
     /**
-     * Creates a {@link Document} from the given {@link InputStream}.
+     * Parses a {@link Document} from the given {@link InputStream}.
      */
     final public static Document createDocument(InputStream in) {
 
@@ -1146,7 +1148,7 @@ public class Control {
     }
 
     /**
-     * Converts the given {@link Document} to a string.
+     * Converts the given DOM {@link Node} to a string.
      */
     final public static String toString(Node node) {
 

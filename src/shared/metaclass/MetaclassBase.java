@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -44,7 +44,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
- * A collection of useful static methods and infrastructure.
+ * A static utility class for common class loader operations.
  * 
  * @apiviz.composedOf shared.metaclass.MetaclassBase.TemporaryFileSet
  * @author Roy Liu

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (C) 2009 Roy Liu<br />
+ * Copyright (c) 2009 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -32,7 +32,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 /**
- * A collection of static utility methods for {@link Buffer} manipulations.
+ * A static utility class for {@link Buffer} manipulations.
  * 
  * @author Roy Liu
  */
