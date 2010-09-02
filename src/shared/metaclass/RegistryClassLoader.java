@@ -98,8 +98,8 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
             this.recursiveMethod = this.policyClass.getDeclaredMethod("recursive");
             this.includesMethod = this.policyClass.getDeclaredMethod("includes");
 
-            // Force loading of shared.metaclass.Library by this class loader to effectively make native
-            // libraries exclusive to it and not the parent class loader.
+            // Force loading of shared.metaclass.Library by this class loader to effectively make native libraries
+            // exclusive to it and not the parent class loader.
             Class<?> clazz = findClass("shared.metaclass.Library");
             this.loadMethod = clazz.getDeclaredMethod("load", String.class);
             this.loadLibraryMethod = clazz.getDeclaredMethod("loadLibrary", String.class);
@@ -251,8 +251,8 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
         // Attempt to load from a file, if found.
         if (url != null) {
 
-            String filename = //
-            (url.getProtocol().equals("file") ? url : getResourceAsTemporaryFile(this, pathname)).getPath();
+            String filename = (url.getProtocol().equals("file") ? url //
+                    : getResourceAsTemporaryFile(this, pathname)).getPath();
 
             try {
 

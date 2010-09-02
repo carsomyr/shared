@@ -178,8 +178,8 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
 
     @Override
     public ComplexArray[] mSVD() {
-        throw new UnsupportedOperationException(
-                "Complex matrices currently do not support singular value decompositions");
+        throw new UnsupportedOperationException("Complex matrices currently do not support " //
+                + "singular value decompositions");
     }
 
     @Override

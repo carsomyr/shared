@@ -958,7 +958,8 @@ public class ElementOps {
                 }
 
                 for (int i = 0, n = Control.checkEquals(Control.checkEquals(lhsV.length, rhsV.length), dstV.length); //
-                i < n; i++) {
+                i < n; //
+                i++) {
                     dstV[i] = op.op(lhsV[i], rhsV[i]);
                 }
             }
@@ -998,7 +999,8 @@ public class ElementOps {
             }
 
             for (int i = 0, n = Control.checkEquals(Control.checkEquals(lhsV.length, rhsV.length), dstV.length); //
-            i < n; i++) {
+            i < n; //
+            i++) {
                 dstV[i] = op.op(lhsV[i], rhsV[i]);
             }
 
@@ -1037,7 +1039,8 @@ public class ElementOps {
             double[] tmp = new double[2];
 
             for (int i = 0, j = 0, n = Control.checkEquals(srcV_d.length * 2, dstV_d.length) / 2; //
-            i < n; i++, j += 2) {
+            i < n; //
+            i++, j += 2) {
 
                 op.op(tmp, srcV_d[i]);
 
@@ -1071,7 +1074,8 @@ public class ElementOps {
             }
 
             for (int i = 0, j = 0, n = Control.checkEquals(srcV_d.length, dstV_d.length * 2); //
-            i < n; i += 2, j++) {
+            i < n; //
+            i += 2, j++) {
                 dstV_d[j] = op.op(srcV_d[i], srcV_d[i + 1]);
             }
 

@@ -67,7 +67,8 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
             FilterFactory<? extends Filter<?, O>, ?, O, ? super C> factory) {
 
         this.factories = Arrays.copyOf(factories, factories.length + 1, FilterFactory[].class);
-        this.factories[this.factories.length - 1] = (FilterFactory<? extends Filter<Object, Object>, Object, Object, ? super C>) factory;
+        this.factories[this.factories.length - 1] = //
+        (FilterFactory<? extends Filter<Object, Object>, Object, Object, ? super C>) factory;
     }
 
     /**

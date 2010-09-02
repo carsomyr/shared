@@ -55,8 +55,8 @@ public class TestXMLConnection extends XMLConnection<TestXMLConnection, TestXMLE
      * @param receiver
      *            the local receiver to which events will be forwarded.
      */
-    public TestXMLConnection(String name, int minimumSize, int maximumSize, ConnectionManager manager,
-            SourceLocal<TestXMLEvent> receiver) {
+    public TestXMLConnection(String name, int minimumSize, int maximumSize, //
+            ConnectionManager manager, SourceLocal<TestXMLEvent> receiver) {
         super(name, CONNECTION, minimumSize, maximumSize, manager);
 
         this.receiver = receiver;

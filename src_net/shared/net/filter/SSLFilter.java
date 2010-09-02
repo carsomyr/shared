@@ -368,7 +368,6 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
             Queue<ByteBuffer> out, Queue<OOBEvent> outEvts) {
 
         Filters.transfer(inEvts, outEvts);
-
         getInbound(in, out);
     }
 

@@ -140,8 +140,7 @@ public class SynchronousConnectionTest {
             verifiers.add(createSender(i, bufferSize, new InetSocketAddress(hostname, port)));
         }
 
-        // Reverse the verifier list so that we synchronize on senders first and detect any errors that may
-        // arise.
+        // Reverse the verifier list so that we synchronize on senders first and detect any errors that may arise.
         Collections.reverse(verifiers);
 
         for (Verifier v : verifiers) {
@@ -287,8 +286,7 @@ public class SynchronousConnectionTest {
                 InputStream in = sender.getInputStream();
                 OutputStream out = sender.getOutputStream();
 
-                ByteBuffer header = (ByteBuffer) ByteBuffer.allocate(8) //
-                        .putLong(0xCAFEBABEDEADBEEFL).flip();
+                ByteBuffer header = (ByteBuffer) ByteBuffer.allocate(8).putLong(0xCAFEBABEDEADBEEFL).flip();
 
                 for (int i = 0; i < 8; i++) {
                     out.write(header.get());

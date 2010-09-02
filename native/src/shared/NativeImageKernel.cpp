@@ -43,8 +43,8 @@ void NativeImageKernel::createIntegralImage(JNIEnv *env, jobject thisObj, //
         jint dstLen = env->GetArrayLength(dstV);
         jint nDims = env->GetArrayLength(srcD);
 
-        if ((nDims != env->GetArrayLength(srcS)) //
-                || (nDims != env->GetArrayLength(dstD)) //
+        if ((nDims != env->GetArrayLength(srcS))
+                || (nDims != env->GetArrayLength(dstD))
                 || (nDims != env->GetArrayLength(dstS))) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -104,9 +104,9 @@ void NativeImageKernel::createIntegralImage(JNIEnv *env, jobject thisObj, //
             jint size = dstDArr[dim];
             jint stride = dstSArr[dim];
 
-            for (jint lower = 0, upper = indexBlockIncrement / size; //
-            lower < dstLen; //
-            lower += indexBlockIncrement, upper += indexBlockIncrement) {
+            for (jint lower = 0, upper = indexBlockIncrement / size;
+                    lower < dstLen;
+                    lower += indexBlockIncrement, upper += indexBlockIncrement) {
 
                 for (jint indexIndex = lower; indexIndex < upper; indexIndex++) {
 
@@ -142,9 +142,9 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
         jint dstLen = env->GetArrayLength(dstV);
         jint nDims = env->GetArrayLength(srcD);
 
-        if ((nDims != env->GetArrayLength(srcS)) //
-                || (nDims + 1 != env->GetArrayLength(dstD)) //
-                || (nDims + 1 != env->GetArrayLength(dstS)) //
+        if ((nDims != env->GetArrayLength(srcS))
+                || (nDims + 1 != env->GetArrayLength(dstD))
+                || (nDims + 1 != env->GetArrayLength(dstS))
                 || (srcLen != memLen)) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -212,15 +212,16 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
 
         MappingOps::assignMappingIndices(dstIndices, dstDArr, dstSArr, nDims);
 
-        for (jint dim = 0, indexBlockIncrement = dstLenModified; dim < nDims; //
-        indexBlockIncrement /= dstDArr[dim++]) {
+        for (jint dim = 0, indexBlockIncrement = dstLenModified;
+                dim < nDims;
+                indexBlockIncrement /= dstDArr[dim++]) {
 
             jint size = dstDArr[dim];
             jint stride = dstSArr[dim];
 
-            for (jint lower = 0, upper = indexBlockIncrement / size; //
-            lower < dstLenModified; //
-            lower += indexBlockIncrement, upper += indexBlockIncrement) {
+            for (jint lower = 0, upper = indexBlockIncrement / size;
+                    lower < dstLenModified;
+                    lower += indexBlockIncrement, upper += indexBlockIncrement) {
 
                 for (jint indexIndex = lower; indexIndex < upper; indexIndex++) {
 

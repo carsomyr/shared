@@ -36,10 +36,10 @@ jobject SparseOps::slice(JNIEnv *env, jobject thisObj, //
 
     try {
 
-        if (!slices //
-                || !srcV || !srcD || !srcS || !srcDO //
-                || !srcI || !srcIO || !srcII //
-                || !dstV || !dstD || !dstS || !dstDO //
+        if (!slices
+                || !srcV || !srcD || !srcS || !srcDO
+                || !srcI || !srcIO || !srcII
+                || !dstV || !dstD || !dstS || !dstDO
                 || !dstI || !dstIO || !dstII) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -91,15 +91,15 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         jint nSlices = env->GetArrayLength(slices) / 3;
 
-        if ((nDims != env->GetArrayLength(srcS)) //
-                || (nDims != env->GetArrayLength(dstD)) //
-                || (nDims != env->GetArrayLength(dstS)) //
-                || (env->GetArrayLength(slices) % 3) //
-                || (srcLen != env->GetArrayLength(srcI)) //
-                || (dstLen != env->GetArrayLength(dstI)) //
-                || (nDims + 1 != env->GetArrayLength(srcDO)) //
-                || (nDims * srcLen != env->GetArrayLength(srcII)) //
-                || (nDims + 1 != env->GetArrayLength(dstDO)) //
+        if ((nDims != env->GetArrayLength(srcS))
+                || (nDims != env->GetArrayLength(dstD))
+                || (nDims != env->GetArrayLength(dstS))
+                || (env->GetArrayLength(slices) % 3)
+                || (srcLen != env->GetArrayLength(srcI))
+                || (dstLen != env->GetArrayLength(dstI))
+                || (nDims + 1 != env->GetArrayLength(srcDO))
+                || (nDims * srcLen != env->GetArrayLength(srcII))
+                || (nDims + 1 != env->GetArrayLength(dstDO))
                 || (nDims * dstLen != env->GetArrayLength(dstII))) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -132,7 +132,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint *dstIOArr = (jint *) dstIOH.get();
         jint *dstIIArr = (jint *) dstIIH.get();
 
-        if ((srcIOLen != Common::sum(srcDArr, nDims, (jint) 0) + nDims) //
+        if ((srcIOLen != Common::sum(srcDArr, nDims, (jint) 0) + nDims)
                 || (dstIOLen != Common::sum(dstDArr, nDims, (jint) 0) + nDims)) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -150,7 +150,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
                 throw std::runtime_error("Invalid dimension");
             }
 
-            if (!(srcIndex >= 0 && srcIndex < srcDArr[dim]) //
+            if (!(srcIndex >= 0 && srcIndex < srcDArr[dim])
                     || !(dstIndex >= 0 && dstIndex < dstDArr[dim])) {
                 throw std::runtime_error("Invalid index");
             }
@@ -158,7 +158,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         for (jint dim = 0; dim < nDims; dim++) {
 
-            if ((srcDOArr[dim + 1] - srcDOArr[dim] - 1 != srcDArr[dim]) //
+            if ((srcDOArr[dim + 1] - srcDOArr[dim] - 1 != srcDArr[dim])
                     || (dstDOArr[dim + 1] - dstDOArr[dim] - 1 != dstDArr[dim])) {
                 throw std::runtime_error("Invalid arguments");
             }
@@ -232,8 +232,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
             srcSlices[sliceOffsets[dim] + srcSliceCounts[dim]] = srcIndex;
             dstSlices[sliceOffsets[dim] + srcSliceCounts[dim]] = dstIndex;
-            dstLookups[lookupOffsets[srcDOArr[dim] + srcIndex] //
-                    + lookupCounts[srcDOArr[dim] + srcIndex]] = dstIndex;
+            dstLookups[lookupOffsets[srcDOArr[dim] + srcIndex] + lookupCounts[srcDOArr[dim] + srcIndex]] = dstIndex;
 
             srcSliceCounts[dim]++;
             lookupCounts[srcDOArr[dim] + srcIndex]++;
@@ -336,8 +335,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
                 logical[dim] = physical / srcSArr[dim];
 
-                newIndices[indirectionOffset] += dstSArr[dim] //
-                        * dstLookups[lookupOffsets[srcDOArr[dim] + logical[dim]]];
+                newIndices[indirectionOffset] += dstSArr[dim] * dstLookups[lookupOffsets[srcDOArr[dim] + logical[dim]]];
 
                 physical %= srcSArr[dim];
             }
@@ -352,9 +350,10 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
                 jint start = lookupOffsets[srcDOArr[dim] + logical[dim]];
                 size = lookupCounts[srcDOArr[dim] + logical[dim]];
 
-                for (jint offset = indirectionOffset + blockSize, //
-                        offsetEnd = indirectionOffset + blockSize * size, n = start + 1; //
-                offset < offsetEnd; offset += blockSize, n++) {
+                for (jint offset = indirectionOffset + blockSize,
+                        offsetEnd = indirectionOffset + blockSize * size, n = start + 1;
+                        offset < offsetEnd;
+                        offset += blockSize, n++) {
 
                     jint strideOffset = dstSArr[dim] * (dstLookups[n] - dstLookups[n - 1]);
 
@@ -408,8 +407,8 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         merge(newIndices, newIndirections, indirectionOffsets[nSrcIndirections], //
                 resNewIndices, resNewIndirections, resLen);
 
-        mergeResult = merge(oldIndices, oldIndirections, dstLen - nDstIndirections, //
-                resNewIndices, resNewIndirections, resLen, //
+        mergeResult = merge(oldIndices, oldIndirections, dstLen - nDstIndirections,
+                resNewIndices, resNewIndirections, resLen,
                 dstDArr, dstSArr, dstDOArr, nDims);
 
         return mergeResult;
@@ -479,10 +478,7 @@ void SparseOps::getSlicedIndirections( //
             jint start = indirectionOffsets[dimOffset + index];
             jint end = indirectionOffsets[dimOffset + index + 1];
 
-            if (!(start >= 0 //
-                    && start <= end //
-                    && end >= 0 //
-                    && end <= nIndirections)) {
+            if (!(start >= 0 && start <= end && end >= 0 && end <= nIndirections)) {
                 throw std::runtime_error("Invalid arguments");
             }
 

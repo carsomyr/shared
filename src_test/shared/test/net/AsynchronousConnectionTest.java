@@ -187,8 +187,8 @@ public class AsynchronousConnectionTest {
                         .add(xmlSConn));
             }
 
-            // The asynchronous sockets specification allows us to write data before connecting; we should
-            // test this case.
+            // The asynchronous sockets specification allows us to write data before connecting; we should test this
+            // case.
             xmlSConn.onRemote(new SequenceXMLEvent(seqNo, this.nMessages, null));
 
             try {
@@ -203,8 +203,7 @@ public class AsynchronousConnectionTest {
             verifiers.add(xmlV);
         }
 
-        // Reverse the verifier list so that we synchronize on senders first and detect any errors that may
-        // arise.
+        // Reverse the verifier list so that we synchronize on senders first and detect any errors that may arise.
         Collections.reverse(verifiers);
 
         for (AbstractTestVerifier<?> v : verifiers) {

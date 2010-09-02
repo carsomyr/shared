@@ -73,7 +73,8 @@ public class FFTOps {
             int srcOffsetIncr = 2;
             int dstOffsetIncr = dimSize << 1;
 
-            for (int j = 0, srcOffset = 0, dstOffset = 0; j < dimStride; //
+            for (int j = 0, srcOffset = 0, dstOffset = 0; //
+            j < dimStride; //
             j++, srcOffset += srcOffsetIncr, dstOffset += dstOffsetIncr) {
                 fft(out, srcOffset, outTmp, dstOffset, scratch, //
                         factors, 0, twiddles, dimSize, dimStride, 1);
@@ -182,7 +183,8 @@ public class FFTOps {
 
         if (m == 1) {
 
-            for (int srcOffsetCurrent = srcOffset, dstOffsetCurrent = dstOffset; dstOffsetCurrent < upper; //
+            for (int srcOffsetCurrent = srcOffset, dstOffsetCurrent = dstOffset; //
+            dstOffsetCurrent < upper; //
             srcOffsetCurrent += srcOffsetIncr, dstOffsetCurrent += 2) {
 
                 dst[dstOffsetCurrent] = src[srcOffsetCurrent];
@@ -191,7 +193,8 @@ public class FFTOps {
 
         } else {
 
-            for (int srcOffsetCurrent = srcOffset, dstOffsetCurrent = dstOffset; dstOffsetCurrent < upper; //
+            for (int srcOffsetCurrent = srcOffset, dstOffsetCurrent = dstOffset; //
+            dstOffsetCurrent < upper; //
             srcOffsetCurrent += srcOffsetIncr, dstOffsetCurrent += dstOffsetIncr) {
                 fft(src, srcOffsetCurrent, dst, dstOffsetCurrent, scratch, //
                         factors, factorIndexCurrent + 2, twiddles, //
@@ -216,22 +219,24 @@ public class FFTOps {
 
         for (int i = 0; i < n; i++) {
 
-            for (int j = 0, dstOffset = (i << 1) + dstOffsetCurrent, scratchOffset = 0; j < p; //
+            for (int j = 0, dstOffset = (i << 1) + dstOffsetCurrent, scratchOffset = 0; //
+            j < p; //
             j++, dstOffset += dstOffsetIncr, scratchOffset += scratchOffsetIncr) {
 
                 scratch[scratchOffset] = dst[dstOffset];
                 scratch[scratchOffset + 1] = dst[dstOffset + 1];
             }
 
-            for (int j = 0, dstOffset = (i << 1) + dstOffsetCurrent, twiddleOffset = (strideCurrent * i) << 1; j < p; //
+            for (int j = 0, dstOffset = (i << 1) + dstOffsetCurrent, twiddleOffset = (strideCurrent * i) << 1; //
+            j < p; //
             j++, dstOffset += dstOffsetIncr, twiddleOffset += twiddleOffsetIncr) {
 
                 dst[dstOffset] = scratch[0];
                 dst[dstOffset + 1] = scratch[1];
 
-                for (int k = 1, scratchOffset = 2, modOffset = twiddleOffset; k < p; //
-                k++, scratchOffset += scratchOffsetIncr, //
-                modOffset = (modOffset + twiddleOffset) % modulus) {
+                for (int k = 1, scratchOffset = 2, modOffset = twiddleOffset; //
+                k < p; //
+                k++, scratchOffset += scratchOffsetIncr, modOffset = (modOffset + twiddleOffset) % modulus) {
 
                     dst[dstOffset] += scratch[scratchOffset] * twiddles[modOffset] //
                             - scratch[scratchOffset + 1] * twiddles[modOffset + 1];

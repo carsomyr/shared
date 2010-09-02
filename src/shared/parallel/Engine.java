@@ -155,8 +155,7 @@ public class Engine<T> {
 
                         } finally {
 
-                            // Make sure that the notifier semaphore is released no matter
-                            // what.
+                            // Make sure that the notifier semaphore is released no matter what.
                             Engine.this.notifier.release();
                         }
                     }
@@ -288,8 +287,8 @@ public class Engine<T> {
             this.engineInput = engineInput;
             this.executor.execute(this.nodeMap.get(this.startCalculator));
 
-            // Try to acquire a number of permits equal to the number of nodes, thus guaranteeing
-            // termination of the computation upon return.
+            // Try to acquire a number of permits equal to the number of nodes, thus guaranteeing termination of the
+            // computation upon return.
             this.notifier.acquireUninterruptibly();
 
             Throwable t = this.exceptionRef.getAndSet(null);
@@ -560,8 +559,8 @@ public class Engine<T> {
 
                     EngineNode<? super O, ?> node = this.outputs.get(i).getV();
 
-                    // The node in question has all of its inputs accounted for; insert it according
-                    // to its traversal order.
+                    // The node in question has all of its inputs accounted for; insert it according to its traversal
+                    // order.
                     if ((val = node.inRefCount.decrementAndGet()) == 0) {
 
                         Engine.this.executor.execute(node);

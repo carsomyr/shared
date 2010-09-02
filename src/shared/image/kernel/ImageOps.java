@@ -185,7 +185,9 @@ public class ImageOps {
 
         dstIndices = MappingOps.assignMappingIndices(dstLenModified, dstDModified, dstSModified);
 
-        for (int dim = 0, indexBlockIncrement = dstLenModified; dim < nDims; indexBlockIncrement /= dstDModified[dim++]) {
+        for (int dim = 0, indexBlockIncrement = dstLenModified; //
+        dim < nDims; //
+        indexBlockIncrement /= dstDModified[dim++]) {
 
             int size = dstDModified[dim];
             int stride = dstSModified[dim];
@@ -200,7 +202,9 @@ public class ImageOps {
 
                         double acc = 0.0;
 
-                        for (int k = 0, physical = dstIndices[indexIndex] + binOffset; k < size; k++, physical += stride) {
+                        for (int k = 0, physical = dstIndices[indexIndex] + binOffset; //
+                        k < size; //
+                        k++, physical += stride) {
 
                             acc += dstV[physical];
                             dstV[physical] = acc;

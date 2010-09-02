@@ -70,9 +70,7 @@ void DimensionOps::riOp(JNIEnv *env, jobject thisObj, jint type, //
         jint dstLen = env->GetArrayLength(dstV);
         jint nDims = env->GetArrayLength(srcD);
 
-        if (!(dim >= -1 && dim < nDims) //
-                || (nDims != env->GetArrayLength(srcS)) //
-                || (srcLen != dstLen)) {
+        if (!(dim >= -1 && dim < nDims) || (nDims != env->GetArrayLength(srcS)) || (srcLen != dstLen)) {
             throw std::runtime_error("Invalid arguments");
         }
 

@@ -146,7 +146,8 @@ void Plan::destroy(JNIEnv *env, jobject thisObj) {
 
         jbyteArray mem = (jbyteArray) env->GetObjectField(thisObj, memFieldID);
 
-        // Null field value; perhaps the constructor didn't finish. Return immediately because there is nothing to clean up.
+        // Null field value; perhaps the constructor didn't finish. Return immediately because there is nothing to clean
+        // up.
         if (!mem) {
             return;
         }

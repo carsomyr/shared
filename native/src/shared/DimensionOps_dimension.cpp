@@ -55,8 +55,7 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
         jint nDims = env->GetArrayLength(srcD);
         jint nOpDims = env->GetArrayLength(opDims);
 
-        if ((nDims != env->GetArrayLength(srcS)) //
-                || (srcLen != dstLen)) {
+        if ((nDims != env->GetArrayLength(srcS)) || (srcLen != dstLen)) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -136,8 +135,9 @@ inline void DimensionOps::rdSum(jdouble *srcVArr, const jint *srcDArr, const jin
         jint size = srcDArr[dim];
         jint stride = srcSArr[dim];
 
-        for (jint lower = 0, upper = indexBlockIncrement / size; lower < len; //
-        lower += indexBlockIncrement, upper += indexBlockIncrement) {
+        for (jint lower = 0, upper = indexBlockIncrement / size;
+                lower < len;
+                lower += indexBlockIncrement, upper += indexBlockIncrement) {
 
             for (jint indexIndex = lower; indexIndex < upper; indexIndex++) {
 
@@ -188,8 +188,9 @@ inline void DimensionOps::rdProd(jdouble *srcVArr, const jint *srcDArr, const ji
         jint size = srcDArr[dim];
         jint stride = srcSArr[dim];
 
-        for (jint lower = 0, upper = indexBlockIncrement / size; lower < len; //
-        lower += indexBlockIncrement, upper += indexBlockIncrement) {
+        for (jint lower = 0, upper = indexBlockIncrement / size;
+                lower < len;
+                lower += indexBlockIncrement, upper += indexBlockIncrement) {
 
             for (jint indexIndex = lower; indexIndex < upper; indexIndex++) {
 

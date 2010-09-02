@@ -23,7 +23,8 @@
 
 #include <BindingsX.hpp>
 
-JNIEXPORT void JNICALL Java_sharedx_fftw_Plan_transform(JNIEnv *env, jobject thisObj, jdoubleArray in, jdoubleArray out) {
+JNIEXPORT void JNICALL Java_sharedx_fftw_Plan_transform(JNIEnv *env, jobject thisObj, //
+        jdoubleArray in, jdoubleArray out) {
     Plan::transform(env, thisObj, in, out);
 }
 

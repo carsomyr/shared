@@ -79,9 +79,9 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
             handlersMap.put(str, new ArrayList<StateHandler>());
         }
 
-        for (Class<?> clazz = target.getClass(); clazz != null //
-                && !clazz.getName().startsWith("java.") //
-                && !clazz.getName().startsWith("javax."); clazz = clazz.getSuperclass()) {
+        for (Class<?> clazz = target.getClass(); //
+        clazz != null && !clazz.getName().startsWith("java.") && !clazz.getName().startsWith("javax."); //
+        clazz = clazz.getSuperclass()) {
 
             outerLoop: for (Field field : clazz.getDeclaredFields()) {
 
@@ -212,10 +212,8 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
 
                 int[][] slices = new int[][] {
                         //
-                        (stateHandler.state != null) ? new int[] { stateHandler.state //
-                                .ordinal() } : rowRange, //
-                        (stateHandler.eventType != null) ? new int[] { stateHandler.eventType //
-                                .ordinal() } : colRange //
+                        (stateHandler.state != null) ? new int[] { stateHandler.state.ordinal() } : rowRange, //
+                        (stateHandler.eventType != null) ? new int[] { stateHandler.eventType.ordinal() } : colRange //
                 };
 
                 this.backingArray.slice(stateHandler, slices);

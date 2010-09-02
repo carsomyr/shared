@@ -1,14 +1,13 @@
 Copyright (c) 2005-2010 Roy Liu
 Copyright (c) 2006-2010 The Regents of the University of California
 
-This software is distributed under the New BSD License
-(license/license_BSD.txt) or the GNU General Public License
-(license/license_GPL.txt). With the dual-licensing scheme, linking certain
-components with GPL-licensed libraries will require the combined work to be
-distributed under the GPL. Namely, components not incorporating source code
-from the "src_extensions", "native/src/sharedx", or "native/include/sharedx"
-directory hierarchies are distributable under the BSD; otherwise, they are
-distributable under the GPL.
+This software is distributed under the New BSD License (license/license_BSD.txt)
+or the GNU General Public License (license/license_GPL.txt). With the dual-
+licensing scheme, linking certain components with GPL-licensed libraries will
+require the combined work to be distributed under the GPL. Namely, components
+not incorporating source code from the "src_extensions", "native/src/sharedx",
+or "native/include/sharedx" directory hierarchies are distributable under the
+BSD; otherwise, they are distributable under the GPL.
 
 Other libraries have been incorporated to varying extents:
 
@@ -20,8 +19,7 @@ Other libraries have been incorporated to varying extents:
   * Components of Kiss FFT (license/license_Kiss-FFT.txt) have been adapted
     into:
     * src/shared/fft/FFTOps.java
-  * The Bitstream Vera font (license/license_Bitstream-Vera.txt) is included
-    at:
+  * The Bitstream Vera font (license/license_Bitstream-Vera.txt) is included at:
     * src/font/Vera.ttf
   * The FFTW3 library (optional, license/license_FFTW3.txt) is used by:
     * native/include/sharedx/Plan.hpp

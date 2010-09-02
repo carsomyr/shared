@@ -287,8 +287,8 @@ void ElementOps::eOp(JNIEnv *env, jobject thisObj, jint type, jobject lhsV, jobj
 
     try {
 
-        if (NativeArrayKernel::isJdoubleArray(env, lhsV) //
-                && NativeArrayKernel::isJdoubleArray(env, rhsV) //
+        if (NativeArrayKernel::isJdoubleArray(env, lhsV)
+                && NativeArrayKernel::isJdoubleArray(env, rhsV)
                 && NativeArrayKernel::isJdoubleArray(env, dstV)) {
 
             if (isComplex) {
@@ -302,8 +302,8 @@ void ElementOps::eOp(JNIEnv *env, jobject thisObj, jint type, jobject lhsV, jobj
                         ElementOps::REAL);
             }
 
-        } else if (NativeArrayKernel::isJintArray(env, lhsV) //
-                && NativeArrayKernel::isJintArray(env, rhsV) //
+        } else if (NativeArrayKernel::isJintArray(env, lhsV)
+                && NativeArrayKernel::isJintArray(env, rhsV)
                 && NativeArrayKernel::isJintArray(env, dstV)) {
 
             ElementOps::binaryOpProxy<jint>(env, type, (jarray) lhsV, (jarray) rhsV, (jarray) dstV, //
@@ -326,7 +326,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 
     try {
 
-        if (NativeArrayKernel::isJdoubleArray(env, srcV) && !isSrcComplex //
+        if (NativeArrayKernel::isJdoubleArray(env, srcV) && !isSrcComplex
                 && NativeArrayKernel::isJdoubleArray(env, dstV) && isDstComplex) {
 
             rtocOp_t *op = NULL;
@@ -349,7 +349,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
                     (jarray) srcV, isSrcComplex, //
                     (jarray) dstV, isDstComplex);
 
-        } else if (NativeArrayKernel::isJdoubleArray(env, srcV) && isSrcComplex //
+        } else if (NativeArrayKernel::isJdoubleArray(env, srcV) && isSrcComplex
                 && NativeArrayKernel::isJdoubleArray(env, dstV) && !isDstComplex) {
 
             ctorOp_t *op = NULL;
@@ -376,7 +376,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
                     (jarray) srcV, isSrcComplex, //
                     (jarray) dstV, isDstComplex);
 
-        } else if (NativeArrayKernel::isJintArray(env, srcV) && !isSrcComplex //
+        } else if (NativeArrayKernel::isJintArray(env, srcV) && !isSrcComplex
                 && NativeArrayKernel::isJdoubleArray(env, dstV) && !isDstComplex) {
 
             itorOp_t *op = NULL;
@@ -406,7 +406,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
     }
 }
 
-template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T (*op)(const T *, jint), //
+template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T (*op)(const T *, jint),
         jarray srcV, jboolean isComplex) {
 
     if (!srcV) {
@@ -427,7 +427,7 @@ template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T (*op)(c
     return op((T *) srcVH.get(), logicalLen);
 }
 
-template<class T> inline void ElementOps::unaryOpProxy(JNIEnv *env, void (*op)(T, T *, jint), //
+template<class T> inline void ElementOps::unaryOpProxy(JNIEnv *env, void (*op)(T, T *, jint),
         jarray srcV, T argument, jboolean isComplex) {
 
     if (!srcV) {
@@ -586,7 +586,7 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
     }
 }
 
-template<class S, class T> inline void ElementOps::convertProxy(JNIEnv *env, void (*op)(const S *, T *, jint), //
+template<class S, class T> inline void ElementOps::convertProxy(JNIEnv *env, void (*op)(const S *, T *, jint),
         jarray srcV, jboolean srcIsComplex, //
         jarray dstV, jboolean dstIsComplex) {
 
@@ -598,8 +598,8 @@ template<class S, class T> inline void ElementOps::convertProxy(JNIEnv *env, voi
     jint dstLen = env->GetArrayLength(dstV);
     jint logicalLen = srcLen / (srcIsComplex ? 2 : 1);
 
-    if ((srcIsComplex && (srcLen % 2) != 0) //
-            || (dstIsComplex && (dstLen % 2) != 0) //
+    if ((srcIsComplex && (srcLen % 2) != 0)
+            || (dstIsComplex && (dstLen % 2) != 0)
             || (logicalLen != dstLen / (dstIsComplex ? 2 : 1))) {
         throw std::runtime_error("Invalid array lengths");
     }
@@ -801,7 +801,7 @@ inline void ElementOps::cuCos(jcomplex a, jcomplex *v, jint len) {
         jcomplex exp1 = factor_i * v[i];
         jcomplex exp2 = factor_minus_i * v[i];
 
-        v[i] = jcomplex(cos(exp1.im) * exp(exp1.re) + cos(exp2.im) * exp(exp2.re), //
+        v[i] = jcomplex(cos(exp1.im) * exp(exp1.re) + cos(exp2.im) * exp(exp2.re),
                 sin(exp1.im) * exp(exp1.re) + sin(exp2.im) * exp(exp2.re)) / denominator;
     }
 }
@@ -817,7 +817,7 @@ inline void ElementOps::cuSin(jcomplex a, jcomplex *v, jint len) {
         jcomplex exp1 = factor_i * v[i];
         jcomplex exp2 = factor_minus_i * v[i];
 
-        v[i] = jcomplex(cos(exp1.im) * exp(exp1.re) - cos(exp2.im) * exp(exp2.re), //
+        v[i] = jcomplex(cos(exp1.im) * exp(exp1.re) - cos(exp2.im) * exp(exp2.re),
                 sin(exp1.im) * exp(exp1.re) - sin(exp2.im) * exp(exp2.re)) / denominator;
     }
 }

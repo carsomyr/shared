@@ -352,16 +352,16 @@ public class ArrayKernelTest {
 
         //
 
-        kernel.convert(ArrayKernel.CTOR_RE, new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3],
-                false);
+        kernel.convert(ArrayKernel.CTOR_RE, //
+                new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3], false);
         assertTrue(Tests.equals(v, new double[] { 0.0, 1.0, 0.5 }));
 
-        kernel.convert(ArrayKernel.CTOR_IM, new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3],
-                false);
+        kernel.convert(ArrayKernel.CTOR_IM, //
+                new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3], false);
         assertTrue(Tests.equals(v, new double[] { 1.0, -1.0, -0.25 }));
 
-        kernel.convert(ArrayKernel.CTOR_ABS, new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3],
-                false);
+        kernel.convert(ArrayKernel.CTOR_ABS, //
+                new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3], false);
         assertTrue(Tests.equals(v, new double[] { 1.0, Math.sqrt(2), Math.sqrt(1.0 / 4.0 + 1.0 / 16.0) }));
 
         //

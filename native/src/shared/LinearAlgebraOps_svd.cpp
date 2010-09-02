@@ -39,13 +39,12 @@ void LinearAlgebraOps::svd(JNIEnv *env, jobject thisObj, //
         jint sLen = env->GetArrayLength(sV);
         jint vLen = env->GetArrayLength(vV);
 
-        if ((nRows < nCols) //
-                || (srcLen != nRows * nCols) //
-                || (uLen != nRows * nCols) //
-                || (sLen != nCols) //
-                || (vLen != nCols * nCols) //
-                || !((srcStrideRow == nCols && srcStrideCol == 1) //
-                        || (srcStrideRow == 1 && srcStrideCol == nRows))) {
+        if ((nRows < nCols)
+                || (srcLen != nRows * nCols)
+                || (uLen != nRows * nCols)
+                || (sLen != nCols)
+                || (vLen != nCols * nCols)
+                || !((srcStrideRow == nCols && srcStrideCol == 1) || (srcStrideRow == 1 && srcStrideCol == nRows))) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -333,8 +332,8 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 }
                 for (jint i = 0; i < nCols; i++) {
                     t = cs * vVArr[vStrideRow * (i) + (j)] + sn * vVArr[vStrideRow * (i) + (p - 1)];
-                    vVArr[vStrideRow * (i) + (p - 1)] = -sn * vVArr[vStrideRow * (i) + (j)] + cs * vVArr[vStrideRow
-                            * (i) + (p - 1)];
+                    vVArr[vStrideRow * (i) + (p - 1)] = -sn * vVArr[vStrideRow * (i) + (j)]
+                            + cs * vVArr[vStrideRow * (i) + (p - 1)];
                     vVArr[vStrideRow * (i) + (j)] = t;
                 }
             }
@@ -355,8 +354,8 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 e[j] = cs * e[j];
                 for (jint i = 0; i < nRows; i++) {
                     t = cs * uVArr[uStrideRow * (i) + (j)] + sn * uVArr[uStrideRow * (i) + (k - 1)];
-                    uVArr[uStrideRow * (i) + (k - 1)] = -sn * uVArr[uStrideRow * (i) + (j)] + cs * uVArr[uStrideRow
-                            * (i) + (k - 1)];
+                    uVArr[uStrideRow * (i) + (k - 1)] = -sn * uVArr[uStrideRow * (i) + (j)]
+                            + cs * uVArr[uStrideRow * (i) + (k - 1)];
                     uVArr[uStrideRow * (i) + (j)] = t;
                 }
             }
@@ -369,9 +368,11 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
 
             // Calculate the shift.
 
-            jdouble scale = std::max(std::max(
-                    std::max(std::max(fabs(sVArr[p - 1]), fabs(sVArr[p - 2])), fabs(e[p - 2])), fabs(sVArr[k])), fabs(
-                    e[k]));
+            jdouble scale = std::max(std::max(std::max(std::max(fabs(sVArr[p - 1]),
+                    fabs(sVArr[p - 2])),
+                    fabs(e[p - 2])),
+                    fabs(sVArr[k])),
+                    fabs(e[k]));
             jdouble sp = sVArr[p - 1] / scale;
             jdouble spm1 = sVArr[p - 2] / scale;
             jdouble epm1 = e[p - 2] / scale;
@@ -405,8 +406,8 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 sVArr[j + 1] = cs * sVArr[j + 1];
                 for (jint i = 0; i < nCols; i++) {
                     t = cs * vVArr[vStrideRow * (i) + (j)] + sn * vVArr[vStrideRow * (i) + (j + 1)];
-                    vVArr[vStrideRow * (i) + (j + 1)] = -sn * vVArr[vStrideRow * (i) + (j)] + cs * vVArr[vStrideRow
-                            * (i) + (j + 1)];
+                    vVArr[vStrideRow * (i) + (j + 1)] = -sn * vVArr[vStrideRow * (i) + (j)]
+                            + cs * vVArr[vStrideRow * (i) + (j + 1)];
                     vVArr[vStrideRow * (i) + (j)] = t;
                 }
                 t = jcomplex(f, g).abs();
@@ -420,8 +421,8 @@ void LinearAlgebraOps::svd(jdouble *srcVArr, jint srcStrideRow, jint srcStrideCo
                 if (j < nRows - 1) {
                     for (jint i = 0; i < nRows; i++) {
                         t = cs * uVArr[uStrideRow * (i) + (j)] + sn * uVArr[uStrideRow * (i) + (j + 1)];
-                        uVArr[uStrideRow * (i) + (j + 1)] = -sn * uVArr[uStrideRow * (i) + (j)] + cs * uVArr[uStrideRow
-                                * (i) + (j + 1)];
+                        uVArr[uStrideRow * (i) + (j + 1)] = -sn * uVArr[uStrideRow * (i) + (j)]
+                                + cs * uVArr[uStrideRow * (i) + (j + 1)];
                         uVArr[uStrideRow * (i) + (j)] = t;
                     }
                 }

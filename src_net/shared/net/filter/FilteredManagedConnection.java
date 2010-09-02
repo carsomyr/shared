@@ -55,14 +55,17 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     final Queue<ByteBuffer> inReadOnly;
     final Queue<T> inFiltered;
     final Queue<T> inFilteredWriteOnly;
+
     final Queue<T> out;
     final Queue<T> outReadOnly;
     final Queue<ByteBuffer> outFiltered;
     final Queue<ByteBuffer> outFilteredWriteOnly;
+
     final Queue<OOBEvent> inEvts;
     final Queue<OOBEvent> inEvtsReadOnly;
     final Queue<OOBEvent> inEvtsFiltered;
     final Queue<OOBEvent> inEvtsFilteredWriteOnly;
+
     final Queue<OOBEvent> outEvts;
     final Queue<OOBEvent> outEvtsReadOnly;
     final Queue<OOBEvent> outEvtsFiltered;
@@ -82,14 +85,17 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         this.inReadOnly = Filters.readOnlyQueue(this.in);
         this.inFiltered = Filters.createQueue();
         this.inFilteredWriteOnly = Filters.writeOnlyQueue(this.inFiltered);
+
         this.out = Filters.createQueue();
         this.outReadOnly = Filters.readOnlyQueue(this.out);
         this.outFiltered = Filters.createQueue();
         this.outFilteredWriteOnly = Filters.writeOnlyQueue(this.outFiltered);
+
         this.inEvts = Filters.createQueue();
         this.inEvtsReadOnly = Filters.readOnlyQueue(this.inEvts);
         this.inEvtsFiltered = Filters.createQueue();
         this.inEvtsFilteredWriteOnly = Filters.writeOnlyQueue(this.inEvtsFiltered);
+
         this.outEvts = Filters.createQueue();
         this.outEvtsReadOnly = Filters.readOnlyQueue(this.outEvts);
         this.outEvtsFiltered = Filters.createQueue();

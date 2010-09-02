@@ -155,7 +155,6 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     final public static TestXMLEvent parse(Node rootNode, Source<TestXMLEvent, SourceType> source) {
 
         NodeList children = rootNode.getChildNodes();
-
         return TestXMLEventType.valueOf(children.item(0).getTextContent()).parseXML(children.item(1), source);
     }
 
@@ -218,7 +217,6 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
 
             contentNode.appendChild(doc.createElement("seqNo")) //
                     .setTextContent(Long.toString(this.seqNo));
-
             contentNode.appendChild(doc.createElement("nmessages")) //
                     .setTextContent(Integer.toString(this.nMessages));
         }

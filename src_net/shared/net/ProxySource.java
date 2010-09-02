@@ -36,8 +36,7 @@ import shared.event.Source;
  * 
  * @author Roy Liu
  */
-public class ProxySource<C extends AbstractManagedConnection<C>> //
-        implements Source<InterestEvent<?>, SourceType> {
+public class ProxySource<C extends AbstractManagedConnection<C>> implements Source<InterestEvent<?>, SourceType> {
 
     final C connection;
 

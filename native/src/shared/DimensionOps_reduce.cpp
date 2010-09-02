@@ -67,8 +67,8 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
         jint nDims = env->GetArrayLength(srcD);
         jint nOpDims = env->GetArrayLength(opDims);
 
-        if ((nDims != env->GetArrayLength(srcS)) //
-                || (nDims != env->GetArrayLength(dstD)) //
+        if ((nDims != env->GetArrayLength(srcS))
+                || (nDims != env->GetArrayLength(dstD))
                 || (nDims != env->GetArrayLength(dstS))) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -130,8 +130,7 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
             return;
         }
 
-        MallocHandler mallocH(sizeof(jdouble) * srcLen //
-                + sizeof(jint) * (srcLen + nDims + 2 * (nDims - 1) + dstLen));
+        MallocHandler mallocH(sizeof(jdouble) * srcLen + sizeof(jint) * (srcLen + nDims + 2 * (nDims - 1) + dstLen));
         void *all = mallocH.get();
 
         jdouble *workingV = (jdouble *) all;

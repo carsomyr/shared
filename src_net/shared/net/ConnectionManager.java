@@ -54,8 +54,7 @@ public class ConnectionManager implements Closeable {
     /**
      * A {@link WeakReference} to the global instance.
      */
-    protected static WeakReference<ConnectionManager> DefaultInstanceRef = //
-    new WeakReference<ConnectionManager>(null);
+    protected static WeakReference<ConnectionManager> DefaultInstanceRef = new WeakReference<ConnectionManager>(null);
 
     /**
      * A global lock for the entire class.

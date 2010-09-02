@@ -177,10 +177,8 @@ public class Control {
             try {
 
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
                 dbf.setValidating(true);
                 dbf.setIgnoringElementContentWhitespace(true);
-
                 dbf.setFeature("http://apache.org/xml/features/validation/dynamic", true);
 
                 db = dbf.newDocumentBuilder();
@@ -823,8 +821,11 @@ public class Control {
      * @throws IOException
      *             when something goes awry.
      */
-    final public static int execAndWaitFor(final InputStream parentIn, //
-            final OutputStream parentOut, final OutputStream parentError, String... execArgs) throws IOException {
+    final public static int execAndWaitFor( //
+            final InputStream parentIn, //
+            final OutputStream parentOut, //
+            final OutputStream parentError, //
+            String... execArgs) throws IOException {
 
         ProcessBuilder pb = new ProcessBuilder(execArgs);
 

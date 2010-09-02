@@ -72,9 +72,9 @@ MappingResult *MappingOps::mapProxy(JNIEnv *env, //
     jint dstLen = env->GetArrayLength(dstV);
     jint nDims = env->GetArrayLength(srcD);
 
-    if ((nDims != env->GetArrayLength(srcS)) //
-            || (nDims != env->GetArrayLength(dstD)) //
-            || (nDims != env->GetArrayLength(dstS)) //
+    if ((nDims != env->GetArrayLength(srcS))
+            || (nDims != env->GetArrayLength(dstD))
+            || (nDims != env->GetArrayLength(dstS))
             || (3 * nDims != env->GetArrayLength(bounds))) {
         throw std::runtime_error("Invalid arguments");
     }
@@ -159,15 +159,13 @@ MappingResult *MappingOps::map( //
             jint *srcSlices = (ssiArr[dim] = ssiBacking + acc);
             jint *dstSlices = (dsiArr[dim] = dsiBacking + acc);
 
-            for (jint j = 0, //
-                    srcSize = srcDArr[dim], //
-                    srcOffset = (((boundsArr[offset]) % srcSize) + srcSize) % srcSize, //
-                    dstSize = dstDArr[dim], //
-                    dstOffset = (((boundsArr[offset + 1]) % dstSize) + dstSize) % dstSize; //
-            j < mapSize; //
-            j++, //
-            srcOffset = (srcOffset + 1) % srcSize, //
-            dstOffset = (dstOffset + 1) % dstSize) {
+            for (jint j = 0,
+                    srcSize = srcDArr[dim], srcOffset = (((boundsArr[offset]) % srcSize) + srcSize) % srcSize,
+                    dstSize = dstDArr[dim], dstOffset = (((boundsArr[offset + 1]) % dstSize) + dstSize) % dstSize;
+                    j < mapSize;
+                    j++,
+                            srcOffset = (srcOffset + 1) % srcSize,
+                            dstOffset = (dstOffset + 1) % dstSize) {
 
                 srcSlices[j] = srcOffset;
                 dstSlices[j] = dstOffset;

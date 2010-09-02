@@ -80,8 +80,7 @@ public class IntegralHistogramTest {
                 int nValues = Arithmetic.product(dims);
                 int nBins = baseBins + Arithmetic.nextInt(baseBins);
 
-                IndexingOrder order = //
-                Arithmetic.nextInt(2) == 0 ? IndexingOrder.FAR : IndexingOrder.NEAR;
+                IndexingOrder order = Arithmetic.nextInt(2) == 0 ? IndexingOrder.FAR : IndexingOrder.NEAR;
 
                 RealArray mat = new RealArray(Arithmetic.doubleRange(nValues), //
                         order, dims).uMul(1.0 / nValues);

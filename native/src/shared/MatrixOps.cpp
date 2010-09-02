@@ -60,10 +60,10 @@ template<class T> inline void MatrixOps::mulProxy(JNIEnv *env, //
     jint rhsR = rhsC ? rhsLen / (factor * rhsC) : 0;
     jint inner = lhsC;
 
-    if (lhsR < 0 || rhsC < 0 //
-            || (lhsLen != factor * lhsR * lhsC) //
-            || (rhsLen != factor * rhsR * rhsC) //
-            || (dstLen != factor * lhsR * rhsC) //
+    if (lhsR < 0 || rhsC < 0
+            || (lhsLen != factor * lhsR * lhsC)
+            || (rhsLen != factor * rhsR * rhsC)
+            || (dstLen != factor * lhsR * rhsC)
             || (inner != rhsR)) {
         throw std::runtime_error("Invalid array lengths");
     }
@@ -98,7 +98,8 @@ template<class T> inline void MatrixOps::mul(const T *lArr, const T *rArr, jint 
     }
 }
 
-void MatrixOps::diag(JNIEnv *env, jobject thisObj, jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean isComplex) {
+void MatrixOps::diag(JNIEnv *env, jobject thisObj, //
+        jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean isComplex) {
 
     try {
 

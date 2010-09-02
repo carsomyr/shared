@@ -228,8 +228,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                 synchronized (amc) {
 
-                    for (amc.writeBuffer.flip(); amc.writeBuffer.hasRemaining() //
-                            && amc.channel.write(amc.writeBuffer) > 0;) {
+                    for (amc.writeBuffer.flip(); //
+                    amc.writeBuffer.hasRemaining() && amc.channel.write(amc.writeBuffer) > 0;) {
                     }
 
                     amc.writeBuffer.compact();
@@ -279,8 +279,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                 synchronized (amc) {
 
-                    for (amc.writeBuffer.flip(); amc.writeBuffer.hasRemaining() //
-                            && amc.channel.write(amc.writeBuffer) > 0;) {
+                    for (amc.writeBuffer.flip(); //
+                    amc.writeBuffer.hasRemaining() && amc.channel.write(amc.writeBuffer) > 0;) {
                     }
 
                     amc.writeBuffer.compact();
@@ -801,8 +801,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         try {
 
-            for (; this.readBuffer.hasRemaining() //
-                    && (bytesRead = this.channel.read(this.readBuffer)) > 0;) {
+            for (; this.readBuffer.hasRemaining() && (bytesRead = this.channel.read(this.readBuffer)) > 0;) {
                 doReadBuffer();
             }
 
@@ -828,11 +827,10 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
             this.key.interestOps(this.key.interestOps() | mask);
 
-            // We adhere to the intended meaning of operation interest events in the context of managed
-            // connections. For example, if the user turns on read interest, then she is interested in
-            // getting called back at least once -- even when the underlying socket's receive buffer bytes
-            // have been drained into our implementation's receive buffer, and thus would not cause a ready
-            // read.
+            // We adhere to the intended meaning of operation interest events in the context of managed connections. For
+            // example, if the user turns on read interest, then she is interested in getting called back at least once
+            // -- even when the underlying socket's receive buffer bytes have been drained into our implementation's
+            // receive buffer, and thus would not cause a ready read.
             switch (mask) {
 
             case SelectionKey.OP_READ:

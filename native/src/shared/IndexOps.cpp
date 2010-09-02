@@ -69,8 +69,7 @@ inline jint *IndexOps::findProxy(JNIEnv *env, //
         jint srcLen = env->GetArrayLength(srcV);
         jint nDims = env->GetArrayLength(srcD);
 
-        if ((nDims != env->GetArrayLength(srcS)) //
-                || (nDims != env->GetArrayLength(logical))) {
+        if ((nDims != env->GetArrayLength(srcS)) || (nDims != env->GetArrayLength(logical))) {
             throw std::runtime_error("Invalid arguments");
         }
 

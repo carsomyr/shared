@@ -91,8 +91,8 @@ public class PermutationEntry<C extends Comparable<? super C>> implements Compar
      *            the component type.
      */
     @SuppressWarnings("unchecked")
-    final public static <T extends Comparable<? super T>> void iSort(T[] srcV, int[] srcIndices, int[] dstV, int size,
-            int stride) {
+    final public static <T extends Comparable<? super T>> void iSort(T[] srcV, int[] srcIndices, int[] dstV, //
+            int size, int stride) {
 
         int len = (srcIndices != null) ? size : srcV.length;
 

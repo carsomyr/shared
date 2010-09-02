@@ -206,8 +206,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         } else {
 
-            throw new IllegalArgumentException( //
-                    String.format("Output format '%s' not recognized", this.outputFormat));
+            throw new IllegalArgumentException(String.format("Output format '%s' not recognized", this.outputFormat));
         }
 
         Formatter f = new Formatter();
@@ -492,7 +491,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
         }
 
         @Override
-        public Gnuplot setAxis(AxisType axisType, String axisTitle, double lower, double upper,
+        public Gnuplot setAxis(AxisType axisType, String axisTitle, double lower, double upper, //
                 AxisScaleType axisScaleType) {
 
             int dim = axisType.ordinal();

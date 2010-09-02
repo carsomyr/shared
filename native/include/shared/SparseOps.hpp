@@ -106,10 +106,7 @@ public:
 
         jint sumD = Common::sum(dims, nDims, (jint) 0);
 
-        void *metadata = malloc(sizeof(jint) * (count //
-                + (sumD + nDims) //
-                + nDims * count //
-                + nDims));
+        void *metadata = malloc(sizeof(jint) * (count + (sumD + nDims) + nDims * count + nDims));
 
         if (!metadata) {
             throw std::runtime_error("Allocation failed");

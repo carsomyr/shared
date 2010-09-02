@@ -64,8 +64,7 @@ import shared.util.RequestFuture;
  * @apiviz.has shared.net.InterestEvent - - - event
  * @author Roy Liu
  */
-abstract public class ConnectionManagerThread //
-        extends CoreThread //
+abstract public class ConnectionManagerThread extends CoreThread //
         implements SourceLocal<InterestEvent<?>>, Closeable, //
         EnumStatus<ConnectionManagerThread.ConnectionManagerThreadStatus> {
 

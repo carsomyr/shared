@@ -314,11 +314,11 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
                     // Otherwise, create a data event.
                     int len = Arithmetic.nextInt(asv.meanMessageSize << 1);
 
-                    // Simulate bursty behavior by transmitting events as either singletons or
-                    // pairs.
-                    for (int i = 0, n = Math.min(asv.nMessages, Arithmetic.nextInt(2) + 1); i < n; i++, asv.seqNoForward++) {
-                        evt.getSource().onRemote( //
-                                createDataEvent(createData(asv.seqNo + i, len)));
+                    // Simulate bursty behavior by transmitting events as either singletons or pairs.
+                    for (int i = 0, n = Math.min(asv.nMessages, Arithmetic.nextInt(2) + 1); //
+                    i < n; //
+                    i++, asv.seqNoForward++) {
+                        evt.getSource().onRemote(createDataEvent(createData(asv.seqNo + i, len)));
                     }
                 }
             }

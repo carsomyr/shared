@@ -73,9 +73,9 @@ MappingResult *MappingOps::sliceProxy(JNIEnv *env, //
     jint nDims = env->GetArrayLength(srcD);
     jint nSlices = env->GetArrayLength(slices);
 
-    if ((nDims != env->GetArrayLength(srcS)) //
-            || (nDims != env->GetArrayLength(dstD)) //
-            || (nDims != env->GetArrayLength(dstS)) //
+    if ((nDims != env->GetArrayLength(srcS))
+            || (nDims != env->GetArrayLength(dstD))
+            || (nDims != env->GetArrayLength(dstS))
             || (nSlices % 3)) {
         throw std::runtime_error("Invalid arguments");
     }
@@ -92,10 +92,7 @@ MappingResult *MappingOps::sliceProxy(JNIEnv *env, //
     jint *dstDArr = (jint *) dstDH.get();
     jint *dstSArr = (jint *) dstSH.get();
 
-    return slice(slicesArr, nSlices / 3, //
-            srcDArr, srcSArr, srcLen, //
-            dstDArr, dstSArr, dstLen, //
-            nDims);
+    return slice(slicesArr, nSlices / 3, srcDArr, srcSArr, srcLen, dstDArr, dstSArr, dstLen, nDims);
 }
 
 MappingResult *MappingOps::slice( //
@@ -123,8 +120,7 @@ MappingResult *MappingOps::slice( //
                 throw std::runtime_error("Invalid dimension");
             }
 
-            if (!(srcIndex >= 0 && srcIndex < srcDArr[dim]) //
-                    || !(dstIndex >= 0 && dstIndex < dstDArr[dim])) {
+            if (!(srcIndex >= 0 && srcIndex < srcDArr[dim]) || !(dstIndex >= 0 && dstIndex < dstDArr[dim])) {
                 throw std::runtime_error("Invalid index");
             }
         }

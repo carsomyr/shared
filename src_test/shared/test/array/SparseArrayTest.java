@@ -200,16 +200,13 @@ public class SparseArrayTest {
             //
 
             RealArray dstRCompare = srcR.slice(srcSlices, dstR.clone(), dstSlices);
-            RealSparseArray dstRSparseCompare = //
-            srcRSparse.slice(srcSlices, dstRSparse.clone(), dstSlices);
+            RealSparseArray dstRSparseCompare = srcRSparse.slice(srcSlices, dstRSparse.clone(), dstSlices);
 
             IntegerArray dstICompare = srcI.slice(srcSlices, dstI.clone(), dstSlices);
-            IntegerSparseArray dstISparseCompare = //
-            srcISparse.slice(srcSlices, dstISparse.clone(), dstSlices);
+            IntegerSparseArray dstISparseCompare = srcISparse.slice(srcSlices, dstISparse.clone(), dstSlices);
 
             ObjectArray<Integer> dstOCompare = srcO.slice(srcSlices, dstO.clone(), dstSlices);
-            ObjectSparseArray<Integer> dstOSparseCompare = //
-            srcOSparse.slice(srcSlices, dstOSparse.clone(), dstSlices);
+            ObjectSparseArray<Integer> dstOSparseCompare = srcOSparse.slice(srcSlices, dstOSparse.clone(), dstSlices);
 
             assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
             assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));

@@ -59,7 +59,8 @@ public class MetaclassBase {
     /**
      * A weak mapping from {@link ResourceRegistry}s to {@link TemporaryFileSet}s.
      */
-    final protected static Map<ResourceRegistry, TemporaryFileSet> RRToTFSMap = new WeakHashMap<ResourceRegistry, TemporaryFileSet>();
+    final protected static Map<ResourceRegistry, TemporaryFileSet> RRToTFSMap = //
+    new WeakHashMap<ResourceRegistry, TemporaryFileSet>();
 
     /**
      * A weak set of {@link TemporaryFileSet}s.

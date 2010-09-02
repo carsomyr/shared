@@ -75,9 +75,9 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint oldLen = env->GetArrayLength(oldV);
         jint newLen = env->GetArrayLength(newV);
 
-        if ((nDims != env->GetArrayLength(oldS)) //
-                || (oldLen != env->GetArrayLength(oldI)) //
-                || (newLen != env->GetArrayLength(newI)) //
+        if ((nDims != env->GetArrayLength(oldS))
+                || (oldLen != env->GetArrayLength(oldI))
+                || (newLen != env->GetArrayLength(newI))
                 || (nDims + 1 != env->GetArrayLength(oldDO))) {
             throw std::runtime_error("Invalid arguments");
         }
@@ -107,8 +107,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         //
 
-        MallocHandler mallocH(sizeof(permutation_entry<jint, jint>) * newLen //
-                + sizeof(jint) * (2 * newLen + oldLen));
+        MallocHandler mallocH(sizeof(permutation_entry<jint, jint>) * newLen + sizeof(jint) * (2 * newLen + oldLen));
 
         void *all = (void *) mallocH.get();
         permutation_entry<jint, jint> *entries = (permutation_entry<jint, jint> *) all;

@@ -322,7 +322,8 @@ public class SparseOps {
 
                 for (int offset = indirectionOffset + blockSize, //
                 offsetEnd = indirectionOffset + blockSize * size, n = start + 1; //
-                offset < offsetEnd; offset += blockSize, n++) {
+                offset < offsetEnd; //
+                offset += blockSize, n++) {
 
                     int strideOffset = dstS[dim] * (dstLookups[n] - dstLookups[n - 1]);
 
