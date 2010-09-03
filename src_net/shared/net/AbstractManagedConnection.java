@@ -480,22 +480,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     @Override
-    public void close() {
-
-        synchronized (this) {
-            this.proxy.onLocal(new InterestEvent<Object>(CLOSE, this.proxy));
-        }
-    }
-
-    @Override
-    public void execute(Runnable r) {
-
-        synchronized (this) {
-            this.proxy.onLocal(new InterestEvent<Runnable>(EXECUTE, r, this.proxy));
-        }
-    }
-
-    @Override
     public InetSocketAddress getLocalAddress() {
 
         synchronized (this) {
@@ -540,9 +524,22 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         return (this.stateMask & CLOSED_MASK) != 0;
     }
 
-    /**
-     * Creates a human-readable representation of this connection that includes the name and status.
-     */
+    @Override
+    public void execute(Runnable r) {
+
+        synchronized (this) {
+            this.proxy.onLocal(new InterestEvent<Runnable>(EXECUTE, r, this.proxy));
+        }
+    }
+
+    @Override
+    public void close() {
+
+        synchronized (this) {
+            this.proxy.onLocal(new InterestEvent<Object>(CLOSE, this.proxy));
+        }
+    }
+
     @Override
     public String toString() {
         return String.format("%s[%s]", this.name, this.status);
@@ -565,7 +562,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     ConnectionManagerThread thread;
     WriteHandler writeHandler;
     Runnable internalHandler;
-    Runnable closeHandler;
     SelectionKey key;
     SocketChannel channel;
     int bufferSize;
@@ -598,7 +594,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         // The connection starts with writes deferred to the manager.
         this.writeHandler = this.bufferedHandler;
         this.internalHandler = this.deferredHandler;
-        this.closeHandler = null;
 
         this.key = null;
         this.channel = null;

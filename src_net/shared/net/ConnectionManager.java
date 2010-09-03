@@ -135,14 +135,6 @@ public class ConnectionManager implements Closeable {
     }
 
     /**
-     * Gets the name of the underlying {@link ConnectionManagerThread}.
-     */
-    @Override
-    public String toString() {
-        return this.thread.toString();
-    }
-
-    /**
      * Shuts down the underlying {@link ConnectionManagerThread}. Blocks until shutdown completion.
      */
     @Override
@@ -151,10 +143,11 @@ public class ConnectionManager implements Closeable {
     }
 
     /**
-     * Gets the list of bound addresses.
+     * Gets the name of the underlying {@link ConnectionManagerThread}.
      */
-    public List<InetSocketAddress> getBoundAddresses() {
-        return this.thread.query(QUERY_BOUND_ADDRESSES);
+    @Override
+    public String toString() {
+        return this.thread.toString();
     }
 
     /**
@@ -162,6 +155,13 @@ public class ConnectionManager implements Closeable {
      */
     public List<AbstractManagedConnection<?>> getConnections() {
         return this.thread.query(QUERY_CONNECTIONS);
+    }
+
+    /**
+     * Gets the list of bound addresses.
+     */
+    public List<InetSocketAddress> getBoundAddresses() {
+        return this.thread.query(QUERY_BOUND_ADDRESSES);
     }
 
     /**

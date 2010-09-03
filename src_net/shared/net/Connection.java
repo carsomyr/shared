@@ -46,14 +46,14 @@ public interface Connection extends Closeable, Executor {
     public static enum ClosingType {
 
         /**
-         * Denotes closure by end-of-stream.
-         */
-        EOS, //
-
-        /**
          * Denotes closure by user request.
          */
         USER, //
+
+        /**
+         * Denotes closure by end-of-stream.
+         */
+        EOS, //
 
         /**
          * Denotes closure by error.
@@ -191,12 +191,6 @@ public interface Connection extends Closeable, Executor {
     public void setError(Throwable error);
 
     /**
-     * Closes this connection.
-     */
-    @Override
-    public void close();
-
-    /**
      * Executes the given code snippet on this connection's manager thread.
      * 
      * @param r
@@ -204,4 +198,16 @@ public interface Connection extends Closeable, Executor {
      */
     @Override
     public void execute(Runnable r);
+
+    /**
+     * Closes this connection.
+     */
+    @Override
+    public void close();
+
+    /**
+     * Creates a human-readable representation of this connection.
+     */
+    @Override
+    public String toString();
 }

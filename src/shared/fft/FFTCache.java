@@ -135,14 +135,6 @@ abstract public class FFTCache<C extends AbstractArray<C, C, R, ?>, R extends Ab
         }
 
         /**
-         * Fulfills the {@link #hashCode()} contract.
-         */
-        @Override
-        public int hashCode() {
-            return this.tag.hashCode() ^ Arrays.hashCode(this.dims);
-        }
-
-        /**
          * Fulfills the {@link #equals(Object)} contract.
          */
         @SuppressWarnings("unchecked")
@@ -151,6 +143,14 @@ abstract public class FFTCache<C extends AbstractArray<C, C, R, ?>, R extends Ab
 
             CacheKey key = (CacheKey) o;
             return key.tag.equals(this.tag) && Arrays.equals(key.dims, this.dims);
+        }
+
+        /**
+         * Fulfills the {@link #hashCode()} contract.
+         */
+        @Override
+        public int hashCode() {
+            return this.tag.hashCode() ^ Arrays.hashCode(this.dims);
         }
     }
 }

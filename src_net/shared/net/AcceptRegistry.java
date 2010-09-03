@@ -174,17 +174,17 @@ public class AcceptRegistry {
         }
 
         /**
-         * Gets the pending accepts.
-         */
-        protected Set<AbstractManagedConnection<?>> getPending() {
-            return this.pending;
-        }
-
-        /**
          * Gets the {@link SelectionKey}.
          */
         protected SelectionKey getKey() {
             return this.key;
+        }
+
+        /**
+         * Gets the pending accepts.
+         */
+        protected Set<AbstractManagedConnection<?>> getPending() {
+            return this.pending;
         }
     }
 }

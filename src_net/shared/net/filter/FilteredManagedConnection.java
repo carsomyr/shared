@@ -72,8 +72,6 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     final Queue<OOBEvent> outEvtsFilteredWriteOnly;
 
     OOBFilter<ByteBuffer, T> filter;
-    Filter<ByteBuffer, T> bindFilter;
-    Filter<ByteBuffer, T> shutdownFilter;
 
     /**
      * Default constructor.
@@ -167,15 +165,6 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     }
 
     @Override
-    public void onReceive(ByteBuffer input) {
-
-        this.in.add(input);
-        this.filter.getInbound(this.inReadOnly, this.inFilteredWriteOnly);
-
-        onReceive(this.inFiltered);
-    }
-
-    @Override
     public void onBind() {
 
         onOOBEvent(OOBEventType.BIND, null, new Handler<Queue<T>>() {
@@ -185,6 +174,15 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
                 onBind(inbounds);
             }
         });
+    }
+
+    @Override
+    public void onReceive(ByteBuffer input) {
+
+        this.in.add(input);
+        this.filter.getInbound(this.inReadOnly, this.inFilteredWriteOnly);
+
+        onReceive(this.inFiltered);
     }
 
     @Override

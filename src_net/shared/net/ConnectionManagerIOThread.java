@@ -135,15 +135,6 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
         }
     };
 
-    @Transition(currentState = "ACTIVE", eventType = "EXECUTE")
-    final Handler<InterestEvent<Runnable>> executeHandler = new Handler<InterestEvent<Runnable>>() {
-
-        @Override
-        public void handle(InterestEvent<Runnable> evt) {
-            handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
-        }
-    };
-
     @Transition(currentState = "ACTIVE", eventType = "CLOSE")
     final Handler<InterestEvent<?>> closeHandler = new Handler<InterestEvent<?>>() {
 
@@ -163,6 +154,15 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
         @Override
         public void handle(InterestEvent<Throwable> evt) {
             handleError(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
+        }
+    };
+
+    @Transition(currentState = "ACTIVE", eventType = "EXECUTE")
+    final Handler<InterestEvent<Runnable>> executeHandler = new Handler<InterestEvent<Runnable>>() {
+
+        @Override
+        public void handle(InterestEvent<Runnable> evt) {
+            handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
 

@@ -338,19 +338,6 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
     @Transitions(transitions = {
             //
-            @Transition(currentState = "CONNECT", eventType = "EXECUTE"), //
-            @Transition(currentState = "ACCEPT", eventType = "EXECUTE") //
-    })
-    final Handler<InterestEvent<Runnable>> executeHandler = new Handler<InterestEvent<Runnable>>() {
-
-        @Override
-        public void handle(InterestEvent<Runnable> evt) {
-            handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
-        }
-    };
-
-    @Transitions(transitions = {
-            //
             @Transition(currentState = "CONNECT", eventType = "CLOSE"), //
             @Transition(currentState = "ACCEPT", eventType = "CLOSE") //
     })
@@ -373,6 +360,19 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         @Override
         public void handle(InterestEvent<Throwable> evt) {
             handleError(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
+        }
+    };
+
+    @Transitions(transitions = {
+            //
+            @Transition(currentState = "CONNECT", eventType = "EXECUTE"), //
+            @Transition(currentState = "ACCEPT", eventType = "EXECUTE") //
+    })
+    final Handler<InterestEvent<Runnable>> executeHandler = new Handler<InterestEvent<Runnable>>() {
+
+        @Override
+        public void handle(InterestEvent<Runnable> evt) {
+            handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
 

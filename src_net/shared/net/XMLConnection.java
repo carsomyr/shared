@@ -63,10 +63,6 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
     final S type;
 
-    int mark;
-
-    Throwable error;
-
     Handler<T> handler;
 
     /**
@@ -88,8 +84,6 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
         this.type = type;
 
-        this.mark = 0;
-        this.error = null;
         this.handler = new Handler<T>() {
 
             @Override

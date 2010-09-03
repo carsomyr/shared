@@ -517,14 +517,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
 
         /**
-         * Closes this stream.
-         */
-        @Override
-        public void close() {
-            Control.close(getConnection());
-        }
-
-        /**
          * Gets the number of readable bytes before blocking.
          */
         @Override
@@ -535,6 +527,14 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             synchronized (smc) {
                 return this.inBuffer.remaining();
             }
+        }
+
+        /**
+         * Closes this stream.
+         */
+        @Override
+        public void close() {
+            Control.close(getConnection());
         }
 
         @Override

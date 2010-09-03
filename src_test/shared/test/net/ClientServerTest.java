@@ -132,16 +132,16 @@ public class ClientServerTest {
         }
 
         @Override
+        public void onBind(Queue<String> inbounds) {
+            this.log.info("Connection is now bound.");
+        }
+
+        @Override
         public void onReceive(Queue<String> inbounds) {
 
             for (String str; (str = inbounds.poll()) != null;) {
                 this.log.info(String.format("Received: \"%s\".", str));
             }
-        }
-
-        @Override
-        public void onBind(Queue<String> inbounds) {
-            this.log.info("Connection is now bound.");
         }
 
         @Override

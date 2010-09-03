@@ -57,24 +57,19 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         ACCEPT, //
 
         /**
-         * Denotes a connection dispatch notification.
-         */
-        DISPATCH, //
-
-        /**
          * Denotes a connection registration request.
          */
         REGISTER, //
 
         /**
+         * Denotes a connection dispatch notification.
+         */
+        DISPATCH, //
+
+        /**
          * Denotes a connection operation interest change request.
          */
         OP, //
-
-        /**
-         * Denotes a request to execute code on the manager thread.
-         */
-        EXECUTE, //
 
         /**
          * Denotes a connection close request.
@@ -87,9 +82,9 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         ERROR, //
 
         /**
-         * Denotes a request to shut down the manager thread.
+         * Denotes a request to execute code on the manager thread.
          */
-        SHUTDOWN, //
+        EXECUTE, //
 
         /**
          * Denotes a request to get the list of bound addresses.
@@ -99,7 +94,12 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         /**
          * Denotes a request to get the list of connections.
          */
-        QUERY_CONNECTIONS;
+        QUERY_CONNECTIONS, //
+
+        /**
+         * Denotes a request to shut down the manager thread.
+         */
+        SHUTDOWN;
     }
 
     final InterestEventType type;

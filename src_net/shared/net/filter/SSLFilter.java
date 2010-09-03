@@ -61,8 +61,6 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
     final C connection;
     final Executor executor;
 
-    Filter<ByteBuffer, ByteBuffer> filter;
-
     ByteBuffer encryptBuffer;
     ByteBuffer decryptBuffer;
     ByteBuffer readBuffer;

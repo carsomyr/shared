@@ -408,15 +408,19 @@ abstract public class ConnectionManagerThread extends CoreThread //
     }
 
     /**
-     * Handles a request to execute code on this thread.
+     * Handles a connection close request.
      */
-    protected void handleExecute(AbstractManagedConnection<?> conn, Runnable r) {
+    protected void handleClosingUser(AbstractManagedConnection<?> conn) {
 
         assert !Thread.holdsLock(conn);
 
         try {
 
-            r.run();
+            conn.doClosing(ClosingType.USER);
+
+            debug("Close [%s].", conn);
+
+            conn.setStatus(AbstractManagedConnectionStatus.CLOSING);
 
         } catch (Throwable t) {
 
@@ -436,27 +440,6 @@ abstract public class ConnectionManagerThread extends CoreThread //
             conn.doClosing(ClosingType.EOS);
 
             debug("EOS [%s].", conn);
-
-            conn.setStatus(AbstractManagedConnectionStatus.CLOSING);
-
-        } catch (Throwable t) {
-
-            handleError(conn, t);
-        }
-    }
-
-    /**
-     * Handles a connection close request.
-     */
-    protected void handleClosingUser(AbstractManagedConnection<?> conn) {
-
-        assert !Thread.holdsLock(conn);
-
-        try {
-
-            conn.doClosing(ClosingType.USER);
-
-            debug("Close [%s].", conn);
 
             conn.setStatus(AbstractManagedConnectionStatus.CLOSING);
 
@@ -526,6 +509,23 @@ abstract public class ConnectionManagerThread extends CoreThread //
         purge(conn);
 
         conn.setStatus(AbstractManagedConnectionStatus.CLOSED);
+    }
+
+    /**
+     * Handles a request to execute code on this thread.
+     */
+    protected void handleExecute(AbstractManagedConnection<?> conn, Runnable r) {
+
+        assert !Thread.holdsLock(conn);
+
+        try {
+
+            r.run();
+
+        } catch (Throwable t) {
+
+            handleError(conn, t);
+        }
     }
 
     /**
