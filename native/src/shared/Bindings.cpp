@@ -105,23 +105,23 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_iuOp(JNIEnv *env,
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_eOp(JNIEnv *env, jobject thisObj, jint type, //
-        jobject lhsV, jobject rhsV, jobject dstV, jboolean isComplex) {
-    ElementOps::eOp(env, thisObj, type, lhsV, rhsV, dstV, isComplex);
+        jobject lhsV, jobject rhsV, jobject dstV, jboolean complex) {
+    ElementOps::eOp(env, thisObj, type, lhsV, rhsV, dstV, complex);
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_convert(JNIEnv *env, jobject thisObj, jint type, //
-        jobject srcV, jboolean srcIsComplex, jobject dstV, jboolean dstIsComplex) {
-    ElementOps::convert(env, thisObj, type, srcV, srcIsComplex, dstV, dstIsComplex);
+        jobject srcV, jboolean isSrcComplex, jobject dstV, jboolean isDstComplex) {
+    ElementOps::convert(env, thisObj, type, srcV, isSrcComplex, dstV, isDstComplex);
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_mul(JNIEnv *env, jobject thisObj, //
-        jdoubleArray lhsV, jdoubleArray rhsV, jint lhsR, jint rhsC, jdoubleArray dstV, jboolean isComplex) {
-    MatrixOps::mul(env, thisObj, lhsV, rhsV, lhsR, rhsC, dstV, isComplex);
+        jdoubleArray lhsV, jdoubleArray rhsV, jint lhsR, jint rhsC, jdoubleArray dstV, jboolean complex) {
+    MatrixOps::mul(env, thisObj, lhsV, rhsV, lhsR, rhsC, dstV, complex);
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_diag(JNIEnv *env, jobject thisObj, //
-        jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean isComplex) {
-    MatrixOps::diag(env, thisObj, srcV, dstV, size, isComplex);
+        jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean complex) {
+    MatrixOps::diag(env, thisObj, srcV, dstV, size, complex);
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_svd(JNIEnv *env, jobject thisObj, //

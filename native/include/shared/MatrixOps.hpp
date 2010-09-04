@@ -51,11 +51,11 @@ public:
      *      the column count of the result.
      * @param dstV
      *      the destination values.
-     * @param isComplex
+     * @param complex
      *      whether the operation is complex-valued.
      */
     static void mul(JNIEnv *env, jobject thisObj, jdoubleArray lhsV, jdoubleArray rhsV, jint lhsR, jint rhsC,
-            jdoubleArray dstV, jboolean isComplex);
+            jdoubleArray dstV, jboolean complex);
 
     /**
      * Computes the product of two matrices.
@@ -91,11 +91,11 @@ public:
      *      destination values.
      * @param size
      *      the matrix size.
-     * @param isComplex
+     * @param complex
      *      whether the operation is complex-valued.
      */
     static void diag(JNIEnv *env, jobject thisObj, jdoubleArray srcV, jdoubleArray dstV, //
-            jint size, jboolean isComplex);
+            jint size, jboolean complex);
 
     /**
      * Computes the diagonal of a matrix.

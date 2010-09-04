@@ -41,9 +41,9 @@ public class MatrixOps {
      * A matrix multiply operation in support of
      * {@link JavaArrayKernel#mul(double[], double[], int, int, double[], boolean)}.
      */
-    final public static void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean isComplex) {
+    final public static void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean complex) {
 
-        int factor = (isComplex ? 2 : 1);
+        int factor = (complex ? 2 : 1);
         int lc = (lr != 0) ? lhsV.length / (factor * lr) : 0;
         int rr = (rc != 0) ? rhsV.length / (factor * rc) : 0;
         int inner = Control.checkEquals(lc, rr);
@@ -54,7 +54,7 @@ public class MatrixOps {
                 && (dstV.length == factor * lr * rc), //
                 "Invalid array lengths");
 
-        if (isComplex) {
+        if (complex) {
 
             for (int i = 0; i < lr; i++) {
 
@@ -102,14 +102,14 @@ public class MatrixOps {
     /**
      * A matrix diagonal operation in support of {@link JavaArrayKernel#diag(double[], double[], int, boolean)}.
      */
-    final public static void diag(double[] srcV, double[] dstV, int size, boolean isComplex) {
+    final public static void diag(double[] srcV, double[] dstV, int size, boolean complex) {
 
-        int factor = (isComplex ? 2 : 1);
+        int factor = (complex ? 2 : 1);
 
         Control.checkTrue((srcV.length == factor * size * size) && (dstV.length == factor * size), //
                 "Invalid array lengths");
 
-        if (isComplex) {
+        if (complex) {
 
             for (int j = 0, m = 2 * size; j < m; j += 2) {
 

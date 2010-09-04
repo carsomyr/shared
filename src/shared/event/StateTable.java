@@ -239,11 +239,11 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
         int nRows = this.backingArray.size(0);
         int nCols = this.backingArray.size(1);
 
-        for (int i = 0; i < nRows; i++) {
+        for (int row = 0; row < nRows; row++) {
 
-            for (int j = 0; j < nCols; j++) {
+            for (int col = 0; col < nCols; col++) {
 
-                StateHandler stateHandler = this.backingArray.get(i, j);
+                StateHandler stateHandler = this.backingArray.get(row, col);
 
                 if (stateHandler != null) {
                     sb.append(stateHandler).append(Control.LineSeparator);

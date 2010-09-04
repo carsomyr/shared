@@ -247,7 +247,7 @@ inline void Plan::getTransformParameters( //
 
     switch (type) {
 
-    case sharedx_fftw_Plan_R2C:
+    case sharedx_fftw_Plan_R_TO_C:
 
     {
         jint acc1 = dimsArr[nDims - 1];
@@ -266,7 +266,7 @@ inline void Plan::getTransformParameters( //
 
         break;
 
-    case sharedx_fftw_Plan_C2R:
+    case sharedx_fftw_Plan_C_TO_R:
 
     {
         jint acc1 = 2 * ((dimsArr[nDims - 1] / 2) + 1);
@@ -361,12 +361,12 @@ inline fftw_plan Plan::createPlan( //
 
     switch (type) {
 
-    case sharedx_fftw_Plan_R2C:
+    case sharedx_fftw_Plan_R_TO_C:
         plan = fftw_plan_dft_r2c(nDims, (const int *) dimsArr, //
                 inArr, (fftw_complex *) outArr, mode | FFTW_PRESERVE_INPUT | FFTW_UNALIGNED);
         break;
 
-    case sharedx_fftw_Plan_C2R:
+    case sharedx_fftw_Plan_C_TO_R:
         // NOTE: Complex-to-real transforms may destroy their input.
         plan = fftw_plan_dft_c2r(nDims, (const int *) dimsArr, //
                 (fftw_complex *) inArr, outArr, mode | FFTW_DESTROY_INPUT | FFTW_UNALIGNED);
@@ -403,12 +403,12 @@ inline void Plan::executePlan( //
 
     switch (type) {
 
-    case sharedx_fftw_Plan_R2C:
+    case sharedx_fftw_Plan_R_TO_C:
         fftw_execute_dft_r2c(plan, inArr, (fftw_complex *) outArr);
         break;
 
-    case sharedx_fftw_Plan_C2R:
-        executePlan_C2R(plan, inArr, outArr, inLen);
+    case sharedx_fftw_Plan_C_TO_R:
+        executePlanCToR(plan, inArr, outArr, inLen);
         break;
 
     case sharedx_fftw_Plan_FORWARD:
@@ -428,7 +428,7 @@ inline void Plan::executePlan( //
     }
 }
 
-void Plan::executePlan_C2R( //
+void Plan::executePlanCToR( //
         fftw_plan plan, jdouble *inArr, jdouble *outArr, jint inLen) {
 
     MallocHandler mallocH(sizeof(jdouble) * inLen);

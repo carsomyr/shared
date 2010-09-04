@@ -29,8 +29,8 @@
 package shared.array.sparse;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.FIELD_PRECISION;
-import static shared.array.ArrayBase.FIELD_WIDTH;
+import static shared.array.ArrayBase.FieldPrecision;
+import static shared.array.ArrayBase.FieldWidth;
 import static shared.array.ArrayBase.OpKernel;
 import static shared.array.ArrayBase.formatRescale;
 import static shared.array.ArrayBase.formatSparseArray;
@@ -173,7 +173,7 @@ public class RealSparseArray extends ProtoSparseArray<RealSparseArray, double[],
             return f.toString();
         }
 
-        String valueFormat = String.format("%%%d.%df", FIELD_WIDTH, FIELD_PRECISION);
+        String valueFormat = String.format("%%%d.%df", FieldWidth, FieldPrecision);
         String indexFormat = String.format("%%%dd", exponentIndex + 2);
 
         formatSparseArray(f, valueFormat, indexFormat, formatRescale(f, exponent, values), indices, strides);

@@ -146,7 +146,7 @@ public class Control {
      * An implementation of {@link ErrorHandler} that immediately throws any {@link SAXException} passed to it,
      * regardless of severity.
      */
-    final public static ErrorHandler DefaultErrorHandler = new ErrorHandler() {
+    final public static ErrorHandler StrictErrorHandler = new ErrorHandler() {
 
         @Override
         public void error(SAXParseException exception) throws SAXException {
@@ -183,7 +183,7 @@ public class Control {
 
                 db = dbf.newDocumentBuilder();
                 db.setEntityResolver(ClasspathResolver);
-                db.setErrorHandler(DefaultErrorHandler);
+                db.setErrorHandler(StrictErrorHandler);
 
             } catch (ParserConfigurationException e) {
 

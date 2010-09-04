@@ -29,8 +29,8 @@
 package shared.net;
 
 import static shared.net.Constants.DEFAULT_BACKLOG_SIZE;
-import static shared.net.InterestEvent.InterestEventType.QUERY_BOUND_ADDRESSES;
-import static shared.net.InterestEvent.InterestEventType.QUERY_CONNECTIONS;
+import static shared.net.InterestEvent.InterestEventType.GET_BOUND_ADDRESSES;
+import static shared.net.InterestEvent.InterestEventType.GET_CONNECTIONS;
 
 import java.io.Closeable;
 import java.lang.ref.WeakReference;
@@ -97,24 +97,24 @@ public class ConnectionManager implements Closeable {
      * 
      * @param name
      *            the name.
-     * @param backlog
+     * @param backlogSize
      *            the listen backlog size.
      */
-    public ConnectionManager(String name, int backlog) {
+    public ConnectionManager(String name, int backlogSize) {
 
         this.thread = new ConnectionManagerDispatchThread(name, //
-                backlog, Runtime.getRuntime().availableProcessors());
+                backlogSize, Runtime.getRuntime().availableProcessors());
         this.thread.start();
     }
 
     /**
      * Alternate constructor.
      * 
-     * @param backlog
+     * @param backlogSize
      *            the listen backlog size.
      */
-    public ConnectionManager(int backlog) {
-        this("", backlog);
+    public ConnectionManager(int backlogSize) {
+        this("", backlogSize);
     }
 
     /**
@@ -154,14 +154,14 @@ public class ConnectionManager implements Closeable {
      * Gets the list of connections.
      */
     public List<AbstractManagedConnection<?>> getConnections() {
-        return this.thread.query(QUERY_CONNECTIONS);
+        return this.thread.request(GET_CONNECTIONS);
     }
 
     /**
      * Gets the list of bound addresses.
      */
     public List<InetSocketAddress> getBoundAddresses() {
-        return this.thread.query(QUERY_BOUND_ADDRESSES);
+        return this.thread.request(GET_BOUND_ADDRESSES);
     }
 
     /**

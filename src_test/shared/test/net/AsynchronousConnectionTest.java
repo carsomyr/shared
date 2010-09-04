@@ -141,7 +141,7 @@ public class AsynchronousConnectionTest {
         int maxMessageSize = this.messageLength << 6;
         int bufferSize = this.messageLength << 2;
 
-        FrameFilterFactory<TestXMLConnection> fFF = new FrameFilterFactory<TestXMLConnection>( //
+        FrameFilterFactory<TestXMLConnection> fff = new FrameFilterFactory<TestXMLConnection>( //
                 minMessageSize, maxMessageSize);
 
         List<AbstractTestVerifier<?>> verifiers = new ArrayList<AbstractTestVerifier<?>>();
@@ -157,7 +157,7 @@ public class AsynchronousConnectionTest {
             if (this.useSSL) {
                 xmlRConn.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXMLConnection>() //
                         .add(ServerSSLFilterFactory) //
-                        .add(fFF) //
+                        .add(fff) //
                         .add(XMLFilterFactory.getInstance()) //
                         .add(xmlRConn));
             }
@@ -182,7 +182,7 @@ public class AsynchronousConnectionTest {
             if (this.useSSL) {
                 xmlSConn.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXMLConnection>() //
                         .add(ClientSSLFilterFactory) //
-                        .add(fFF) //
+                        .add(fff) //
                         .add(XMLFilterFactory.getInstance()) //
                         .add(xmlSConn));
             }

@@ -24,11 +24,11 @@
 #include <MatrixOps.hpp>
 
 void MatrixOps::mul(JNIEnv *env, jobject thisObj, jdoubleArray lhsV, jdoubleArray rhsV, jint lhsR, jint rhsC,
-        jdoubleArray dstV, jboolean isComplex) {
+        jdoubleArray dstV, jboolean complex) {
 
     try {
 
-        if (isComplex) {
+        if (complex) {
 
             MatrixOps::mulProxy<jcomplex>(env, lhsV, rhsV, lhsR, rhsC, dstV, jcomplex(0, 0), JNI_TRUE);
 
@@ -45,7 +45,7 @@ void MatrixOps::mul(JNIEnv *env, jobject thisObj, jdoubleArray lhsV, jdoubleArra
 
 template<class T> inline void MatrixOps::mulProxy(JNIEnv *env, //
         jarray lhsV, jarray rhsV, jint lhsR, jint rhsC, jarray dstV, //
-        T zero, jboolean isComplex) {
+        T zero, jboolean complex) {
 
     if (!lhsV || !rhsV || !dstV) {
         throw std::runtime_error("Invalid arguments");
@@ -55,7 +55,7 @@ template<class T> inline void MatrixOps::mulProxy(JNIEnv *env, //
     jint rhsLen = env->GetArrayLength(rhsV);
     jint dstLen = env->GetArrayLength(dstV);
 
-    jint factor = (isComplex ? 2 : 1);
+    jint factor = (complex ? 2 : 1);
     jint lhsC = lhsR ? lhsLen / (factor * lhsR) : 0;
     jint rhsR = rhsC ? rhsLen / (factor * rhsC) : 0;
     jint inner = lhsC;
@@ -99,11 +99,11 @@ template<class T> inline void MatrixOps::mul(const T *lArr, const T *rArr, jint 
 }
 
 void MatrixOps::diag(JNIEnv *env, jobject thisObj, //
-        jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean isComplex) {
+        jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean complex) {
 
     try {
 
-        if (isComplex) {
+        if (complex) {
 
             MatrixOps::diagProxy<jcomplex>(env, srcV, dstV, size, JNI_TRUE);
 
@@ -119,7 +119,7 @@ void MatrixOps::diag(JNIEnv *env, jobject thisObj, //
 }
 
 template<class T> inline void MatrixOps::diagProxy(JNIEnv *env, //
-        jarray srcV, jarray dstV, jint size, jboolean isComplex) {
+        jarray srcV, jarray dstV, jint size, jboolean complex) {
 
     if (!srcV || !dstV) {
         throw std::runtime_error("Invalid arguments");
@@ -128,7 +128,7 @@ template<class T> inline void MatrixOps::diagProxy(JNIEnv *env, //
     jint srcLen = env->GetArrayLength(srcV);
     jint dstLen = env->GetArrayLength(dstV);
 
-    jint factor = (isComplex ? 2 : 1);
+    jint factor = (complex ? 2 : 1);
 
     if ((srcLen != factor * size * size) || (dstLen != factor * size)) {
         throw std::runtime_error("Invalid array lengths");

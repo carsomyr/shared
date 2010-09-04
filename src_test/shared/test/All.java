@@ -79,7 +79,7 @@ public class All {
      * The program entry point.
      */
     @EntryPoint
-    public static void entryPoint(String[] args) {
+    public static void main0(String[] args) {
 
         ArrayBase.OpKernel.useJava();
         ArrayBase.IOKernel.useMatlabIO();

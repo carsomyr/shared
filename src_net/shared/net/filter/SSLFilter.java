@@ -93,7 +93,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
     }
 
     @Override
-    public void getInbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
+    public void getInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
         assert !Thread.holdsLock(this.connection);
 
@@ -101,7 +101,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
         //
 
-        for (ByteBuffer bb; (bb = in.poll()) != null;) {
+        for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
             this.readBuffer = (ByteBuffer) Buffers.append(this.readBuffer.compact(), bb, 1).flip();
         }
 
@@ -229,11 +229,11 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
         //
 
-        out.add((ByteBuffer) this.decryptBuffer.flip());
+        outputs.add((ByteBuffer) this.decryptBuffer.flip());
     }
 
     @Override
-    public void getOutbound(Queue<ByteBuffer> in, Queue<ByteBuffer> out) {
+    public void getOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
         assert Thread.holdsLock(this.connection);
 
@@ -241,7 +241,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
         //
 
-        for (ByteBuffer bb; (bb = in.poll()) != null;) {
+        for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
             this.writeBuffer = (ByteBuffer) Buffers.append(this.writeBuffer.compact(), bb, 1).flip();
         }
 
@@ -357,24 +357,24 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
         //
 
-        out.add((ByteBuffer) this.encryptBuffer.flip());
+        outputs.add((ByteBuffer) this.encryptBuffer.flip());
     }
 
     @Override
     public void getInboundOOB( //
-            Queue<ByteBuffer> in, Queue<OOBEvent> inEvts, //
-            Queue<ByteBuffer> out, Queue<OOBEvent> outEvts) {
+            Queue<ByteBuffer> inputs, Queue<OOBEvent> inputEvts, //
+            Queue<ByteBuffer> outputs, Queue<OOBEvent> outputEvts) {
 
-        Filters.transfer(inEvts, outEvts);
-        getInbound(in, out);
+        Filters.transfer(inputEvts, outputEvts);
+        getInbound(inputs, outputs);
     }
 
     @Override
     public void getOutboundOOB( //
-            Queue<ByteBuffer> in, Queue<OOBEvent> inEvts, //
-            Queue<ByteBuffer> out, Queue<OOBEvent> outEvts) {
+            Queue<ByteBuffer> inputs, Queue<OOBEvent> inputEvts, //
+            Queue<ByteBuffer> outputs, Queue<OOBEvent> outputEvts) {
 
-        for (OOBEvent evt; (evt = inEvts.poll()) != null;) {
+        for (OOBEvent evt; (evt = inputEvts.poll()) != null;) {
 
             switch (evt.getType()) {
 
@@ -383,10 +383,10 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
                 break;
             }
 
-            outEvts.add(evt);
+            outputEvts.add(evt);
         }
 
-        getOutbound(in, out);
+        getOutbound(inputs, outputs);
     }
 
     /**

@@ -34,9 +34,6 @@ import static shared.array.kernel.ArrayKernel.CE_ADD;
 import static shared.array.kernel.ArrayKernel.CE_DIV;
 import static shared.array.kernel.ArrayKernel.CE_MUL;
 import static shared.array.kernel.ArrayKernel.CE_SUB;
-import static shared.array.kernel.ArrayKernel.CTOR_ABS;
-import static shared.array.kernel.ArrayKernel.CTOR_IM;
-import static shared.array.kernel.ArrayKernel.CTOR_RE;
 import static shared.array.kernel.ArrayKernel.CU_ADD;
 import static shared.array.kernel.ArrayKernel.CU_CONJ;
 import static shared.array.kernel.ArrayKernel.CU_COS;
@@ -46,6 +43,9 @@ import static shared.array.kernel.ArrayKernel.CU_MUL;
 import static shared.array.kernel.ArrayKernel.CU_RND;
 import static shared.array.kernel.ArrayKernel.CU_SHUFFLE;
 import static shared.array.kernel.ArrayKernel.CU_SIN;
+import static shared.array.kernel.ArrayKernel.C_TO_R_ABS;
+import static shared.array.kernel.ArrayKernel.C_TO_R_IM;
+import static shared.array.kernel.ArrayKernel.C_TO_R_RE;
 import static shared.array.kernel.ArrayKernel.IE_ADD;
 import static shared.array.kernel.ArrayKernel.IE_MAX;
 import static shared.array.kernel.ArrayKernel.IE_MIN;
@@ -67,8 +67,6 @@ import static shared.array.kernel.ArrayKernel.RE_MAX;
 import static shared.array.kernel.ArrayKernel.RE_MIN;
 import static shared.array.kernel.ArrayKernel.RE_MUL;
 import static shared.array.kernel.ArrayKernel.RE_SUB;
-import static shared.array.kernel.ArrayKernel.RTOC_IM;
-import static shared.array.kernel.ArrayKernel.RTOC_RE;
 import static shared.array.kernel.ArrayKernel.RU_ABS;
 import static shared.array.kernel.ArrayKernel.RU_ADD;
 import static shared.array.kernel.ArrayKernel.RU_ATAN;
@@ -84,6 +82,8 @@ import static shared.array.kernel.ArrayKernel.RU_SHUFFLE;
 import static shared.array.kernel.ArrayKernel.RU_SIN;
 import static shared.array.kernel.ArrayKernel.RU_SQR;
 import static shared.array.kernel.ArrayKernel.RU_SQRT;
+import static shared.array.kernel.ArrayKernel.R_TO_C_IM;
+import static shared.array.kernel.ArrayKernel.R_TO_C_RE;
 import shared.util.Arithmetic;
 import shared.util.Control;
 
@@ -273,7 +273,7 @@ public class ElementOps {
         public double op(double aRe, double aIm);
     }
 
-    final static ComplexToRealOperation CTORAbsOp = new ComplexToRealOperation() {
+    final static ComplexToRealOperation CToRAbsOp = new ComplexToRealOperation() {
 
         @Override
         public double op(double aRe, double aIm) {
@@ -281,7 +281,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexToRealOperation CTORReOp = new ComplexToRealOperation() {
+    final static ComplexToRealOperation CToRReOp = new ComplexToRealOperation() {
 
         @Override
         public double op(double aRe, double aIm) {
@@ -289,7 +289,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexToRealOperation CTORImOp = new ComplexToRealOperation() {
+    final static ComplexToRealOperation CToRImOp = new ComplexToRealOperation() {
 
         @Override
         public double op(double aRe, double aIm) {
@@ -308,7 +308,7 @@ public class ElementOps {
         public void op(double[] res, double a);
     }
 
-    final static RealToComplexOperation RTOCReOp = new RealToComplexOperation() {
+    final static RealToComplexOperation RToCReOp = new RealToComplexOperation() {
 
         @Override
         public void op(double[] res, double a) {
@@ -318,7 +318,7 @@ public class ElementOps {
         }
     };
 
-    final static RealToComplexOperation RTOCImOp = new RealToComplexOperation() {
+    final static RealToComplexOperation RToCImOp = new RealToComplexOperation() {
 
         @Override
         public void op(double[] res, double a) {
@@ -875,7 +875,7 @@ public class ElementOps {
     /**
      * A binary elementwise operation in support of {@link JavaArrayKernel#eOp(int, Object, Object, Object, boolean)}.
      */
-    final public static void eOp(int type, Object lhs, Object rhs, Object dst, boolean isComplex) {
+    final public static void eOp(int type, Object lhs, Object rhs, Object dst, boolean complex) {
 
         if (lhs instanceof double[] && rhs instanceof double[] && dst instanceof double[]) {
 
@@ -883,7 +883,7 @@ public class ElementOps {
             final double[] rhsV = (double[]) rhs;
             final double[] dstV = (double[]) dst;
 
-            if (isComplex) {
+            if (complex) {
 
                 final ComplexBinaryOperation op;
 
@@ -1024,12 +1024,12 @@ public class ElementOps {
 
             switch (type) {
 
-            case RTOC_RE:
-                op = RTOCReOp;
+            case R_TO_C_RE:
+                op = RToCReOp;
                 break;
 
-            case RTOC_IM:
-                op = RTOCImOp;
+            case R_TO_C_IM:
+                op = RToCImOp;
                 break;
 
             default:
@@ -1057,16 +1057,16 @@ public class ElementOps {
 
             switch (type) {
 
-            case CTOR_ABS:
-                op = CTORAbsOp;
+            case C_TO_R_ABS:
+                op = CToRAbsOp;
                 break;
 
-            case CTOR_RE:
-                op = CTORReOp;
+            case C_TO_R_RE:
+                op = CToRReOp;
                 break;
 
-            case CTOR_IM:
-                op = CTORImOp;
+            case C_TO_R_IM:
+                op = CToRImOp;
                 break;
 
             default:

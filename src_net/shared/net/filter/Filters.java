@@ -396,31 +396,31 @@ public class Filters {
         return (filter instanceof OOBFilter<?, ?>) ? (OOBFilter<I, O>) filter : new OOBFilter<I, O>() {
 
             @Override
-            public void getInbound(Queue<I> in, Queue<O> out) {
-                filter.getInbound(in, out);
+            public void getInbound(Queue<I> inputs, Queue<O> outputs) {
+                filter.getInbound(inputs, outputs);
             }
 
             @Override
-            public void getOutbound(Queue<O> in, Queue<I> out) {
-                filter.getOutbound(in, out);
+            public void getOutbound(Queue<O> inputs, Queue<I> outputs) {
+                filter.getOutbound(inputs, outputs);
             }
 
             @Override
             public void getInboundOOB( //
-                    Queue<I> in, Queue<OOBEvent> inEvts, //
-                    Queue<O> out, Queue<OOBEvent> outEvts) {
+                    Queue<I> inputs, Queue<OOBEvent> inputEvts, //
+                    Queue<O> outputs, Queue<OOBEvent> outputEvts) {
 
-                transfer(inEvts, outEvts);
-                getInbound(in, out);
+                transfer(inputEvts, outputEvts);
+                getInbound(inputs, outputs);
             }
 
             @Override
             public void getOutboundOOB( //
-                    Queue<O> in, Queue<OOBEvent> inEvts, //
-                    Queue<I> out, Queue<OOBEvent> outEvts) {
+                    Queue<O> inputs, Queue<OOBEvent> inputEvts, //
+                    Queue<I> outputs, Queue<OOBEvent> outputEvts) {
 
-                transfer(inEvts, outEvts);
-                getOutbound(in, out);
+                transfer(inputEvts, outputEvts);
+                getOutbound(inputs, outputs);
             }
         };
     }
@@ -431,10 +431,10 @@ public class Filters {
      * @param <T>
      *            the element type.
      */
-    final public static <T> void transfer(Queue<T> in, Queue<T> out) {
+    final public static <T> void transfer(Queue<T> inputs, Queue<T> outputs) {
 
-        for (T elt; (elt = in.poll()) != null;) {
-            out.add(elt);
+        for (T elt; (elt = inputs.poll()) != null;) {
+            outputs.add(elt);
         }
     }
 

@@ -39,12 +39,12 @@ def main():
 
     subprocess.call(["make", "jar"])
 
-    javacmd = ["java", "-ea", "-XX:+AggressiveHeap", "-XX:+AllowUserSignalHandlers", "-Xcheck:jni", "-cp", "sst.jar"]
+    java_cmd = ["java", "-ea", "-XX:+AggressiveHeap", "-XX:+AllowUserSignalHandlers", "-Xcheck:jni", "-cp", "sst.jar"]
 
-    subprocess.call(javacmd + ["shared.test.All"])
-    subprocess.call(javacmd + ["shared.test.Demo"])
-    subprocess.call(javacmd + ["shared.test.AllNative"])
-    subprocess.call(javacmd + ["sharedx.test.AllX"])
+    subprocess.call(java_cmd + ["shared.test.All"])
+    subprocess.call(java_cmd + ["shared.test.Demo"])
+    subprocess.call(java_cmd + ["shared.test.AllNative"])
+    subprocess.call(java_cmd + ["sharedx.test.AllX"])
 
 #
 

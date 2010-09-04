@@ -98,7 +98,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
     /**
      * Handles a request to get the list of connections.
      */
-    protected void handleQueryConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
+    protected void handleGetConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
 
         List<AbstractManagedConnection<?>> res = new ArrayList<AbstractManagedConnection<?>>();
 
@@ -166,13 +166,13 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_CONNECTIONS", group = "internal")
-    final Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>> queryConnectionsHandler = //
+    @Transition(currentState = "RUN", eventType = "GET_CONNECTIONS", group = "internal")
+    final Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>> getConnectionsHandler = //
     new Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>>() {
 
         @Override
         public void handle(InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>> evt) {
-            handleQueryConnections(evt.getArgument());
+            handleGetConnections(evt.getArgument());
         }
     };
 

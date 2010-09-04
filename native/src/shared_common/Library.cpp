@@ -30,7 +30,7 @@ static jmethodID registerServiceMethodID;
 
 static jfieldID initializedFieldID;
 
-jint Library::JNI_OnLoad(JavaVM *jvm, void *reserved) {
+jint Library::OnLoad(JavaVM *jvm, void *reserved) {
 
     void *env_p;
 
@@ -50,7 +50,7 @@ jint Library::JNI_OnLoad(JavaVM *jvm, void *reserved) {
                 Common::findClass(env, "shared/util/Services"));
 
         initializedFieldID = Common::getStaticFieldID(env, libraryClass, //
-                "INITIALIZED", "Z");
+                "Initialized", "Z");
 
         registerServiceMethodID = Common::getStaticMethodID(env, servicesClass, //
                 "registerService", "(Ljava/lang/Class;Ljava/lang/Class;)V");
@@ -84,7 +84,7 @@ jint Library::JNI_OnLoad(JavaVM *jvm, void *reserved) {
     return JNI_VERSION_1_4;
 }
 
-void Library::JNI_OnUnload(JavaVM *jvm, void *reserved) {
+void Library::OnUnload(JavaVM *jvm, void *reserved) {
 
     void *env_p;
 

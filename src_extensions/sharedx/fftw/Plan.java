@@ -70,12 +70,12 @@ public class Plan extends PlanKey {
     /**
      * Real-to-half-complex (RFFT).
      */
-    final public static int R2C = 0;
+    final public static int R_TO_C = 0;
 
     /**
      * Half-complex-to-real (RIFFT).
      */
-    final public static int C2R = 1;
+    final public static int C_TO_R = 1;
 
     /**
      * Complex-to-complex forward (FFT).

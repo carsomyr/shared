@@ -76,7 +76,7 @@ public class Demo {
      * The program entry point.
      */
     @EntryPoint
-    public static void entryPoint(String[] args) {
+    public static void main0(String[] args) {
 
         Logging.configureLog4J("shared/log4j.xml");
         Logging.configureLog4J("shared/net/log4j.xml");

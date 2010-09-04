@@ -87,7 +87,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * Sets a read {@link Resolver} for when read operation interest is enabled.
      */
-    protected void setEnabledReader() {
+    protected void setInResolverEnabled() {
 
         assert Thread.holdsLock(this);
 
@@ -95,7 +95,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             return;
         }
 
-        this.inReader = new Resolver() {
+        this.inResolver = new Resolver() {
 
             @Override
             public int resolve(int size) throws IOException {
@@ -118,7 +118,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * Sets a read {@link Resolver} for when read operation interest is disabled.
      */
-    protected void setDisabledReader() {
+    protected void setInResolverDisabled() {
 
         assert Thread.holdsLock(this);
 
@@ -126,7 +126,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             return;
         }
 
-        this.inReader = new Resolver() {
+        this.inResolver = new Resolver() {
 
             @Override
             public int resolve(int size) throws IOException {
@@ -134,14 +134,14 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
                 assert Thread.holdsLock(smc);
 
-                ByteBuffer bb = smc.in.inBuffer;
+                ByteBuffer bb = smc.in.buffer;
 
                 // If running low, request more!
                 if (bb.remaining() <= bb.capacity() >>> 1) {
 
                     getThread().debug("Reads enabled [%s].", smc);
 
-                    setEnabledReader();
+                    setInResolverEnabled();
                     setEnabled(OperationType.READ, true);
                 }
 
@@ -160,11 +160,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * Sets a read {@link Resolver} for when an end-of-stream has been reached.
      */
-    protected void setEOSReader() {
+    protected void setInResolverEOS() {
 
         assert Thread.holdsLock(this);
 
-        this.inReader = new Resolver() {
+        this.inResolver = new Resolver() {
 
             @Override
             public int resolve(int size) {
@@ -180,11 +180,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * Sets an error read {@link Resolver}.
      */
-    protected void setErrorReader(final IOException x) {
+    protected void setInResolverError(final IOException e) {
 
         assert Thread.holdsLock(this);
 
-        this.inReader = new Resolver() {
+        this.inResolver = new Resolver() {
 
             @Override
             public int resolve(int size) throws IOException {
@@ -198,7 +198,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
                 } else {
 
-                    throw x;
+                    throw e;
                 }
             }
         };
@@ -207,11 +207,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * Sets the default write {@link Resolver}.
      */
-    protected void setDefaultWriter() {
+    protected void setOutResolverDefault() {
 
         assert Thread.holdsLock(this);
 
-        this.outWriter = new Resolver() {
+        this.outResolver = new Resolver() {
 
             @Override
             public int resolve(int remaining) {
@@ -219,7 +219,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
                 assert Thread.holdsLock(smc);
 
-                return sendOutbound(smc.out.outBuffer) + smc.out.outBuffer.remaining();
+                return sendOutbound(smc.out.buffer) + smc.out.buffer.remaining();
             }
         };
     }
@@ -227,11 +227,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * Sets an error write {@link Resolver}.
      */
-    protected void setErrorWriter(final IOException x) {
+    protected void setOutResolverError(final IOException e) {
 
         assert Thread.holdsLock(this);
 
-        this.outWriter = new Resolver() {
+        this.outResolver = new Resolver() {
 
             @Override
             public int resolve(int remaining) throws IOException {
@@ -240,7 +240,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 assert Thread.holdsLock(smc);
 
                 // If there's nothing left to write, return normally.
-                if (remaining + smc.out.outBuffer.remaining() == 0) {
+                if (remaining + smc.out.buffer.remaining() == 0) {
 
                     return 0;
 
@@ -248,14 +248,14 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 // Otherwise, throw an exception.
                 else {
 
-                    throw x;
+                    throw e;
                 }
             }
         };
     }
 
-    Resolver inReader;
-    Resolver outWriter;
+    Resolver inResolver;
+    Resolver outResolver;
 
     ManagedInputStream in;
     ManagedOutputStream out;
@@ -271,12 +271,12 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         synchronized (this) {
 
-            setEnabledReader();
-            setDefaultWriter();
+            setInResolverEnabled();
+            setOutResolverDefault();
         }
 
-        IdentityFilterFactory<ByteBuffer, SynchronousManagedConnection> iFF = IdentityFilterFactory.getInstance();
-        setFilterFactory(iFF);
+        IdentityFilterFactory<ByteBuffer, SynchronousManagedConnection> iff = IdentityFilterFactory.getInstance();
+        setFilterFactory(iff);
     }
 
     /**
@@ -315,7 +315,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     }
 
     @Override
-    public void onBind(Queue<ByteBuffer> inbounds) {
+    public void onBind(Queue<ByteBuffer> inputs) {
 
         synchronized (this) {
 
@@ -326,7 +326,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     }
 
     @Override
-    public void onReceive(Queue<ByteBuffer> inbounds) {
+    public void onReceive(Queue<ByteBuffer> inputs) {
 
         boolean disableReads = false;
 
@@ -334,23 +334,23 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             notifyAll();
 
-            for (ByteBuffer inbound = null; (inbound = inbounds.peek()) != null && !disableReads;) {
+            for (ByteBuffer bb = null; (bb = inputs.peek()) != null && !disableReads;) {
 
-                ByteBuffer receiveBB = this.in.inBuffer;
+                ByteBuffer receiveBB = this.in.buffer;
 
                 receiveBB.compact();
 
-                int size = Math.min(inbound.remaining(), receiveBB.remaining());
-                int save = inbound.position();
+                int size = Math.min(bb.remaining(), receiveBB.remaining());
+                int save = bb.position();
 
-                receiveBB.put(inbound.array(), save, size).flip();
-                inbound.position(save + size);
+                receiveBB.put(bb.array(), save, size).flip();
+                bb.position(save + size);
 
                 disableReads = (receiveBB.remaining() == receiveBB.capacity()) //
-                        && inbound.hasRemaining();
+                        && bb.hasRemaining();
 
-                if (!inbound.hasRemaining()) {
-                    inbounds.remove();
+                if (!bb.hasRemaining()) {
+                    inputs.remove();
                 }
             }
 
@@ -359,16 +359,16 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
                 getThread().debug("Reads disabled [%s].", this);
 
-                setDisabledReader();
+                setInResolverDisabled();
                 setEnabled(OperationType.READ, false);
             }
         }
     }
 
     @Override
-    public void onClosing(ClosingType type, Queue<ByteBuffer> inbounds) {
+    public void onClosing(ClosingType type, Queue<ByteBuffer> inputs) {
 
-        final IOException x;
+        final IOException e;
 
         synchronized (this) {
 
@@ -376,38 +376,38 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             case EOS:
 
-                x = new IOException("Connection closed");
+                e = new IOException("Connection closed");
 
-                setEOSReader();
-                setErrorWriter(x);
+                setInResolverEOS();
+                setOutResolverError(e);
 
                 // Append the remainders onto the incoming buffer.
-                for (ByteBuffer bb; (bb = inbounds.poll()) != null;) {
-                    this.in.inBuffer = (ByteBuffer) Buffers.append(this.in.inBuffer.compact(), bb).flip();
+                for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
+                    this.in.buffer = (ByteBuffer) Buffers.append(this.in.buffer.compact(), bb).flip();
                 }
 
                 break;
 
             case USER:
 
-                x = new IOException("Connection closed");
+                e = new IOException("Connection closed");
 
-                setErrorReader(x);
-                setErrorWriter(x);
+                setInResolverError(e);
+                setOutResolverError(e);
 
                 // Append the remainders onto the incoming buffer.
-                for (ByteBuffer bb; (bb = inbounds.poll()) != null;) {
-                    this.in.inBuffer = (ByteBuffer) Buffers.append(this.in.inBuffer.compact(), bb).flip();
+                for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
+                    this.in.buffer = (ByteBuffer) Buffers.append(this.in.buffer.compact(), bb).flip();
                 }
 
                 break;
 
             case ERROR:
 
-                x = (IOException) new IOException("Connection encountered an error").initCause(getError());
+                e = (IOException) new IOException("Connection encountered an error").initCause(getError());
 
-                setErrorReader(x);
-                setErrorWriter(x);
+                setInResolverError(e);
+                setOutResolverError(e);
 
                 // Do NOT append the remainder onto the incoming buffer, since the very cause of the error could be a
                 // buffer discontinuity.
@@ -443,7 +443,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected class ManagedInputStream extends InputStream implements ManagedStream {
 
-        ByteBuffer inBuffer;
+        ByteBuffer buffer;
 
         /**
          * Default constructor.
@@ -451,7 +451,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         protected ManagedInputStream() {
 
             // Invariant: The incoming buffer is always in the ready-to-read configuration.
-            this.inBuffer = (ByteBuffer) ByteBuffer.allocate(getBufferSize()).flip();
+            this.buffer = (ByteBuffer) ByteBuffer.allocate(getBufferSize()).flip();
         }
 
         /**
@@ -464,21 +464,21 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             synchronized (smc) {
 
-                for (; !isClosed() && !this.inBuffer.hasRemaining();) {
+                for (; !isClosed() && !this.buffer.hasRemaining();) {
                     smc.waitInterruptibly();
                 }
 
-                if (this.inBuffer.hasRemaining()) {
+                if (this.buffer.hasRemaining()) {
 
-                    int res = this.inBuffer.get() & 0x000000FF;
+                    int res = this.buffer.get() & 0x000000FF;
 
-                    smc.inReader.resolve(1);
+                    smc.inResolver.resolve(1);
 
                     return res;
 
                 } else {
 
-                    return smc.inReader.resolve(0);
+                    return smc.inResolver.resolve(0);
                 }
             }
         }
@@ -505,14 +505,14 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             synchronized (smc) {
 
-                for (; !isClosed() && !this.inBuffer.hasRemaining();) {
+                for (; !isClosed() && !this.buffer.hasRemaining();) {
                     smc.waitInterruptibly();
                 }
 
-                int size = Math.min(this.inBuffer.remaining(), length);
-                this.inBuffer.get(dst, offset, size);
+                int size = Math.min(this.buffer.remaining(), length);
+                this.buffer.get(dst, offset, size);
 
-                return smc.inReader.resolve(size);
+                return smc.inResolver.resolve(size);
             }
         }
 
@@ -525,7 +525,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             SynchronousManagedConnection smc = getConnection();
 
             synchronized (smc) {
-                return this.inBuffer.remaining();
+                return this.buffer.remaining();
             }
         }
 
@@ -548,7 +548,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected class ManagedOutputStream extends OutputStream implements ManagedStream {
 
-        final ByteBuffer outBuffer;
+        final ByteBuffer buffer;
 
         /**
          * Default constructor.
@@ -556,7 +556,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         protected ManagedOutputStream() {
 
             // Invariant: The outgoing buffer is always in the ready-to-read configuration.
-            this.outBuffer = (ByteBuffer) ByteBuffer.allocate(getBufferSize()).flip();
+            this.buffer = (ByteBuffer) ByteBuffer.allocate(getBufferSize()).flip();
         }
 
         /**
@@ -571,11 +571,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
                 for (int size, length = 1; length > 0; length -= size) {
 
-                    this.outBuffer.compact();
-                    size = Math.min(this.outBuffer.remaining(), length);
-                    ((size > 0) ? this.outBuffer.put((byte) b) : this.outBuffer).flip();
+                    this.buffer.compact();
+                    size = Math.min(this.buffer.remaining(), length);
+                    ((size > 0) ? this.buffer.put((byte) b) : this.buffer).flip();
 
-                    for (; smc.outWriter.resolve(length - size) > 0;) {
+                    for (; smc.outResolver.resolve(length - size) > 0;) {
                         smc.waitInterruptibly();
                     }
                 }
@@ -602,11 +602,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
                 for (int size; length > 0; offset += size, length -= size) {
 
-                    this.outBuffer.compact();
-                    size = Math.min(this.outBuffer.remaining(), length);
-                    this.outBuffer.put(src, offset, size).flip();
+                    this.buffer.compact();
+                    size = Math.min(this.buffer.remaining(), length);
+                    this.buffer.put(src, offset, size).flip();
 
-                    for (; smc.outWriter.resolve(length - size) > 0;) {
+                    for (; smc.outResolver.resolve(length - size) > 0;) {
                         smc.waitInterruptibly();
                     }
                 }

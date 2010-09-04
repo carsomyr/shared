@@ -89,12 +89,12 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         /**
          * Denotes a request to get the list of bound addresses.
          */
-        QUERY_BOUND_ADDRESSES, //
+        GET_BOUND_ADDRESSES, //
 
         /**
          * Denotes a request to get the list of connections.
          */
-        QUERY_CONNECTIONS, //
+        GET_CONNECTIONS, //
 
         /**
          * Denotes a request to shut down the manager thread.

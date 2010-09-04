@@ -352,29 +352,29 @@ public class ArrayKernelTest {
 
         //
 
-        kernel.convert(ArrayKernel.CTOR_RE, //
+        kernel.convert(ArrayKernel.C_TO_R_RE, //
                 new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3], false);
         assertTrue(Tests.equals(v, new double[] { 0.0, 1.0, 0.5 }));
 
-        kernel.convert(ArrayKernel.CTOR_IM, //
+        kernel.convert(ArrayKernel.C_TO_R_IM, //
                 new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3], false);
         assertTrue(Tests.equals(v, new double[] { 1.0, -1.0, -0.25 }));
 
-        kernel.convert(ArrayKernel.CTOR_ABS, //
+        kernel.convert(ArrayKernel.C_TO_R_ABS, //
                 new double[] { 0.0, 1.0, 1.0, -1.0, 0.5, -0.25 }, true, v = new double[3], false);
         assertTrue(Tests.equals(v, new double[] { 1.0, Math.sqrt(2), Math.sqrt(1.0 / 4.0 + 1.0 / 16.0) }));
 
         //
 
-        kernel.convert(ArrayKernel.RTOC_RE, new double[] { 1, 2, 3, 4, 5, 6 }, false, v = new double[12], true);
+        kernel.convert(ArrayKernel.R_TO_C_RE, new double[] { 1, 2, 3, 4, 5, 6 }, false, v = new double[12], true);
         assertTrue(Tests.equals(v, new double[] { 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0 }));
 
-        kernel.convert(ArrayKernel.RTOC_IM, new double[] { 1, 2, 3, 4, 5, 6 }, false, v = new double[12], true);
+        kernel.convert(ArrayKernel.R_TO_C_IM, new double[] { 1, 2, 3, 4, 5, 6 }, false, v = new double[12], true);
         assertTrue(Tests.equals(v, new double[] { 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6 }));
 
         //
 
-        kernel.convert(ArrayKernel.ITOR, new int[] { 1, 2, 3, 4, 5, 6 }, false, v = new double[6], false);
+        kernel.convert(ArrayKernel.I_TO_R, new int[] { 1, 2, 3, 4, 5, 6 }, false, v = new double[6], false);
         assertTrue(Tests.equals(v, new double[] { 1, 2, 3, 4, 5, 6 }));
     }
 }

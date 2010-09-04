@@ -283,7 +283,7 @@ void ElementOps::iuOp(JNIEnv *env, jobject thisObj, jint type, jint a, jintArray
 }
 
 void ElementOps::eOp(JNIEnv *env, jobject thisObj, jint type, jobject lhsV, jobject rhsV, jobject dstV,
-        jboolean isComplex) {
+        jboolean complex) {
 
     try {
 
@@ -291,7 +291,7 @@ void ElementOps::eOp(JNIEnv *env, jobject thisObj, jint type, jobject lhsV, jobj
                 && NativeArrayKernel::isJdoubleArray(env, rhsV)
                 && NativeArrayKernel::isJdoubleArray(env, dstV)) {
 
-            if (isComplex) {
+            if (complex) {
 
                 ElementOps::binaryOpProxy<jcomplex>(env, type, (jarray) lhsV, (jarray) rhsV, (jarray) dstV, //
                         ElementOps::COMPLEX);
@@ -333,11 +333,11 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_RTOC_RE:
+            case shared_array_kernel_ArrayKernel_R_TO_C_RE:
                 op = ElementOps::rtocRe;
                 break;
 
-            case shared_array_kernel_ArrayKernel_RTOC_IM:
+            case shared_array_kernel_ArrayKernel_R_TO_C_IM:
                 op = ElementOps::rtocIm;
                 break;
 
@@ -356,15 +356,15 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_CTOR_RE:
+            case shared_array_kernel_ArrayKernel_C_TO_R_RE:
                 op = ElementOps::ctorRe;
                 break;
 
-            case shared_array_kernel_ArrayKernel_CTOR_IM:
+            case shared_array_kernel_ArrayKernel_C_TO_R_IM:
                 op = ElementOps::ctorIm;
                 break;
 
-            case shared_array_kernel_ArrayKernel_CTOR_ABS:
+            case shared_array_kernel_ArrayKernel_C_TO_R_ABS:
                 op = ElementOps::ctorAbs;
                 break;
 
@@ -383,7 +383,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_ITOR:
+            case shared_array_kernel_ArrayKernel_I_TO_R:
                 op = ElementOps::itor;
                 break;
 
@@ -407,7 +407,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 }
 
 template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T (*op)(const T *, jint),
-        jarray srcV, jboolean isComplex) {
+        jarray srcV, jboolean complex) {
 
     if (!srcV) {
         throw std::runtime_error("Invalid arguments");
@@ -415,11 +415,11 @@ template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T (*op)(c
 
     jint srcLen = env->GetArrayLength(srcV);
 
-    if (isComplex && (srcLen % 2) != 0) {
+    if (complex && (srcLen % 2) != 0) {
         throw std::runtime_error("Invalid array length");
     }
 
-    jint logicalLen = srcLen / (isComplex ? 2 : 1);
+    jint logicalLen = srcLen / (complex ? 2 : 1);
 
     ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
     // NO JNI AFTER THIS POINT!
@@ -428,7 +428,7 @@ template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T (*op)(c
 }
 
 template<class T> inline void ElementOps::unaryOpProxy(JNIEnv *env, void (*op)(T, T *, jint),
-        jarray srcV, T argument, jboolean isComplex) {
+        jarray srcV, T argument, jboolean complex) {
 
     if (!srcV) {
         throw std::runtime_error("Invalid arguments");
@@ -436,11 +436,11 @@ template<class T> inline void ElementOps::unaryOpProxy(JNIEnv *env, void (*op)(T
 
     jint srcLen = env->GetArrayLength(srcV);
 
-    if (isComplex && (srcLen % 2) != 0) {
+    if (complex && (srcLen % 2) != 0) {
         throw std::runtime_error("Invalid array length");
     }
 
-    jint logicalLen = srcLen / (isComplex ? 2 : 1);
+    jint logicalLen = srcLen / (complex ? 2 : 1);
 
     ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
     // NO JNI AFTER THIS POINT!
@@ -455,7 +455,7 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
 
         void (*op)(const T *, const T *, T *, jint) = NULL;
 
-        jboolean isComplex;
+        jboolean complex;
 
         switch (elementType) {
 
@@ -483,7 +483,7 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
                 throw std::runtime_error("Operation type not recognized");
             }
 
-            isComplex = JNI_TRUE;
+            complex = JNI_TRUE;
 
             break;
 
@@ -519,7 +519,7 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
                 throw std::runtime_error("Operation type not recognized");
             }
 
-            isComplex = JNI_FALSE;
+            complex = JNI_FALSE;
 
             break;
 
@@ -551,7 +551,7 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
                 throw std::runtime_error("Operation type not recognized");
             }
 
-            isComplex = JNI_FALSE;
+            complex = JNI_FALSE;
 
             break;
 
@@ -567,11 +567,11 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
         jint rhsLen = env->GetArrayLength(rhsV);
         jint dstLen = env->GetArrayLength(dstV);
 
-        if (dstLen != lhsLen || dstLen != rhsLen || (isComplex && (dstLen % 2) != 0)) {
+        if (dstLen != lhsLen || dstLen != rhsLen || (complex && (dstLen % 2) != 0)) {
             throw std::runtime_error("Invalid array lengths");
         }
 
-        jint logicalLen = dstLen / (isComplex ? 2 : 1);
+        jint logicalLen = dstLen / (complex ? 2 : 1);
 
         ArrayPinHandler lhsVH(env, lhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         ArrayPinHandler rhsVH(env, rhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
@@ -587,8 +587,8 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
 }
 
 template<class S, class T> inline void ElementOps::convertProxy(JNIEnv *env, void (*op)(const S *, T *, jint),
-        jarray srcV, jboolean srcIsComplex, //
-        jarray dstV, jboolean dstIsComplex) {
+        jarray srcV, jboolean isSrcComplex,
+        jarray dstV, jboolean isDstComplex) {
 
     if (!srcV || !dstV) {
         throw std::runtime_error("Invalid arguments");
@@ -596,11 +596,11 @@ template<class S, class T> inline void ElementOps::convertProxy(JNIEnv *env, voi
 
     jint srcLen = env->GetArrayLength(srcV);
     jint dstLen = env->GetArrayLength(dstV);
-    jint logicalLen = srcLen / (srcIsComplex ? 2 : 1);
+    jint logicalLen = srcLen / (isSrcComplex ? 2 : 1);
 
-    if ((srcIsComplex && (srcLen % 2) != 0)
-            || (dstIsComplex && (dstLen % 2) != 0)
-            || (logicalLen != dstLen / (dstIsComplex ? 2 : 1))) {
+    if ((isSrcComplex && (srcLen % 2) != 0)
+            || (isDstComplex && (dstLen % 2) != 0)
+            || (logicalLen != dstLen / (isDstComplex ? 2 : 1))) {
         throw std::runtime_error("Invalid array lengths");
     }
 

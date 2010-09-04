@@ -70,12 +70,12 @@ public class ArrayBase {
     /**
      * The field width to use when printing.
      */
-    public static int FIELD_WIDTH = 8;
+    public static int FieldWidth = 8;
 
     /**
      * The field precision to use when printing.
      */
-    public static int FIELD_PRECISION = 2;
+    public static int FieldPrecision = 2;
 
     /**
      * Canonicalizes the alternate slicing specification.
@@ -216,7 +216,7 @@ public class ArrayBase {
     }
 
     /**
-     * Sets the formatting parameters {@link #FIELD_WIDTH} and {@link #FIELD_PRECISION}.
+     * Sets the formatting parameters {@link #FieldWidth} and {@link #FieldPrecision}.
      * 
      * @param width
      *            the number width.
@@ -228,8 +228,8 @@ public class ArrayBase {
         Control.checkTrue(width >= precision + 4 && precision >= 1, //
                 "Invalid formatting parameters");
 
-        FIELD_WIDTH = width;
-        FIELD_PRECISION = precision;
+        FieldWidth = width;
+        FieldPrecision = precision;
     }
 
     /**
@@ -249,14 +249,14 @@ public class ArrayBase {
      *            the number of rows in the slice.
      * @param nCols
      *            the number of columns in the slice.
-     * @param isComplex
+     * @param complex
      *            whether the values are complex.
      */
     final public static void formatSlice(Formatter f, String format, //
             Object values, int[] indices, //
-            int offset, int nRows, int nCols, boolean isComplex) {
+            int offset, int nRows, int nCols, boolean complex) {
 
-        if (!isComplex) {
+        if (!complex) {
 
             for (int j = 0, k = 0; j < nRows; j++) {
 
@@ -316,7 +316,7 @@ public class ArrayBase {
      */
     final public static double[] formatRescale(Formatter f, int exponent, double[] values) {
 
-        if (FIELD_WIDTH < exponent + FIELD_PRECISION + 4 || exponent < 0) {
+        if (FieldWidth < exponent + FieldPrecision + 4 || exponent < 0) {
 
             f.format("%s[rescale 10^%d]%s", //
                     LineSeparator, exponent, LineSeparator);
@@ -408,12 +408,12 @@ public class ArrayBase {
      *            the declared dimensions.
      * @param len
      *            the array length.
-     * @param isComplex
+     * @param complex
      *            whether the array contains complex values.
      * @return the inferred dimensions.
      */
-    final public static int[] inferDimensions(int[] dims, int len, boolean isComplex) {
-        return (dims.length > 0) ? dims.clone() : (isComplex ? new int[] {
+    final public static int[] inferDimensions(int[] dims, int len, boolean complex) {
+        return (dims.length > 0) ? dims.clone() : (complex ? new int[] {
                 Control.checkEquals(len, (len >>> 1) << 1) >>> 1, 2 } : new int[] { len });
     }
 

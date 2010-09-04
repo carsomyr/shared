@@ -62,12 +62,12 @@ public class FFTWService implements FFTService {
 
     @Override
     public void rfft(int[] dims, double[] in, double[] out) {
-        transform(Plan.R2C, dims, this.mode, in, out);
+        transform(Plan.R_TO_C, dims, this.mode, in, out);
     }
 
     @Override
     public void rifft(int[] dims, double[] in, double[] out) {
-        transform(Plan.C2R, dims, this.mode, in, out);
+        transform(Plan.C_TO_R, dims, this.mode, in, out);
     }
 
     @Override
@@ -172,10 +172,10 @@ public class FFTWService implements FFTService {
 
         switch (mode) {
 
-        case Plan.R2C:
+        case Plan.R_TO_C:
             return "r2c";
 
-        case Plan.C2R:
+        case Plan.C_TO_R:
             return "c2r";
 
         case Plan.FORWARD:

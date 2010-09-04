@@ -24,9 +24,9 @@
 #include <BindingsCommon.hpp>
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
-    return Library::JNI_OnLoad(jvm, reserved);
+    return Library::OnLoad(jvm, reserved);
 }
 
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *jvm, void *reserved) {
-    Library::JNI_OnUnload(jvm, reserved);
+    Library::OnUnload(jvm, reserved);
 }

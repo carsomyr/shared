@@ -30,8 +30,8 @@ package shared.array;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
 import static shared.array.ArrayBase.FFTService;
-import static shared.array.ArrayBase.FIELD_PRECISION;
-import static shared.array.ArrayBase.FIELD_WIDTH;
+import static shared.array.ArrayBase.FieldPrecision;
+import static shared.array.ArrayBase.FieldWidth;
 import static shared.array.ArrayBase.formatEmptyArray;
 import static shared.array.ArrayBase.formatRescale;
 import static shared.array.ArrayBase.formatSlice;
@@ -142,7 +142,7 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
             return f.toString();
         }
 
-        String format = String.format("%%%d.%df", FIELD_WIDTH, FIELD_PRECISION);
+        String format = String.format("%%%d.%df", FieldWidth, FieldPrecision);
 
         values = formatRescale(f, exponent, values);
 

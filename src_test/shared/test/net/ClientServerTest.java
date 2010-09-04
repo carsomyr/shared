@@ -132,20 +132,20 @@ public class ClientServerTest {
         }
 
         @Override
-        public void onBind(Queue<String> inbounds) {
+        public void onBind(Queue<String> inputs) {
             this.log.info("Connection is now bound.");
         }
 
         @Override
-        public void onReceive(Queue<String> inbounds) {
+        public void onReceive(Queue<String> inputs) {
 
-            for (String str; (str = inbounds.poll()) != null;) {
+            for (String str; (str = inputs.poll()) != null;) {
                 this.log.info(String.format("Received: \"%s\".", str));
             }
         }
 
         @Override
-        public void onClosing(ClosingType type, Queue<String> inbounds) {
+        public void onClosing(ClosingType type, Queue<String> inputs) {
 
             switch (type) {
 
@@ -172,22 +172,22 @@ public class ClientServerTest {
         }
 
         @Override
-        public void getInbound(Queue<ByteBuffer> in, Queue<String> out) {
+        public void getInbound(Queue<ByteBuffer> inputs, Queue<String> outputs) {
 
-            for (ByteBuffer bb; (bb = in.poll()) != null;) {
+            for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
 
                 byte[] bytes = new byte[bb.remaining()];
                 bb.get(bytes);
 
-                out.add(new String(bytes));
+                outputs.add(new String(bytes));
             }
         }
 
         @Override
-        public void getOutbound(Queue<String> in, Queue<ByteBuffer> out) {
+        public void getOutbound(Queue<String> inputs, Queue<ByteBuffer> outputs) {
 
-            for (String str; (str = in.poll()) != null;) {
-                out.add(ByteBuffer.wrap(str.getBytes()));
+            for (String str; (str = inputs.poll()) != null;) {
+                outputs.add(ByteBuffer.wrap(str.getBytes()));
             }
         }
     }

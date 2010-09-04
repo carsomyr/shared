@@ -107,19 +107,19 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * A bit mask indicating that the connection has been submitted to a {@link ConnectionManager}.
+     * A bit flag indicating that the connection has been submitted to a {@link ConnectionManager}.
      */
-    final protected static int SUBMITTED_MASK = 1 << 0;
+    final protected static int FLAG_SUBMITTED = 1 << 0;
 
     /**
-     * A bit mask indicating that the connection has been bound.
+     * A bit flag indicating that the connection has been bound.
      */
-    final protected static int BOUND_MASK = 1 << 1;
+    final protected static int FLAG_BOUND = 1 << 1;
 
     /**
-     * A bit mask indicating that the connection has been closed.
+     * A bit flag indicating that the connection has been closed.
      */
-    final protected static int CLOSED_MASK = 1 << 2;
+    final protected static int FLAG_CLOSED = 1 << 2;
 
     /**
      * Defines a handler for outgoing data.
@@ -320,7 +320,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             Control.checkTrue(!isSubmitted(), //
                     "The connection has already been submitted");
 
-            setStateMask(this.stateMask | SUBMITTED_MASK);
+            setStateMask(this.stateMask | FLAG_SUBMITTED);
         }
 
         final InterestEventType eventType;
@@ -359,8 +359,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                     }
                 }
 
-                if (amc.error != null) {
-                    throw new ExecutionException(amc.error);
+                if (amc.exception != null) {
+                    throw new ExecutionException(amc.exception);
                 }
 
                 return getResult();
@@ -387,8 +387,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                     }
                 }
 
-                if (amc.error != null) {
-                    throw new ExecutionException(amc.error);
+                if (amc.exception != null) {
+                    throw new ExecutionException(amc.exception);
                 }
 
                 return getResult();
@@ -468,14 +468,14 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
     @Override
     public Throwable getError() {
-        return this.error;
+        return this.exception;
     }
 
     @Override
-    public void setError(Throwable error) {
+    public void setError(Throwable exception) {
 
         synchronized (this) {
-            this.proxy.onLocal(new InterestEvent<Throwable>(ERROR, error, this.proxy));
+            this.proxy.onLocal(new InterestEvent<Throwable>(ERROR, exception, this.proxy));
         }
     }
 
@@ -511,17 +511,17 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
     @Override
     public boolean isSubmitted() {
-        return (this.stateMask & SUBMITTED_MASK) != 0;
+        return (this.stateMask & FLAG_SUBMITTED) != 0;
     }
 
     @Override
     public boolean isBound() {
-        return (this.stateMask & BOUND_MASK) != 0;
+        return (this.stateMask & FLAG_BOUND) != 0;
     }
 
     @Override
     public boolean isClosed() {
-        return (this.stateMask & CLOSED_MASK) != 0;
+        return (this.stateMask & FLAG_CLOSED) != 0;
     }
 
     @Override
@@ -568,7 +568,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     ByteBuffer readBuffer;
     ByteBuffer writeBuffer;
     int stateMask;
-    Throwable error;
+    Throwable exception;
     AbstractManagedConnectionStatus status;
 
     /**
@@ -607,7 +607,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
 
         this.stateMask = 0;
-        this.error = null;
+        this.exception = null;
         this.status = AbstractManagedConnectionStatus.VIRGIN;
     }
 
@@ -753,7 +753,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         onBind();
 
-        setStateMask(this.stateMask | BOUND_MASK);
+        setStateMask(this.stateMask | FLAG_BOUND);
     }
 
     /**
@@ -860,11 +860,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Sets the error that occurred. Does <i>not</i> do own exception handling.
+     * {@link ConnectionManagerThread} call -- Sets the exception that occurred. Does <i>not</i> do own exception
+     * handling.
      */
-    protected void doError(Throwable error) {
+    protected void doError(Throwable exception) {
 
-        this.error = error;
+        this.exception = exception;
 
         this.readBuffer.flip();
         onClosing(ClosingType.ERROR, this.readBuffer);
@@ -890,7 +891,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         } finally {
 
-            setStateMask(this.stateMask | CLOSED_MASK);
+            setStateMask(this.stateMask | FLAG_CLOSED);
         }
     }
 }

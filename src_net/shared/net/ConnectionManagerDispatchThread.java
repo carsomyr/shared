@@ -29,7 +29,7 @@
 package shared.net;
 
 import static shared.net.InterestEvent.InterestEventType.DISPATCH;
-import static shared.net.InterestEvent.InterestEventType.QUERY_CONNECTIONS;
+import static shared.net.InterestEvent.InterestEventType.GET_CONNECTIONS;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -289,7 +289,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     /**
      * Handles a request to get the list of bound addresses.
      */
-    protected void handleQueryBoundAddresses(RequestFuture<List<InetSocketAddress>> future) {
+    protected void handleGetBoundAddresses(RequestFuture<List<InetSocketAddress>> future) {
         future.set(new ArrayList<InetSocketAddress>(this.acceptRegistry.getAddresses()));
     }
 
@@ -298,12 +298,12 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
      * {@link ConnectionManagerIOThread}s.
      */
     @SuppressWarnings("unchecked")
-    protected void handleQueryConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
+    protected void handleGetConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
 
         List<AbstractManagedConnection<?>> res = new ArrayList<AbstractManagedConnection<?>>();
 
         for (ConnectionManagerIOThread ioThread : this.ioThreads) {
-            res.addAll((List<AbstractManagedConnection<?>>) ioThread.query(QUERY_CONNECTIONS));
+            res.addAll((List<AbstractManagedConnection<?>>) ioThread.request(GET_CONNECTIONS));
         }
 
         future.set(res);
@@ -376,23 +376,23 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_BOUND_ADDRESSES", group = "internal")
-    final Handler<InterestEvent<RequestFuture<List<InetSocketAddress>>>> queryBoundAddressesHandler = //
+    @Transition(currentState = "RUN", eventType = "GET_BOUND_ADDRESSES", group = "internal")
+    final Handler<InterestEvent<RequestFuture<List<InetSocketAddress>>>> getBoundAddressesHandler = //
     new Handler<InterestEvent<RequestFuture<List<InetSocketAddress>>>>() {
 
         @Override
         public void handle(InterestEvent<RequestFuture<List<InetSocketAddress>>> evt) {
-            handleQueryBoundAddresses(evt.getArgument());
+            handleGetBoundAddresses(evt.getArgument());
         }
     };
 
-    @Transition(currentState = "RUN", eventType = "QUERY_CONNECTIONS", group = "internal")
-    final Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>> queryConnectionsHandler = //
+    @Transition(currentState = "RUN", eventType = "GET_CONNECTIONS", group = "internal")
+    final Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>> getConnectionsHandler = //
     new Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>>() {
 
         @Override
         public void handle(InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>> evt) {
-            handleQueryConnections(evt.getArgument());
+            handleGetConnections(evt.getArgument());
         }
     };
 
@@ -407,15 +407,15 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
     final AcceptRegistry acceptRegistry;
     final LinkedList<ConnectionManagerIOThread> ioThreads;
-    final int backlog;
+    final int backlogSize;
 
     /**
      * Default constructor.
      */
-    protected ConnectionManagerDispatchThread(String name, int backlog, int nThreads) {
+    protected ConnectionManagerDispatchThread(String name, int backlogSize, int nThreads) {
         super(String.format("%s/Dispatch", name));
 
-        this.acceptRegistry = new AcceptRegistry(this.selector, this.backlog);
+        this.acceptRegistry = new AcceptRegistry(this.selector, this.backlogSize);
 
         this.ioThreads = new LinkedList<ConnectionManagerIOThread>();
 
@@ -423,6 +423,6 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             this.ioThreads.add(new ConnectionManagerIOThread(String.format("%s/IO-%d", name, i), this));
         }
 
-        this.backlog = backlog;
+        this.backlogSize = backlogSize;
     }
 }

@@ -174,7 +174,7 @@ public:
      * @param inLen
      *      the input array length.
      */
-    static void executePlan_C2R( //
+    static void executePlanCToR( //
             fftw_plan plan, jdouble *inArr, jdouble *outArr, jint inLen);
 
     /**

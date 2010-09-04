@@ -59,10 +59,10 @@ public interface SocketInformation<T extends SocketInformation<T>> {
     /**
      * Sets the read/write buffer size.
      * 
-     * @param size
+     * @param bufferSize
      *            the buffer size.
      */
-    public T setBufferSize(int size);
+    public T setBufferSize(int bufferSize);
 
     /**
      * Gets the error, if any, that occurred.

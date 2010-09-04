@@ -29,7 +29,7 @@
 package shared.array.kernel;
 
 import static shared.array.kernel.ElementOps.CEDivOp;
-import static shared.array.kernel.ElementOps.CTORAbsOp;
+import static shared.array.kernel.ElementOps.CToRAbsOp;
 import shared.util.Arithmetic;
 import shared.util.Control;
 
@@ -77,7 +77,7 @@ public class LinearAlgebraOps {
                 // Compute 2-norm of k-th column without under/overflow.
                 sV[k] = 0;
                 for (int i = k; i < nRows; i++) {
-                    sV[k] = CTORAbsOp.op(sV[k], a[srcStrideRow * (i) + srcStrideCol * (k)]);
+                    sV[k] = CToRAbsOp.op(sV[k], a[srcStrideRow * (i) + srcStrideCol * (k)]);
                 }
                 if (sV[k] != 0.0) {
                     if (a[srcStrideRow * (k) + srcStrideCol * (k)] < 0.0) {
@@ -126,7 +126,7 @@ public class LinearAlgebraOps {
                 // Compute 2-norm without under/overflow.
                 e[k] = 0;
                 for (int i = k + 1; i < nCols; i++) {
-                    e[k] = CTORAbsOp.op(e[k], e[i]);
+                    e[k] = CToRAbsOp.op(e[k], e[i]);
                 }
                 if (e[k] != 0.0) {
                     if (e[k + 1] < 0.0) {
@@ -302,7 +302,7 @@ public class LinearAlgebraOps {
                 double f = e[p - 2];
                 e[p - 2] = 0.0;
                 for (int j = p - 2; j >= k; j--) {
-                    double t = CTORAbsOp.op(sV[j], f);
+                    double t = CToRAbsOp.op(sV[j], f);
                     double cs = sV[j] / t;
                     double sn = f / t;
                     sV[j] = t;
@@ -326,7 +326,7 @@ public class LinearAlgebraOps {
                 double f = e[k - 1];
                 e[k - 1] = 0.0;
                 for (int j = k; j < p; j++) {
-                    double t = CTORAbsOp.op(sV[j], f);
+                    double t = CToRAbsOp.op(sV[j], f);
                     double cs = sV[j] / t;
                     double sn = f / t;
                     sV[j] = t;
@@ -372,7 +372,7 @@ public class LinearAlgebraOps {
                 // Chase zeros.
 
                 for (int j = k; j < p - 1; j++) {
-                    double t = CTORAbsOp.op(f, g);
+                    double t = CToRAbsOp.op(f, g);
                     double cs = f / t;
                     double sn = g / t;
                     if (j != k) {
@@ -388,7 +388,7 @@ public class LinearAlgebraOps {
                                 * vV[vStrideRow * (i) + (j + 1)];
                         vV[vStrideRow * (i) + (j)] = t;
                     }
-                    t = CTORAbsOp.op(f, g);
+                    t = CToRAbsOp.op(f, g);
                     cs = f / t;
                     sn = g / t;
                     sV[j] = t;
@@ -596,7 +596,7 @@ public class LinearAlgebraOps {
         int hStrideRow = size;
         int vStrideRow = size;
 
-        double[] cdiv = new double[2];
+        double[] cDiv = new double[2];
 
         // This is derived from the Algol procedure hqr2,
         // by Martin and Wilkinson, Handbook for Auto. Comp.,
@@ -948,11 +948,11 @@ public class LinearAlgebraOps {
                     h[hStrideRow * (n - 1) + (n - 1)] = q / h[hStrideRow * (n) + (n - 1)];
                     h[hStrideRow * (n - 1) + (n)] = -(h[hStrideRow * (n) + (n)] - p) / h[hStrideRow * (n) + (n - 1)];
                 } else {
-                    CEDivOp.op(cdiv, //
+                    CEDivOp.op(cDiv, //
                             0.0, -h[hStrideRow * (n - 1) + (n)], //
                             h[hStrideRow * (n - 1) + (n - 1)] - p, q);
-                    h[hStrideRow * (n - 1) + (n - 1)] = cdiv[0];
-                    h[hStrideRow * (n - 1) + (n)] = cdiv[1];
+                    h[hStrideRow * (n - 1) + (n - 1)] = cDiv[0];
+                    h[hStrideRow * (n - 1) + (n)] = cDiv[1];
                 }
                 h[hStrideRow * (n) + (n - 1)] = 0.0;
                 h[hStrideRow * (n) + (n)] = 1.0;
@@ -973,10 +973,10 @@ public class LinearAlgebraOps {
                     } else {
                         l = i;
                         if (valV[2 * (i) + 1] == 0) {
-                            CEDivOp.op(cdiv, //
+                            CEDivOp.op(cDiv, //
                                     -ra, -sa, w, q);
-                            h[hStrideRow * (i) + (n - 1)] = cdiv[0];
-                            h[hStrideRow * (i) + (n)] = cdiv[1];
+                            h[hStrideRow * (i) + (n - 1)] = cDiv[0];
+                            h[hStrideRow * (i) + (n)] = cDiv[1];
                         } else {
 
                             // Solve complex equations
@@ -989,12 +989,12 @@ public class LinearAlgebraOps {
                             if (vr == 0.0 && vi == 0.0) {
                                 vr = eps * norm * (Math.abs(w) + Math.abs(q) + Math.abs(x) + Math.abs(y) + Math.abs(z));
                             }
-                            CEDivOp.op(cdiv, //
+                            CEDivOp.op(cDiv, //
                                     x * r - z * ra + q * sa, //
                                     x * s - z * sa - q * ra, //
                                     vr, vi);
-                            h[hStrideRow * (i) + (n - 1)] = cdiv[0];
-                            h[hStrideRow * (i) + (n)] = cdiv[1];
+                            h[hStrideRow * (i) + (n - 1)] = cDiv[0];
+                            h[hStrideRow * (i) + (n)] = cDiv[1];
                             if (Math.abs(x) > (Math.abs(z) + Math.abs(q))) {
                                 h[hStrideRow * (i + 1) + (n - 1)] = (-ra - w * h[hStrideRow * (i) + (n - 1)] + q
                                         * h[hStrideRow * (i) + (n)])
@@ -1003,12 +1003,12 @@ public class LinearAlgebraOps {
                                         * h[hStrideRow * (i) + (n - 1)])
                                         / x;
                             } else {
-                                CEDivOp.op(cdiv, //
+                                CEDivOp.op(cDiv, //
                                         -r - y * h[hStrideRow * (i) + (n - 1)], //
                                         -s - y * h[hStrideRow * (i) + (n)], //
                                         z, q);
-                                h[hStrideRow * (i + 1) + (n - 1)] = cdiv[0];
-                                h[hStrideRow * (i + 1) + (n)] = cdiv[1];
+                                h[hStrideRow * (i + 1) + (n - 1)] = cDiv[0];
+                                h[hStrideRow * (i + 1) + (n)] = cDiv[1];
                             }
                         }
 

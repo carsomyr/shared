@@ -85,14 +85,14 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
      * Creates an {@link AbstractComplexArray} with the real parts set to this array's elements.
      */
     public C tocRe() {
-        return applyKernelRealToComplexOperation(ArrayKernel.RTOC_RE);
+        return applyKernelRealToComplexOperation(ArrayKernel.R_TO_C_RE);
     }
 
     /**
      * Creates an {@link AbstractComplexArray} with the imaginary parts set to this array's elements.
      */
     public C tocIm() {
-        return applyKernelRealToComplexOperation(ArrayKernel.RTOC_IM);
+        return applyKernelRealToComplexOperation(ArrayKernel.R_TO_C_IM);
     }
 
     /**

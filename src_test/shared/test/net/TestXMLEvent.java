@@ -67,7 +67,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         ERROR {
 
             @Override
-            protected TestXMLEvent parseXML(Node rootNode, Source<TestXMLEvent, SourceType> source) {
+            protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source) {
                 throw new IllegalArgumentException();
             }
         }, //
@@ -78,7 +78,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         END_OF_STREAM {
 
             @Override
-            protected TestXMLEvent parseXML(Node rootNode, Source<TestXMLEvent, SourceType> source) {
+            protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source) {
                 throw new IllegalArgumentException();
             }
         }, //
@@ -89,8 +89,8 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         DATA {
 
             @Override
-            protected TestXMLEvent parseXML(Node rootNode, Source<TestXMLEvent, SourceType> source) {
-                return new DataXMLEvent(rootNode, source);
+            protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source) {
+                return new DataXMLEvent(contentNode, source);
             }
         }, //
 
@@ -100,15 +100,15 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         SEQUENCE {
 
             @Override
-            protected TestXMLEvent parseXML(Node rootNode, Source<TestXMLEvent, SourceType> source) {
-                return new SequenceXMLEvent(rootNode, source);
+            protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source) {
+                return new SequenceXMLEvent(contentNode, source);
             }
         };
 
         /**
          * Parses a {@link TestXMLEvent} from the given DOM {@link Node}.
          */
-        abstract protected TestXMLEvent parseXML(Node rootNode, Source<TestXMLEvent, SourceType> source);
+        abstract protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source);
     }
 
     final Source<TestXMLEvent, SourceType> source;
@@ -155,7 +155,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     final public static TestXMLEvent parse(Node rootNode, Source<TestXMLEvent, SourceType> source) {
 
         NodeList children = rootNode.getChildNodes();
-        return TestXMLEventType.valueOf(children.item(0).getTextContent()).parseXML(children.item(1), source);
+        return TestXMLEventType.valueOf(children.item(0).getTextContent()).parse(children.item(1), source);
     }
 
     /**
@@ -163,20 +163,20 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
      */
     final protected static class ErrorXMLEvent extends TestXMLEvent implements ErrorEventDefinition {
 
-        final Throwable error;
+        final Throwable exception;
 
         /**
          * Default constructor.
          */
-        public ErrorXMLEvent(Throwable error, Source<TestXMLEvent, SourceType> source) {
+        public ErrorXMLEvent(Throwable exception, Source<TestXMLEvent, SourceType> source) {
             super(ERROR, source);
 
-            this.error = error;
+            this.exception = exception;
         }
 
         @Override
         public Throwable getError() {
-            return this.error;
+            return this.exception;
         }
     }
 

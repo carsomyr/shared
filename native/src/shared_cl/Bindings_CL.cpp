@@ -106,19 +106,19 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_iuOp(JNIEnv *env,
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_eOp(JNIEnv *env, jobject thisObj, jint type, //
-        jobject lhsV, jobject rhsV, jobject dstV, jboolean isComplex) {
+        jobject lhsV, jobject rhsV, jobject dstV, jboolean complex) {
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_convert(JNIEnv *env, jobject thisObj, jint type, //
-        jobject srcV, jboolean srcIsComplex, jobject dstV, jboolean dstIsComplex) {
+        jobject srcV, jboolean isSrcComplex, jobject dstV, jboolean isDstComplex) {
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_mul(JNIEnv *env, jobject thisObj, //
-        jdoubleArray lhsV, jdoubleArray rhsV, jint lhsR, jint rhsC, jdoubleArray dstV, jboolean isComplex) {
+        jdoubleArray lhsV, jdoubleArray rhsV, jint lhsR, jint rhsC, jdoubleArray dstV, jboolean complex) {
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_diag(JNIEnv *env, jobject thisObj, //
-        jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean isComplex) {
+        jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean complex) {
 }
 
 JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_svd(JNIEnv *env, jobject thisObj, //

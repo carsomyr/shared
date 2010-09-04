@@ -32,7 +32,7 @@ import static shared.array.ArrayBase.IOKernel;
 import static shared.array.ArrayBase.OpKernel;
 import static shared.array.ArrayBase.formatEmptyArray;
 import static shared.array.ArrayBase.formatSlice;
-import static shared.array.kernel.ArrayKernel.ITOR;
+import static shared.array.kernel.ArrayKernel.I_TO_R;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -225,7 +225,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
         RealArray res = new RealArray(a.order, a.dims);
 
-        OpKernel.convert(ITOR, a.values, false, res.values, false);
+        OpKernel.convert(I_TO_R, a.values, false, res.values, false);
 
         return res;
     }

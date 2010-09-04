@@ -97,17 +97,17 @@ public class CLI {
         for (CLIOption cliOption : cliOptions.options()) {
 
             boolean optionalArgs = cliOption.optionalArgs();
-            int numArgs = cliOption.numArgs();
+            int nArgs = cliOption.numArgs();
 
             if (!optionalArgs) {
 
-                if (numArgs >= 0) {
+                if (nArgs >= 0) {
 
-                    OptionBuilder.hasArgs(numArgs);
+                    OptionBuilder.hasArgs(nArgs);
 
                 } else {
 
-                    Control.checkTrue(numArgs == -1, //
+                    Control.checkTrue(nArgs == -1, //
                             "Invalid number of arguments");
 
                     OptionBuilder.hasArgs();
@@ -115,13 +115,13 @@ public class CLI {
 
             } else {
 
-                if (numArgs >= 0) {
+                if (nArgs >= 0) {
 
-                    OptionBuilder.hasOptionalArgs(numArgs);
+                    OptionBuilder.hasOptionalArgs(nArgs);
 
                 } else {
 
-                    Control.checkTrue(numArgs == -1, //
+                    Control.checkTrue(nArgs == -1, //
                             "Invalid number of arguments");
 
                     OptionBuilder.hasOptionalArgs();

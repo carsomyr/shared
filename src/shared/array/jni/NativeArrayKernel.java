@@ -105,7 +105,7 @@ public class NativeArrayKernel implements ArrayKernel {
     final public native void iuOp(int type, int a, int[] srcV);
 
     @Override
-    final public native void eOp(int type, Object lhsV, Object rhsV, Object dstV, boolean isComplex);
+    final public native void eOp(int type, Object lhsV, Object rhsV, Object dstV, boolean complex);
 
     @Override
     final public native void convert(int type, //
@@ -115,10 +115,10 @@ public class NativeArrayKernel implements ArrayKernel {
     //
 
     @Override
-    final public native void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean isComplex);
+    final public native void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean complex);
 
     @Override
-    final public native void diag(double[] srcV, double[] dstV, int size, boolean isComplex);
+    final public native void diag(double[] srcV, double[] dstV, int size, boolean complex);
 
     //
 

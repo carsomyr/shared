@@ -90,14 +90,14 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
         final int nFilters = this.factories.length;
 
         final OOBFilter<Object, Object>[] filters = new OOBFilter[nFilters];
-        final Queue<Object>[] inboundReadOnlys = new Queue[nFilters - 1];
-        final Queue<Object>[] inboundWriteOnlys = new Queue[nFilters - 1];
-        final Queue<Object>[] outboundReadOnlys = new Queue[nFilters - 1];
-        final Queue<Object>[] outboundWriteOnlys = new Queue[nFilters - 1];
-        final Queue<OOBEvent>[] inboundReadOnlyOOBs = new Queue[nFilters - 1];
-        final Queue<OOBEvent>[] inboundWriteOnlyOOBs = new Queue[nFilters - 1];
-        final Queue<OOBEvent>[] outboundReadOnlyOOBs = new Queue[nFilters - 1];
-        final Queue<OOBEvent>[] outboundWriteOnlyOOBs = new Queue[nFilters - 1];
+        final Queue<Object>[] inboundsReadOnly = new Queue[nFilters - 1];
+        final Queue<Object>[] inboundsWriteOnly = new Queue[nFilters - 1];
+        final Queue<Object>[] outboundsReadOnly = new Queue[nFilters - 1];
+        final Queue<Object>[] outboundsWriteOnly = new Queue[nFilters - 1];
+        final Queue<OOBEvent>[] inboundEvtsReadOnly = new Queue[nFilters - 1];
+        final Queue<OOBEvent>[] inboundEvtsWriteOnly = new Queue[nFilters - 1];
+        final Queue<OOBEvent>[] outboundEvtsReadOnly = new Queue[nFilters - 1];
+        final Queue<OOBEvent>[] outboundEvtsWriteOnly = new Queue[nFilters - 1];
 
         for (int i = 0; i < nFilters; i++) {
             filters[i] = Filters.asOOBFilter(this.factories[i].newFilter(connection));
@@ -105,124 +105,128 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
 
         for (int i = 0, n = nFilters - 1; i < n; i++) {
 
-            Queue<Object> inbound = Filters.createQueue();
-            inboundReadOnlys[i] = Filters.readOnlyQueue(inbound);
-            inboundWriteOnlys[i] = Filters.writeOnlyQueue(inbound);
+            Queue<Object> inbounds = Filters.createQueue();
+            inboundsReadOnly[i] = Filters.readOnlyQueue(inbounds);
+            inboundsWriteOnly[i] = Filters.writeOnlyQueue(inbounds);
 
-            Queue<Object> outbound = Filters.createQueue();
-            outboundReadOnlys[i] = Filters.readOnlyQueue(outbound);
-            outboundWriteOnlys[i] = Filters.writeOnlyQueue(outbound);
+            Queue<Object> outbounds = Filters.createQueue();
+            outboundsReadOnly[i] = Filters.readOnlyQueue(outbounds);
+            outboundsWriteOnly[i] = Filters.writeOnlyQueue(outbounds);
 
-            Queue<OOBEvent> inboundOOB = Filters.createQueue();
-            inboundReadOnlyOOBs[i] = Filters.readOnlyQueue(inboundOOB);
-            inboundWriteOnlyOOBs[i] = Filters.writeOnlyQueue(inboundOOB);
+            Queue<OOBEvent> inboundEvts = Filters.createQueue();
+            inboundEvtsReadOnly[i] = Filters.readOnlyQueue(inboundEvts);
+            inboundEvtsWriteOnly[i] = Filters.writeOnlyQueue(inboundEvts);
 
-            Queue<OOBEvent> outboundOOB = Filters.createQueue();
-            outboundReadOnlyOOBs[i] = Filters.readOnlyQueue(outboundOOB);
-            outboundWriteOnlyOOBs[i] = Filters.writeOnlyQueue(outboundOOB);
+            Queue<OOBEvent> outboundEvts = Filters.createQueue();
+            outboundEvtsReadOnly[i] = Filters.readOnlyQueue(outboundEvts);
+            outboundEvtsWriteOnly[i] = Filters.writeOnlyQueue(outboundEvts);
         }
 
         return new OOBFilter<I, O>() {
 
             @Override
-            public void getInbound(Queue<I> in, Queue<O> out) {
+            public void getInbound(Queue<I> inputs, Queue<O> outputs) {
 
                 switch (filters.length) {
 
                 case 1:
-                    ((Filter<I, O>) filters[0]).getInbound(in, out);
+                    ((Filter<I, O>) filters[0]).getInbound(inputs, outputs);
                     break;
 
                 default:
 
-                    ((Filter<I, Object>) filters[0]).getInbound(in, inboundWriteOnlys[0]);
+                    ((Filter<I, Object>) filters[0]).getInbound(inputs, inboundsWriteOnly[0]);
 
                     for (int i = 1, n = nFilters - 1; i < n; i++) {
-                        filters[i].getInbound(inboundReadOnlys[i - 1], inboundWriteOnlys[i]);
+                        filters[i].getInbound(inboundsReadOnly[i - 1], inboundsWriteOnly[i]);
                     }
 
-                    ((Filter<Object, O>) filters[nFilters - 1]).getInbound(inboundReadOnlys[nFilters - 2], out);
+                    ((Filter<Object, O>) filters[nFilters - 1]).getInbound(inboundsReadOnly[nFilters - 2], outputs);
 
                     break;
                 }
             }
 
             @Override
-            public void getOutbound(Queue<O> in, Queue<I> out) {
+            public void getOutbound(Queue<O> inputs, Queue<I> outputs) {
 
                 switch (filters.length) {
 
                 case 1:
-                    ((Filter<I, O>) filters[0]).getOutbound(in, out);
+                    ((Filter<I, O>) filters[0]).getOutbound(inputs, outputs);
                     break;
 
                 default:
 
-                    ((Filter<Object, O>) filters[nFilters - 1]).getOutbound(in, outboundWriteOnlys[nFilters - 2]);
+                    ((Filter<Object, O>) filters[nFilters - 1]).getOutbound(inputs, outboundsWriteOnly[nFilters - 2]);
 
                     for (int i = nFilters - 2; i >= 1; i--) {
-                        filters[i].getOutbound(outboundReadOnlys[i], outboundWriteOnlys[i - 1]);
+                        filters[i].getOutbound(outboundsReadOnly[i], outboundsWriteOnly[i - 1]);
                     }
 
-                    ((Filter<I, Object>) filters[0]).getOutbound(outboundReadOnlys[0], out);
+                    ((Filter<I, Object>) filters[0]).getOutbound(outboundsReadOnly[0], outputs);
 
                     break;
                 }
             }
 
             @Override
-            public void getInboundOOB(Queue<I> in, Queue<OOBEvent> inEvts, Queue<O> out, Queue<OOBEvent> outEvts) {
+            public void getInboundOOB( //
+                    Queue<I> inputs, Queue<OOBEvent> inputEvts, //
+                    Queue<O> outputs, Queue<OOBEvent> outputEvts) {
 
                 switch (filters.length) {
 
                 case 1:
-                    ((OOBFilter<I, O>) filters[0]).getInboundOOB(in, inEvts, out, outEvts);
+                    ((OOBFilter<I, O>) filters[0]).getInboundOOB(inputs, inputEvts, outputs, outputEvts);
                     break;
 
                 default:
 
                     ((OOBFilter<I, Object>) filters[0]).getInboundOOB( //
-                            in, inEvts, //
-                            inboundWriteOnlys[0], inboundWriteOnlyOOBs[0]);
+                            inputs, inputEvts, //
+                            inboundsWriteOnly[0], inboundEvtsWriteOnly[0]);
 
                     for (int i = 1, n = nFilters - 1; i < n; i++) {
                         filters[i].getInboundOOB( //
-                                inboundReadOnlys[i - 1], inboundReadOnlyOOBs[i - 1], //
-                                inboundWriteOnlys[i], inboundWriteOnlyOOBs[i]);
+                                inboundsReadOnly[i - 1], inboundEvtsReadOnly[i - 1], //
+                                inboundsWriteOnly[i], inboundEvtsWriteOnly[i]);
                     }
 
                     ((OOBFilter<Object, O>) filters[nFilters - 1]).getInboundOOB( //
-                            inboundReadOnlys[nFilters - 2], inboundReadOnlyOOBs[nFilters - 2], //
-                            out, outEvts);
+                            inboundsReadOnly[nFilters - 2], inboundEvtsReadOnly[nFilters - 2], //
+                            outputs, outputEvts);
 
                     break;
                 }
             }
 
             @Override
-            public void getOutboundOOB(Queue<O> in, Queue<OOBEvent> inEvts, Queue<I> out, Queue<OOBEvent> outEvts) {
+            public void getOutboundOOB( //
+                    Queue<O> inputs, Queue<OOBEvent> inputEvts, //
+                    Queue<I> outputs, Queue<OOBEvent> outputEvts) {
 
                 switch (filters.length) {
 
                 case 1:
-                    ((OOBFilter<I, O>) filters[0]).getOutboundOOB(in, inEvts, out, outEvts);
+                    ((OOBFilter<I, O>) filters[0]).getOutboundOOB(inputs, inputEvts, outputs, outputEvts);
                     break;
 
                 default:
 
                     ((OOBFilter<Object, O>) filters[nFilters - 1]).getOutboundOOB( //
-                            in, inEvts, //
-                            outboundWriteOnlys[nFilters - 2], outboundWriteOnlyOOBs[nFilters - 2]);
+                            inputs, inputEvts, //
+                            outboundsWriteOnly[nFilters - 2], outboundEvtsWriteOnly[nFilters - 2]);
 
                     for (int i = nFilters - 2; i >= 1; i--) {
                         filters[i].getOutboundOOB( //
-                                outboundReadOnlys[i], outboundReadOnlyOOBs[i], //
-                                outboundWriteOnlys[i - 1], outboundWriteOnlyOOBs[i - 1]);
+                                outboundsReadOnly[i], outboundEvtsReadOnly[i], //
+                                outboundsWriteOnly[i - 1], outboundEvtsWriteOnly[i - 1]);
                     }
 
                     ((OOBFilter<I, Object>) filters[0]).getOutboundOOB( //
-                            outboundReadOnlys[0], outboundReadOnlyOOBs[0], //
-                            out, outEvts);
+                            outboundsReadOnly[0], outboundEvtsReadOnly[0], //
+                            outputs, outputEvts);
 
                     break;
                 }

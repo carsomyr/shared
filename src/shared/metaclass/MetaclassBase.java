@@ -220,7 +220,7 @@ public class MetaclassBase {
         }
 
         // A finalizer guardian for the set.
-        final Object guardian = new Object() {
+        final Object reaper = new Object() {
 
             @Override
             public void finalize() {

@@ -51,7 +51,7 @@ import shared.util.Control;
 public class AcceptRegistry {
 
     final Selector selector;
-    final int backlog;
+    final int backlogSize;
 
     final Map<InetSocketAddress, Entry> addressToEntryMap;
     final Map<AbstractManagedConnection<?>, Entry> connectionToEntryMap;
@@ -59,10 +59,10 @@ public class AcceptRegistry {
     /**
      * Default constructor.
      */
-    protected AcceptRegistry(Selector selector, int backlog) {
+    protected AcceptRegistry(Selector selector, int backlogSize) {
 
         this.selector = selector;
-        this.backlog = backlog;
+        this.backlogSize = backlogSize;
 
         this.addressToEntryMap = new HashMap<InetSocketAddress, Entry>();
         this.connectionToEntryMap = new HashMap<AbstractManagedConnection<?>, Entry>();
@@ -152,7 +152,7 @@ public class AcceptRegistry {
             ServerSocket socket = channel.socket();
 
             socket.setReuseAddress(true);
-            socket.bind(address, AcceptRegistry.this.backlog);
+            socket.bind(address, AcceptRegistry.this.backlogSize);
 
             channel.configureBlocking(false);
 

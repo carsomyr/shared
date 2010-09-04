@@ -152,11 +152,11 @@ public:
      *      the right hand side values.
      * @param dstV
      *      the destination values.
-     * @param isComplex
+     * @param complex
      *      whether the operation is complex-valued.
      */
     static void eOp(JNIEnv *env, jobject thisObj, jint type, jobject lhsV, jobject rhsV, jobject dstV,
-            jboolean isComplex);
+            jboolean complex);
 
     /**
      * Performs a conversion operation.

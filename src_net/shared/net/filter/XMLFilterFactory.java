@@ -75,11 +75,11 @@ public class XMLFilterFactory<C extends Connection> //
         return new Filter<ByteBuffer, Element>() {
 
             @Override
-            public void getInbound(Queue<ByteBuffer> in, Queue<Element> out) {
+            public void getInbound(Queue<ByteBuffer> inputs, Queue<Element> outputs) {
 
                 assert !Thread.holdsLock(connection);
 
-                for (ByteBuffer bb; (bb = in.poll()) != null;) {
+                for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
 
                     int save = bb.position();
                     int size = bb.remaining();
@@ -88,19 +88,19 @@ public class XMLFilterFactory<C extends Connection> //
 
                     byte[] array = (size == bb.capacity()) ? bb.array() //
                             : Arrays.copyOfRange(bb.array(), save, save + size);
-                    out.add(Control.createDocument(array).getDocumentElement());
+                    outputs.add(Control.createDocument(array).getDocumentElement());
 
                     bb.position(save + size);
                 }
             }
 
             @Override
-            public void getOutbound(Queue<Element> in, Queue<ByteBuffer> out) {
+            public void getOutbound(Queue<Element> inputs, Queue<ByteBuffer> outputs) {
 
                 assert Thread.holdsLock(connection);
 
-                for (Element elt; (elt = in.poll()) != null;) {
-                    out.add(ByteBuffer.wrap(Control.toString(elt).getBytes()));
+                for (Element elt; (elt = inputs.poll()) != null;) {
+                    outputs.add(ByteBuffer.wrap(Control.toString(elt).getBytes()));
                 }
             }
         };

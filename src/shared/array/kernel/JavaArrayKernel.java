@@ -132,8 +132,8 @@ public class JavaArrayKernel implements ArrayKernel {
     }
 
     @Override
-    public void eOp(int type, Object lhsV, Object rhsV, Object dstV, boolean isComplex) {
-        ElementOps.eOp(type, lhsV, rhsV, dstV, isComplex);
+    public void eOp(int type, Object lhsV, Object rhsV, Object dstV, boolean complex) {
+        ElementOps.eOp(type, lhsV, rhsV, dstV, complex);
     }
 
     @Override
@@ -144,13 +144,13 @@ public class JavaArrayKernel implements ArrayKernel {
     //
 
     @Override
-    public void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean isComplex) {
-        MatrixOps.mul(lhsV, rhsV, lr, rc, dstV, isComplex);
+    public void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean complex) {
+        MatrixOps.mul(lhsV, rhsV, lr, rc, dstV, complex);
     }
 
     @Override
-    public void diag(double[] srcV, double[] dstV, int size, boolean isComplex) {
-        MatrixOps.diag(srcV, dstV, size, isComplex);
+    public void diag(double[] srcV, double[] dstV, int size, boolean complex) {
+        MatrixOps.diag(srcV, dstV, size, complex);
     }
 
     //

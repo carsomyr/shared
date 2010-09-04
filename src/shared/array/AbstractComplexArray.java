@@ -29,8 +29,8 @@
 package shared.array;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.FIELD_PRECISION;
-import static shared.array.ArrayBase.FIELD_WIDTH;
+import static shared.array.ArrayBase.FieldPrecision;
+import static shared.array.ArrayBase.FieldWidth;
 import static shared.array.ArrayBase.OpKernel;
 import static shared.array.ArrayBase.formatEmptyArray;
 import static shared.array.ArrayBase.formatRescale;
@@ -124,7 +124,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
         }
 
         String format = String.format("%%%d.%df +%%%d.%dfi", //
-                FIELD_WIDTH, FIELD_PRECISION, FIELD_WIDTH, FIELD_PRECISION);
+                FieldWidth, FieldPrecision, FieldWidth, FieldPrecision);
 
         values = formatRescale(f, exponent, values);
 
@@ -240,21 +240,21 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
      * Creates an {@link AbstractRealArray} from the complex magnitudes of this array's elements.
      */
     public R torAbs() {
-        return applyKernelComplexToRealOperation(ArrayKernel.CTOR_ABS);
+        return applyKernelComplexToRealOperation(ArrayKernel.C_TO_R_ABS);
     }
 
     /**
      * Creates an {@link AbstractRealArray} from the real parts of this array's elements.
      */
     public R torRe() {
-        return applyKernelComplexToRealOperation(ArrayKernel.CTOR_RE);
+        return applyKernelComplexToRealOperation(ArrayKernel.C_TO_R_RE);
     }
 
     /**
      * Creates an {@link AbstractRealArray} from the imaginary parts of this array's elements.
      */
     public R torIm() {
-        return applyKernelComplexToRealOperation(ArrayKernel.CTOR_IM);
+        return applyKernelComplexToRealOperation(ArrayKernel.C_TO_R_IM);
     }
 
     /**

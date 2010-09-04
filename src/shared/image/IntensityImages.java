@@ -54,17 +54,17 @@ public class IntensityImages {
     /**
      * A mapping of color names to interpolating colormaps.
      */
-    final protected static Map<String, int[]> ColorMaps;
+    final protected static Map<String, int[]> Colormaps;
 
     static {
 
-        ColorMaps = new HashMap<String, int[]>();
+        Colormaps = new HashMap<String, int[]>();
 
-        ColorMaps.put("gray", createInterpolatingColorMap( //
+        Colormaps.put("gray", createInterpolatingColormap( //
                 0, 0xFF000000, //
                 255, 0xFFFFFFFF));
 
-        ColorMaps.put("jet", createInterpolatingColorMap( //
+        Colormaps.put("jet", createInterpolatingColormap( //
                 0, 0xFF000080, //
                 31, 0xFF0000FF, //
                 95, 0xFF00FFFF, //
@@ -94,9 +94,9 @@ public class IntensityImages {
         Control.checkTrue(rangeMax > rangeMin, //
                 "Invalid intensity range");
 
-        int[] colorMap = ColorMaps.get(cmName);
+        int[] colormap = Colormaps.get(cmName);
 
-        Control.checkTrue(colorMap != null, //
+        Control.checkTrue(colormap != null, //
                 "Invalid color map name");
 
         m = m.transpose(1, 0).reverseOrder().uAdd(-rangeMin) //
@@ -106,7 +106,7 @@ public class IntensityImages {
         int[] arr = new int[backing.length];
 
         for (int i = 0, n = backing.length; i < n; i++) {
-            arr[i] = colorMap[(int) (backing[i] * 255)];
+            arr[i] = colormap[(int) (backing[i] * 255)];
         }
 
         BufferedImage bi = new BufferedImage(m.size(0), m.size(1), BufferedImage.TYPE_INT_RGB);
@@ -211,7 +211,7 @@ public class IntensityImages {
     /**
      * Creates a colormap by interpolating between start, end, and intermediate colors.
      */
-    final protected static int[] createInterpolatingColorMap(int... args) {
+    final protected static int[] createInterpolatingColormap(int... args) {
 
         Control.checkTrue(args.length < 4 //
                 || args.length % 2 == 0 //
@@ -228,7 +228,7 @@ public class IntensityImages {
             values[i] = args[2 * i + 1];
         }
 
-        int[] colorMap = new int[256];
+        int[] colormap = new int[256];
 
         for (int i = 1, n = indices.length; i < n; i++) {
 
@@ -260,11 +260,11 @@ public class IntensityImages {
                 int g = ((((int) Math.round(gSrc + (j - lower) * gIncr)) & 0xFF) << 8);
                 int b = (((int) Math.round(bSrc + (j - lower) * bIncr)) & 0xFF);
 
-                colorMap[j] = a | r | g | b;
+                colormap[j] = a | r | g | b;
             }
         }
 
-        return colorMap;
+        return colormap;
     }
 
     // Dummy constructor.

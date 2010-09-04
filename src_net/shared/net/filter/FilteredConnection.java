@@ -54,38 +54,38 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
     public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory);
 
     /**
-     * Sends the given outbound value to the remote host.
+     * Sends the given output value to the remote host.
      * 
-     * @param outbound
-     *            the outbound value.
+     * @param output
+     *            the output value.
      * @return the number of units remaining to be written.
      */
-    public int sendOutbound(T outbound);
+    public int sendOutbound(T output);
 
     /**
      * On binding.
      * 
-     * @param inbounds
-     *            the inbound {@link Queue}.
+     * @param inputs
+     *            the input {@link Queue}.
      */
-    public void onBind(Queue<T> inbounds);
+    public void onBind(Queue<T> inputs);
 
     /**
      * On receipt of data.
      * 
-     * @param inbounds
-     *            the inbound {@link Queue}.
+     * @param inputs
+     *            the input {@link Queue}.
      */
-    public void onReceive(Queue<T> inbounds);
+    public void onReceive(Queue<T> inputs);
 
     /**
      * On closure.
      * 
      * @param type
      *            the {@link shared.net.Connection.ClosingType}.
-     * @param inbounds
-     *            the inbound {@link Queue}.
+     * @param inputs
+     *            the input {@link Queue}.
      * @see shared.net.Connection.ClosingType
      */
-    public void onClosing(ClosingType type, Queue<T> inbounds);
+    public void onClosing(ClosingType type, Queue<T> inputs);
 }

@@ -184,11 +184,11 @@ public interface Connection extends Closeable, Executor {
     /**
      * Sets the error and triggers connection closure.
      * 
-     * @param error
-     *            the error.
+     * @param exception
+     *            the exception.
      * @see ClosingType#ERROR
      */
-    public void setError(Throwable error);
+    public void setError(Throwable exception);
 
     /**
      * Executes the given code snippet on this connection's manager thread.

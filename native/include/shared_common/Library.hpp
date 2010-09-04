@@ -43,7 +43,7 @@ public:
      *      the extra data.
      * @return the minimum JNI version number required to run the library code.
      */
-    static jint JNI_OnLoad(JavaVM *jvm, void *reserved);
+    static jint OnLoad(JavaVM *jvm, void *reserved);
 
     /**
      * On library unload.
@@ -53,7 +53,7 @@ public:
      * @param reserved
      *      the extra data.
      */
-    static void JNI_OnUnload(JavaVM *jvm, void *reserved);
+    static void OnUnload(JavaVM *jvm, void *reserved);
 
     /**
      * Registers a native service provider.

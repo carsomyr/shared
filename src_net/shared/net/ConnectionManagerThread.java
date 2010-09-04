@@ -327,24 +327,24 @@ abstract public class ConnectionManagerThread extends CoreThread //
     }
 
     /**
-     * Logs a debugging error message.
+     * Logs a debugging exception message.
      */
-    protected void debug(Throwable error, String format, Object... args) {
+    protected void debug(Throwable exception, String format, Object... args) {
 
         if (this.log.isDebugEnabled()) {
-            this.log.debug(String.format(format, args), error);
+            this.log.debug(String.format(format, args), exception);
         }
     }
 
     /**
-     * Retrieves this thread's internal state. Blocks until query completion.
+     * Retrieves this thread's internal state. Blocks until request completion.
      * 
      * @param type
      *            the {@link InterestEventType}.
      * @param <T>
      *            the result type.
      */
-    protected <T> T query(InterestEventType type) {
+    protected <T> T request(InterestEventType type) {
 
         RequestFuture<T> fut = new RequestFuture<T>();
 
@@ -475,7 +475,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * Handles a connection error notification.
      */
-    protected void handleError(AbstractManagedConnection<?> conn, Throwable error) {
+    protected void handleError(AbstractManagedConnection<?> conn, Throwable exception) {
 
         // Connection already invalidated. Nothing to do.
         if (conn.getStatus() == AbstractManagedConnectionStatus.CLOSED) {
@@ -486,9 +486,9 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         try {
 
-            conn.doError(error);
+            conn.doError(exception);
 
-            debug(error, "Error [%s].", conn);
+            debug(exception, "Error [%s].", conn);
 
         } catch (Throwable t) {
 

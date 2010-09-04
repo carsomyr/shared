@@ -44,28 +44,32 @@ public interface OOBFilter<I, O> extends Filter<I, O> {
     /**
      * Processes an {@link OOBEvent} as it would apply to the inbound direction.
      * 
-     * @param in
+     * @param inputs
      *            the input {@link Queue}.
-     * @param inEvts
+     * @param inputEvts
      *            the input event {@link Queue}.
-     * @param out
+     * @param outputs
      *            the output {@link Queue}.
-     * @param outEvts
+     * @param outputEvts
      *            the output event {@link Queue}.
      */
-    public void getInboundOOB(Queue<I> in, Queue<OOBEvent> inEvts, Queue<O> out, Queue<OOBEvent> outEvts);
+    public void getInboundOOB( //
+            Queue<I> inputs, Queue<OOBEvent> inputEvts, //
+            Queue<O> outputs, Queue<OOBEvent> outputEvts);
 
     /**
      * Processes an {@link OOBEvent} as it would apply to the outbound direction.
      * 
-     * @param in
+     * @param inputs
      *            the input {@link Queue}.
-     * @param inEvts
+     * @param inputEvts
      *            the input event {@link Queue}.
-     * @param out
+     * @param outputs
      *            the output {@link Queue}.
-     * @param outEvts
+     * @param outputEvts
      *            the output event {@link Queue}.
      */
-    public void getOutboundOOB(Queue<O> in, Queue<OOBEvent> inEvts, Queue<I> out, Queue<OOBEvent> outEvts);
+    public void getOutboundOOB( //
+            Queue<O> inputs, Queue<OOBEvent> inputEvts, //
+            Queue<I> outputs, Queue<OOBEvent> outputEvts);
 }

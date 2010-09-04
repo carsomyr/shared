@@ -154,15 +154,15 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
     }
 
     @Override
-    public void onReceive(Queue<T> evts) {
+    public void onReceive(Queue<T> inputs) {
 
-        for (T evt; (evt = evts.poll()) != null;) {
+        for (T evt; (evt = inputs.poll()) != null;) {
             onLocal(evt);
         }
     }
 
     @Override
-    public void onClosing(ClosingType type, Queue<T> evts) {
+    public void onClosing(ClosingType type, Queue<T> inputs) {
 
         switch (type) {
 
@@ -170,7 +170,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
             onLocal(parse(null));
 
-            Control.checkTrue(evts.isEmpty(), //
+            Control.checkTrue(inputs.isEmpty(), //
                     "No more events can remain in queue");
 
             break;
@@ -194,29 +194,29 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         return new Filter<Element, T>() {
 
             @Override
-            public void getInbound(Queue<Element> in, Queue<T> out) {
+            public void getInbound(Queue<Element> inputs, Queue<T> outputs) {
 
                 assert !Thread.holdsLock(connection);
 
-                for (Element inbound; (inbound = in.poll()) != null;) {
-                    out.add(parse(inbound));
+                for (Element elt; (elt = inputs.poll()) != null;) {
+                    outputs.add(parse(elt));
                 }
             }
 
             @Override
-            public void getOutbound(Queue<T> in, Queue<Element> out) {
+            public void getOutbound(Queue<T> inputs, Queue<Element> outputs) {
 
                 assert Thread.holdsLock(connection);
 
-                for (T outbound; (outbound = in.poll()) != null;) {
-                    out.add(outbound.toDOM());
+                for (T evt; (evt = inputs.poll()) != null;) {
+                    outputs.add(evt.toDOM());
                 }
             }
         };
     }
 
     @Override
-    public void onBind(Queue<T> inbounds) {
+    public void onBind(Queue<T> inputs) {
         // Do nothing.
     }
 }

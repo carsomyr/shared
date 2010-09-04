@@ -168,7 +168,7 @@ void LinearAlgebraOps::hessenbergToSchur(jdouble *h, jdouble *vecVArr, jdouble *
     jint hStrideRow = size;
     jint vStrideRow = size;
 
-    jcomplex cdiv = jcomplex(0.0, 0.0);
+    jcomplex cDiv = jcomplex(0.0, 0.0);
 
     // This is derived from the Algol procedure hqr2,
     // by Martin and Wilkinson, Handbook for Auto. Comp.,
@@ -522,10 +522,10 @@ void LinearAlgebraOps::hessenbergToSchur(jdouble *h, jdouble *vecVArr, jdouble *
                 h[hStrideRow * (n - 1) + (n - 1)] = q / h[hStrideRow * (n) + (n - 1)];
                 h[hStrideRow * (n - 1) + (n)] = -(h[hStrideRow * (n) + (n)] - p) / h[hStrideRow * (n) + (n - 1)];
             } else {
-                cdiv = jcomplex(0.0, -h[hStrideRow * (n - 1) + (n)])
+                cDiv = jcomplex(0.0, -h[hStrideRow * (n - 1) + (n)])
                         / jcomplex(h[hStrideRow * (n - 1) + (n - 1)] - p, q);
-                h[hStrideRow * (n - 1) + (n - 1)] = cdiv.re;
-                h[hStrideRow * (n - 1) + (n)] = cdiv.im;
+                h[hStrideRow * (n - 1) + (n - 1)] = cDiv.re;
+                h[hStrideRow * (n - 1) + (n)] = cDiv.im;
             }
             h[hStrideRow * (n) + (n - 1)] = 0.0;
             h[hStrideRow * (n) + (n)] = 1.0;
@@ -546,9 +546,9 @@ void LinearAlgebraOps::hessenbergToSchur(jdouble *h, jdouble *vecVArr, jdouble *
                 } else {
                     l = i;
                     if (valVArr[2 * (i) + 1] == 0) {
-                        cdiv = jcomplex(-ra, -sa) / jcomplex(w, q);
-                        h[hStrideRow * (i) + (n - 1)] = cdiv.re;
-                        h[hStrideRow * (i) + (n)] = cdiv.im;
+                        cDiv = jcomplex(-ra, -sa) / jcomplex(w, q);
+                        h[hStrideRow * (i) + (n - 1)] = cDiv.re;
+                        h[hStrideRow * (i) + (n)] = cDiv.im;
                     } else {
 
                         // Solve complex equations
@@ -561,19 +561,19 @@ void LinearAlgebraOps::hessenbergToSchur(jdouble *h, jdouble *vecVArr, jdouble *
                         if (vr == 0.0 && vi == 0.0) {
                             vr = eps * norm * (fabs(w) + fabs(q) + fabs(x) + fabs(y) + fabs(z));
                         }
-                        cdiv = jcomplex(x * r - z * ra + q * sa, x * s - z * sa - q * ra) / jcomplex(vr, vi);
-                        h[hStrideRow * (i) + (n - 1)] = cdiv.re;
-                        h[hStrideRow * (i) + (n)] = cdiv.im;
+                        cDiv = jcomplex(x * r - z * ra + q * sa, x * s - z * sa - q * ra) / jcomplex(vr, vi);
+                        h[hStrideRow * (i) + (n - 1)] = cDiv.re;
+                        h[hStrideRow * (i) + (n)] = cDiv.im;
                         if (fabs(x) > (fabs(z) + fabs(q))) {
                             h[hStrideRow * (i + 1) + (n - 1)] = (-ra - w * h[hStrideRow * (i) + (n - 1)]
                                     + q * h[hStrideRow * (i) + (n)]) / x;
                             h[hStrideRow * (i + 1) + (n)] = (-sa - w * h[hStrideRow * (i) + (n)]
                                     - q * h[hStrideRow * (i) + (n - 1)]) / x;
                         } else {
-                            cdiv = jcomplex(-r - y * h[hStrideRow * (i) + (n - 1)], -s - y * h[hStrideRow * (i) + (n)])
+                            cDiv = jcomplex(-r - y * h[hStrideRow * (i) + (n - 1)], -s - y * h[hStrideRow * (i) + (n)])
                                     / jcomplex(z, q);
-                            h[hStrideRow * (i + 1) + (n - 1)] = cdiv.re;
-                            h[hStrideRow * (i + 1) + (n)] = cdiv.im;
+                            h[hStrideRow * (i + 1) + (n - 1)] = cDiv.re;
+                            h[hStrideRow * (i + 1) + (n)] = cDiv.im;
                         }
                     }
 

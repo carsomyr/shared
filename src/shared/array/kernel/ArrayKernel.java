@@ -256,26 +256,26 @@ public interface ArrayKernel extends Service {
     //
 
     /** Complex to real conversion by complex magnitudes. */
-    final public static int CTOR_ABS = 0;
+    final public static int C_TO_R_ABS = 0;
 
     /** Complex to real conversion by real part. */
-    final public static int CTOR_RE = 1;
+    final public static int C_TO_R_RE = 1;
 
     /** Complex to real conversion by imaginary part. */
-    final public static int CTOR_IM = 2;
+    final public static int C_TO_R_IM = 2;
 
     //
 
     /** Real to complex conversion by real part. */
-    final public static int RTOC_RE = 0;
+    final public static int R_TO_C_RE = 0;
 
     /** Real to complex conversion by imaginary part. */
-    final public static int RTOC_IM = 1;
+    final public static int R_TO_C_IM = 1;
 
     //
 
     /** Integer to real conversion by up-casting. */
-    final public static int ITOR = 0;
+    final public static int I_TO_R = 0;
 
     //
 
@@ -476,10 +476,10 @@ public interface ArrayKernel extends Service {
      *            the right hand side values.
      * @param dstV
      *            the destination values.
-     * @param isComplex
+     * @param complex
      *            whether the operation is complex-valued.
      */
-    public void eOp(int type, Object lhsV, Object rhsV, Object dstV, boolean isComplex);
+    public void eOp(int type, Object lhsV, Object rhsV, Object dstV, boolean complex);
 
     /**
      * Performs a conversion operation.
@@ -514,10 +514,10 @@ public interface ArrayKernel extends Service {
      *            the column count of the result.
      * @param dstV
      *            the destination values.
-     * @param isComplex
+     * @param complex
      *            whether the operation is complex-valued.
      */
-    public void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean isComplex);
+    public void mul(double[] lhsV, double[] rhsV, int lr, int rc, double[] dstV, boolean complex);
 
     /**
      * Gets the diagonal of a {@link Matrix}.
@@ -528,10 +528,10 @@ public interface ArrayKernel extends Service {
      *            destination values.
      * @param size
      *            the matrix size.
-     * @param isComplex
+     * @param complex
      *            whether the operation is complex-valued.
      */
-    public void diag(double[] srcV, double[] dstV, int size, boolean isComplex);
+    public void diag(double[] srcV, double[] dstV, int size, boolean complex);
 
     //
 
