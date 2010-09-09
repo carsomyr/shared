@@ -28,9 +28,9 @@
 
 package shared.test.array;
 
-import static org.junit.Assert.assertTrue;
 import static shared.array.ArrayBase.OpKernel;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -87,7 +87,7 @@ public class MatrixTest {
                 4, 4 //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 a.mMul(a.transpose(1, 0)).values(), expected.values()));
 
         ComplexArray c1 = new ComplexArray(new double[] {
@@ -119,7 +119,7 @@ public class MatrixTest {
                 3, 3, 2 //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 c1.mMul(c2).values(), cExpected.values()));
     }
 
@@ -151,7 +151,7 @@ public class MatrixTest {
                 5, 1 //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 a.mDiag().values(), expected.values()));
 
         ComplexArray cA = new ComplexArray(new double[] {
@@ -176,7 +176,7 @@ public class MatrixTest {
                 5, 1, 2 //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 cA.mDiag().values(), cExpected.values()));
     }
 
@@ -216,7 +216,7 @@ public class MatrixTest {
             RealArray r = new RealArray(size, size).uRnd(1.0);
             RealArray[] eigs = r.mEigs();
 
-            assertTrue(r.mMul(eigs[0]).lSub(eigs[0].mMul(eigs[1])) //
+            Assert.assertTrue(r.mMul(eigs[0]).lSub(eigs[0].mMul(eigs[1])) //
                     .uAbs().aSum() < 1e-8);
         }
     }
@@ -236,7 +236,7 @@ public class MatrixTest {
 
             RealArray r = new RealArray(size, size).uRnd(1.0).lAdd(eye);
 
-            assertTrue(r.mMul(r.mInvert()).lSub(eye) //
+            Assert.assertTrue(r.mMul(r.mInvert()).lSub(eye) //
                     .uAbs().aSum() < 1e-8);
         }
     }

@@ -28,9 +28,6 @@
 
 package shared.metaclass;
 
-import static shared.metaclass.MetaclassBase.getBytes;
-import static shared.metaclass.MetaclassBase.getResourceAsTemporaryFile;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -101,7 +98,7 @@ public class JarRegistry implements ResourceRegistry {
 
     @Override
     public URL getResource(String pathname) {
-        return getResourceAsTemporaryFile(this, pathname);
+        return MetaclassBase.getResourceAsTemporaryFile(this, pathname);
     }
 
     @SuppressWarnings("unchecked")
@@ -143,7 +140,7 @@ public class JarRegistry implements ResourceRegistry {
         HashMap<String, byte[]> map = new HashMap<String, byte[]>();
 
         for (JarEntry je = null; (je = jis.getNextJarEntry()) != null;) {
-            map.put(je.getName(), getBytes(jis));
+            map.put(je.getName(), MetaclassBase.getBytes(jis));
         }
 
         return map;
@@ -162,7 +159,7 @@ public class JarRegistry implements ResourceRegistry {
         for (Enumeration<JarEntry> jes = jf.entries(); jes.hasMoreElements();) {
 
             JarEntry je = jes.nextElement();
-            map.put(je.getName(), getBytes(jf.getInputStream(je)));
+            map.put(je.getName(), MetaclassBase.getBytes(jf.getInputStream(je)));
         }
 
         return map;

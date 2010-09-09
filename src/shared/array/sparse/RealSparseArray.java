@@ -32,8 +32,6 @@ import static shared.array.ArrayBase.DEFAULT_ORDER;
 import static shared.array.ArrayBase.FieldPrecision;
 import static shared.array.ArrayBase.FieldWidth;
 import static shared.array.ArrayBase.OpKernel;
-import static shared.array.ArrayBase.formatRescale;
-import static shared.array.ArrayBase.formatSparseArray;
 
 import java.util.Formatter;
 
@@ -176,7 +174,8 @@ public class RealSparseArray extends ProtoSparseArray<RealSparseArray, double[],
         String valueFormat = String.format("%%%d.%df", FieldWidth, FieldPrecision);
         String indexFormat = String.format("%%%dd", exponentIndex + 2);
 
-        formatSparseArray(f, valueFormat, indexFormat, formatRescale(f, exponent, values), indices, strides);
+        ArrayBase.formatSparseArray(f, valueFormat, indexFormat, //
+                ArrayBase.formatRescale(f, exponent, values), indices, strides);
 
         return f.toString();
     }

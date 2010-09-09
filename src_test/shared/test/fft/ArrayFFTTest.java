@@ -28,10 +28,9 @@
 
 package shared.test.fft;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.Array;
@@ -78,7 +77,7 @@ public class ArrayFFTTest {
                 } //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 a.fft().eMul(b.fft()).ifft().values(), expected.values()));
 
         RealArray aReal = new RealArray(new double[] {
@@ -105,7 +104,7 @@ public class ArrayFFTTest {
                 } //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 aReal.rfft().eMul(bReal.rfft()).rifft().values(), expectedReal.values()));
     }
 
@@ -154,10 +153,10 @@ public class ArrayFFTTest {
                 7, 7 //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 ((a.rfft()).eMul(b.rfft().uConj())).rifft().values(), expected.values()));
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 ((a.tocRe().fft()).eMul(b.tocRe().fft().uConj())).ifft().torRe().values(), //
                 expected.values()));
     }
@@ -219,10 +218,10 @@ public class ArrayFFTTest {
                 3, 3, 3 //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 a.tocRe().fft().eMul(b.tocRe().fft()).ifft().torRe().values(), expected.values()));
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 a.rfft().eMul(b.rfft()).rifft().values(), expected.values()));
     }
 
@@ -282,8 +281,8 @@ public class ArrayFFTTest {
                 5, 3, 4, 2 //
         );
 
-        assertTrue(Arrays.equals(a.fftShift().values(), expected.values()));
-        assertTrue(Arrays.equals(a.fftShift().ifftShift().values(), a.values()));
+        Assert.assertTrue(Arrays.equals(a.fftShift().values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(a.fftShift().ifftShift().values(), a.values()));
     }
 
     /**

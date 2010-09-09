@@ -28,11 +28,10 @@
 
 package shared.test.array;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.Array;
@@ -85,11 +84,11 @@ public class ArrayIOKernelTest {
                 2, 4, 5 //
         );
 
-        assertTrue(Arrays.equals(expected.values(), //
+        Assert.assertTrue(Arrays.equals(expected.values(), //
                 ((RealArray) kernel.parseMat( //
                         kernel.getMatBytes(expected))[0]).values()));
 
-        assertTrue(Arrays.equals(expected.values(), //
+        Assert.assertTrue(Arrays.equals(expected.values(), //
                 RealArray.parse(expected.getBytes()).values()));
 
         expected = new RealArray(new double[] {
@@ -116,8 +115,8 @@ public class ArrayIOKernelTest {
         Array<?, ?>[] arrays = kernel.parseMat(Control.getBytes(Thread.currentThread().getContextClassLoader() //
                 .getResourceAsStream("shared/test/array/r.mat")));
 
-        assertTrue(Arrays.equals(expected.values(), ((RealArray) arrays[0]).values()));
-        assertTrue(Tests.equals(expected.uMul(1 << 24).uAdd(0.5).values(), ((RealArray) arrays[1]).values()));
+        Assert.assertTrue(Arrays.equals(expected.values(), ((RealArray) arrays[0]).values()));
+        Assert.assertTrue(Tests.equals(expected.uMul(1 << 24).uAdd(0.5).values(), ((RealArray) arrays[1]).values()));
     }
 
     /**
@@ -142,11 +141,11 @@ public class ArrayIOKernelTest {
                 5, 3, 2 //
         );
 
-        assertTrue(Arrays.equals(expected.values(), //
+        Assert.assertTrue(Arrays.equals(expected.values(), //
                 ((ComplexArray) kernel.parseMat( //
                         kernel.getMatBytes(expected))[0]).values()));
 
-        assertTrue(Arrays.equals(expected.values(), //
+        Assert.assertTrue(Arrays.equals(expected.values(), //
                 ComplexArray.parse(expected.getBytes()).values()));
 
         expected = new ComplexArray(new double[] {
@@ -172,8 +171,8 @@ public class ArrayIOKernelTest {
         Array<?, ?>[] arrays = kernel.parseMat(Control.getBytes(Thread.currentThread().getContextClassLoader() //
                 .getResourceAsStream("shared/test/array/c.mat")));
 
-        assertTrue(Arrays.equals(expected.values(), ((ComplexArray) arrays[0]).values()));
-        assertTrue(Tests.equals(expected.uMul(1 << 24, 0).uAdd(0.5, 0.0).values(), //
+        Assert.assertTrue(Arrays.equals(expected.values(), ((ComplexArray) arrays[0]).values()));
+        Assert.assertTrue(Tests.equals(expected.uMul(1 << 24, 0).uAdd(0.5, 0.0).values(), //
                 ((ComplexArray) arrays[1]).values()));
     }
 
@@ -206,11 +205,11 @@ public class ArrayIOKernelTest {
                 3, 3, 4 //
         );
 
-        assertTrue(Arrays.equals(expected.values(), //
+        Assert.assertTrue(Arrays.equals(expected.values(), //
                 ((IntegerArray) kernel.parseMat( //
                         kernel.getMatBytes(expected))[0]).values()));
 
-        assertTrue(Arrays.equals(expected.values(), //
+        Assert.assertTrue(Arrays.equals(expected.values(), //
                 IntegerArray.parse(expected.getBytes()).values()));
 
         expected = new IntegerArray(new int[] {
@@ -237,7 +236,7 @@ public class ArrayIOKernelTest {
         Array<?, ?>[] arrays = kernel.parseMat(Control.getBytes(Thread.currentThread().getContextClassLoader() //
                 .getResourceAsStream("shared/test/array/i.mat")));
 
-        assertTrue(Arrays.equals(expected.values(), ((IntegerArray) arrays[0]).values()));
-        assertTrue(Arrays.equals(expected.uMul(1 << 24).values(), ((IntegerArray) arrays[1]).values()));
+        Assert.assertTrue(Arrays.equals(expected.values(), ((IntegerArray) arrays[0]).values()));
+        Assert.assertTrue(Arrays.equals(expected.uMul(1 << 24).values(), ((IntegerArray) arrays[1]).values()));
     }
 }

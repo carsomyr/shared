@@ -30,8 +30,6 @@ package shared.array;
 
 import static shared.array.ArrayBase.IOKernel;
 import static shared.array.ArrayBase.OpKernel;
-import static shared.array.ArrayBase.canonicalizeSlices;
-import static shared.array.ArrayBase.createReverseSlices;
 
 import java.util.Arrays;
 
@@ -180,7 +178,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         Control.checkTrue(src != dst, //
                 "Source and destination cannot be the same");
 
-        int[] slices = canonicalizeSlices(srcSlices, src.dims, dstSlices, dst.dims);
+        int[] slices = ArrayBase.canonicalizeSlices(srcSlices, src.dims, dstSlices, dst.dims);
 
         OpKernel.slice(slices, //
                 src.values, src.dims, src.strides, //
@@ -197,7 +195,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         Control.checkTrue(src != dst, //
                 "Source and destination cannot be the same");
 
-        OpKernel.slice(canonicalizeSlices(src.dims, dst.dims, dstSlices), //
+        OpKernel.slice(ArrayBase.canonicalizeSlices(src.dims, dst.dims, dstSlices), //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -237,7 +235,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         T dst = wrap(src.order, dstDims, src.order.strides(dstDims));
 
-        OpKernel.slice(canonicalizeSlices(nSlices, src.dims, srcSlices), //
+        OpKernel.slice(ArrayBase.canonicalizeSlices(nSlices, src.dims, srcSlices), //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -377,7 +375,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         T dst = wrap(src.order, src.dims, src.strides);
 
-        OpKernel.slice(createReverseSlices(src.dims, opDims), //
+        OpKernel.slice(ArrayBase.createReverseSlices(src.dims, opDims), //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 

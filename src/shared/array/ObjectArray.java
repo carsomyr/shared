@@ -28,9 +28,6 @@
 
 package shared.array;
 
-import static shared.array.ArrayBase.formatEmptyArray;
-import static shared.array.ArrayBase.formatSlice;
-
 import java.lang.reflect.Array;
 import java.util.Formatter;
 
@@ -175,7 +172,7 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
 
         if (values.length == 0) {
 
-            formatEmptyArray(f, dims);
+            ArrayBase.formatEmptyArray(f, dims);
 
             return f.toString();
         }
@@ -189,7 +186,7 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
 
             f.format("%n");
 
-            formatSlice(f, " \"%s\"", //
+            ArrayBase.formatSlice(f, " \"%s\"", //
                     values, indices, 0, nRows, nCols, false);
 
             return f.toString();
@@ -205,7 +202,7 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
 
             f.format(":, :)]%n");
 
-            formatSlice(f, " \"%s\"", //
+            ArrayBase.formatSlice(f, " \"%s\"", //
                     values, indices, offset, nRows, nCols, false);
         }
 

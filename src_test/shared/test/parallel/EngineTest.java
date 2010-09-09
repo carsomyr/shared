@@ -28,11 +28,10 @@
 
 package shared.test.parallel;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -199,7 +198,7 @@ public class EngineTest {
 
         this.engine.execute(1);
 
-        assertEquals(new Integer(8), ref.get());
+        Assert.assertEquals(new Integer(8), ref.get());
     }
 
     /**
@@ -234,7 +233,7 @@ public class EngineTest {
 
         this.engine.execute(1);
 
-        assertEquals(new Integer(8), ref.get());
+        Assert.assertEquals(new Integer(8), ref.get());
     }
 
     /**
@@ -272,15 +271,15 @@ public class EngineTest {
 
         Handle<Integer> ref1 = this.engine.addOutput(o1, r1);
         this.engine.execute(1);
-        assertEquals(new Integer(1), ref1.get());
+        Assert.assertEquals(new Integer(1), ref1.get());
 
         Handle<Integer> ref2 = this.engine.addOutput(o2, r2);
         this.engine.execute(2);
-        assertEquals(new Integer(2), ref2.get());
+        Assert.assertEquals(new Integer(2), ref2.get());
 
         Handle<Integer> ref3 = this.engine.addOutput(o3, r4);
         this.engine.execute(3);
-        assertEquals(new Integer(3), ref3.get());
+        Assert.assertEquals(new Integer(3), ref3.get());
     }
 
     /**
@@ -320,7 +319,7 @@ public class EngineTest {
 
         this.engine.execute(1);
 
-        assertEquals(new Integer(5), ref.get());
+        Assert.assertEquals(new Integer(5), ref.get());
     }
 
     /**

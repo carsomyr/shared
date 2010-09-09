@@ -30,8 +30,6 @@ package shared.array;
 
 import static shared.array.ArrayBase.IOKernel;
 import static shared.array.ArrayBase.OpKernel;
-import static shared.array.ArrayBase.formatEmptyArray;
-import static shared.array.ArrayBase.formatSlice;
 import static shared.array.kernel.ArrayKernel.I_TO_R;
 
 import java.util.Arrays;
@@ -162,7 +160,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
         if (values.length == 0) {
 
-            formatEmptyArray(f, dims);
+            ArrayBase.formatEmptyArray(f, dims);
 
             return f.toString();
         }
@@ -178,7 +176,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
             f.format("%n");
 
-            formatSlice(f, format, //
+            ArrayBase.formatSlice(f, format, //
                     values, indices, 0, nRows, nCols, false);
 
             return f.toString();
@@ -194,7 +192,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
             f.format(":, :)]%n");
 
-            formatSlice(f, format, //
+            ArrayBase.formatSlice(f, format, //
                     values, indices, offset, nRows, nCols, false);
         }
 

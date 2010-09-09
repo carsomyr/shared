@@ -28,9 +28,6 @@
 
 package shared.codec;
 
-import static org.apache.commons.codec.binary.Base64.decodeBase64;
-import static org.apache.commons.codec.binary.Base64.encodeBase64;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -38,8 +35,7 @@ import shared.util.Control;
 
 /**
  * A collection of convenience wrappers for the static methods found in <a
- * href="http://commons.apache.org/codec/">Apache Commons Codec</a>'s {@link org.apache.commons.codec.binary.Base64}
- * class.
+ * href="http://commons.apache.org/codec/">Apache Commons Codec</a>'s {@code Base64} class.
  * 
  * @author Roy Liu
  */
@@ -53,7 +49,7 @@ public class Base64 {
      * @return the {@code byte} array.
      */
     final public static byte[] base64ToBytes(String data) {
-        return decodeBase64(data.getBytes());
+        return org.apache.commons.codec.binary.Base64.decodeBase64(data.getBytes());
     }
 
     /**
@@ -64,7 +60,7 @@ public class Base64 {
      * @return the base {@code 64} string.
      */
     final public static String bytesToBase64(byte[] data) {
-        return new String(encodeBase64(data));
+        return new String(org.apache.commons.codec.binary.Base64.encodeBase64(data));
     }
 
     /**

@@ -28,6 +28,15 @@
 
 package sharedx.fftw;
 
+import static sharedx.fftw.Plan.BACKWARD;
+import static sharedx.fftw.Plan.C_TO_R;
+import static sharedx.fftw.Plan.FFTW_ESTIMATE;
+import static sharedx.fftw.Plan.FFTW_EXHAUSTIVE;
+import static sharedx.fftw.Plan.FFTW_MEASURE;
+import static sharedx.fftw.Plan.FFTW_PATIENT;
+import static sharedx.fftw.Plan.FORWARD;
+import static sharedx.fftw.Plan.R_TO_C;
+
 import java.lang.ref.Reference;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -57,27 +66,27 @@ public class FFTWService implements FFTService {
         this.planMap = new ConcurrentHashMap<PlanKey, Reference<Plan>>();
         this.rr = new ReferenceReaper<Plan>();
 
-        this.mode = Plan.FFTW_MEASURE;
+        this.mode = FFTW_MEASURE;
     }
 
     @Override
     public void rfft(int[] dims, double[] in, double[] out) {
-        transform(Plan.R_TO_C, dims, this.mode, in, out);
+        transform(R_TO_C, dims, this.mode, in, out);
     }
 
     @Override
     public void rifft(int[] dims, double[] in, double[] out) {
-        transform(Plan.C_TO_R, dims, this.mode, in, out);
+        transform(C_TO_R, dims, this.mode, in, out);
     }
 
     @Override
     public void fft(int[] dims, double[] in, double[] out) {
-        transform(Plan.FORWARD, dims, this.mode, in, out);
+        transform(FORWARD, dims, this.mode, in, out);
     }
 
     @Override
     public void ifft(int[] dims, double[] in, double[] out) {
-        transform(Plan.BACKWARD, dims, this.mode, in, out);
+        transform(BACKWARD, dims, this.mode, in, out);
     }
 
     @Override
@@ -91,19 +100,19 @@ public class FFTWService implements FFTService {
 
             if (value.equals("estimate")) {
 
-                this.mode = Plan.FFTW_ESTIMATE;
+                this.mode = FFTW_ESTIMATE;
 
             } else if (value.equals("measure")) {
 
-                this.mode = Plan.FFTW_MEASURE;
+                this.mode = FFTW_MEASURE;
 
             } else if (value.equals("patient")) {
 
-                this.mode = Plan.FFTW_PATIENT;
+                this.mode = FFTW_PATIENT;
 
             } else if (value.equals("exhaustive")) {
 
-                this.mode = Plan.FFTW_EXHAUSTIVE;
+                this.mode = FFTW_EXHAUSTIVE;
 
             } else {
 
@@ -148,16 +157,16 @@ public class FFTWService implements FFTService {
 
         switch (mode) {
 
-        case Plan.FFTW_ESTIMATE:
+        case FFTW_ESTIMATE:
             return "estimate";
 
-        case Plan.FFTW_MEASURE:
+        case FFTW_MEASURE:
             return "measure";
 
-        case Plan.FFTW_PATIENT:
+        case FFTW_PATIENT:
             return "patient";
 
-        case Plan.FFTW_EXHAUSTIVE:
+        case FFTW_EXHAUSTIVE:
             return "exhaustive";
 
         default:
@@ -172,16 +181,16 @@ public class FFTWService implements FFTService {
 
         switch (mode) {
 
-        case Plan.R_TO_C:
+        case R_TO_C:
             return "r2c";
 
-        case Plan.C_TO_R:
+        case C_TO_R:
             return "c2r";
 
-        case Plan.FORWARD:
+        case FORWARD:
             return "forward";
 
-        case Plan.BACKWARD:
+        case BACKWARD:
             return "backward";
 
         default:

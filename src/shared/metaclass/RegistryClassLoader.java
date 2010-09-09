@@ -28,10 +28,6 @@
 
 package shared.metaclass;
 
-import static shared.metaclass.MetaclassBase.close;
-import static shared.metaclass.MetaclassBase.getBytes;
-import static shared.metaclass.MetaclassBase.getResourceAsTemporaryFile;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -171,7 +167,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
         try {
 
             return defineClass(className, //
-                    ByteBuffer.wrap(getBytes(in)), //
+                    ByteBuffer.wrap(MetaclassBase.getBytes(in)), //
                     RegistryClassLoader.class.getProtectionDomain());
 
         } catch (IOException e) {
@@ -180,7 +176,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
 
         } finally {
 
-            close(in);
+            MetaclassBase.close(in);
         }
     }
 
@@ -252,7 +248,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
         if (url != null) {
 
             String filename = (url.getProtocol().equals("file") ? url //
-                    : getResourceAsTemporaryFile(this, pathname)).getPath();
+                    : MetaclassBase.getResourceAsTemporaryFile(this, pathname)).getPath();
 
             try {
 

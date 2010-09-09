@@ -28,8 +28,7 @@
 
 package shared.test.util;
 
-import static org.junit.Assert.assertTrue;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.util.Arithmetic;
@@ -73,7 +72,7 @@ public class DynamicArrayTest {
             int length = 1 << i;
 
             for (DynamicArray<?, ?, ?> a : arrays) {
-                assertTrue(a.capacity() == length - 1);
+                Assert.assertTrue(a.capacity() == length - 1);
             }
 
             for (int j = 0; j < length; j++, count++) {
@@ -85,10 +84,10 @@ public class DynamicArrayTest {
             }
         }
 
-        assertTrue(java.util.Arrays.equals(dia.values(), Arithmetic.range((1 << nStages) - 1)));
-        assertTrue(java.util.Arrays.equals(dda.values(), Arithmetic.doubleRange((1 << nStages) - 1)));
-        assertTrue(java.util.Arrays.equals(dla.values(), Arithmetic.longRange((1 << nStages) - 1)));
-        assertTrue(java.util.Arrays.equals(doa.values(), Arrays.box(Arithmetic.range((1 << nStages) - 1))));
+        Assert.assertTrue(java.util.Arrays.equals(dia.values(), Arithmetic.range((1 << nStages) - 1)));
+        Assert.assertTrue(java.util.Arrays.equals(dda.values(), Arithmetic.doubleRange((1 << nStages) - 1)));
+        Assert.assertTrue(java.util.Arrays.equals(dla.values(), Arithmetic.longRange((1 << nStages) - 1)));
+        Assert.assertTrue(java.util.Arrays.equals(doa.values(), Arrays.box(Arithmetic.range((1 << nStages) - 1))));
 
         for (int i = 0, length = 1 << (nStages - 1); i < length; i++) {
 
@@ -103,7 +102,7 @@ public class DynamicArrayTest {
             int length = 1 << i;
 
             for (DynamicArray<?, ?, ?> a : arrays) {
-                assertTrue(a.capacity() == 4 * length - 1);
+                Assert.assertTrue(a.capacity() == 4 * length - 1);
             }
 
             for (int j = 0; j < length; j++) {

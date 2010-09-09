@@ -28,10 +28,9 @@
 
 package shared.test.stat;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Random;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.RealArray;
@@ -77,7 +76,7 @@ public class GMModelTest {
         gmc.covariances.clone().uSqrt().map(expected, 0, 0, input.size(0), 0, nDims, nDims);
         gmc.weights.map(expected, 0, 0, input.size(0), 0, 2 * nDims, 1);
 
-        assertTrue(KMeans.distances(input, expected).rMin(0).rMax(1).singleton() < 0.5);
+        Assert.assertTrue(KMeans.distances(input, expected).rMin(0).rMax(1).singleton() < 0.5);
     }
 
     /**

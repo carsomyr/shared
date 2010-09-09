@@ -28,6 +28,8 @@
 
 package shared.test.net;
 
+import static shared.test.net.AllNetTests.Parameterizations;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -102,7 +104,7 @@ public class SynchronousConnectionTest {
      */
     @Parameters
     final public static Collection<Object[]> parameters() {
-        return AllNetTests.Parameterizations;
+        return Parameterizations;
     }
 
     /**

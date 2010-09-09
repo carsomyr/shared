@@ -28,10 +28,9 @@
 
 package shared.test.fft;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.RealArray;
@@ -88,7 +87,7 @@ public class ConvolutionCacheTest {
                 4, 4 //
         );
 
-        assertTrue(Tests.equals( //
+        Assert.assertTrue(Tests.equals( //
                 ConvolutionCache.getInstance().convolve(a.rfft(), b).values(), expected.values()));
     }
 
@@ -150,7 +149,7 @@ public class ConvolutionCacheTest {
                 5, 5, 5 //
         );
 
-        assertTrue(Arrays.equals(ConvolutionCache.pad(a, 1, 1, 1).values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(ConvolutionCache.pad(a, 1, 1, 1).values(), expected.values()));
 
         a = new RealArray(new double[] {
                 //
@@ -174,6 +173,6 @@ public class ConvolutionCacheTest {
                 7, 7 //
         );
 
-        assertTrue(Arrays.equals(ConvolutionCache.pad(a, 2, 1).values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(ConvolutionCache.pad(a, 2, 1).values(), expected.values()));
     }
 }

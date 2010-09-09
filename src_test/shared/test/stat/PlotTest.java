@@ -28,13 +28,13 @@
 
 package shared.test.stat;
 
-import static org.junit.Assert.assertTrue;
 import static shared.test.Demo.DemoDir;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -268,8 +268,8 @@ public class PlotTest {
 
         gpc.setOutputFormat("svg").setFont("Helvetica", 8).toFile(svgFile);
 
-        assertTrue(epsFile.exists());
-        assertTrue(pngFile.exists());
-        assertTrue(svgFile.exists());
+        Assert.assertTrue(epsFile.exists());
+        Assert.assertTrue(pngFile.exists());
+        Assert.assertTrue(svgFile.exists());
     }
 }

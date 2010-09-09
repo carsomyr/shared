@@ -28,10 +28,9 @@
 
 package shared.test.stat;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.stat.util.Combinatorics;
@@ -55,7 +54,7 @@ public class CombinatoricsTest {
     @Test
     public void testPartition() {
 
-        assertTrue(Arrays.deepEquals(Combinatorics.partition(5), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.partition(5), //
                 new int[][] {
                         //
                         { 5 }, //
@@ -68,7 +67,7 @@ public class CombinatoricsTest {
                 }) //
         );
 
-        assertTrue(Arrays.deepEquals(Combinatorics.partition(7, 3, 5), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.partition(7, 3, 5), //
                 new int[][] {
                         //
                         { 1, 1, 5 }, //
@@ -81,7 +80,7 @@ public class CombinatoricsTest {
                 }) //
         );
 
-        assertTrue(Arrays.deepEquals(Combinatorics.partition(8, 4, 5), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.partition(8, 4, 5), //
                 new int[][] {
                         //
                         { 1, 1, 1, 5 }, //
@@ -92,7 +91,7 @@ public class CombinatoricsTest {
                 }) //
         );
 
-        assertTrue(Arrays.deepEquals(Combinatorics.partition(9, 2, 3), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.partition(9, 2, 3), //
                 new int[][] {
                         //
                         { 1, 8 }, //
@@ -102,14 +101,14 @@ public class CombinatoricsTest {
                 }) //
         );
 
-        assertTrue(Arrays.deepEquals(Combinatorics.partition(9, 1, 2), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.partition(9, 1, 2), //
                 new int[][] {
                 //
                 { 9 } //
                 }) //
         );
 
-        assertTrue(Arrays.deepEquals(Combinatorics.partition(9, 9, 10), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.partition(9, 9, 10), //
                 new int[][] {
                 //
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1 } //
@@ -123,7 +122,7 @@ public class CombinatoricsTest {
     @Test
     public void testOrderedPartition() {
 
-        assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(3), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(3), //
                 new int[][] {
                         //
                         { 3 }, //
@@ -144,7 +143,7 @@ public class CombinatoricsTest {
                 }) //
         );
 
-        assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(8, 2, 3), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(8, 2, 3), //
                 new int[][] {
                         //
                         { 0, 8 }, //
@@ -159,7 +158,7 @@ public class CombinatoricsTest {
                 }) //
         );
 
-        assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(2, 4, 5), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(2, 4, 5), //
                 new int[][] {
                         //
                         { 0, 0, 0, 2 }, //
@@ -175,7 +174,7 @@ public class CombinatoricsTest {
                 }) //
         );
 
-        assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(9, 1, 2), //
+        Assert.assertTrue(Arrays.deepEquals(Combinatorics.orderedPartition(9, 1, 2), //
                 new int[][] {
                 //
                 { 9 } //
@@ -190,7 +189,7 @@ public class CombinatoricsTest {
     public void testGamma() {
 
         for (int i = 1, acc = 1; i < 8; i++, acc *= i) {
-            assertTrue(Math.abs(acc - Combinatorics.gamma(i + 1)) < 1e-8);
+            Assert.assertTrue(Math.abs(acc - Combinatorics.gamma(i + 1)) < 1e-8);
         }
     }
 }

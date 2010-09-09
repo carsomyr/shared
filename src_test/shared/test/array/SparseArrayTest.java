@@ -28,12 +28,12 @@
 
 package shared.test.array;
 
-import static org.junit.Assert.assertTrue;
 import static shared.array.ArrayBase.DEFAULT_ORDER;
 import static shared.util.Control.NullRunnable;
 
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.IntegerArray;
@@ -208,9 +208,9 @@ public class SparseArrayTest {
             ObjectArray<Integer> dstOCompare = srcO.slice(srcSlices, dstO.clone(), dstSlices);
             ObjectSparseArray<Integer> dstOSparseCompare = srcOSparse.slice(srcSlices, dstOSparse.clone(), dstSlices);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -223,9 +223,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.slice(srcSlices);
             dstOSparseCompare = srcOSparse.slice(srcSlices);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -242,9 +242,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.slice(dstO.clone(), dstSlices);
             dstOSparseCompare = srcOSparse.slice(dstOSparse.clone(), dstSlices);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -257,9 +257,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.clone().slice(-1, srcSlices);
             dstOSparseCompare = srcOSparse.clone().slice(-1, srcSlices);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -274,9 +274,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.transpose(perm);
             dstOSparseCompare = srcOSparse.transpose(perm);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -292,9 +292,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.reverse(opDims);
             dstOSparseCompare = srcOSparse.reverse(opDims);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -313,9 +313,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.shift(shifts);
             dstOSparseCompare = srcOSparse.shift(shifts);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -334,9 +334,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.tile(repetitions);
             dstOSparseCompare = srcOSparse.tile(repetitions);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -357,9 +357,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.reshape(reshapeDims);
             dstOSparseCompare = srcOSparse.reshape(reshapeDims);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -383,9 +383,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.subarray(bounds);
             dstOSparseCompare = srcOSparse.subarray(bounds);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
 
             //
 
@@ -400,9 +400,9 @@ public class SparseArrayTest {
             dstOCompare = srcO.concat(opDim, dstO);
             dstOSparseCompare = srcOSparse.concat(opDim, dstOSparse);
 
-            assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
-            assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstRCompare.values(), dstRSparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstICompare.values(), dstISparseCompare.toDense().values()));
+            Assert.assertTrue(Arrays.equals(dstOCompare.values(), dstOSparseCompare.toDense().values()));
         }
     }
 
@@ -485,7 +485,7 @@ public class SparseArrayTest {
 
         } catch (RuntimeException e) {
 
-            assertTrue(e.getMessage().equals("Invalid array types"));
+            Assert.assertTrue(e.getMessage().equals("Invalid array types"));
 
             throw e;
         }

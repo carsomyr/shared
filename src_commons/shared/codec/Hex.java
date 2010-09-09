@@ -28,14 +28,11 @@
 
 package shared.codec;
 
-import static org.apache.commons.codec.binary.Hex.decodeHex;
-import static org.apache.commons.codec.binary.Hex.encodeHex;
-
 import org.apache.commons.codec.DecoderException;
 
 /**
  * A collection of convenience wrappers for the static methods found in <a
- * href="http://commons.apache.org/codec/">Apache Commons Codec</a>'s {@link org.apache.commons.codec.binary.Hex} class.
+ * href="http://commons.apache.org/codec/">Apache Commons Codec</a>'s {@code Hex} class.
  * 
  * @author Roy Liu
  */
@@ -52,7 +49,7 @@ public class Hex {
 
         try {
 
-            return decodeHex(data.toCharArray());
+            return org.apache.commons.codec.binary.Hex.decodeHex(data.toCharArray());
 
         } catch (DecoderException e) {
 
@@ -68,7 +65,7 @@ public class Hex {
      * @return the hex string.
      */
     final public static String bytesToHex(byte[] data) {
-        return new String(encodeHex(data));
+        return new String(org.apache.commons.codec.binary.Hex.encodeHex(data));
     }
 
     // Dummy constructor.

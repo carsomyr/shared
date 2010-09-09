@@ -28,24 +28,10 @@
 
 package shared.test.util;
 
-import static java.nio.ByteOrder.BIG_ENDIAN;
-import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static org.junit.Assert.assertTrue;
-import static shared.codec.Base64.base64ToBytes;
-import static shared.codec.Base64.base64ToDoubles;
-import static shared.codec.Base64.base64ToInts;
-import static shared.codec.Base64.base64ToLongs;
-import static shared.codec.Base64.bytesToBase64;
-import static shared.codec.Base64.doublesToBase64;
-import static shared.codec.Base64.intsToBase64;
-import static shared.codec.Base64.longsToBase64;
-import static shared.codec.Compression.deflate;
-import static shared.codec.Compression.inflate;
-import static shared.codec.Hex.bytesToHex;
-import static shared.codec.Hex.hexToBytes;
-
+import java.nio.ByteOrder;
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.codec.Base64;
@@ -94,24 +80,24 @@ public class CodecTest {
             longValues[i] = Arithmetic.nextLong();
         }
 
-        assertTrue(Arrays.equals(base64ToBytes(bytesToBase64(byteValues)), byteValues));
-        assertTrue(Arrays.equals(base64ToDoubles(doublesToBase64(doubleValues)), doubleValues));
-        assertTrue(Arrays.equals(base64ToInts(intsToBase64(intValues)), intValues));
-        assertTrue(Arrays.equals(base64ToLongs(longsToBase64(longValues)), longValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToBytes(Base64.bytesToBase64(byteValues)), byteValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToDoubles(Base64.doublesToBase64(doubleValues)), doubleValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToInts(Base64.intsToBase64(intValues)), intValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToLongs(Base64.longsToBase64(longValues)), longValues));
 
-        assertTrue(Arrays.equals(base64ToDoubles(doublesToBase64(doubleValues, BIG_ENDIAN), BIG_ENDIAN), //
-                doubleValues));
-        assertTrue(Arrays.equals(base64ToInts(intsToBase64(intValues, BIG_ENDIAN), BIG_ENDIAN), //
-                intValues));
-        assertTrue(Arrays.equals(base64ToLongs(longsToBase64(longValues, BIG_ENDIAN), BIG_ENDIAN), //
-                longValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToDoubles(Base64.doublesToBase64( //
+                doubleValues, ByteOrder.BIG_ENDIAN), ByteOrder.BIG_ENDIAN), doubleValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToInts(Base64.intsToBase64( //
+                intValues, ByteOrder.BIG_ENDIAN), ByteOrder.BIG_ENDIAN), intValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToLongs(Base64.longsToBase64( //
+                longValues, ByteOrder.BIG_ENDIAN), ByteOrder.BIG_ENDIAN), longValues));
 
-        assertTrue(Arrays.equals(base64ToDoubles(doublesToBase64(doubleValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
-                doubleValues));
-        assertTrue(Arrays.equals(base64ToInts(intsToBase64(intValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
-                intValues));
-        assertTrue(Arrays.equals(base64ToLongs(longsToBase64(longValues, LITTLE_ENDIAN), LITTLE_ENDIAN), //
-                longValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToDoubles(Base64.doublesToBase64( //
+                doubleValues, ByteOrder.LITTLE_ENDIAN), ByteOrder.LITTLE_ENDIAN), doubleValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToInts(Base64.intsToBase64( //
+                intValues, ByteOrder.LITTLE_ENDIAN), ByteOrder.LITTLE_ENDIAN), intValues));
+        Assert.assertTrue(Arrays.equals(Base64.base64ToLongs(Base64.longsToBase64( //
+                longValues, ByteOrder.LITTLE_ENDIAN), ByteOrder.LITTLE_ENDIAN), longValues));
     }
 
     /**
@@ -124,7 +110,7 @@ public class CodecTest {
 
         byte[] byteValues = Arithmetic.nextBytes(len);
 
-        assertTrue(Arrays.equals(hexToBytes(bytesToHex(byteValues)), byteValues));
+        Assert.assertTrue(Arrays.equals(Hex.hexToBytes(Hex.bytesToHex(byteValues)), byteValues));
     }
 
     /**
@@ -136,7 +122,7 @@ public class CodecTest {
         for (int i = 0; i < 256; i++) {
 
             byte[] byteValues = Arithmetic.nextBytes(Arithmetic.nextInt(1024) + 1);
-            assertTrue(Arrays.equals(inflate(deflate(byteValues)), byteValues));
+            Assert.assertTrue(Arrays.equals(Compression.inflate(Compression.deflate(byteValues)), byteValues));
         }
     }
 }

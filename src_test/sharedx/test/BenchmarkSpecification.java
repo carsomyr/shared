@@ -28,7 +28,7 @@
 
 package sharedx.test;
 
-import sharedx.fftw.Plan;
+import static sharedx.fftw.Plan.FFTW_MEASURE;
 
 /**
  * A specification ascribed to by Java and native performance benchmarks.
@@ -50,7 +50,7 @@ public interface BenchmarkSpecification {
     /**
      * The desired level of <a href="http://www.fftw.org/">FFTW3</a> precomputation.
      */
-    final public static int MODE = Plan.FFTW_MEASURE;
+    final public static int MODE = FFTW_MEASURE;
 
     /**
      * Benchmarks convolution capabilities.

@@ -28,8 +28,7 @@
 
 package shared.test.image;
 
-import static org.junit.Assert.assertTrue;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.Array.IndexingOrder;
@@ -91,7 +90,7 @@ public class IntegralImageTest {
                         bounds[dim << 1] + Arithmetic.nextInt(dims[dim] - bounds[dim << 1]) + 1;
                     }
 
-                    assertTrue(Math.abs(ii.query(bounds) - mat.subarray(bounds).aSum()) < 1e-8);
+                    Assert.assertTrue(Math.abs(ii.query(bounds) - mat.subarray(bounds).aSum()) < 1e-8);
                 }
             }
         }

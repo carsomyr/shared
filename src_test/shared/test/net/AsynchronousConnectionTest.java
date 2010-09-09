@@ -28,6 +28,8 @@
 
 package shared.test.net;
 
+import static shared.test.net.AllNetTests.Parameterizations;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -108,7 +110,7 @@ public class AsynchronousConnectionTest {
      */
     @Parameters
     final public static Collection<Object[]> parameters() {
-        return AllNetTests.Parameterizations;
+        return Parameterizations;
     }
 
     /**

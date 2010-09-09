@@ -29,13 +29,16 @@
 package sharedx.test;
 
 import static shared.array.ArrayBase.FFTService;
+import static sharedx.fftw.Plan.FFTW_ESTIMATE;
+import static sharedx.fftw.Plan.FFTW_EXHAUSTIVE;
+import static sharedx.fftw.Plan.FFTW_MEASURE;
+import static sharedx.fftw.Plan.FFTW_PATIENT;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import shared.array.ComplexArray;
 import shared.fft.ConvolutionCache;
-import sharedx.fftw.Plan;
 
 /**
  * A collection of Java performance benchmarks.
@@ -60,19 +63,19 @@ public class BenchmarkJava implements BenchmarkSpecification {
 
         switch (MODE) {
 
-        case Plan.FFTW_ESTIMATE:
+        case FFTW_ESTIMATE:
             modeStr = "estimate";
             break;
 
-        case Plan.FFTW_MEASURE:
+        case FFTW_MEASURE:
             modeStr = "measure";
             break;
 
-        case Plan.FFTW_PATIENT:
+        case FFTW_PATIENT:
             modeStr = "patient";
             break;
 
-        case Plan.FFTW_EXHAUSTIVE:
+        case FFTW_EXHAUSTIVE:
             modeStr = "exhaustive";
             break;
 

@@ -28,8 +28,6 @@
 
 package shared.codec;
 
-import static java.util.zip.Deflater.BEST_COMPRESSION;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.Deflater;
@@ -54,7 +52,7 @@ public class Compression {
     final public static byte[] deflate(byte[] array) {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        DeflaterOutputStream deflaterOut = new DeflaterOutputStream(out, new Deflater(BEST_COMPRESSION));
+        DeflaterOutputStream deflaterOut = new DeflaterOutputStream(out, new Deflater(Deflater.BEST_COMPRESSION));
 
         try {
 

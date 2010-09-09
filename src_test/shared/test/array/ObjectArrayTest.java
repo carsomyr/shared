@@ -28,11 +28,11 @@
 
 package shared.test.array;
 
-import static org.junit.Assert.assertTrue;
 import static shared.util.Control.NullRunnable;
 
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.Array;
@@ -94,7 +94,7 @@ public class ObjectArrayTest {
                         0, 1, 2, //
                         1, 0, 3);
 
-        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
     }
 
     /**
@@ -152,7 +152,7 @@ public class ObjectArrayTest {
                 2, 3, 4 //
         );
 
-        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
 
         a = original.slice( //
                 new int[][] {
@@ -170,7 +170,7 @@ public class ObjectArrayTest {
                         new int[] { 0, 1, 2, 3 } //
                 });
 
-        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
     }
 
     /**
@@ -242,7 +242,7 @@ public class ObjectArrayTest {
         // Sort along the dimension.
         IntegerArray indices = a.iSort(1);
 
-        assertTrue(Arrays.equals(a.values(), valuesExpected.values()) //
+        Assert.assertTrue(Arrays.equals(a.values(), valuesExpected.values()) //
                 && Arrays.equals(indices.values(), expected.values()));
 
         a = new ObjectArray<Integer>(new Integer[] {
@@ -281,7 +281,7 @@ public class ObjectArrayTest {
         // Sort the backing array.
         indices = a.iSort(-1);
 
-        assertTrue(Arrays.equals(a.values(), valuesExpected.values()) //
+        Assert.assertTrue(Arrays.equals(a.values(), valuesExpected.values()) //
                 && Arrays.equals(indices.values(), expected.values()));
     }
 
@@ -301,7 +301,7 @@ public class ObjectArrayTest {
 
         } catch (RuntimeException e) {
 
-            assertTrue(e.getMessage().equals("Invalid array types"));
+            Assert.assertTrue(e.getMessage().equals("Invalid array types"));
 
             throw e;
         }

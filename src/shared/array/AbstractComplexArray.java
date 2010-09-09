@@ -32,9 +32,6 @@ import static shared.array.ArrayBase.DEFAULT_ORDER;
 import static shared.array.ArrayBase.FieldPrecision;
 import static shared.array.ArrayBase.FieldWidth;
 import static shared.array.ArrayBase.OpKernel;
-import static shared.array.ArrayBase.formatEmptyArray;
-import static shared.array.ArrayBase.formatRescale;
-import static shared.array.ArrayBase.formatSlice;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -118,7 +115,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
         if (values.length == 0) {
 
-            formatEmptyArray(f, dims);
+            ArrayBase.formatEmptyArray(f, dims);
 
             return f.toString();
         }
@@ -126,7 +123,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
         String format = String.format("%%%d.%df +%%%d.%dfi", //
                 FieldWidth, FieldPrecision, FieldWidth, FieldPrecision);
 
-        values = formatRescale(f, exponent, values);
+        values = ArrayBase.formatRescale(f, exponent, values);
 
         int[] indices = MappingOps.assignMappingIndices(Arithmetic.product(dims), //
                 dims, strides);
@@ -137,7 +134,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
             f.format("%n");
 
-            formatSlice(f, format, //
+            ArrayBase.formatSlice(f, format, //
                     values, indices, 0, nRows, nCols, true);
 
             return f.toString();
@@ -153,7 +150,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
             f.format(":, :)]%n");
 
-            formatSlice(f, format, //
+            ArrayBase.formatSlice(f, format, //
                     values, indices, offset, nRows, nCols, true);
         }
 

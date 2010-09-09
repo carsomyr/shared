@@ -28,8 +28,7 @@
 
 package shared.test.image;
 
-import static org.junit.Assert.assertTrue;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.Array.IndexingOrder;
@@ -127,7 +126,7 @@ public class IntegralHistogramTest {
                         hExpected[j] = iis[j].query(bounds);
                     }
 
-                    assertTrue(Tests.equals(ih.query(h, bounds), hExpected));
+                    Assert.assertTrue(Tests.equals(ih.query(h, bounds), hExpected));
                 }
             }
         }

@@ -32,9 +32,6 @@ import static shared.array.ArrayBase.DEFAULT_ORDER;
 import static shared.array.ArrayBase.FFTService;
 import static shared.array.ArrayBase.FieldPrecision;
 import static shared.array.ArrayBase.FieldWidth;
-import static shared.array.ArrayBase.formatEmptyArray;
-import static shared.array.ArrayBase.formatRescale;
-import static shared.array.ArrayBase.formatSlice;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -137,14 +134,14 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
 
         if (values.length == 0) {
 
-            formatEmptyArray(f, dims);
+            ArrayBase.formatEmptyArray(f, dims);
 
             return f.toString();
         }
 
         String format = String.format("%%%d.%df", FieldWidth, FieldPrecision);
 
-        values = formatRescale(f, exponent, values);
+        values = ArrayBase.formatRescale(f, exponent, values);
 
         int[] indices = MappingOps.assignMappingIndices(Arithmetic.product(dims), //
                 dims, strides);
@@ -155,7 +152,7 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
 
             f.format("%n");
 
-            formatSlice(f, format, //
+            ArrayBase.formatSlice(f, format, //
                     values, indices, 0, nRows, nCols, false);
 
             return f.toString();
@@ -171,7 +168,7 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
 
             f.format(":, :)]%n");
 
-            formatSlice(f, format, //
+            ArrayBase.formatSlice(f, format, //
                     values, indices, offset, nRows, nCols, false);
         }
 

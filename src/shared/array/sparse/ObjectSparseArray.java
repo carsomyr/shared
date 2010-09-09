@@ -30,7 +30,6 @@ package shared.array.sparse;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
 import static shared.array.ArrayBase.OpKernel;
-import static shared.array.ArrayBase.formatSparseArray;
 
 import java.lang.reflect.Array;
 import java.util.Formatter;
@@ -170,7 +169,7 @@ public class ObjectSparseArray<T> extends ProtoSparseArray<ObjectSparseArray<T>,
         String valueFormat = String.format(" \"%%s\"");
         String indexFormat = String.format("%%%dd", exponentIndex + 2);
 
-        formatSparseArray(f, valueFormat, indexFormat, values, indices, strides);
+        ArrayBase.formatSparseArray(f, valueFormat, indexFormat, values, indices, strides);
 
         return f.toString();
     }

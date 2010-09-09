@@ -28,10 +28,9 @@
 
 package shared.test.array;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import shared.array.Array;
@@ -84,7 +83,7 @@ public class IntegerArrayTest {
         a = a.map(new IntegerArray(IndexingOrder.FAR, 3, 3, 4), //
                 1, 0, 2, 0, 1, 2, 1, 0, 3);
 
-        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
     }
 
     /**
@@ -141,7 +140,7 @@ public class IntegerArrayTest {
                 2, 3, 4 //
         );
 
-        assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(a.reverseOrder().values(), expected.values()));
 
         a = new IntegerArray(new int[] {
                 //
@@ -175,7 +174,7 @@ public class IntegerArrayTest {
                 3, 3 //
         );
 
-        assertTrue(Arrays.equals(a.values(), expected.values()));
+        Assert.assertTrue(Arrays.equals(a.values(), expected.values()));
     }
 
     /**
@@ -205,18 +204,18 @@ public class IntegerArrayTest {
                 3, 4, 5 //
         );
 
-        assertTrue(Arrays.equals(a.find(0, 0, -1), new int[] { 0, 1, 2, 3 }));
-        assertTrue(Arrays.equals(a.find(0, 1, -1), new int[] { 5, 6, 7 }));
-        assertTrue(Arrays.equals(a.find(0, 2, -1), new int[] { 10, 11 }));
-        assertTrue(Arrays.equals(a.find(0, 3, -1), new int[] { 15 }));
-        assertTrue(Arrays.equals(a.find(1, 0, -1), new int[] { 20, 21, 22, 23 }));
-        assertTrue(Arrays.equals(a.find(1, 1, -1), new int[] { 25, 26, 27 }));
-        assertTrue(Arrays.equals(a.find(1, 2, -1), new int[] { 30, 31 }));
-        assertTrue(Arrays.equals(a.find(1, 3, -1), new int[] { 35 }));
-        assertTrue(Arrays.equals(a.find(2, 0, -1), new int[] { 40, 41, 42, 43 }));
-        assertTrue(Arrays.equals(a.find(2, 1, -1), new int[] { 45, 46, 47 }));
-        assertTrue(Arrays.equals(a.find(2, 2, -1), new int[] { 50, 51 }));
-        assertTrue(Arrays.equals(a.find(2, 3, -1), new int[] { 55 }));
+        Assert.assertTrue(Arrays.equals(a.find(0, 0, -1), new int[] { 0, 1, 2, 3 }));
+        Assert.assertTrue(Arrays.equals(a.find(0, 1, -1), new int[] { 5, 6, 7 }));
+        Assert.assertTrue(Arrays.equals(a.find(0, 2, -1), new int[] { 10, 11 }));
+        Assert.assertTrue(Arrays.equals(a.find(0, 3, -1), new int[] { 15 }));
+        Assert.assertTrue(Arrays.equals(a.find(1, 0, -1), new int[] { 20, 21, 22, 23 }));
+        Assert.assertTrue(Arrays.equals(a.find(1, 1, -1), new int[] { 25, 26, 27 }));
+        Assert.assertTrue(Arrays.equals(a.find(1, 2, -1), new int[] { 30, 31 }));
+        Assert.assertTrue(Arrays.equals(a.find(1, 3, -1), new int[] { 35 }));
+        Assert.assertTrue(Arrays.equals(a.find(2, 0, -1), new int[] { 40, 41, 42, 43 }));
+        Assert.assertTrue(Arrays.equals(a.find(2, 1, -1), new int[] { 45, 46, 47 }));
+        Assert.assertTrue(Arrays.equals(a.find(2, 2, -1), new int[] { 50, 51 }));
+        Assert.assertTrue(Arrays.equals(a.find(2, 3, -1), new int[] { 55 }));
     }
 
     /**
@@ -227,7 +226,7 @@ public class IntegerArrayTest {
 
         IntegerArray[] arrays = IntegerArray.ndgrid(-3, 0, 1, 3, 0, -1, 6, 0, -2);
 
-        assertTrue(Arrays.equals(arrays[0].values(), new int[] {
+        Assert.assertTrue(Arrays.equals(arrays[0].values(), new int[] {
                 //
                 -3, -3, -3, //
                 -3, -3, -3, //
@@ -243,7 +242,7 @@ public class IntegerArrayTest {
                 }) //
         );
 
-        assertTrue(Arrays.equals(arrays[1].values(), new int[] {
+        Assert.assertTrue(Arrays.equals(arrays[1].values(), new int[] {
                 //
                 3, 3, 3, //
                 2, 2, 2, //
@@ -259,7 +258,7 @@ public class IntegerArrayTest {
                 }) //
         );
 
-        assertTrue(Arrays.equals(arrays[2].values(), new int[] {
+        Assert.assertTrue(Arrays.equals(arrays[2].values(), new int[] {
                 //
                 6, 4, 2, //
                 6, 4, 2, //
