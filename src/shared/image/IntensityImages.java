@@ -97,7 +97,7 @@ public class IntensityImages {
         int[] colormap = Colormaps.get(cmName);
 
         Control.checkTrue(colormap != null, //
-                "Invalid color map name");
+                "Invalid colormap name");
 
         m = m.transpose(1, 0).reverseOrder().uAdd(-rangeMin) //
                 .uMul(1.0 / (rangeMax - rangeMin));
@@ -236,9 +236,8 @@ public class IntensityImages {
             int upper = indices[i];
             int diff = upper - lower;
 
-            if (diff <= 0) {
-                throw new RuntimeException("Invalid arguments");
-            }
+            Control.checkTrue(diff > 0, //
+                    "Invalid arguments");
 
             int srcARGB = values[i - 1];
             int dstARGB = values[i];

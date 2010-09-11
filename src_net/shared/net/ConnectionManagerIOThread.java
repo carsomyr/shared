@@ -87,7 +87,7 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
             conn.registerKey(this.selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
             conn.doBind();
 
-            debug("Received dispatch [%s].", conn);
+            debug("Received as dispatch [%s].", conn);
 
         } catch (Throwable t) {
 

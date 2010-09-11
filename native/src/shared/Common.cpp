@@ -23,6 +23,9 @@
 
 #include <Common.hpp>
 
+template<class T> CleanupHandler<T>::~CleanupHandler() {
+}
+
 MallocHandler::MallocHandler(jint nBytes) {
 
     this->ptr = malloc(nBytes);

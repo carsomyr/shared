@@ -161,7 +161,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
         InputStream in = getResourceAsStream(className.replace(".", "/").concat(".class"));
 
         if (in == null) {
-            throw new ClassNotFoundException(String.format("Class '%s' not found", className));
+            throw new ClassNotFoundException(String.format("Class \"%s\" not found", className));
         }
 
         try {
@@ -276,8 +276,8 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
 
             } catch (InvocationTargetException e) {
 
-                throw new RuntimeException(String.format("Library '%s' not found " //
-                        + "and dynamic linker resolution of '%s' failed", pathname, librarySymbolicName), e);
+                throw new RuntimeException(String.format("Library \"%s\" not found " //
+                        + "and dynamic linker resolution of \"%s\" failed", pathname, librarySymbolicName), e);
             }
         }
     }
@@ -526,7 +526,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
                 f.format("%s%s%s%n", indent, prefix, //
                         (node.policy != null) ? ":".concat(node.policy.toString()) : "");
 
-                node.format(f, indent.concat("\t"));
+                node.format(f, indent.concat("    "));
             }
         }
     }

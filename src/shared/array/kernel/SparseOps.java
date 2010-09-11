@@ -465,7 +465,7 @@ public class SparseOps {
 
         } else {
 
-            throw new IllegalArgumentException("Invalid arguments");
+            throw new IllegalArgumentException("Invalid array types");
         }
 
         return new SparseArrayState<V>(values, indices, indirectionOffsets, indirections);

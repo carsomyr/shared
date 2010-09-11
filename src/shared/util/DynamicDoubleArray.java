@@ -164,8 +164,7 @@ public class DynamicDoubleArray implements DynamicArray<DynamicDoubleArray, doub
     @Override
     public String toString() {
         return String.format("%s[size = %d, capacity = %d, values = %s]", //
-                DynamicDoubleArray.class.getSimpleName(), //
-                size(), capacity(), Arrays.toString(values()));
+                getClass().getSimpleName(), size(), capacity(), Arrays.toString(values()));
     }
 
     @Override

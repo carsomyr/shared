@@ -96,7 +96,7 @@ public class SynchronousConnectionTest {
         this.messageLength = Integer.parseInt(p.getProperty("message_length"));
         this.nMessages = Integer.parseInt(p.getProperty("n_messages"));
         this.nConnections = Integer.parseInt(p.getProperty("n_sync_conns"));
-        this.useSSL = p.getProperty("use_SSL").equals("yes");
+        this.useSSL = p.getProperty("use_ssl").equals("yes");
     }
 
     /**

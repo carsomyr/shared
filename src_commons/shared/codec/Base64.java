@@ -49,7 +49,7 @@ public class Base64 {
      * @return the {@code byte} array.
      */
     final public static byte[] base64ToBytes(String data) {
-        return org.apache.commons.codec.binary.Base64.decodeBase64(data.getBytes());
+        return org.apache.commons.codec.binary.Base64.decodeBase64(data);
     }
 
     /**
@@ -60,7 +60,7 @@ public class Base64 {
      * @return the base {@code 64} string.
      */
     final public static String bytesToBase64(byte[] data) {
-        return new String(org.apache.commons.codec.binary.Base64.encodeBase64(data));
+        return org.apache.commons.codec.binary.Base64.encodeBase64String(data);
     }
 
     /**

@@ -228,4 +228,8 @@ public class MetaclassBase {
             }
         };
     }
+
+    // Dummy constructor.
+    MetaclassBase() {
+    }
 }

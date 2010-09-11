@@ -66,7 +66,7 @@ public class Tests {
 
             @Override
             public void testRunStarted(Description description) throws Exception {
-                Log.debug(String.format("Running '%s'.", name));
+                Log.debug(String.format("Running \"%s\".", name));
             }
 
             @Override
@@ -76,18 +76,18 @@ public class Tests {
 
             @Override
             public void testFinished(Description description) throws Exception {
-                Log.debug(String.format("\t%s\t(%d ms)", description, Control.tock()));
+                Log.debug(String.format("    %s (%d ms)", description, Control.tock()));
             }
 
             @Override
             public void testFailure(Failure failure) throws Exception {
-                Log.debug(String.format("\tException: %s", //
+                Log.debug(String.format("    Exception: %s", //
                         failure.getDescription()), failure.getException());
             }
 
             @Override
             public void testIgnored(Description description) throws Exception {
-                Log.debug(String.format("\tIgnored: %s", description));
+                Log.debug(String.format("    Ignored: %s", description));
             }
 
             @Override

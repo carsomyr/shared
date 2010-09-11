@@ -678,8 +678,8 @@ public class Arrays {
     final public static <T extends Comparable<? super T>> int binarySearchNearest(List<? extends T> values, T key, //
             RoundingMode rm) {
 
-        Control.checkTrue(values.size() > 0, //
-                "List size must be positive");
+        Control.checkTrue(!values.isEmpty(), //
+                "List must be nonempty");
 
         int index = Collections.binarySearch(values, key);
 
@@ -737,8 +737,8 @@ public class Arrays {
     final public static <T> int binarySearchNearest(List<? extends T> values, T key, Comparator<? super T> c, //
             RoundingMode rm) {
 
-        Control.checkTrue(values.size() > 0, //
-                "List size must be positive");
+        Control.checkTrue(!values.isEmpty(), //
+                "List must be nonempty");
 
         int index = Collections.binarySearch(values, key, c);
 

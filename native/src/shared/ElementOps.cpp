@@ -397,7 +397,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 
         } else {
 
-            throw std::runtime_error("Invalid arguments");
+            throw std::runtime_error("Invalid array types");
         }
 
     } catch (std::exception &e) {

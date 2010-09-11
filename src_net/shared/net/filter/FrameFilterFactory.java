@@ -144,7 +144,7 @@ public class FrameFilterFactory<C extends Connection> //
                     }
 
                     Control.checkTrue(bb.position() == bb.limit(), //
-                            "Buffer must contain all non-zero byte values");
+                            "Buffer must contain all nonzero byte values");
 
                     bb.position(save);
 
@@ -153,7 +153,10 @@ public class FrameFilterFactory<C extends Connection> //
                 }
             }
 
-            void ensureCapacity(int len) {
+            /**
+             * Ensures that the underlying frame buffer has at least the given number of {@code byte}s.
+             */
+            protected void ensureCapacity(int len) {
 
                 Control.checkTrue(len <= fff.maximumSize - this.frameBuffer.position(), //
                         "Maximum message size exceeded");

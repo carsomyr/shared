@@ -80,12 +80,12 @@ public class AllNetTests {
     final protected static String KEYSTORE_PATHNAME = "shared/test/net/keystore.jks";
 
     /**
-     * The names of {@link Logger}s used in this test.
+     * The classes of {@link Logger}s used in this test.
      */
-    final protected static String[] LoggerNames = new String[] {
+    final protected static Class<?>[] LoggerClasses = new Class[] {
             //
-            ConnectionManager.class.getName(), //
-            SSLFilter.class.getName() //
+            ConnectionManager.class, //
+            SSLFilter.class //
     };
 
     /**
@@ -113,11 +113,11 @@ public class AllNetTests {
         }
 
         Properties pNoSSL = (Properties) p.clone();
-        pNoSSL.setProperty("use_SSL", "no");
+        pNoSSL.setProperty("use_ssl", "no");
         Object[] paramsNoSSL = new Object[] { pNoSSL };
 
         Properties pSSL = (Properties) p.clone();
-        pSSL.setProperty("use_SSL", "yes");
+        pSSL.setProperty("use_ssl", "yes");
         Object[] paramsSSL = new Object[] { pSSL };
 
         Parameterizations = Arrays.asList(new Object[][] { paramsNoSSL, paramsSSL });
@@ -133,8 +133,8 @@ public class AllNetTests {
 
         Level debugLevel = DEBUG ? Level.DEBUG : Level.INFO;
 
-        for (String loggerName : LoggerNames) {
-            Logger.getLogger(loggerName).setLevel(debugLevel);
+        for (Class<?> loggerClass : LoggerClasses) {
+            Logger.getLogger(loggerClass).setLevel(debugLevel);
         }
     }
 

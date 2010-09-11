@@ -44,7 +44,7 @@ void BuildAndTest::execAndWaitFor(const TCHAR *cmd) {
             &si, //
             &pi)) {
 
-        printf("Could not create child process '%s'.\n", cmd);
+        printf("Could not create child process \"%s\".\n", cmd);
 
         return;
     }

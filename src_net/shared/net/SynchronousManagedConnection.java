@@ -294,7 +294,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         synchronized (this) {
 
             Control.checkTrue(isBound(), //
-                    "Connection is not bound");
+                    "Connection must be bound");
 
             return this.in;
         }
@@ -308,7 +308,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         synchronized (this) {
 
             Control.checkTrue(isBound(), //
-                    "Connection is not bound");
+                    "Connection must be bound");
 
             return this.out;
         }

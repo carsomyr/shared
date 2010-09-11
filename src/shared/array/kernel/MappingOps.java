@@ -186,7 +186,7 @@ public class MappingOps {
 
         } else {
 
-            throw new IllegalArgumentException("Invalid arguments");
+            throw new IllegalArgumentException("Invalid array types");
         }
     }
 

@@ -53,7 +53,7 @@ void Benchmark::testConvolve(JNIEnv *env, jobject thisObj) {
             break;
 
         default:
-            throw std::runtime_error("Plan type not recognized");
+            throw std::runtime_error("Invalid FFTW execution mode");
         }
 
         jint size = sharedx_test_BenchmarkSpecification_SIZE;

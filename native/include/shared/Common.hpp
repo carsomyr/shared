@@ -43,6 +43,8 @@ public:
      * Gets the resource.
      */
     virtual T get() = 0;
+
+    virtual ~CleanupHandler();
 };
 
 /**

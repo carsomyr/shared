@@ -220,7 +220,7 @@ public class Engine<T> {
 
         EngineNode<I, O> node = new EngineNode<I, O>(calc, hasOutput);
 
-        Control.checkTrue(calcDeps.size() > 0, //
+        Control.checkTrue(!calcDeps.isEmpty(), //
                 "Please specify some dependencies");
 
         try {
@@ -348,7 +348,7 @@ public class Engine<T> {
                 for (EngineEdge<?> edge : node.outputs) {
 
                     for (int i = 0, n = node.depth; i < n; i++) {
-                        f.format("\t");
+                        f.format("    ");
                     }
 
                     f.format("\"%s (%d)\" -> \"%s (%d)\"%n", //
@@ -388,7 +388,7 @@ public class Engine<T> {
             // Attach everything that's a sink to the fake sink.
             for (EngineNode<?, ?> node : nodes) {
 
-                if (node.outputs.size() == 0 && node != sink) {
+                if (node.outputs.isEmpty() && node != sink) {
                     addEdge(node, sink);
                 }
             }

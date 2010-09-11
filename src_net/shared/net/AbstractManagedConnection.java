@@ -383,7 +383,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                     }
 
                     if (!isDone()) {
-                        throw new TimeoutException();
+                        throw new TimeoutException("Operation timed out");
                     }
                 }
 

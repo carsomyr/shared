@@ -62,33 +62,33 @@ all: shared sharedx
 cmake: $(OS)$(WORD_SIZE)/Makefile
 
 $(OS)$(WORD_SIZE)/Makefile: CMakeLists.txt
-	mkdir -p $(OS)$(WORD_SIZE)
-	cd $(OS)$(WORD_SIZE) && $(CMAKE) .. $(CMAKE_FLAGS)
+	mkdir -p -- $(OS)$(WORD_SIZE)
+	cd -- $(OS)$(WORD_SIZE) && $(CMAKE) .. $(CMAKE_FLAGS)
 
 shared: cmake $(JNI_HEADERS)
-	$(MAKE) -C $(OS)$(WORD_SIZE) sst
+	$(MAKE) -C $(OS)$(WORD_SIZE) -- sst
 
 sharedx: cmake $(JNI_HEADERS) $(JNI_HEADERSX)
-	$(MAKE) -C $(OS)$(WORD_SIZE) sstx
+	$(MAKE) -C $(OS)$(WORD_SIZE) -- sstx
 
 shared_cl: cmake $(JNI_HEADERS)
-	$(MAKE) -C $(OS)$(WORD_SIZE) sst_cl
+	$(MAKE) -C $(OS)$(WORD_SIZE) -- sst_cl
 
 buildandtest: cmake $(ICON_ICO)
-	$(MAKE) -C $(OS)$(WORD_SIZE) buildandtest
+	$(MAKE) -C $(OS)$(WORD_SIZE) -- buildandtest
 
 doxygen: cmake
-	$(MAKE) -C $(OS)$(WORD_SIZE) doxygen
+	$(MAKE) -C $(OS)$(WORD_SIZE) -- doxygen
 
 #------------------------------------------------------------------------------#
 # Make the JNI headers.                                                        #
 #------------------------------------------------------------------------------#
 
 $(JNI_HEADERS):
-	$(MAKE) -C .. headers
+	$(MAKE) -C .. -- headers
 
 $(JNI_HEADERSX):
-	$(MAKE) -C .. headersx
+	$(MAKE) -C .. -- headersx
 
 #------------------------------------------------------------------------------#
 # Make the icon stack.                                                         #
@@ -96,18 +96,18 @@ $(JNI_HEADERSX):
 
 $(ICON_PNGS): icon_%.png: src/icon/icon_%.svg
 	inkscape --without-gui \
-		--file=$< \
-		--export-png="$(CURDIR)"/$@ \
-		--export-width=$*
+		--export-png $@ \
+		--export-width $* \
+		-- $<
 
 $(ICON_ICO): $(ICON_PNGS)
 	gimp -i -b - < ../build/conf/icon.scm > /dev/null
-	mv icon.ico $(ICON_ICO)
+	mv -- icon.ico $(ICON_ICO)
 
 #------------------------------------------------------------------------------#
 # Clean the distribution.                                                      #
 #------------------------------------------------------------------------------#
 
 clean:
-	rm -rf $(OS)$(WORD_SIZE)
-	rm -f $(ICON_ICO)
+	rm -rf -- $(OS)$(WORD_SIZE)
+	rm -f -- $(ICON_ICO)

@@ -164,8 +164,7 @@ public class DynamicIntArray implements DynamicArray<DynamicIntArray, int[], Int
     @Override
     public String toString() {
         return String.format("%s[size = %d, capacity = %d, values = %s]", //
-                DynamicIntArray.class.getSimpleName(), //
-                size(), capacity(), Arrays.toString(values()));
+                getClass().getSimpleName(), size(), capacity(), Arrays.toString(values()));
     }
 
     @Override

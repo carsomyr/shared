@@ -100,6 +100,6 @@ public class OOBEvent implements Event<OOBEvent, OOBEvent.OOBEventType, SourceTy
     @Override
     public String toString() {
         return String.format("%s[%s, %s]", //
-                OOBEvent.class.getSimpleName(), this.type, this.source);
+                getClass().getSimpleName(), this.type, this.source);
     }
 }

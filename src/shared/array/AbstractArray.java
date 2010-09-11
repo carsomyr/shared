@@ -54,7 +54,7 @@ import shared.util.Control;
  *            the array element type.
  * @author Roy Liu
  */
-abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U extends AbstractArray<U, ?, ?, ?>, D extends AbstractArray<D, ?, ?, ?>, E>
+abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U extends AbstractArray<? extends U, ?, ?, ?>, D extends AbstractArray<? extends D, ?, ?, ?>, E>
         extends ProtoArray<T, double[], E> {
 
     /**

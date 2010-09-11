@@ -164,7 +164,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             conn.setup(channel);
 
-            debug("Accepted [%s] at '%s'.", conn, conn.getLocalAddress());
+            debug("Accepted [%s] at \"%s\".", conn, conn.getLocalAddress());
 
             conn.setStatus(AbstractManagedConnectionStatus.ACTIVE);
 
@@ -189,7 +189,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             // It had better be the case that this method either throws an exception or returns true.
             Control.assertTrue(((SocketChannel) conn.getKey().channel()).finishConnect());
 
-            debug("Connected [%s] to '%s'.", conn, conn.getRemoteAddress());
+            debug("Connected [%s] to \"%s\".", conn, conn.getRemoteAddress());
 
             conn.setStatus(AbstractManagedConnectionStatus.ACTIVE);
 
@@ -220,7 +220,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             connectImmediately = channel.connect(address);
 
-            debug("Connect [%s] to '%s'.", conn, address);
+            debug("Connect [%s] to \"%s\".", conn, address);
 
             conn.setStatus(AbstractManagedConnectionStatus.CONNECT);
 
@@ -250,7 +250,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             Entry entry = this.acceptRegistry.register(conn, address);
             entry.getKey().attach(entry);
 
-            debug("Listen [%s] at '%s' (%d in queue).", //
+            debug("Listen [%s] at \"%s\" (%d in queue).", //
                     conn, entry.getAddress(), entry.getPending().size());
 
             conn.setStatus(AbstractManagedConnectionStatus.ACCEPT);

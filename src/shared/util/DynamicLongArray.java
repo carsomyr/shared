@@ -164,8 +164,7 @@ public class DynamicLongArray implements DynamicArray<DynamicLongArray, long[], 
     @Override
     public String toString() {
         return String.format("%s[size = %d, capacity = %d, values = %s]", //
-                DynamicLongArray.class.getSimpleName(), //
-                size(), capacity(), Arrays.toString(values()));
+                getClass().getSimpleName(), size(), capacity(), Arrays.toString(values()));
     }
 
     @Override

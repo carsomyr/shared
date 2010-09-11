@@ -30,16 +30,23 @@
 """A script for running SST JUnit tests.
 """
 
+__author__ = "Roy Liu <carsomyr@gmail.com>"
+
+import platform
 import subprocess
 import sys
+
+os_options = {"Darwin": ["-XX:+AggressiveHeap"],
+              "Linux": ["-XX:+AggressiveHeap", "-XX:+AllowUserSignalHandlers", "-Xcheck:jni"],
+              "Windows": ["-XX:+AggressiveHeap", "-Xcheck:jni"]}
 
 def main():
     """The main method body.
     """
 
-    subprocess.call(["make", "jar"])
+    subprocess.call(["make", "--", "jar"])
 
-    java_cmd = ["java", "-ea", "-XX:+AggressiveHeap", "-XX:+AllowUserSignalHandlers", "-Xcheck:jni", "-cp", "sst.jar"]
+    java_cmd = ["java", "-ea"] + os_options[platform.system()] + ["-cp", "sst.jar"]
 
     subprocess.call(java_cmd + ["shared.test.All"])
     subprocess.call(java_cmd + ["shared.test.Demo"])

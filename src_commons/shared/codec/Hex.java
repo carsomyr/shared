@@ -65,7 +65,7 @@ public class Hex {
      * @return the hex string.
      */
     final public static String bytesToHex(byte[] data) {
-        return new String(org.apache.commons.codec.binary.Hex.encodeHex(data));
+        return new String(org.apache.commons.codec.binary.Hex.encodeHexString(data));
     }
 
     // Dummy constructor.

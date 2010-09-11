@@ -90,16 +90,15 @@ public class CLI {
         CLIOptions cliOptions = clazz.getAnnotation(CLIOptions.class);
 
         Control.checkTrue(cliOptions != null, //
-                "Please provide command line argument specifications");
+                "Please provide command-line argument specifications");
 
         Options options = new Options();
 
         for (CLIOption cliOption : cliOptions.options()) {
 
-            boolean optionalArgs = cliOption.optionalArgs();
             int nArgs = cliOption.numArgs();
 
-            if (!optionalArgs) {
+            if (!cliOption.optionalArgs()) {
 
                 if (nArgs >= 0) {
 

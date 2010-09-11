@@ -77,11 +77,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
     final public static String PROPERTY_COLORMAP = "colormap";
 
     static {
-
-        boolean isWindows = System.getProperty("os.name").contains("Windows");
-
-        GnuplotExecArgs = isWindows ? new String[] { "cmd", "/C", "gnuplot.exe" } //
-                : new String[] { "gnuplot" };
+        GnuplotExecArgs = new String[] { "gnuplot" };
     }
 
     final List<Gnuplot> plots;
@@ -206,7 +202,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         } else {
 
-            throw new IllegalArgumentException(String.format("Output format '%s' not recognized", this.outputFormat));
+            throw new IllegalArgumentException(String.format("Output format \"%s\" not recognized", this.outputFormat));
         }
 
         Formatter f = new Formatter();
@@ -288,7 +284,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
                 break;
 
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Invalid plotting dimensionality -- Must be either two or three");
             }
 
             f.format("%s ", plotStr);
@@ -322,7 +318,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
                     break;
 
                 default:
-                    throw new IllegalArgumentException();
+                    throw new IllegalArgumentException("Invalid plotting style");
                 }
 
                 f.format("\"-\" title \"%s\" with %s ls %d", plot.dataTitles[i], styleStr, i + 1);

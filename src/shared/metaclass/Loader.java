@@ -176,7 +176,7 @@ public class Loader {
             InputStream in = cl.getResourceAsStream(pathname);
 
             if (in == null) {
-                throw new IllegalArgumentException(String.format("Jar '%s' not found", pathname));
+                throw new IllegalArgumentException(String.format("Jar \"%s\" not found", pathname));
             }
 
             bootstrapCL.addRegistry(new JarRegistry(new JarInputStream(in)));
@@ -189,7 +189,7 @@ public class Loader {
             File folder = new File(pathname);
 
             if (!folder.isDirectory()) {
-                throw new IllegalArgumentException(String.format("Folder '%s' is not a directory", pathname));
+                throw new IllegalArgumentException(String.format("Folder \"%s\" is not a directory", pathname));
             }
 
             bootstrapCL.addRegistry(new FileSystemRegistry(folder));

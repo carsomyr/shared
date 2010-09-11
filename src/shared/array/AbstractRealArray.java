@@ -63,7 +63,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
 
     @Override
     protected R wrapDown(int parity, IndexingOrder order, int[] dims, int[] strides) {
-        throw new IllegalStateException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

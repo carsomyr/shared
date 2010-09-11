@@ -740,7 +740,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
             int savePosition = bb.position();
 
             Control.checkTrue(this.type == MATLAB_MI_MATRIX, //
-                    "Data element must be a Matlab matrix");
+                    "Data element must be a MATLAB matrix");
 
             int arrayType = new IntArrayDataElement(bb).get()[0];
             int[] dims = new IntArrayDataElement(bb).get();
@@ -794,7 +794,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
                 break;
 
             default:
-                throw new IllegalArgumentException("Invalid Matlab matrix type");
+                throw new IllegalArgumentException("Invalid MATLAB matrix type");
             }
 
             Control.checkTrue(this.size == bb.position() - savePosition, //

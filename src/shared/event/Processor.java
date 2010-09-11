@@ -97,7 +97,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
      */
     public void checkCurrentThread() {
         Control.checkTrue(Thread.currentThread() == this.thread, //
-                "Expected call from within processor thread");
+                "Expected call from within the processor thread");
     }
 
     /**
@@ -106,7 +106,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
      * @param <T>
      *            the {@link Event} type.
      */
-    final protected static class ProcessorThread<T extends Event<T, ?, ?>> extends CoreThread {
+    protected static class ProcessorThread<T extends Event<T, ?, ?>> extends CoreThread {
 
         final BlockingQueue<T> eq;
 

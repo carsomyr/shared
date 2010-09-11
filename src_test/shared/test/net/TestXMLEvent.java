@@ -150,18 +150,18 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     }
 
     /**
-     * Parses a {@link TestXMLEvent} from the given root DOM {@link Node}.
+     * Parses a {@link TestXMLEvent} from the given root DOM {@link Element}.
      */
-    final public static TestXMLEvent parse(Node rootNode, Source<TestXMLEvent, SourceType> source) {
+    final public static TestXMLEvent parse(Element rootElement, Source<TestXMLEvent, SourceType> source) {
 
-        NodeList children = rootNode.getChildNodes();
+        NodeList children = rootElement.getChildNodes();
         return TestXMLEventType.valueOf(children.item(0).getTextContent()).parse(children.item(1), source);
     }
 
     /**
      * A subclass of {@link TestXMLEvent} for carrying errors.
      */
-    final protected static class ErrorXMLEvent extends TestXMLEvent implements ErrorEventDefinition {
+    protected static class ErrorXMLEvent extends TestXMLEvent implements ErrorEventDefinition {
 
         final Throwable exception;
 
@@ -183,7 +183,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     /**
      * A subclass of {@link TestXMLEvent} for holding sequence numbers.
      */
-    final protected static class SequenceXMLEvent extends TestXMLEvent implements SequenceEventDefinition {
+    protected static class SequenceXMLEvent extends TestXMLEvent implements SequenceEventDefinition {
 
         final long seqNo;
         final int nMessages;
@@ -235,7 +235,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     /**
      * A subclass of {@link TestXMLEvent} for carrying data.
      */
-    final protected static class DataXMLEvent extends TestXMLEvent implements DataEventDefinition {
+    protected static class DataXMLEvent extends TestXMLEvent implements DataEventDefinition {
 
         final byte[] data;
 
@@ -275,7 +275,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     /**
      * An instantiation of {@link AbstractReceiverVerifier}.
      */
-    final protected static class ReceiverXMLVerifier extends AbstractReceiverVerifier<TestXMLEvent> {
+    protected static class ReceiverXMLVerifier extends AbstractReceiverVerifier<TestXMLEvent> {
 
         /**
          * Default constructor.
@@ -292,7 +292,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     /**
      * An instantiation of {@link AbstractSenderVerifier}.
      */
-    final protected static class SenderXMLVerifier extends AbstractSenderVerifier<TestXMLEvent> {
+    protected static class SenderXMLVerifier extends AbstractSenderVerifier<TestXMLEvent> {
 
         /**
          * Default constructor.

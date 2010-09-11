@@ -145,7 +145,7 @@ public class ReferenceReaper<T> {
      * @param <T>
      *            the referent type.
      */
-    final protected static class ReaperThread<T> extends CoreThread {
+    protected static class ReaperThread<T> extends CoreThread {
 
         final ReferenceQueue<T> rq;
         final ConcurrentMap<Reference<T>, Runnable> map;

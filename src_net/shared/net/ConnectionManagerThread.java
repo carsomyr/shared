@@ -464,7 +464,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         } catch (Throwable t) {
 
-            debug(t, "Ignored error [%s].", conn);
+            debug(t, "Ignored exception [%s].", conn);
         }
 
         purge(conn);
@@ -492,7 +492,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         } catch (Throwable t) {
 
-            debug(t, "Ignored error [%s].", conn);
+            debug(t, "Ignored exception [%s].", conn);
         }
 
         try {
@@ -503,7 +503,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         } catch (Throwable t) {
 
-            debug(t, "Ignored error [%s].", conn);
+            debug(t, "Ignored exception [%s].", conn);
         }
 
         purge(conn);
