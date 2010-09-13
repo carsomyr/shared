@@ -29,6 +29,7 @@
 package shared;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Properties;
 
@@ -52,10 +53,11 @@ public class Constants {
     static {
 
         Properties p = new Properties();
+        InputStream in = Constants.class.getClassLoader().getResourceAsStream("shared/project.properties");
 
         try {
 
-            p.load(Constants.class.getClassLoader().getResourceAsStream("shared/project.properties"));
+            p.load(in);
 
         } catch (IOException e) {
 

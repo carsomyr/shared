@@ -29,6 +29,7 @@
 package shared.test.net;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -101,11 +102,12 @@ public class AllNetTests {
     static {
 
         Properties p = new Properties();
+        InputStream in = Thread.currentThread().getContextClassLoader() //
+                .getResourceAsStream("shared/test/net/parameters.properties");
 
         try {
 
-            p.load(Thread.currentThread().getContextClassLoader() //
-                    .getResourceAsStream("shared/test/net/parameters.properties"));
+            p.load(in);
 
         } catch (IOException e) {
 
@@ -146,16 +148,21 @@ public class AllNetTests {
      */
     final protected static KeyManager[] getKeyManagers(String pathname, String password) {
 
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(pathname);
+
         try {
 
             KeyStore keystore = KeyStore.getInstance("JKS");
-            keystore.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(pathname), //
-                    password.toCharArray());
+            keystore.load(in, password.toCharArray());
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             kmf.init(keystore, password.toCharArray());
 
             return kmf.getKeyManagers();
+
+        } catch (RuntimeException e) {
+
+            throw e;
 
         } catch (Exception e) {
 

@@ -172,8 +172,6 @@ public class Control {
         @Override
         protected DocumentBuilder initialValue() {
 
-            final DocumentBuilder db;
-
             try {
 
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -181,16 +179,16 @@ public class Control {
                 dbf.setIgnoringElementContentWhitespace(true);
                 dbf.setFeature("http://apache.org/xml/features/validation/dynamic", true);
 
-                db = dbf.newDocumentBuilder();
+                DocumentBuilder db = dbf.newDocumentBuilder();
                 db.setEntityResolver(ClasspathResolver);
                 db.setErrorHandler(StrictErrorHandler);
+
+                return db;
 
             } catch (ParserConfigurationException e) {
 
                 throw new RuntimeException(e);
             }
-
-            return db;
         }
     };
 
@@ -829,17 +827,17 @@ public class Control {
 
         ProcessBuilder pb = new ProcessBuilder(execArgs);
 
+        Map<String, String> env = EnvironmentLocal.get();
+
+        if (env != null) {
+            pb.environment().putAll(env);
+        }
+
         final AtomicReference<IOException> childThreadException = new AtomicReference<IOException>(null);
 
         Process p = null;
 
         try {
-
-            Map<String, String> env = EnvironmentLocal.get();
-
-            if (env != null) {
-                pb.environment().putAll(env);
-            }
 
             p = pb.start();
 
@@ -1141,6 +1139,10 @@ public class Control {
         try {
 
             return BuilderLocal.get().parse(in);
+
+        } catch (RuntimeException e) {
+
+            throw e;
 
         } catch (Exception e) {
 

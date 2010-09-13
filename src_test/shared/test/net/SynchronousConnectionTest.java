@@ -176,14 +176,7 @@ public class SynchronousConnectionTest {
 
                 SynchronousConnectionTest sct = SynchronousConnectionTest.this;
 
-                try {
-
-                    receiver.init(InitializationType.ACCEPT, localAddress).get();
-
-                } catch (Exception e) {
-
-                    throw new RuntimeException(e);
-                }
+                receiver.init(InitializationType.ACCEPT, localAddress).get();
 
                 InputStream in = receiver.getInputStream();
                 OutputStream out = receiver.getOutputStream();
@@ -276,14 +269,7 @@ public class SynchronousConnectionTest {
 
                 SynchronousConnectionTest sct = SynchronousConnectionTest.this;
 
-                try {
-
-                    sender.init(InitializationType.CONNECT, remoteAddress).get();
-
-                } catch (Exception e) {
-
-                    throw new RuntimeException(e);
-                }
+                sender.init(InitializationType.CONNECT, remoteAddress).get();
 
                 InputStream in = sender.getInputStream();
                 OutputStream out = sender.getOutputStream();

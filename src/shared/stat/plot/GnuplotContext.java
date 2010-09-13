@@ -32,6 +32,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -152,13 +154,13 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         File errFile = new File(file.toString().concat(".log"));
 
-        FileOutputStream out = new FileOutputStream(file);
-        FileOutputStream errOut = new FileOutputStream(errFile);
+        InputStream in = new ByteArrayInputStream(toString().getBytes());
+        OutputStream out = new FileOutputStream(file);
+        OutputStream errOut = new FileOutputStream(errFile);
 
         try {
 
-            Control.execAndWaitFor(new ByteArrayInputStream(toString().getBytes()), out, errOut, //
-                    GnuplotExecArgs);
+            Control.execAndWaitFor(in, out, errOut, GnuplotExecArgs);
 
         } catch (IOException e) {
 

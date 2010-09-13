@@ -134,17 +134,20 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
         @Override
         protected void runUnchecked() {
 
-            for (; this.run;) {
+            loop: for (; this.run;) {
+
+                final T evt;
 
                 try {
 
-                    T evt = this.eq.take();
-                    evt.getSource().getHandler().handle(evt);
+                    evt = this.eq.take();
 
                 } catch (InterruptedException e) {
 
-                    // Do nothing.
+                    continue loop;
                 }
+
+                evt.getSource().getHandler().handle(evt);
             }
         }
 

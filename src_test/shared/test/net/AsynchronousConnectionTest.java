@@ -30,7 +30,6 @@ package shared.test.net;
 
 import static shared.test.net.AllNetTests.Parameterizations;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Future;
 
 import org.junit.After;
 import org.junit.Before;
@@ -127,11 +127,11 @@ public class AsynchronousConnectionTest {
      * Tests the {@link ConnectionManager} transport mechanism. The sender sends {@link DataXMLEvent}s to the receiver,
      * whereupon the results are checked.
      * 
-     * @exception IOException
+     * @exception Exception
      *                when something goes awry.
      */
     @Test
-    public void testTransport() throws IOException {
+    public void testTransport() throws Exception {
 
         InetSocketAddress listenAddress = //
         new InetSocketAddress(this.remoteAddress.getPort());
@@ -189,18 +189,14 @@ public class AsynchronousConnectionTest {
                         .add(xmlSConn));
             }
 
+            Future<?> fut = xmlSConn.init(InitializationType.CONNECT, connectAddress);
+
             // The asynchronous sockets specification allows us to write data before connecting; we should test this
             // case.
             xmlSConn.onRemote(new SequenceXMLEvent(seqNo, this.nMessages, null));
 
-            try {
-
-                xmlSConn.init(InitializationType.CONNECT, connectAddress).get();
-
-            } catch (Exception e) {
-
-                throw new RuntimeException(e);
-            }
+            // Wait for connection establishment.
+            fut.get();
 
             verifiers.add(xmlV);
         }

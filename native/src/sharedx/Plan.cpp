@@ -142,15 +142,14 @@ jbyteArray Plan::create(JNIEnv *env, jobject thisObj, jint type, jintArray dims,
 
 void Plan::destroy(JNIEnv *env, jobject thisObj) {
 
+    jbyteArray mem = (jbyteArray) env->GetObjectField(thisObj, memFieldID);
+
+    // Null field value; perhaps the constructor didn't finish. Return immediately because there is nothing to clean up.
+    if (!mem) {
+        return;
+    }
+
     try {
-
-        jbyteArray mem = (jbyteArray) env->GetObjectField(thisObj, memFieldID);
-
-        // Null field value; perhaps the constructor didn't finish. Return immediately because there is nothing to clean
-        // up.
-        if (!mem) {
-            return;
-        }
 
         // Acquire the class monitor to safely perform the destruction operation.
         MonitorHandler monitorH(env, (jobject) planClass);
@@ -179,11 +178,9 @@ jstring Plan::exportWisdom(JNIEnv *env) {
 
     jstring res = NULL;
 
-    char *str = NULL;
+    char *str = fftw_export_wisdom_to_string();
 
     try {
-
-        str = fftw_export_wisdom_to_string();
 
         if (!str) {
             throw std::runtime_error("Failed to export wisdom");

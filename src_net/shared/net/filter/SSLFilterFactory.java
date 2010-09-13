@@ -139,6 +139,10 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
                 context = SSLContext.getInstance("TLS");
                 context.init(this.keyManagers, this.trustManagers, this.random);
 
+            } catch (RuntimeException e) {
+
+                throw e;
+
             } catch (Exception e) {
 
                 throw new RuntimeException(e);

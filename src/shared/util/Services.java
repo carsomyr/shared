@@ -71,23 +71,27 @@ public class Services {
     @SuppressWarnings("unchecked")
     public static <A extends Service> A createService(Class<? super A> specClass) {
 
+        Reference<Class<? extends Service>> ref = Instance.serviceMap.get(specClass);
+
+        if (ref == null) {
+            return null;
+        }
+
+        Class<? extends Service> implClass = ref.get();
+
+        if (implClass == null) {
+            return null;
+        }
+
         try {
-
-            Reference<Class<? extends Service>> ref = Instance.serviceMap.get(specClass);
-
-            if (ref == null) {
-                return null;
-            }
-
-            Class<? extends Service> implClass = ref.get();
-
-            if (implClass == null) {
-                return null;
-            }
 
             return ((Class<? extends A>) implClass).newInstance();
 
-        } catch (Exception e) {
+        } catch (InstantiationException e) {
+
+            throw new RuntimeException(e);
+
+        } catch (IllegalAccessException e) {
 
             throw new RuntimeException(e);
         }

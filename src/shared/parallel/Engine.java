@@ -530,11 +530,17 @@ public class Engine<T> {
 
                 this.value = this.calculator.calculate(this.inputsReadOnly);
 
-            } catch (Throwable t) {
+            } catch (RuntimeException e) {
 
-                Engine.this.exceptionRef.compareAndSet(null, t);
+                Engine.this.exceptionRef.compareAndSet(null, e);
 
-                Control.rethrow(t);
+                throw e;
+
+            } catch (Error e) {
+
+                Engine.this.exceptionRef.compareAndSet(null, e);
+
+                throw e;
 
             } finally {
 

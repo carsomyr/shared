@@ -362,6 +362,10 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
             return fut.get();
 
+        } catch (RuntimeException e) {
+
+            throw e;
+
         } catch (Exception e) {
 
             throw new RuntimeException(e);

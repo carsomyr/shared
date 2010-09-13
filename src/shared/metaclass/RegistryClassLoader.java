@@ -164,11 +164,11 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
             throw new ClassNotFoundException(String.format("Class \"%s\" not found", className));
         }
 
+        final ByteBuffer bb;
+
         try {
 
-            return defineClass(className, //
-                    ByteBuffer.wrap(MetaclassBase.getBytes(in)), //
-                    RegistryClassLoader.class.getProtectionDomain());
+            bb = ByteBuffer.wrap(MetaclassBase.getBytes(in));
 
         } catch (IOException e) {
 
@@ -178,6 +178,8 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
 
             MetaclassBase.close(in);
         }
+
+        return defineClass(className, bb, RegistryClassLoader.class.getProtectionDomain());
     }
 
     @Override
