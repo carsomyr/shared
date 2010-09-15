@@ -133,7 +133,7 @@ public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
 
         } else {
 
-            throw new RuntimeException("Invalid array type");
+            throw new IllegalArgumentException("Invalid array type");
         }
     }
 

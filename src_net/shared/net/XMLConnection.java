@@ -88,7 +88,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
 
             @Override
             public void handle(T evt) {
-                throw new IllegalStateException("The handler is not initialized");
+                throw new UnsupportedOperationException("The handler is not initialized");
             }
         };
 
@@ -184,7 +184,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
             break;
 
         default:
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalArgumentException("Invalid closing type");
         }
     }
 

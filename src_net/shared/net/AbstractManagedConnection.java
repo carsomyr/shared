@@ -340,7 +340,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             break;
 
         default:
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalArgumentException("Invalid initialization type");
         }
 
         this.manager.initConnection(this, eventType, argument);
@@ -427,7 +427,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                     return null;
 
                 default:
-                    throw new AssertionError("Control should never reach here");
+                    throw new IllegalArgumentException("Invalid event type");
                 }
             }
         };
@@ -458,7 +458,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             break;
 
         default:
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalArgumentException("Invalid operation type");
         }
 
         synchronized (this) {

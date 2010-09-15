@@ -164,7 +164,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
                     break;
 
                 default:
-                    throw new AssertionError("Control should never reach here");
+                    throw new IllegalStateException("Invalid result status");
                 }
 
                 // The second step is to deal with handshaking.
@@ -213,7 +213,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
                     break;
 
                 default:
-                    throw new AssertionError("Control should never reach here");
+                    throw new IllegalStateException("Invalid handshake status");
                 }
 
                 // Break the loop: There's nothing to read and all special handling is done.
@@ -299,7 +299,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
                 case BUFFER_UNDERFLOW:
                 default:
-                    throw new AssertionError("Control should never reach here");
+                    throw new IllegalStateException("Invalid result status");
                 }
 
                 // The second step is to deal with handshaking.
@@ -341,7 +341,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
                     break;
 
                 default:
-                    throw new AssertionError("Control should never reach here");
+                    throw new IllegalStateException("Invalid handshake status");
                 }
 
                 // Break the loop: There's nothing to write and all special handling is done.

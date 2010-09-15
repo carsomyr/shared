@@ -204,7 +204,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         } else {
 
-            throw new IllegalArgumentException(String.format("Output format \"%s\" not recognized", this.outputFormat));
+            throw new IllegalStateException(String.format("Output format \"%s\" not recognized", this.outputFormat));
         }
 
         Formatter f = new Formatter();
@@ -286,7 +286,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
                 break;
 
             default:
-                throw new IllegalArgumentException("Invalid plotting dimensionality -- Must be either two or three");
+                throw new IllegalStateException("Invalid plotting dimensionality -- Must be either two or three");
             }
 
             f.format("%s ", plotStr);
@@ -320,7 +320,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
                     break;
 
                 default:
-                    throw new IllegalArgumentException("Invalid plotting style");
+                    throw new IllegalStateException("Invalid plotting style");
                 }
 
                 f.format("\"-\" title \"%s\" with %s ls %d", plot.dataTitles[i], styleStr, i + 1);

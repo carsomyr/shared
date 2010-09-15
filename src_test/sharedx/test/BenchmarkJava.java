@@ -80,7 +80,7 @@ public class BenchmarkJava implements BenchmarkSpecification {
             break;
 
         default:
-            throw new AssertionError();
+            throw new IllegalStateException("Invalid FFTW execution mode");
         }
 
         FFTService.setHint("mode", modeStr);

@@ -584,7 +584,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         } catch (IOException e) {
 
-            throw new IllegalStateException(e);
+            throw new RuntimeException(e);
         }
 
         this.queue = new LinkedBlockingQueue<InterestEvent<?>>();

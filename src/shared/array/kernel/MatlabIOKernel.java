@@ -598,7 +598,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
                 break;
 
             default:
-                throw new UnsupportedOperationException("Unknown data type");
+                throw new IllegalStateException("Unknown data type");
             }
 
             readPadding();
@@ -712,7 +712,7 @@ public class MatlabIOKernel implements ArrayIOKernel {
                 break;
 
             default:
-                throw new UnsupportedOperationException("Unknown data type");
+                throw new IllegalStateException("Unknown data type");
             }
 
             readPadding();

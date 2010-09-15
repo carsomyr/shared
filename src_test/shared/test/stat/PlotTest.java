@@ -167,7 +167,7 @@ public class PlotTest {
                     return (xcoord * ycoord) / Math.sqrt(Math.abs(xcoord * ycoord) + 1);
 
                 default:
-                    throw new IllegalStateException("Invalid logical index");
+                    throw new IllegalArgumentException("Invalid logical index");
                 }
             }
         });

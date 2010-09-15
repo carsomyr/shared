@@ -78,7 +78,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         this.inResolver = new Resolver() {
 
             @Override
-            public int resolve(int size) throws IOException {
+            public int resolve(int size) {
 
                 if (size > 0) {
 
@@ -86,7 +86,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
                 } else {
 
-                    throw new IOException("Control should never reach here");
+                    throw new IllegalArgumentException("Cannot resolve a nonpositive size");
                 }
             }
         };
@@ -104,7 +104,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         this.inResolver = new Resolver() {
 
             @Override
-            public int resolve(int size) throws IOException {
+            public int resolve(int size) {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
                 ByteBuffer bb = smc.in.buffer;
@@ -124,7 +124,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
                 } else {
 
-                    throw new IOException("Control should never reach here");
+                    throw new IllegalArgumentException("Cannot resolve a nonpositive size");
                 }
             }
         };
@@ -370,7 +370,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 break;
 
             default:
-                throw new AssertionError("Control should never reach here");
+                throw new IllegalArgumentException("Invalid closing type");
             }
         }
     }

@@ -103,24 +103,24 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
 
             @Override
             public void getInbound(Queue<ByteBuffer> inputs, Queue<T> outputs) {
-                throw new IllegalArgumentException("Please initialize the filter factory");
+                throw new UnsupportedOperationException("Please initialize the filter factory");
             }
 
             @Override
             public void getOutbound(Queue<T> inputs, Queue<ByteBuffer> outputs) {
-                throw new IllegalArgumentException("Please initialize the filter factory");
+                throw new UnsupportedOperationException("Please initialize the filter factory");
             }
 
             @Override
             public void getInboundOOB(Queue<ByteBuffer> inputs, Queue<OOBEvent> inputEvts, //
                     Queue<T> outputs, Queue<OOBEvent> outputEvts) {
-                throw new IllegalArgumentException("Please initialize the filter factory");
+                throw new UnsupportedOperationException("Please initialize the filter factory");
             }
 
             @Override
             public void getOutboundOOB(Queue<T> inputs, Queue<OOBEvent> inputEvts, //
                     Queue<ByteBuffer> outputs, Queue<OOBEvent> outputEvts) {
-                throw new IllegalArgumentException("Please initialize the filter factory");
+                throw new UnsupportedOperationException("Please initialize the filter factory");
             }
         };
     }
@@ -205,7 +205,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
             break;
 
         default:
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalArgumentException("Invalid closing type");
         }
 
         onOOBEvent(eventType, bb, new Handler<Queue<T>>() {

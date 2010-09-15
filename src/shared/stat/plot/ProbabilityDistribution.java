@@ -136,7 +136,7 @@ public class ProbabilityDistribution extends Histogram {
             return "Cumulative Density Function";
 
         default:
-            throw new IllegalArgumentException("Invalid mode");
+            throw new IllegalStateException("Invalid mode");
         }
     }
 
@@ -159,7 +159,7 @@ public class ProbabilityDistribution extends Histogram {
                 return "cumulative density";
 
             default:
-                throw new IllegalArgumentException("Invalid mode");
+                throw new IllegalStateException("Invalid mode");
             }
 
         default:

@@ -168,7 +168,7 @@ public class SSLFilterFactory<C extends FilteredConnection<C, ?>> //
             break;
 
         default:
-            throw new AssertionError("Control should never reach here");
+            throw new IllegalStateException("Invalid mode");
         }
 
         return res;

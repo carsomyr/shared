@@ -162,7 +162,7 @@ public class ClientServerTest {
                 break;
 
             default:
-                throw new AssertionError("Control should never reach here");
+                throw new IllegalArgumentException("Invalid closing type");
             }
         }
 
