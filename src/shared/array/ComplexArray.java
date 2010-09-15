@@ -89,13 +89,6 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
         super(new double[Arithmetic.product(dims)], parity, dims, strides);
     }
 
-    /**
-     * Internal constructor for package use only.
-     */
-    protected ComplexArray(double[] values, int parity, int[] dims) {
-        super(values, parity, dims, DEFAULT_ORDER.strides(dims));
-    }
-
     @Override
     protected ComplexArray wrap(int parity, IndexingOrder order, int[] dims, int[] strides) {
         return new ComplexArray(parity, dims, strides);

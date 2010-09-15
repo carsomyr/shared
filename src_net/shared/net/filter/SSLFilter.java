@@ -84,10 +84,10 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
         this.connection = connection;
         this.executor = executor;
 
-        this.encryptBuffer = Buffers.EmptyBuffer;
-        this.decryptBuffer = Buffers.EmptyBuffer;
-        this.readBuffer = Buffers.EmptyBuffer;
-        this.writeBuffer = Buffers.EmptyBuffer;
+        this.encryptBuffer = ByteBuffer.allocate(0);
+        this.decryptBuffer = ByteBuffer.allocate(0);
+        this.readBuffer = ByteBuffer.allocate(0);
+        this.writeBuffer = ByteBuffer.allocate(0);
 
         this.shutdownOutbound = false;
     }

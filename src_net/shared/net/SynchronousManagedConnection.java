@@ -28,7 +28,6 @@
 
 package shared.net;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,23 +48,6 @@ import shared.util.Control;
  * @author Roy Liu
  */
 public class SynchronousManagedConnection extends FilteredManagedConnection<SynchronousManagedConnection, ByteBuffer> {
-
-    /**
-     * Defines a managed input/output stream.
-     */
-    public interface ManagedStream extends Closeable {
-
-        /**
-         * Gets the containing instance.
-         */
-        public SynchronousManagedConnection getConnection();
-
-        /**
-         * Closes this stream.
-         */
-        @Override
-        public void close();
-    }
 
     /**
      * Defines a gadget that supports {@link ManagedInputStream} and {@link ManagedOutputStream}.
@@ -89,8 +71,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected void setInResolverEnabled() {
 
-        assert Thread.holdsLock(this);
-
         if (isClosed()) {
             return;
         }
@@ -99,9 +79,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             @Override
             public int resolve(int size) throws IOException {
-
-                SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                assert Thread.holdsLock(smc);
 
                 if (size > 0) {
 
@@ -120,8 +97,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected void setInResolverDisabled() {
 
-        assert Thread.holdsLock(this);
-
         if (isClosed()) {
             return;
         }
@@ -132,8 +107,6 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             public int resolve(int size) throws IOException {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                assert Thread.holdsLock(smc);
-
                 ByteBuffer bb = smc.in.buffer;
 
                 // If running low, request more!
@@ -162,16 +135,10 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected void setInResolverEOS() {
 
-        assert Thread.holdsLock(this);
-
         this.inResolver = new Resolver() {
 
             @Override
             public int resolve(int size) {
-
-                SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                assert Thread.holdsLock(smc);
-
                 return (size > 0) ? size : -1;
             }
         };
@@ -182,15 +149,10 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected void setInResolverError(final IOException e) {
 
-        assert Thread.holdsLock(this);
-
         this.inResolver = new Resolver() {
 
             @Override
             public int resolve(int size) throws IOException {
-
-                SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                assert Thread.holdsLock(smc);
 
                 if (size > 0) {
 
@@ -209,16 +171,12 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected void setOutResolverDefault() {
 
-        assert Thread.holdsLock(this);
-
         this.outResolver = new Resolver() {
 
             @Override
             public int resolve(int remaining) {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                assert Thread.holdsLock(smc);
-
                 return sendOutbound(smc.out.buffer) + smc.out.buffer.remaining();
             }
         };
@@ -229,15 +187,12 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected void setOutResolverError(final IOException e) {
 
-        assert Thread.holdsLock(this);
-
         this.outResolver = new Resolver() {
 
             @Override
             public int resolve(int remaining) throws IOException {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                assert Thread.holdsLock(smc);
 
                 // If there's nothing left to write, return normally.
                 if (remaining + smc.out.buffer.remaining() == 0) {
@@ -441,7 +396,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * A subclass of {@link InputStream} that is managed underneath.
      */
-    protected class ManagedInputStream extends InputStream implements ManagedStream {
+    protected class ManagedInputStream extends InputStream {
 
         ByteBuffer buffer;
 
@@ -460,7 +415,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public int read() throws IOException {
 
-            SynchronousManagedConnection smc = getConnection();
+            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
 
             synchronized (smc) {
 
@@ -489,7 +444,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public int read(byte[] dst, int offset, int length) throws IOException {
 
-            SynchronousManagedConnection smc = getConnection();
+            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
 
             if (dst == null) {
                 throw new NullPointerException("Null destination array");
@@ -522,7 +477,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public int available() {
 
-            SynchronousManagedConnection smc = getConnection();
+            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
 
             synchronized (smc) {
                 return this.buffer.remaining();
@@ -534,19 +489,14 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
          */
         @Override
         public void close() {
-            Control.close(getConnection());
-        }
-
-        @Override
-        public SynchronousManagedConnection getConnection() {
-            return SynchronousManagedConnection.this;
+            Control.close(SynchronousManagedConnection.this);
         }
     }
 
     /**
      * A subclass of {@link OutputStream} that is managed underneath.
      */
-    protected class ManagedOutputStream extends OutputStream implements ManagedStream {
+    protected class ManagedOutputStream extends OutputStream {
 
         final ByteBuffer buffer;
 
@@ -565,7 +515,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public void write(int b) throws IOException {
 
-            SynchronousManagedConnection smc = getConnection();
+            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
 
             synchronized (smc) {
 
@@ -588,7 +538,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public void write(byte[] src, int offset, int length) throws IOException {
 
-            SynchronousManagedConnection smc = getConnection();
+            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
 
             if (src == null) {
                 throw new NullPointerException("Null source array");
@@ -618,12 +568,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
          */
         @Override
         public void close() {
-            Control.close(getConnection());
-        }
-
-        @Override
-        public SynchronousManagedConnection getConnection() {
-            return SynchronousManagedConnection.this;
+            Control.close(SynchronousManagedConnection.this);
         }
     }
 }

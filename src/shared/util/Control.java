@@ -101,16 +101,6 @@ public class Control {
     };
 
     /**
-     * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
-     */
-    final public static Runnable NullRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-        }
-    };
-
-    /**
      * A timestamp local to the current thread in support of {@link #tick()} and {@link #tock()}.
      */
     final protected static ThreadLocal<Long> TimestampLocal = new ThreadLocal<Long>();
@@ -210,11 +200,6 @@ public class Control {
             }
         }
     };
-
-    /**
-     * The system-dependent line separator.
-     */
-    final public static String LineSeparator = System.getProperty("line.separator");
 
     /**
      * A {@link Closeable#close()} convenience wrapper.

@@ -127,11 +127,6 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
     }
 
     @Override
-    public int[] values() {
-        return this.values;
-    }
-
-    @Override
     public byte[] getBytes() {
         return IOKernel.getBytes(this);
     }

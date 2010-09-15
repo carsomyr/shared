@@ -28,8 +28,6 @@
 
 package shared.array;
 
-import static shared.util.Control.LineSeparator;
-
 import java.lang.reflect.Array;
 import java.util.Formatter;
 
@@ -264,7 +262,7 @@ public class ArrayBase {
                     f.format(format, Array.get(values, indices[offset + k]));
                 }
 
-                f.format(LineSeparator);
+                f.format("%n");
             }
 
         } else {
@@ -277,7 +275,7 @@ public class ArrayBase {
                             Array.get(values, indices[offset + k + 1]));
                 }
 
-                f.format(LineSeparator);
+                f.format("%n");
             }
         }
     }
@@ -294,13 +292,13 @@ public class ArrayBase {
 
         int nDims = dims.length;
 
-        f.format(LineSeparator).format("[empty (");
+        f.format("%n[empty (");
 
         for (int i = 0, n = nDims - 1; i < n; i++) {
             f.format("%d, ", dims[i]);
         }
 
-        f.format("%d)]", dims[nDims - 1]).format(LineSeparator);
+        f.format("%d)]%n", dims[nDims - 1]);
     }
 
     /**
@@ -318,8 +316,7 @@ public class ArrayBase {
 
         if (FieldWidth < exponent + FieldPrecision + 4 || exponent < 0) {
 
-            f.format("%s[rescale 10^%d]%s", //
-                    LineSeparator, exponent, LineSeparator);
+            f.format("%n[rescale 10^%d]%n", exponent);
 
             double scale = Math.pow(10.0, -exponent);
 
@@ -375,7 +372,7 @@ public class ArrayBase {
             f.format(indexFormat, physical / strides[nDims - 1]);
             f.format(")");
             f.format(valueFormat, Array.get(values, i));
-            f.format(LineSeparator);
+            f.format("%n");
         }
     }
 

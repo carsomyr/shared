@@ -30,6 +30,7 @@ package shared.event;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,7 +235,7 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
     @Override
     public String toString() {
 
-        StringBuilder sb = new StringBuilder();
+        Formatter f = new Formatter();
 
         int nRows = this.backingArray.size(0);
         int nCols = this.backingArray.size(1);
@@ -246,12 +247,12 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
                 StateHandler stateHandler = this.backingArray.get(row, col);
 
                 if (stateHandler != null) {
-                    sb.append(stateHandler).append(Control.LineSeparator);
+                    f.format("%s%n", stateHandler);
                 }
             }
         }
 
-        return sb.toString();
+        return f.toString();
     }
 
     /**

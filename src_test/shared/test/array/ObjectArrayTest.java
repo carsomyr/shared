@@ -28,8 +28,6 @@
 
 package shared.test.array;
 
-import static shared.util.Control.NullRunnable;
-
 import java.util.Arrays;
 
 import org.junit.Assert;
@@ -292,12 +290,12 @@ public class ObjectArrayTest {
     @Test(expected = RuntimeException.class)
     public void testThrowException() {
 
-        ObjectArray<Runnable> runnableArray = new ObjectArray<Runnable>(new Runnable[] { NullRunnable }, 1);
-        ObjectArray<Thread> threadArray = new ObjectArray<Thread>(new Thread[] { Thread.currentThread() }, 1);
+        ObjectArray<Integer> integerArray = new ObjectArray<Integer>(new Integer[] { 0 }, 1);
+        ObjectArray<Double> doubleArray = new ObjectArray<Double>(new Double[] { 0.0 }, 1);
 
         try {
 
-            runnableArray.slice((ObjectArray<Runnable>) ((ObjectArray<?>) threadArray), new int[] { 0 });
+            integerArray.slice((ObjectArray<Integer>) ((ObjectArray<?>) doubleArray), new int[] { 0 });
 
         } catch (RuntimeException e) {
 

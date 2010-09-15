@@ -29,7 +29,6 @@
 package shared.test.array;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.util.Control.NullRunnable;
 
 import java.util.Arrays;
 
@@ -450,10 +449,10 @@ public class SparseArrayTest {
     @Test(expected = RuntimeException.class)
     public void testThrowException() {
 
-        ObjectSparseArray<Runnable> runnableArray = new ObjectSparseArray<Runnable>(Runnable.class, 3, 3);
-        ObjectSparseArray<Thread> threadArray = new ObjectSparseArray<Thread>(Thread.class, 3, 3);
+        ObjectSparseArray<Integer> integerArray = new ObjectSparseArray<Integer>(Integer.class, 3, 3);
+        ObjectSparseArray<Double> doubleArray = new ObjectSparseArray<Double>(Double.class, 3, 3);
 
-        runnableArray.insert(shared.util.Arrays.newArray(Runnable.class, 9, NullRunnable), //
+        integerArray.insert(shared.util.Arrays.newArray(Integer.class, 9, 0), //
                 //
                 0, 0, //
                 0, 1, //
@@ -465,7 +464,7 @@ public class SparseArrayTest {
                 2, 1, //
                 2, 2);
 
-        threadArray.insert(shared.util.Arrays.newArray(Thread.class, 9, Thread.currentThread()), //
+        doubleArray.insert(shared.util.Arrays.newArray(Double.class, 9, 0.0), //
                 //
                 0, 0, //
                 0, 1, //
@@ -479,7 +478,7 @@ public class SparseArrayTest {
 
         try {
 
-            runnableArray.slice((ObjectSparseArray<Runnable>) ((ObjectSparseArray<?>) threadArray), //
+            integerArray.slice((ObjectSparseArray<Integer>) ((ObjectSparseArray<?>) doubleArray), //
                     new int[] { 0, 1, 2 }, //
                     new int[] { 0, 1, 2 });
 

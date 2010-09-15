@@ -106,11 +106,6 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
     }
 
     @Override
-    public double[] values() {
-        return this.values;
-    }
-
-    @Override
     protected T wrap(IndexingOrder order, int[] dims, int[] strides) {
         return wrap(this.parity, order, dims, strides);
     }

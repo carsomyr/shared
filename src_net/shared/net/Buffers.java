@@ -39,11 +39,6 @@ import java.nio.ByteBuffer;
 public class Buffers {
 
     /**
-     * An empty {@link ByteBuffer}.
-     */
-    final public static ByteBuffer EmptyBuffer = ByteBuffer.allocate(0);
-
-    /**
      * Appends the contents of one buffer onto the end of another.
      * 
      * @param dst

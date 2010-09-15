@@ -74,13 +74,6 @@ public class JarRegistry implements ResourceRegistry {
     }
 
     /**
-     * Alternate constructor.
-     */
-    public JarRegistry() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * Internal constructor.
      */
     protected JarRegistry(Map<String, byte[]> dataMap) {

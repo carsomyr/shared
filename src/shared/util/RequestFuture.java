@@ -40,10 +40,20 @@ import java.util.concurrent.FutureTask;
 public class RequestFuture<T> extends FutureTask<T> {
 
     /**
+     * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
+     */
+    final protected static Runnable NullRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+        }
+    };
+
+    /**
      * Default constructor.
      */
     public RequestFuture() {
-        super(Control.NullRunnable, null);
+        super(NullRunnable, null);
     }
 
     /**

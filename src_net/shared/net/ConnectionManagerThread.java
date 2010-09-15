@@ -399,8 +399,6 @@ abstract public class ConnectionManagerThread extends CoreThread //
      */
     protected void handleOp(AbstractManagedConnection<?> conn, int mask, boolean enabled) {
 
-        assert !Thread.holdsLock(conn);
-
         try {
 
             conn.doOp(mask, enabled);
@@ -415,8 +413,6 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * Handles a connection close request.
      */
     protected void handleClosingUser(AbstractManagedConnection<?> conn) {
-
-        assert !Thread.holdsLock(conn);
 
         try {
 
@@ -437,8 +433,6 @@ abstract public class ConnectionManagerThread extends CoreThread //
      */
     protected void handleClosingEOS(AbstractManagedConnection<?> conn) {
 
-        assert !Thread.holdsLock(conn);
-
         try {
 
             conn.doClosing(ClosingType.EOS);
@@ -457,8 +451,6 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * Handles a connection closure notification.
      */
     protected void handleClose(AbstractManagedConnection<?> conn) {
-
-        assert !Thread.holdsLock(conn);
 
         try {
 
@@ -485,8 +477,6 @@ abstract public class ConnectionManagerThread extends CoreThread //
         if (conn.getStatus() == AbstractManagedConnectionStatus.CLOSED) {
             return;
         }
-
-        assert !Thread.holdsLock(conn);
 
         try {
 
@@ -519,8 +509,6 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * Handles a request to execute code on this thread.
      */
     protected void handleExecute(AbstractManagedConnection<?> conn, Runnable r) {
-
-        assert !Thread.holdsLock(conn);
 
         try {
 

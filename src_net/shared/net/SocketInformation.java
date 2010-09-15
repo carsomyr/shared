@@ -65,11 +65,6 @@ public interface SocketInformation<T extends SocketInformation<T>> {
     public T setBufferSize(int bufferSize);
 
     /**
-     * Gets the error, if any, that occurred.
-     */
-    public Throwable getError();
-
-    /**
      * Checks if this connection has been submitted.
      */
     public boolean isSubmitted();

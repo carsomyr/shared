@@ -108,6 +108,16 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
      */
     protected static class ProcessorThread<T extends Event<T, ?, ?>> extends CoreThread {
 
+        /**
+         * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
+         */
+        final protected static Runnable NullRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+            }
+        };
+
         final BlockingQueue<T> eq;
 
         volatile Runnable finalizer;
@@ -121,7 +131,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
 
             this.eq = new LinkedBlockingQueue<T>();
 
-            this.finalizer = Control.NullRunnable;
+            this.finalizer = NullRunnable;
             this.run = true;
 
             setDaemon(true);

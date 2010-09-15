@@ -62,28 +62,6 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     public enum TestXMLEventType {
 
         /**
-         * Indicates that an error has occurred.
-         */
-        ERROR {
-
-            @Override
-            protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source) {
-                throw new IllegalArgumentException();
-            }
-        }, //
-
-        /**
-         * Indicates that an end-of-stream has been reached.
-         */
-        END_OF_STREAM {
-
-            @Override
-            protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source) {
-                throw new IllegalArgumentException();
-            }
-        }, //
-
-        /**
          * Indicates that fresh data awaits parsing.
          */
         DATA {
@@ -103,12 +81,24 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
             protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source) {
                 return new SequenceXMLEvent(contentNode, source);
             }
-        };
+        }, //
+
+        /**
+         * Indicates that an error has occurred.
+         */
+        ERROR, //
+
+        /**
+         * Indicates that an end-of-stream has been reached.
+         */
+        END_OF_STREAM;
 
         /**
          * Parses a {@link TestXMLEvent} from the given DOM {@link Node}.
          */
-        abstract protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source);
+        protected TestXMLEvent parse(Node contentNode, Source<TestXMLEvent, SourceType> source) {
+            throw new UnsupportedOperationException("Parse method not defined");
+        }
     }
 
     final Source<TestXMLEvent, SourceType> source;

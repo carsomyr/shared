@@ -147,11 +147,6 @@ public class ObjectArray<T> extends ProtoArray<ObjectArray<T>, T[], T> {
     }
 
     @Override
-    public T[] values() {
-        return this.values;
-    }
-
-    @Override
     public byte[] getBytes() {
         throw new UnsupportedOperationException("Serialization of object arrays is not yet supported");
     }

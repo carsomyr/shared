@@ -749,8 +749,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     protected void doBind() {
 
-        assert !Thread.holdsLock(this);
-
         onBind();
 
         setStateMask(this.stateMask | FLAG_BOUND);
@@ -767,8 +765,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     protected void doReadBuffer() {
 
-        assert !Thread.holdsLock(this);
-
         // It is the callee's responsibility to actively drain the buffer.
         this.readBuffer.flip();
         onReceive(this.readBuffer);
@@ -779,9 +775,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      * {@link ConnectionManagerThread} call -- Does a ready write. Does own exception handling.
      */
     protected void doWrite() {
-
-        assert !Thread.holdsLock(this);
-
         this.internalHandler.run();
     }
 
@@ -789,8 +782,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      * {@link ConnectionManagerThread} call -- Does a ready read. Does own exception handling.
      */
     protected void doRead() {
-
-        assert !Thread.holdsLock(this);
 
         int bytesRead = 0;
 
