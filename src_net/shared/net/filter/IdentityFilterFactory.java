@@ -43,7 +43,7 @@ import shared.net.Connection;
  * @author Roy Liu
  */
 public class IdentityFilterFactory<T, C extends Connection> //
-        implements FilterFactory<IdentityFilterFactory<T, C>, T, T, C>, OOBFilter<T, T> {
+        implements FilterFactory<OOBFilter<T, T>, T, T, C>, OOBFilter<T, T> {
 
     /**
      * The global {@link IdentityFilterFactory} instance.
@@ -61,6 +61,17 @@ public class IdentityFilterFactory<T, C extends Connection> //
     @SuppressWarnings("unchecked")
     final public static <T, C extends Connection> IdentityFilterFactory<T, C> getInstance() {
         return (IdentityFilterFactory<T, C>) Instance;
+    }
+
+    /**
+     * Creates a new identity {@link Filter}.
+     * 
+     * @param <T>
+     *            the input and output type.
+     */
+    @SuppressWarnings("unchecked")
+    final public static <T> OOBFilter<T, T> newFilter() {
+        return (OOBFilter<T, T>) Instance;
     }
 
     /**
@@ -98,7 +109,7 @@ public class IdentityFilterFactory<T, C extends Connection> //
     }
 
     @Override
-    public IdentityFilterFactory<T, C> newFilter(C connection) {
-        return this;
+    public OOBFilter<T, T> newFilter(C connection) {
+        return newFilter();
     }
 }

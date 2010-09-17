@@ -144,14 +144,6 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
                     debug("[%s] inbound %s.", this.connection, result);
 
-                    if (!this.engine.isInboundDone()) {
-                        this.engine.closeInbound();
-                    }
-
-                    if (!this.engine.isOutboundDone()) {
-                        this.engine.closeOutbound();
-                    }
-
                     // Clear the read buffer for good measure.
                     this.readBuffer.clear().flip();
 
@@ -184,8 +176,8 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
 
                     this.connection.sendOutbound(null);
 
-                    // Continue the loop: We can immediately do a write.
-                    continue loop;
+                    // Break the loop: We can't proceed until the remote host responds.
+                    break loop;
 
                 case NEED_TASK:
 

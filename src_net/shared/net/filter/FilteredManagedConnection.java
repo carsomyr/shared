@@ -35,7 +35,6 @@ import shared.event.Handler;
 import shared.net.AbstractManagedConnection;
 import shared.net.ConnectionManager;
 import shared.net.filter.OOBEvent.OOBEventType;
-import shared.util.Control;
 
 /**
  * An abstract base class implementing much of {@link FilteredConnection}.
@@ -129,15 +128,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     @Override
     public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory) {
 
-        Filter<ByteBuffer, T> filter = filterFactory.newFilter((C) this);
-
-        synchronized (this) {
-
-            Control.checkTrue(!isSubmitted(), //
-                    "Cannot modify already submitted connections");
-
-            this.filter = Filters.asOOBFilter(filter);
-        }
+        this.filter = Filters.asOOBFilter(filterFactory.newFilter((C) this));
 
         return (C) this;
     }

@@ -84,13 +84,13 @@ public class FrameFilterFactory<C extends Connection> //
 
                 assert !Thread.holdsLock(connection);
 
-                loop: for (ByteBuffer bb = null; (bb = inputs.peek()) != null;) {
+                for (ByteBuffer bb = null; (bb = inputs.peek()) != null;) {
 
                     int save = bb.position();
 
-                    byte b;
+                    byte b = -1;
 
-                    for (b = -1; bb.hasRemaining() && (b = bb.get()) != 0;) {
+                    for (; bb.hasRemaining() && (b = bb.get()) != 0;) {
                     }
 
                     if (b == 0) {
@@ -113,9 +113,6 @@ public class FrameFilterFactory<C extends Connection> //
                         if (this.frameBuffer.capacity() > fff.minimumSize) {
                             this.frameBuffer = ByteBuffer.allocate(fff.minimumSize);
                         }
-
-                        // Continue the loop and see if anything more can be read.
-                        continue loop;
 
                     } else {
 

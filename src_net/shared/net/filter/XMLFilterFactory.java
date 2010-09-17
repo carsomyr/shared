@@ -45,7 +45,7 @@ import shared.util.Control;
  * @author Roy Liu
  */
 public class XMLFilterFactory<C extends Connection> //
-        implements FilterFactory<Filter<ByteBuffer, Element>, ByteBuffer, Element, C> {
+        implements FilterFactory<Filter<ByteBuffer, Element>, ByteBuffer, Element, C>, Filter<ByteBuffer, Element> {
 
     /**
      * The global instance.
@@ -64,45 +64,46 @@ public class XMLFilterFactory<C extends Connection> //
     }
 
     /**
+     * Creates a new XML {@link Filter}.
+     */
+    final public static Filter<ByteBuffer, Element> newFilter() {
+        return Instance;
+    }
+
+    /**
      * Default constructor.
      */
     public XMLFilterFactory() {
     }
 
     @Override
-    public Filter<ByteBuffer, Element> newFilter(final C connection) {
+    public void getInbound(Queue<ByteBuffer> inputs, Queue<Element> outputs) {
 
-        return new Filter<ByteBuffer, Element>() {
+        for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
 
-            @Override
-            public void getInbound(Queue<ByteBuffer> inputs, Queue<Element> outputs) {
+            int save = bb.position();
+            int size = bb.remaining();
 
-                assert !Thread.holdsLock(connection);
+            assert (bb.limit() == bb.capacity());
 
-                for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
+            byte[] array = (size == bb.capacity()) ? bb.array() //
+                    : Arrays.copyOfRange(bb.array(), save, save + size);
+            outputs.add(Control.createDocument(array).getDocumentElement());
 
-                    int save = bb.position();
-                    int size = bb.remaining();
+            bb.position(save + size);
+        }
+    }
 
-                    assert (bb.limit() == bb.capacity());
+    @Override
+    public void getOutbound(Queue<Element> inputs, Queue<ByteBuffer> outputs) {
 
-                    byte[] array = (size == bb.capacity()) ? bb.array() //
-                            : Arrays.copyOfRange(bb.array(), save, save + size);
-                    outputs.add(Control.createDocument(array).getDocumentElement());
+        for (Element elt; (elt = inputs.poll()) != null;) {
+            outputs.add(ByteBuffer.wrap(Control.toString(elt).getBytes()));
+        }
+    }
 
-                    bb.position(save + size);
-                }
-            }
-
-            @Override
-            public void getOutbound(Queue<Element> inputs, Queue<ByteBuffer> outputs) {
-
-                assert Thread.holdsLock(connection);
-
-                for (Element elt; (elt = inputs.poll()) != null;) {
-                    outputs.add(ByteBuffer.wrap(Control.toString(elt).getBytes()));
-                }
-            }
-        };
+    @Override
+    public Filter<ByteBuffer, Element> newFilter(C connection) {
+        return newFilter();
     }
 }
