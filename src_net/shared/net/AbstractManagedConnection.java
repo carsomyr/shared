@@ -175,18 +175,18 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                 if (remaining > 0) {
 
-                    getThread().debug("Writes deferred [%s].", amc);
+                    amc.thread.debug("Writes deferred [%s].", amc);
 
-                    setBufferedHandler();
-                    setEnabled(OperationType.WRITE, true);
+                    amc.setBufferedHandler();
+                    amc.setEnabled(OperationType.WRITE, true);
                 }
 
                 return remaining;
 
             } catch (Throwable t) {
 
-                setNullHandler();
-                setError(t);
+                amc.setNullHandler();
+                amc.setError(t);
 
                 return 0;
             }
@@ -222,9 +222,9 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
             assert !Thread.holdsLock(amc);
 
-            try {
+            final boolean disableWrites;
 
-                final boolean disableWrites;
+            try {
 
                 synchronized (amc) {
 
@@ -242,22 +242,24 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                             amc.writeBuffer = ByteBuffer.allocate(amc.bufferSize);
                         }
 
-                        getThread().debug("Canceled write defer [%s].", amc);
+                        amc.thread.debug("Canceled write defer [%s].", amc);
 
                         // Notify anyone waiting for restoration of the write-through handler.
-                        setWriteThroughHandler();
+                        amc.setWriteThroughHandler();
                         amc.notifyAll();
                     }
-                }
-
-                // No longer under the protection of the monitor, perform the operation interest change.
-                if (disableWrites) {
-                    doOp(SelectionKey.OP_WRITE, false);
                 }
 
             } catch (Throwable t) {
 
                 amc.thread.handleError(amc, t);
+
+                return;
+            }
+
+            // No longer under the protection of the monitor, perform the operation interest change.
+            if (disableWrites) {
+                amc.thread.handleOp(amc, SelectionKey.OP_WRITE, false);
             }
         }
     };
@@ -377,7 +379,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                 synchronized (amc) {
 
                     for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
-                    remaining > 0 && !isDone(); //
+                    !isDone() && remaining > 0; //
                     remaining = end - System.currentTimeMillis()) {
                         amc.wait(remaining);
                     }
@@ -461,9 +463,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             throw new IllegalArgumentException("Invalid operation type");
         }
 
-        synchronized (this) {
-            this.proxy.onLocal(createOpEvent(opType, enabled));
-        }
+        this.proxy.onLocal(createOpEvent(opType, enabled));
     }
 
     @Override
@@ -473,10 +473,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
     @Override
     public void setError(Throwable exception) {
-
-        synchronized (this) {
-            this.proxy.onLocal(new InterestEvent<Throwable>(ERROR, exception, this.proxy));
-        }
+        this.proxy.onLocal(new InterestEvent<Throwable>(ERROR, exception, this.proxy));
     }
 
     @Override
@@ -526,18 +523,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
     @Override
     public void execute(Runnable r) {
-
-        synchronized (this) {
-            this.proxy.onLocal(new InterestEvent<Runnable>(EXECUTE, r, this.proxy));
-        }
+        this.proxy.onLocal(new InterestEvent<Runnable>(EXECUTE, r, this.proxy));
     }
 
     @Override
     public void close() {
-
-        synchronized (this) {
-            this.proxy.onLocal(new InterestEvent<Object>(CLOSE, this.proxy));
-        }
+        this.proxy.onLocal(new InterestEvent<Object>(CLOSE, this.proxy));
     }
 
     @Override
@@ -601,10 +592,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         this.bufferSize = DEFAULT_BUFFER_SIZE;
 
         this.readBuffer = ByteBuffer.allocate(0);
-
-        synchronized (this) {
-            this.writeBuffer = ByteBuffer.allocate(0);
-        }
+        this.writeBuffer = ByteBuffer.allocate(0);
 
         this.stateMask = 0;
         this.exception = null;
@@ -699,15 +687,13 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         this.channel = channel;
 
-        int socketBufferSize = Math.max(this.bufferSize, DEFAULT_BUFFER_SIZE);
-
         Socket socket = channel.socket();
 
         // Set some magical TCP socket options to improve responsiveness.
         socket.setTcpNoDelay(true);
         socket.setKeepAlive(true);
-        socket.setSendBufferSize(socketBufferSize);
-        socket.setReceiveBufferSize(socketBufferSize);
+        socket.setSendBufferSize(this.bufferSize);
+        socket.setReceiveBufferSize(this.bufferSize);
 
         channel.configureBlocking(false);
 
@@ -755,23 +741,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Reads exclusively from this connection's receive buffer. Does <i>not</i>
-     * do own exception handling.<br>
-     * <br>
-     * IMPORTANT NOTE: This method complies with the behavior specified in
-     * {@link ConnectionManagerThread#handleOp(AbstractManagedConnection, int, boolean)}.
-     * 
-     * @see ConnectionManagerThread#handleOp(AbstractManagedConnection, int, boolean)
-     */
-    protected void doReadBuffer() {
-
-        // It is the callee's responsibility to actively drain the buffer.
-        this.readBuffer.flip();
-        onReceive(this.readBuffer);
-        this.readBuffer.compact();
-    }
-
-    /**
      * {@link ConnectionManagerThread} call -- Does a ready write. Does own exception handling.
      */
     protected void doWrite() {
@@ -788,7 +757,18 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         try {
 
             for (; this.readBuffer.hasRemaining() && (bytesRead = this.channel.read(this.readBuffer)) > 0;) {
-                doReadBuffer();
+
+                this.readBuffer.flip();
+
+                try {
+
+                    // It is the callee's responsibility to actively drain the buffer.
+                    onReceive(this.readBuffer);
+
+                } finally {
+
+                    this.readBuffer.compact();
+                }
             }
 
         } catch (Throwable t) {
@@ -820,7 +800,19 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             switch (mask) {
 
             case SelectionKey.OP_READ:
-                doReadBuffer();
+
+                this.readBuffer.flip();
+
+                try {
+
+                    // It is the callee's responsibility to actively drain the buffer.
+                    onReceive(this.readBuffer);
+
+                } finally {
+
+                    this.readBuffer.compact();
+                }
+
                 break;
             }
 
@@ -846,8 +838,15 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         this.internalHandler = this.closingHandler;
 
         this.readBuffer.flip();
-        onClosing(type, this.readBuffer);
-        this.readBuffer.compact();
+
+        try {
+
+            onClosing(type, this.readBuffer);
+
+        } finally {
+
+            this.readBuffer.compact();
+        }
     }
 
     /**
@@ -859,8 +858,15 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         this.exception = exception;
 
         this.readBuffer.flip();
-        onClosing(ClosingType.ERROR, this.readBuffer);
-        this.readBuffer.compact();
+
+        try {
+
+            onClosing(ClosingType.ERROR, this.readBuffer);
+
+        } finally {
+
+            this.readBuffer.compact();
+        }
     }
 
     /**

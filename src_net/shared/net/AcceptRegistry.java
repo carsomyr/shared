@@ -76,21 +76,16 @@ public class AcceptRegistry {
      */
     protected Entry register(AbstractManagedConnection<?> conn, InetSocketAddress address) throws IOException {
 
-        Control.checkTrue(address.getPort() > 0, //
-                "Wildcard ports are not allowed");
-
         Entry entry = this.addressToEntryMap.get(address);
 
-        boolean newEntry = (entry == null);
+        if (entry == null) {
 
-        entry = newEntry ? new Entry(address) : entry;
-
-        entry.pending.add(conn);
-        this.connectionToEntryMap.put(conn, entry);
-
-        if (newEntry) {
-            this.addressToEntryMap.put(entry.address, entry);
+            entry = new Entry(address);
+            this.addressToEntryMap.put(entry.getAddress(), entry);
         }
+
+        entry.getPending().add(conn);
+        this.connectionToEntryMap.put(conn, entry);
 
         return entry;
     }
@@ -100,7 +95,7 @@ public class AcceptRegistry {
      */
     protected void removePending(AbstractManagedConnection<?> conn) {
 
-        Entry entry = this.connectionToEntryMap.get(conn);
+        Entry entry = this.connectionToEntryMap.remove(conn);
 
         // Null reference. Nothing to do.
         if (entry == null) {
@@ -108,17 +103,18 @@ public class AcceptRegistry {
         }
 
         Set<AbstractManagedConnection<?>> pending = entry.getPending();
+        InetSocketAddress address = entry.getAddress();
+        SelectionKey key = entry.getKey();
 
         pending.remove(conn);
-        this.connectionToEntryMap.remove(conn);
 
         // Close the server socket if it has no remaining accept interests.
         if (pending.isEmpty()) {
 
-            this.addressToEntryMap.remove(entry.address);
+            this.addressToEntryMap.remove(address);
 
-            Control.close(entry.key.channel());
-            entry.key.cancel();
+            Control.close(key.channel());
+            key.cancel();
         }
     }
 
@@ -157,7 +153,7 @@ public class AcceptRegistry {
             channel.configureBlocking(false);
 
             // Normalize the recently bound local address.
-            this.address = new InetSocketAddress(address.getAddress(), //
+            this.address = new InetSocketAddress((address != null) ? address.getAddress() : null, //
                     ((InetSocketAddress) socket.getLocalSocketAddress()).getPort());
 
             // Create a SelectionKey for the server socket.

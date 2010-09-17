@@ -50,7 +50,6 @@ import shared.event.Source;
 import shared.event.SourceLocal;
 import shared.event.StateTable;
 import shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus;
-import shared.net.AcceptRegistry.Entry;
 import shared.net.Connection.ClosingType;
 import shared.net.InterestEvent.InterestEventType;
 import shared.util.Control;
@@ -191,6 +190,8 @@ abstract public class ConnectionManagerThread extends CoreThread //
                 }
             }
         }
+
+        this.exception = new IllegalStateException("The connection manager thread has exited");
     }
 
     /**
@@ -204,9 +205,8 @@ abstract public class ConnectionManagerThread extends CoreThread //
             setStatus(ConnectionManagerThreadStatus.CLOSING);
         }
 
-        this.exception = t;
-
-        Control.rethrow(t);
+        this.exception = new IllegalStateException("The connection manager thread has encountered " //
+                + "an unexpected exception", t);
     }
 
     /**
@@ -236,24 +236,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
             // Ah well.
         }
 
-        // Tell the bad news to all registered connections.
-        for (SelectionKey key : this.selector.keys()) {
-
-            Object attachment = key.attachment();
-
-            if (attachment instanceof AbstractManagedConnection<?>) {
-
-                handleError((AbstractManagedConnection<?>) attachment, this.exception);
-
-            } else if (attachment instanceof Entry) {
-
-                Set<AbstractManagedConnection<?>> pending = ((Entry) attachment).getPending();
-
-                for (; !pending.isEmpty();) {
-                    handleError(pending.iterator().next(), this.exception);
-                }
-            }
-        }
+        onStop();
 
         // Finally, close the selector.
         try {
@@ -264,8 +247,6 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
             // Ah well.
         }
-
-        onStop();
 
         // Notify anyone calling #close.
         synchronized (this) {
@@ -454,9 +435,9 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         try {
 
-            conn.doClose();
-
             debug("Closed [%s].", conn);
+
+            conn.doClose();
 
         } catch (Throwable t) {
 
@@ -480,9 +461,9 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         try {
 
-            conn.doError(exception);
-
             debug(exception, "Error [%s].", conn);
+
+            conn.doError(exception);
 
         } catch (Throwable t) {
 
@@ -491,9 +472,9 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         try {
 
-            conn.doClose();
-
             debug("Closed [%s].", conn);
+
+            conn.doClose();
 
         } catch (Throwable t) {
 
@@ -589,12 +570,11 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         this.queue = new LinkedBlockingQueue<InterestEvent<?>>();
         this.futures = Collections.newSetFromMap(new WeakHashMap<RequestFuture<?>, Boolean>());
-        this.exception = new IllegalStateException("The connection manager thread has exited");
-
         this.log = LoggerFactory.getLogger(String.format("%s.%s", ConnectionManager.class.getName(), name));
 
         this.fsm = null;
         this.fsmInternal = null;
+        this.exception = null;
 
         this.status = ConnectionManagerThreadStatus.RUN;
     }

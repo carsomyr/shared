@@ -30,6 +30,7 @@ package shared.net;
 
 import static shared.net.InterestEvent.InterestEventType.DISPATCH;
 import static shared.net.InterestEvent.InterestEventType.GET_CONNECTIONS;
+import static shared.net.InterestEvent.InterestEventType.SHUTDOWN;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -67,8 +68,27 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     @Override
     protected void onStop() {
 
+        // Tell the bad news to all pending connections.
+        for (SelectionKey key : this.selector.keys()) {
+
+            Object attachment = key.attachment();
+
+            if (attachment instanceof Entry) {
+
+                Set<AbstractManagedConnection<?>> pending = ((Entry) attachment).getPending();
+
+                // Copy the collection to prevent concurrent modification.
+                for (AbstractManagedConnection<?> pendingConn : new ArrayList<AbstractManagedConnection<?>>(pending)) {
+                    handleError(pendingConn, this.exception);
+                }
+
+                // All pending connections must have been deregistered.
+                assert pending.isEmpty();
+            }
+        }
+
         for (ConnectionManagerIOThread ioThread : this.ioThreads) {
-            Control.close(ioThread);
+            ioThread.onLocal(new InterestEvent<Object>(SHUTDOWN, null));
         }
     }
 
@@ -134,7 +154,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         Set<AbstractManagedConnection<?>> pending = entry.getPending();
 
         // We had better have pending accepts.
-        Control.assertTrue(!pending.isEmpty());
+        assert !pending.isEmpty();
 
         AbstractManagedConnection<?> conn = pending.iterator().next();
 
@@ -153,9 +173,13 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
                 this.acceptRegistry.removePending(conn);
 
-                for (; !pending.isEmpty();) {
-                    handleError(pending.iterator().next(), e);
+                // Copy the collection to prevent concurrent modification.
+                for (AbstractManagedConnection<?> pendingConn : new ArrayList<AbstractManagedConnection<?>>(pending)) {
+                    handleError(pendingConn, e);
                 }
+
+                // All pending connections must have been deregistered.
+                assert pending.isEmpty();
 
                 throw e;
             }
@@ -187,7 +211,8 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         try {
 
             // It had better be the case that this method either throws an exception or returns true.
-            Control.assertTrue(((SocketChannel) conn.getKey().channel()).finishConnect());
+            Control.checkTrue(((SocketChannel) conn.getKey().channel()).finishConnect(), //
+                    "Expected to finish connecting");
 
             debug("Connected [%s] to \"%s\".", conn, conn.getRemoteAddress());
 

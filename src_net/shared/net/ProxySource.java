@@ -56,7 +56,11 @@ public class ProxySource<C extends AbstractManagedConnection<C>> implements Sour
 
     @Override
     public void onLocal(InterestEvent<?> evt) {
-        this.connection.getThread().onLocal(evt);
+
+        // Acquire the connection monitor because the manager thread may change during a handoff.
+        synchronized (this.connection) {
+            this.connection.getThread().onLocal(evt);
+        }
     }
 
     @Override

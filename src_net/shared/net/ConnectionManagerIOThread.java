@@ -54,6 +54,17 @@ public class ConnectionManagerIOThread extends ConnectionManagerThread {
 
     @Override
     protected void onStop() {
+
+        // Tell the bad news to all registered connections.
+        for (SelectionKey key : this.selector.keys()) {
+
+            Object attachment = key.attachment();
+
+            if (attachment instanceof AbstractManagedConnection<?>) {
+                handleError((AbstractManagedConnection<?>) attachment, this.exception);
+            }
+        }
+
         this.parent.onLocal(new InterestEvent<Object>(SHUTDOWN, null));
     }
 

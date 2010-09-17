@@ -112,10 +112,10 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 // If running low, request more!
                 if (bb.remaining() <= bb.capacity() >>> 1) {
 
-                    getThread().debug("Reads enabled [%s].", smc);
+                    smc.getThread().debug("Reads enabled [%s].", smc);
 
-                    setInResolverEnabled();
-                    setEnabled(OperationType.READ, true);
+                    smc.setInResolverEnabled();
+                    smc.setEnabled(OperationType.READ, true);
                 }
 
                 if (size > 0) {
@@ -177,7 +177,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             public int resolve(int remaining) {
 
                 SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                return sendOutbound(smc.out.buffer) + smc.out.buffer.remaining();
+                return smc.sendOutbound(smc.out.buffer) + smc.out.buffer.remaining();
             }
         };
     }
@@ -221,14 +221,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     public SynchronousManagedConnection(String name, ConnectionManager manager) {
         super(name, manager);
 
+        this.inResolver = null;
+        this.outResolver = null;
+
         this.in = null;
         this.out = null;
-
-        synchronized (this) {
-
-            setInResolverEnabled();
-            setOutResolverDefault();
-        }
 
         IdentityFilterFactory<ByteBuffer, SynchronousManagedConnection> iff = IdentityFilterFactory.getInstance();
         setFilterFactory(iff);
@@ -273,6 +270,10 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     public void onBind(Queue<ByteBuffer> inputs) {
 
         synchronized (this) {
+
+            // Set the initial read/write resolvers.
+            setInResolverEnabled();
+            setOutResolverDefault();
 
             // Initialize input/output streams.
             this.in = new ManagedInputStream();
@@ -419,7 +420,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             synchronized (smc) {
 
-                for (; !isClosed() && !this.buffer.hasRemaining();) {
+                for (; !smc.isClosed() && !this.buffer.hasRemaining();) {
                     smc.waitInterruptibly();
                 }
 
@@ -460,7 +461,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             synchronized (smc) {
 
-                for (; !isClosed() && !this.buffer.hasRemaining();) {
+                for (; !smc.isClosed() && !this.buffer.hasRemaining();) {
                     smc.waitInterruptibly();
                 }
 
