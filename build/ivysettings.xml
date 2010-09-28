@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivysettings>
 
-    <property name="ivy.deliver.revision" value="${build.version}" />
-
     <resolvers>
         <chain name="public" returnFirst="true">
             <ibiblio name="first" m2compatible="true" />

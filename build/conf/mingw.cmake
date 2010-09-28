@@ -1,11 +1,14 @@
 # Determine the MinGW installation prefix.
 
-find_program(MINGW_PREFIX NAMES "i586-mingw32msvc-gcc" "i386-mingw32-gcc")
-get_filename_component(MINGW_PREFIX ${MINGW_PREFIX} NAME)
+find_program(MINGW_GCC_FILENAME NAMES "i586-mingw32msvc-gcc")
+get_filename_component(MINGW_PREFIX ${MINGW_GCC_FILENAME} NAME)
 
-string(REGEX REPLACE "^(.*)-gcc$" "\\1" MINGW_PREFIX ${MINGW_PREFIX})
+string(REGEX REPLACE "^(.*)-gcc\$" "\\1" MINGW_PREFIX ${MINGW_PREFIX})
 
-find_file(MINGW_INSTALLATION ${MINGW_PREFIX} PATHS "/usr" "/opt/local" NO_DEFAULT_PATH)
+get_filename_component(MINGW_PREFIX_PATH ${MINGW_GCC_FILENAME} PATH)
+get_filename_component(MINGW_PREFIX_PATH ${MINGW_PREFIX_PATH} PATH)
+
+find_file(MINGW_INSTALLATION ${MINGW_PREFIX} PATHS ${MINGW_PREFIX_PATH} NO_DEFAULT_PATH)
 
 if(NOT MINGW_INSTALLATION)
     message(SEND_ERROR "An installation of MinGW could not be found.")

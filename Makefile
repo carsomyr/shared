@@ -63,8 +63,8 @@ MAKE_BUILD_AND_TEST	= \
 
 .PHONY: all \
 	shared sharedx shared_cl shared32 sharedx32 shared64 sharedx64 \
-	headers headersx \
-	win32 java jar javadoc doxydoc checkstyle publish publishx \
+	win32 headers headersx \
+	java jar javadoc doxydoc checkstyle publish publishx \
 	clean clean32 clean64 clean_win32 distclean
 
 all: shared sharedx
@@ -75,62 +75,53 @@ all: shared sharedx
 
 # Default
 
-shared: bin/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX)
+shared: build/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX)
 
 build/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX): \
-	bin/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX)
-
-bin/lib/$(LIB_PREFIX)sst.$(LIB_SUFFIX): \
 	$(CSRCS) $(CHEADERS) $(JNI_HEADERS)
 	$(MAKE_SHARED)
 
-sharedx: bin/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
+sharedx: build/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
 
 build/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX): \
-	bin/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
-
-bin/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX): \
 	$(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
 	$(MAKE_SHAREDX)
 
-shared_cl: bin/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX)
+shared_cl: build/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX)
 
 build/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX): \
-	bin/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX)
-
-bin/lib/$(LIB_PREFIX)sst_cl.$(LIB_SUFFIX): \
 	$(CSRCS) $(CHEADERS) $(JNI_HEADERS)
 	$(MAKE_SHARED_CL)
 
 # 32-Bit
 
 shared32: WORD_SIZE = 32
-shared32: bin/lib/$(LIB_PREFIX)sst32.$(LIB_SUFFIX)
+shared32: build/lib/$(LIB_PREFIX)sst32.$(LIB_SUFFIX)
 
-bin/lib/$(LIB_PREFIX)sst32.$(LIB_SUFFIX): \
+build/lib/$(LIB_PREFIX)sst32.$(LIB_SUFFIX): \
 	$(CSRCS) $(CHEADERS) $(JNI_HEADERS)
 	$(MAKE_SHARED)
 
 sharedx32: WORD_SIZE = 32
-sharedx32: bin/libx/$(LIB_PREFIX)sstx32.$(LIB_SUFFIX)
+sharedx32: build/libx/$(LIB_PREFIX)sstx32.$(LIB_SUFFIX)
 
-bin/libx/$(LIB_PREFIX)sstx32.$(LIB_SUFFIX): \
+build/libx/$(LIB_PREFIX)sstx32.$(LIB_SUFFIX): \
 	$(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
 	$(MAKE_SHAREDX)
 
 # 64-Bit
 
 shared64: WORD_SIZE = 64
-shared64: bin/lib/$(LIB_PREFIX)sst64.$(LIB_SUFFIX)
+shared64: build/lib/$(LIB_PREFIX)sst64.$(LIB_SUFFIX)
 
-bin/lib/$(LIB_PREFIX)sst64.$(LIB_SUFFIX): \
+build/lib/$(LIB_PREFIX)sst64.$(LIB_SUFFIX): \
 	$(CSRCS) $(CHEADERS) $(JNI_HEADERS)
 	$(MAKE_SHARED)
 
 sharedx64: WORD_SIZE = 64
-sharedx64: bin/libx/$(LIB_PREFIX)sstx64.$(LIB_SUFFIX)
+sharedx64: build/libx/$(LIB_PREFIX)sstx64.$(LIB_SUFFIX)
 
-bin/libx/$(LIB_PREFIX)sstx64.$(LIB_SUFFIX): \
+build/libx/$(LIB_PREFIX)sstx64.$(LIB_SUFFIX): \
 	$(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
 	$(MAKE_SHAREDX)
 
@@ -139,12 +130,12 @@ bin/libx/$(LIB_PREFIX)sstx64.$(LIB_SUFFIX): \
 win32: OS = Windows
 win32: LIB_PREFIX =
 win32: LIB_SUFFIX = dll
-win32: bin/lib/sst.dll bin/libx/sstx.dll buildandtest.exe
+win32: build/lib/sst.dll build/libx/sstx.dll buildandtest.exe
 
-bin/lib/sst.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS)
+build/lib/sst.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS)
 	$(MAKE_SHARED)
 
-bin/libx/sstx.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
+build/libx/sstx.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
 	$(MAKE_SHAREDX)
 
 buildandtest.exe: $(CSRCS) $(CHEADERS)

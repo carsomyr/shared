@@ -184,7 +184,7 @@ BINARY_TOC             = NO
 TOC_EXPAND             = NO
 GENERATE_QHP           = NO
 QCH_FILE               =
-QHP_NAMESPACE          =
+QHP_NAMESPACE          = org.doxygen.Project
 QHP_VIRTUAL_FOLDER     = doc
 QHP_CUST_FILTER_NAME   =
 QHP_CUST_FILTER_ATTRS  =
@@ -192,7 +192,7 @@ QHP_SECT_FILTER_ATTRS  =
 QHG_LOCATION           =
 DISABLE_INDEX          = NO
 ENUM_VALUES_PER_LINE   = 4
-GENERATE_TREEVIEW      = NONE
+GENERATE_TREEVIEW      = NO
 TREEVIEW_WIDTH         = 250
 FORMULA_FONTSIZE       = 10
 
@@ -304,8 +304,3 @@ DOT_TRANSPARENT        = NO
 DOT_MULTI_TARGETS      = NO
 GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
-
-#---------------------------------------------------------------------------
-# Options related to the search engine
-#---------------------------------------------------------------------------
-SEARCHENGINE           = NO

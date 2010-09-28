@@ -26,17 +26,17 @@ ICON_ICO		= include/win32/icon.ico
 CMAKE			= cmake
 CMAKE_TOOLCHAIN	= ../../build/conf/mingw.cmake
 
-CMAKE_FLAGS		= -DCMAKE_BUILD_TYPE="Release"
+CMAKE_FLAGS		= -DCMAKE_BUILD_TYPE=Release
 
 ifdef build.version
 
-CMAKE_FLAGS		+= -DVERSION="$(build.version)"
+CMAKE_FLAGS		+= -DVERSION:STRING=$(build.version)
 
 endif
 
 ifdef WORD_SIZE
 
-CMAKE_FLAGS		+= -DM="$(WORD_SIZE)"
+CMAKE_FLAGS		+= -DM:STRING=$(WORD_SIZE)
 
 endif
 

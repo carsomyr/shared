@@ -5,23 +5,22 @@
     <info organisation="shared" module="shared" />
 
     <configurations>
-        <conf name="ant" />
         <conf name="base" />
-        <conf name="build-conf" />
-        <conf name="checkstyle" />
+        <conf name="bootstrap" />
         <conf name="commons" extends="base" />
+        <conf name="default" extends="base,commons,net" />
         <conf name="extensions" extends="base" />
-        <conf name="lib" extends="base, commons, net" />
+        <conf name="lib" visibility="private" />
         <conf name="native" />
         <conf name="nativex" />
-        <conf name="net" extends="base, commons" />
-        <conf name="test" extends="base, commons, net" />
+        <conf name="net" extends="base" />
+        <conf name="test" extends="base,commons,extensions,net" />
     </configurations>
 
     <publications>
         <artifact name="sst-base" type="jar" conf="base" ext="jar" />
         <artifact name="sst-base-src" type="source" conf="base" ext="jar" />
-        <artifact name="sst-build-conf" type="resource" conf="build-conf" ext="jar" />
+        <artifact name="sst-build-conf" type="resource" conf="bootstrap" ext="jar" />
         <artifact name="sst-commons" type="jar" conf="commons" ext="jar" />
         <artifact name="sst-commons-src" type="source" conf="commons" ext="jar" />
         <artifact name="sst-extensions" type="jar" conf="extensions" ext="jar" />
@@ -35,20 +34,14 @@
     </publications>
 
     <dependencies>
-        <dependency org="org.apache.ant" name="ant-nodeps" rev="1.8.1" conf="ant->default">
-            <exclude module="ant" />
-        </dependency>
-        <dependency org="org.jboss.apiviz" name="apiviz" rev="1.3.2.GA" conf="ant->default" />
-        <dependency org="checkstyle" name="checkstyle" rev="5.0" conf="checkstyle->default">
-            <exclude module="commons-cli" />
-            <exclude module="commons-collections" />
-        </dependency>
-        <dependency org="commons-cli" name="commons-cli" rev="1.2" conf="commons->default" />
-        <dependency org="commons-codec" name="commons-codec" rev="1.4" conf="commons->default" />
-        <dependency org="junit" name="junit" rev="4.8.1" conf="lib->default" />
-        <dependency org="log4j" name="log4j" rev="1.2.16" conf="commons->default" />
-        <dependency org="org.slf4j" name="slf4j-api" rev="1.6.1" conf="commons->default" />
-        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.1" conf="commons->default" />
+        <dependency org="org.jboss.apiviz" name="apiviz" rev="1.3.2.GA" conf="bootstrap->default" />
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="5.3" conf="bootstrap->default" />
+        <dependency org="commons-cli" name="commons-cli" rev="1.2" conf="commons,lib->default" />
+        <dependency org="commons-codec" name="commons-codec" rev="1.4" conf="commons,lib->default" />
+        <dependency org="junit" name="junit" rev="4.8.2" conf="lib,test->default" />
+        <dependency org="log4j" name="log4j" rev="1.2.16" conf="commons,lib->default" />
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.6.1" conf="commons,lib,net->default" />
+        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.1" conf="commons,lib->default" />
     </dependencies>
 
 </ivy-module>

@@ -32,9 +32,6 @@
         <mkdir dir="bin" />
         <mkdir dir="build/lib" />
         <mkdir dir="build/libx" />
-        <mkdir dir="distrib/jars" />
-        <mkdir dir="distrib/sources" />
-        <mkdir dir="distrib/resources" />
         <available file=".dependencies" property="build.dependencies" />
         <available resource="org/apache/ivy/ant/antlib.xml" property="ivy.install" classpathref="shared.classpath" />
     </target>
@@ -43,17 +40,17 @@
         <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="build/ivy.jar" usetimestamp="true" />
     </target>
 
-    <target name="ivy-prepare" depends="ivy-install" unless="ivy.settings.file">
+    <target name="ivy-configure" depends="ivy-install" unless="ivy.settings.file">
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="shared.classpath" />
         <ivy:configure file="build/ivysettings.xml" />
     </target>
 
-    <target name="ivy-resolve" depends="ivy-prepare" unless="ivy.module.shared-shared">
+    <target name="ivy-resolve" depends="ivy-configure" unless="ivy.module">
         <ivy:resolve />
     </target>
 
-    <target name="ivy-retrieve" depends="ivy-prepare" unless="build.dependencies">
-        <ivy:retrieve conf="ant, checkstyle, lib" />
+    <target name="ivy-retrieve" depends="ivy-configure" unless="build.dependencies">
+        <ivy:retrieve conf="bootstrap, lib" />
         <touch file=".dependencies" />
     </target>
 
@@ -101,79 +98,79 @@
     </target>
 
     <target name="jar-base" depends="build-project, build-resource">
-        <jar destfile="distrib/jars/sst-base-${build.version}.jar" basedir="bin" includes="shared/**, font/**" excludes="shared/test/**, shared/cli/**, shared/codec/**, shared/log/**, shared/net/**">
+        <jar destfile="${ivy.distrib.dir}/jars/sst-base-${build.version}.jar" basedir="bin" includes="shared/**, font/**" excludes="shared/test/**, shared/cli/**, shared/codec/**, shared/log/**, shared/net/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-base-src" depends="build-project, build-resource">
-        <jar destfile="distrib/sources/sst-base-src-${build.version}.jar" basedir="src" includes="shared/**, font/**" excludes="shared/test/**, shared/cli/**, shared/codec/**, shared/log/**, shared/net/**">
+        <jar destfile="${ivy.distrib.dir}/sources/sst-base-src-${build.version}.jar" basedir="src" includes="shared/**, font/**" excludes="shared/test/**, shared/cli/**, shared/codec/**, shared/log/**, shared/net/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-build-conf" depends="build-project, build-resource">
-        <jar destfile="distrib/resources/sst-build-conf-${build.version}.jar" basedir="build" includes="conf/**">
+        <jar destfile="${ivy.distrib.dir}/resources/sst-build-conf-${build.version}.jar" basedir="build" includes="conf/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-commons" depends="build-project, build-resource">
-        <jar destfile="distrib/jars/sst-commons-${build.version}.jar" basedir="bin" includes="shared/cli/**, shared/codec/**, shared/log/**">
+        <jar destfile="${ivy.distrib.dir}/jars/sst-commons-${build.version}.jar" basedir="bin" includes="shared/cli/**, shared/codec/**, shared/log/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-commons-src" depends="build-project, build-resource">
-        <jar destfile="distrib/sources/sst-commons-src-${build.version}.jar" basedir="src_commons" includes="shared/cli/**, shared/codec/**, shared/log/**">
+        <jar destfile="${ivy.distrib.dir}/sources/sst-commons-src-${build.version}.jar" basedir="src_commons" includes="shared/cli/**, shared/codec/**, shared/log/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-extensions" depends="build-project, build-resource">
-        <jar destfile="distrib/jars/sst-extensions-${build.version}.jar" basedir="bin" includes="sharedx/**" excludes="sharedx/test/**">
+        <jar destfile="${ivy.distrib.dir}/jars/sst-extensions-${build.version}.jar" basedir="bin" includes="sharedx/**" excludes="sharedx/test/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-extensions-src" depends="build-project, build-resource">
-        <jar destfile="distrib/sources/sst-extensions-src-${build.version}.jar" basedir="src_extensions" includes="sharedx/**" excludes="sharedx/test/**">
+        <jar destfile="${ivy.distrib.dir}/sources/sst-extensions-src-${build.version}.jar" basedir="src_extensions" includes="sharedx/**" excludes="sharedx/test/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-native" depends="build-project, build-resource">
-        <jar destfile="distrib/resources/sst-native-${build.version}.jar" basedir="build" includes="lib/**" excludes="lib/*.jar">
+        <jar destfile="${ivy.distrib.dir}/resources/sst-native-${build.version}.jar" basedir="build" includes="lib/**" excludes="lib/*.jar">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-nativex" depends="build-project, build-resource">
-        <jar destfile="distrib/resources/sst-nativex-${build.version}.jar" basedir="build" includes="libx/**" excludes="libx/*.jar">
+        <jar destfile="${ivy.distrib.dir}/resources/sst-nativex-${build.version}.jar" basedir="build" includes="libx/**" excludes="libx/*.jar">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-net" depends="build-project, build-resource">
-        <jar destfile="distrib/jars/sst-net-${build.version}.jar" basedir="bin" includes="shared/net/**">
+        <jar destfile="${ivy.distrib.dir}/jars/sst-net-${build.version}.jar" basedir="bin" includes="shared/net/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-net-src" depends="build-project, build-resource">
-        <jar destfile="distrib/sources/sst-net-src-${build.version}.jar" basedir="src_net" includes="shared/net/**">
+        <jar destfile="${ivy.distrib.dir}/sources/sst-net-src-${build.version}.jar" basedir="src_net" includes="shared/net/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-test" depends="build-project, build-resource">
-        <jar destfile="distrib/jars/sst-test-${build.version}.jar" basedir="bin" includes="shared/test/**, sharedx/test/**">
+        <jar destfile="${ivy.distrib.dir}/jars/sst-test-${build.version}.jar" basedir="bin" includes="shared/test/**, sharedx/test/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
 
     <target name="jar-test-src" depends="build-project, build-resource">
-        <jar destfile="distrib/sources/sst-test-src-${build.version}.jar" basedir="src_test" includes="shared/test/**, sharedx/test/**">
+        <jar destfile="${ivy.distrib.dir}/sources/sst-test-src-${build.version}.jar" basedir="src_test" includes="shared/test/**, sharedx/test/**">
             <metainf refid="shared.metainf" />
         </jar>
     </target>
@@ -181,13 +178,13 @@
     <!-- Publish Jars. -->
 
     <target name="ivy-publish" depends="ivy-resolve, jar-base, jar-base-src, jar-build-conf, jar-commons, jar-commons-src, jar-native, jar-net, jar-net-src">
-        <ivy:publish resolver="local" conf="ant, build-conf, checkstyle, base, base-src, commons, commons-src, net, net-src, native, build-conf" overwrite="true" forcedeliver="true" />
+        <ivy:publish resolver="local" conf="base, bootstrap, commons, default, native, net" pubrevision="${build.version}" overwrite="true" forcedeliver="true" />
         <delete file=".publishx" />
         <touch file=".publish" />
     </target>
 
     <target name="ivy-publishx" depends="ivy-resolve, jar-base, jar-base-src, jar-build-conf, jar-commons, jar-commons-src, jar-extensions, jar-extensions-src, jar-native, jar-nativex, jar-net, jar-net-src, jar-test, jar-test-src">
-        <ivy:publish resolver="local" overwrite="true" forcedeliver="true" />
+        <ivy:publish resolver="local" pubrevision="${build.version}" overwrite="true" forcedeliver="true" />
         <delete file=".publish" />
         <touch file=".publishx" />
     </target>
@@ -221,7 +218,7 @@
         <javadoc access="protected" destdir="javadoc" packagenames="*" source="${source}" splitindex="true" failonerror="true" author="true" use="true" version="true">
             <sourcepath refid="shared.sourcepath" />
             <classpath refid="shared.classpath" />
-            <link href="http://java.sun.com/javase/6/docs/api/" />
+            <link href="http://download.oracle.com/javase/6/docs/api/" />
             <doclet name="org.jboss.apiviz.APIviz" pathref="shared.classpath" />
         </javadoc>
         <touch file=".javadoc" />
@@ -265,8 +262,7 @@
     <target name="distclean" depends="clean">
         <delete file=".dependencies" />
         <delete file="build/ivy.jar" />
-        <delete dir="build/ant" />
-        <delete dir="build/checkstyle" />
+        <delete dir="build/bootstrap" />
         <delete dir="build/lib" />
         <delete dir="build/libx" />
     </target>
