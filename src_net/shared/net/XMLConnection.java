@@ -194,7 +194,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
         return new Filter<Element, T>() {
 
             @Override
-            public void getInbound(Queue<Element> inputs, Queue<T> outputs) {
+            public void applyInbound(Queue<Element> inputs, Queue<T> outputs) {
 
                 assert !Thread.holdsLock(connection);
 
@@ -204,7 +204,7 @@ abstract public class XMLConnection<C extends XMLConnection<C, T, S>, T extends 
             }
 
             @Override
-            public void getOutbound(Queue<T> inputs, Queue<Element> outputs) {
+            public void applyOutbound(Queue<T> inputs, Queue<Element> outputs) {
 
                 assert Thread.holdsLock(connection);
 

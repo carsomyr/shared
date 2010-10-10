@@ -59,7 +59,7 @@ public class ModalImageKernel implements ImageKernel {
      * 
      * @return {@code true} if and only if an implementation could be obtained without resorting to the default kernel.
      */
-    public boolean useNative() {
+    public boolean useRegisteredKernel() {
 
         this.imKernel = Services.createService(ImageKernel.class);
 

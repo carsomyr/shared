@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import shared.codec.Base64;
+import shared.codec.Codecs;
 import shared.event.Source;
 import shared.event.XMLEvent;
 import shared.net.SourceType;
@@ -122,7 +122,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
     @Override
     public Element toDOM() {
 
-        Document doc = Control.createDocument();
+        Document doc = Control.newDocument();
 
         Element rootElement = doc.createElement(XMLEvent.class.getName());
 
@@ -165,7 +165,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         }
 
         @Override
-        public Throwable getError() {
+        public Throwable getException() {
             return this.exception;
         }
     }
@@ -244,7 +244,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
         public DataXMLEvent(Node contentNode, Source<TestXMLEvent, SourceType> source) {
             super(DATA, source);
 
-            this.data = Base64.base64ToBytes(contentNode.getFirstChild().getTextContent());
+            this.data = Codecs.base64ToBytes(contentNode.getFirstChild().getTextContent());
         }
 
         @Override
@@ -253,7 +253,7 @@ public class TestXMLEvent extends XMLEvent<TestXMLEvent, TestXMLEvent.TestXMLEve
             Document doc = contentNode.getOwnerDocument();
 
             contentNode.appendChild(doc.createElement("data")) //
-                    .setTextContent(Base64.bytesToBase64(this.data));
+                    .setTextContent(Codecs.bytesToBase64(this.data));
         }
 
         @Override

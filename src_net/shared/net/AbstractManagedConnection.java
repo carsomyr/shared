@@ -186,7 +186,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             } catch (Throwable t) {
 
                 amc.setNullHandler();
-                amc.setError(t);
+                amc.setException(t);
 
                 return 0;
             }
@@ -467,12 +467,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     @Override
-    public Throwable getError() {
+    public Throwable getException() {
         return this.exception;
     }
 
     @Override
-    public void setError(Throwable exception) {
+    public void setException(Throwable exception) {
         this.proxy.onLocal(new InterestEvent<Throwable>(ERROR, exception, this.proxy));
     }
 

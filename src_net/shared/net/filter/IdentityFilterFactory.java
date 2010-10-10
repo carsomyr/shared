@@ -81,31 +81,31 @@ public class IdentityFilterFactory<T, C extends Connection> //
     }
 
     @Override
-    public void getInbound(Queue<T> inputs, Queue<T> outputs) {
+    public void applyInbound(Queue<T> inputs, Queue<T> outputs) {
         Filters.transfer(inputs, outputs);
     }
 
     @Override
-    public void getOutbound(Queue<T> inputs, Queue<T> outputs) {
+    public void applyOutbound(Queue<T> inputs, Queue<T> outputs) {
         Filters.transfer(inputs, outputs);
     }
 
     @Override
-    public void getInboundOOB( //
+    public void applyInboundOOB( //
             Queue<T> inputs, Queue<OOBEvent> inputEvts, //
             Queue<T> outputs, Queue<OOBEvent> outputEvts) {
 
         Filters.transfer(inputEvts, outputEvts);
-        getInbound(inputs, outputs);
+        applyInbound(inputs, outputs);
     }
 
     @Override
-    public void getOutboundOOB( //
+    public void applyOutboundOOB( //
             Queue<T> inputs, Queue<OOBEvent> inputEvts, //
             Queue<T> outputs, Queue<OOBEvent> outputEvts) {
 
         Filters.transfer(inputEvts, outputEvts);
-        getOutbound(inputs, outputs);
+        applyOutbound(inputs, outputs);
     }
 
     @Override

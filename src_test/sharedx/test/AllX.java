@@ -89,7 +89,7 @@ public class AllX {
             return;
         }
 
-        Control.checkTrue(ArrayBase.OpKernel.useNative() && ArrayBase.FFTService.useProvider(), //
+        Control.checkTrue(ArrayBase.OpKernel.useRegisteredKernel() && ArrayBase.FFTService.useRegisteredService(), //
                 "Could not link native library");
 
         Tests.runTests("Extension Module Tests", //

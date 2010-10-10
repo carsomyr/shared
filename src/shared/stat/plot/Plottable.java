@@ -79,5 +79,5 @@ public interface Plottable {
      *            the given property.
      * @return {@code true} if and only if the given property is enabled.
      */
-    public boolean getPropertyEnabled(String property);
+    public boolean isPropertyEnabled(String property);
 }

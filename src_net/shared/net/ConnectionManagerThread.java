@@ -121,7 +121,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * Runs the main operation readiness and event processing loop.
      */
     @Override
-    protected void runUnchecked() {
+    protected void doRun() {
 
         debug("Started.");
 
@@ -199,7 +199,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * {@link #close()}.
      */
     @Override
-    protected void runCatch(Throwable t) {
+    protected void doCatch(Throwable t) {
 
         synchronized (this) {
             setStatus(ConnectionManagerThreadStatus.CLOSING);
@@ -213,7 +213,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * Releases any currently held resources.
      */
     @Override
-    protected void runFinalizer() {
+    protected void doFinally() {
 
         // Everyone who has a request pending will get an error.
         for (InterestEvent<?> evt; (evt = this.queue.poll()) != null;) {

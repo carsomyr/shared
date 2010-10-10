@@ -396,31 +396,31 @@ public class Filters {
         return (filter instanceof OOBFilter<?, ?>) ? (OOBFilter<I, O>) filter : new OOBFilter<I, O>() {
 
             @Override
-            public void getInbound(Queue<I> inputs, Queue<O> outputs) {
-                filter.getInbound(inputs, outputs);
+            public void applyInbound(Queue<I> inputs, Queue<O> outputs) {
+                filter.applyInbound(inputs, outputs);
             }
 
             @Override
-            public void getOutbound(Queue<O> inputs, Queue<I> outputs) {
-                filter.getOutbound(inputs, outputs);
+            public void applyOutbound(Queue<O> inputs, Queue<I> outputs) {
+                filter.applyOutbound(inputs, outputs);
             }
 
             @Override
-            public void getInboundOOB( //
+            public void applyInboundOOB( //
                     Queue<I> inputs, Queue<OOBEvent> inputEvts, //
                     Queue<O> outputs, Queue<OOBEvent> outputEvts) {
 
                 transfer(inputEvts, outputEvts);
-                getInbound(inputs, outputs);
+                applyInbound(inputs, outputs);
             }
 
             @Override
-            public void getOutboundOOB( //
+            public void applyOutboundOOB( //
                     Queue<O> inputs, Queue<OOBEvent> inputEvts, //
                     Queue<I> outputs, Queue<OOBEvent> outputEvts) {
 
                 transfer(inputEvts, outputEvts);
-                getOutbound(inputs, outputs);
+                applyOutbound(inputs, outputs);
             }
         };
     }

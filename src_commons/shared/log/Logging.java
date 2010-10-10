@@ -49,7 +49,7 @@ public class Logging {
     final public static void configureLog4J(String pathname) {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        DOMConfigurator.configure(Control.createDocument(cl.getResourceAsStream(pathname)).getDocumentElement());
+        DOMConfigurator.configure(Control.parse(cl.getResourceAsStream(pathname)).getDocumentElement());
     }
 
     // Dummy constructor.

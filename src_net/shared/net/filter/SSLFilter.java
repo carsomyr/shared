@@ -93,7 +93,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
     }
 
     @Override
-    public void getInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
+    public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
         assert !Thread.holdsLock(this.connection);
 
@@ -225,7 +225,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
     }
 
     @Override
-    public void getOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
+    public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
         assert Thread.holdsLock(this.connection);
 
@@ -353,16 +353,16 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
     }
 
     @Override
-    public void getInboundOOB( //
+    public void applyInboundOOB( //
             Queue<ByteBuffer> inputs, Queue<OOBEvent> inputEvts, //
             Queue<ByteBuffer> outputs, Queue<OOBEvent> outputEvts) {
 
         Filters.transfer(inputEvts, outputEvts);
-        getInbound(inputs, outputs);
+        applyInbound(inputs, outputs);
     }
 
     @Override
-    public void getOutboundOOB( //
+    public void applyOutboundOOB( //
             Queue<ByteBuffer> inputs, Queue<OOBEvent> inputEvts, //
             Queue<ByteBuffer> outputs, Queue<OOBEvent> outputEvts) {
 
@@ -378,7 +378,7 @@ public class SSLFilter<C extends FilteredConnection<C, ?>> implements OOBFilter<
             outputEvts.add(evt);
         }
 
-        getOutbound(inputs, outputs);
+        applyOutbound(inputs, outputs);
     }
 
     /**

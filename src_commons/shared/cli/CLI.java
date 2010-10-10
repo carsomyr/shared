@@ -96,9 +96,9 @@ public class CLI {
 
         for (CLIOption cliOption : cliOptions.options()) {
 
-            int nArgs = cliOption.numArgs();
+            int nArgs = cliOption.nArgs();
 
-            if (!cliOption.optionalArgs()) {
+            if (!cliOption.hasOptionalArgs()) {
 
                 if (nArgs >= 0) {
 
@@ -127,7 +127,7 @@ public class CLI {
                 }
             }
 
-            OptionBuilder.isRequired(cliOption.requiredOpt());
+            OptionBuilder.isRequired(cliOption.required());
 
             String longOpt = cliOption.longOpt();
             OptionBuilder.withLongOpt(longOpt.length() > 0 ? longOpt : null);

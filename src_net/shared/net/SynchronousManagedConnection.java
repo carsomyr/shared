@@ -360,7 +360,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             case ERROR:
 
-                e = (IOException) new IOException("Connection encountered an error").initCause(getError());
+                e = (IOException) new IOException("Connection encountered an error").initCause(getException());
 
                 setInResolverError(e);
                 setOutResolverError(e);

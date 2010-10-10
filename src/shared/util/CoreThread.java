@@ -54,15 +54,15 @@ abstract public class CoreThread extends Thread {
 
         try {
 
-            runUnchecked();
+            doRun();
 
         } catch (Throwable t) {
 
-            runCatch(t);
+            doCatch(t);
 
         } finally {
 
-            runFinalizer();
+            doFinally();
         }
     }
 
@@ -72,20 +72,20 @@ abstract public class CoreThread extends Thread {
      * @throws Exception
      *             the exception to pass upwards.
      */
-    abstract protected void runUnchecked() throws Exception;
+    abstract protected void doRun() throws Exception;
 
     /**
      * Runs the exception handler. The default behavior is to rethrow the given exception if unchecked and to throw a
      * {@link RuntimeException} wrapping it if checked.
      */
-    protected void runCatch(Throwable t) {
+    protected void doCatch(Throwable t) {
         Control.rethrow(t);
     }
 
     /**
-     * Runs the finalizer. Guaranteed to execute on termination of {@link #runUnchecked()}. The default behavior is to
-     * do nothing.
+     * Runs the finalizer. Guaranteed to execute on termination of {@link #doRun()}. The default behavior is to do
+     * nothing.
      */
-    protected void runFinalizer() {
+    protected void doFinally() {
     }
 }

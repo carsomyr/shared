@@ -115,7 +115,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         /**
          * Gets the cause of the error.
          */
-        public Throwable getError();
+        public Throwable getException();
     }
 
     final Semaphore semaphore;

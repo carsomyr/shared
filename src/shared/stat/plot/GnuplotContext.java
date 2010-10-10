@@ -126,13 +126,13 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
                 .setDataStyles(plottable.getDataStyles()) //
                 .setDataTitles(plottable.getDataTitles()) //
                 .setPropertyEnabled(PROPERTY_LEGEND, //
-                        plottable.getPropertyEnabled(PROPERTY_LEGEND)) //
+                        plottable.isPropertyEnabled(PROPERTY_LEGEND)) //
                 .setPropertyEnabled(PROPERTY_GRID, //
-                        plottable.getPropertyEnabled(PROPERTY_GRID)) //
+                        plottable.isPropertyEnabled(PROPERTY_GRID)) //
                 .setPropertyEnabled(PROPERTY_MESH, //
-                        plottable.getPropertyEnabled(PROPERTY_MESH)) //
+                        plottable.isPropertyEnabled(PROPERTY_MESH)) //
                 .setPropertyEnabled(PROPERTY_COLORMAP, //
-                        plottable.getPropertyEnabled(PROPERTY_COLORMAP));
+                        plottable.isPropertyEnabled(PROPERTY_COLORMAP));
 
         this.plots.add(gp);
 

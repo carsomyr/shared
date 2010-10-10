@@ -31,15 +31,19 @@ package shared.codec;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
+
 import shared.util.Control;
 
 /**
  * A collection of convenience wrappers for the static methods found in <a
- * href="http://commons.apache.org/codec/">Apache Commons Codec</a>'s {@code Base64} class.
+ * href="http://commons.apache.org/codec/">Apache Commons Codec</a>'s {@link Base64} and {@link Hex} classes.
  * 
  * @author Roy Liu
  */
-public class Base64 {
+public class Codecs {
 
     /**
      * Converts the given base {@code 64} string into a {@code byte} array.
@@ -49,7 +53,7 @@ public class Base64 {
      * @return the {@code byte} array.
      */
     final public static byte[] base64ToBytes(String data) {
-        return org.apache.commons.codec.binary.Base64.decodeBase64(data);
+        return Base64.decodeBase64(data);
     }
 
     /**
@@ -60,7 +64,7 @@ public class Base64 {
      * @return the base {@code 64} string.
      */
     final public static String bytesToBase64(byte[] data) {
-        return org.apache.commons.codec.binary.Base64.encodeBase64String(data);
+        return Base64.encodeBase64String(data);
     }
 
     /**
@@ -276,7 +280,37 @@ public class Base64 {
         return longsToBase64(values, ByteOrder.nativeOrder());
     }
 
+    /**
+     * Converts the given hex string into a {@code byte} array.
+     * 
+     * @param data
+     *            the data.
+     * @return the {@code byte} array.
+     */
+    final public static byte[] hexToBytes(String data) {
+
+        try {
+
+            return Hex.decodeHex(data.toCharArray());
+
+        } catch (DecoderException e) {
+
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Converts the given {@code byte} array into a hex string.
+     * 
+     * @param data
+     *            the data.
+     * @return the hex string.
+     */
+    final public static String bytesToHex(byte[] data) {
+        return Hex.encodeHexString(data);
+    }
+
     // Dummy constructor.
-    Base64() {
+    Codecs() {
     }
 }

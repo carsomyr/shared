@@ -57,7 +57,7 @@ public class ModalFFTService implements FFTService {
      * 
      * @return {@code true} if and only if an implementation could be obtained without resorting to the default service.
      */
-    public boolean useProvider() {
+    public boolean useRegisteredService() {
 
         this.service = Services.createService(FFTService.class);
 

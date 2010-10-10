@@ -171,7 +171,7 @@ public class ReferenceReaper<T> {
          * Runs the reference reaping loop.
          */
         @Override
-        public void runUnchecked() {
+        public void doRun() {
 
             loop: for (; this.run;) {
 

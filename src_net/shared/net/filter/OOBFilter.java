@@ -53,7 +53,7 @@ public interface OOBFilter<I, O> extends Filter<I, O> {
      * @param outputEvts
      *            the output event {@link Queue}.
      */
-    public void getInboundOOB( //
+    public void applyInboundOOB( //
             Queue<I> inputs, Queue<OOBEvent> inputEvts, //
             Queue<O> outputs, Queue<OOBEvent> outputEvts);
 
@@ -69,7 +69,7 @@ public interface OOBFilter<I, O> extends Filter<I, O> {
      * @param outputEvts
      *            the output event {@link Queue}.
      */
-    public void getOutboundOOB( //
+    public void applyOutboundOOB( //
             Queue<O> inputs, Queue<OOBEvent> inputEvts, //
             Queue<I> outputs, Queue<OOBEvent> outputEvts);
 }

@@ -132,7 +132,7 @@ abstract public class ErrorDistribution implements Plottable {
     }
 
     @Override
-    public boolean getPropertyEnabled(String property) {
+    public boolean isPropertyEnabled(String property) {
         return (property.equals("legend") || property.equals("grid"));
     }
 

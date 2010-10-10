@@ -69,7 +69,7 @@ public class TestXMLConnection extends XMLConnection<TestXMLConnection, TestXMLE
 
     @Override
     protected void onError() {
-        onLocal(new ErrorXMLEvent(getError(), this));
+        onLocal(new ErrorXMLEvent(getException(), this));
     }
 
     @Override

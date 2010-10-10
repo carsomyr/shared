@@ -1079,28 +1079,28 @@ public class Control {
     /**
      * Creates a new {@link Document}.
      */
-    final public static Document createDocument() {
+    final public static Document newDocument() {
         return BuilderLocal.get().newDocument();
     }
 
     /**
      * Parses a {@link Document} from the given {@code byte} array.
      */
-    final public static Document createDocument(byte[] array) {
-        return createDocument(new ByteArrayInputStream(array));
+    final public static Document parse(byte[] array) {
+        return parse(new ByteArrayInputStream(array));
     }
 
     /**
      * Parses a {@link Document} from the given string.
      */
-    final public static Document createDocument(String data) {
-        return createDocument(new ByteArrayInputStream(data.getBytes()));
+    final public static Document parse(String data) {
+        return parse(new ByteArrayInputStream(data.getBytes()));
     }
 
     /**
      * Parses a {@link Document} from the given file.
      */
-    final public static Document createDocument(File file) {
+    final public static Document parse(File file) {
 
         final FileInputStream fin;
 
@@ -1113,13 +1113,13 @@ public class Control {
             throw new RuntimeException(e);
         }
 
-        return createDocument(fin);
+        return parse(fin);
     }
 
     /**
      * Parses a {@link Document} from the given {@link InputStream}.
      */
-    final public static Document createDocument(InputStream in) {
+    final public static Document parse(InputStream in) {
 
         try {
 

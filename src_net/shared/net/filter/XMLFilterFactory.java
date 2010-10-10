@@ -77,7 +77,7 @@ public class XMLFilterFactory<C extends Connection> //
     }
 
     @Override
-    public void getInbound(Queue<ByteBuffer> inputs, Queue<Element> outputs) {
+    public void applyInbound(Queue<ByteBuffer> inputs, Queue<Element> outputs) {
 
         for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
 
@@ -88,14 +88,14 @@ public class XMLFilterFactory<C extends Connection> //
 
             byte[] array = (size == bb.capacity()) ? bb.array() //
                     : Arrays.copyOfRange(bb.array(), save, save + size);
-            outputs.add(Control.createDocument(array).getDocumentElement());
+            outputs.add(Control.parse(array).getDocumentElement());
 
             bb.position(save + size);
         }
     }
 
     @Override
-    public void getOutbound(Queue<Element> inputs, Queue<ByteBuffer> outputs) {
+    public void applyOutbound(Queue<Element> inputs, Queue<ByteBuffer> outputs) {
 
         for (Element elt; (elt = inputs.poll()) != null;) {
             outputs.add(ByteBuffer.wrap(Control.toString(elt).getBytes()));

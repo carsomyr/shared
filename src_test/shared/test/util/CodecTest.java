@@ -31,12 +31,13 @@ package shared.test.util;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.junit.Assert;
 import org.junit.Test;
 
-import shared.codec.Base64;
+import shared.codec.Codecs;
 import shared.codec.Compression;
-import shared.codec.Hex;
 import shared.util.Arithmetic;
 
 /**
@@ -80,23 +81,23 @@ public class CodecTest {
             longValues[i] = Arithmetic.nextLong();
         }
 
-        Assert.assertTrue(Arrays.equals(Base64.base64ToBytes(Base64.bytesToBase64(byteValues)), byteValues));
-        Assert.assertTrue(Arrays.equals(Base64.base64ToDoubles(Base64.doublesToBase64(doubleValues)), doubleValues));
-        Assert.assertTrue(Arrays.equals(Base64.base64ToInts(Base64.intsToBase64(intValues)), intValues));
-        Assert.assertTrue(Arrays.equals(Base64.base64ToLongs(Base64.longsToBase64(longValues)), longValues));
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToBytes(Codecs.bytesToBase64(byteValues)), byteValues));
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToDoubles(Codecs.doublesToBase64(doubleValues)), doubleValues));
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToInts(Codecs.intsToBase64(intValues)), intValues));
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToLongs(Codecs.longsToBase64(longValues)), longValues));
 
-        Assert.assertTrue(Arrays.equals(Base64.base64ToDoubles(Base64.doublesToBase64( //
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToDoubles(Codecs.doublesToBase64( //
                 doubleValues, ByteOrder.BIG_ENDIAN), ByteOrder.BIG_ENDIAN), doubleValues));
-        Assert.assertTrue(Arrays.equals(Base64.base64ToInts(Base64.intsToBase64( //
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToInts(Codecs.intsToBase64( //
                 intValues, ByteOrder.BIG_ENDIAN), ByteOrder.BIG_ENDIAN), intValues));
-        Assert.assertTrue(Arrays.equals(Base64.base64ToLongs(Base64.longsToBase64( //
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToLongs(Codecs.longsToBase64( //
                 longValues, ByteOrder.BIG_ENDIAN), ByteOrder.BIG_ENDIAN), longValues));
 
-        Assert.assertTrue(Arrays.equals(Base64.base64ToDoubles(Base64.doublesToBase64( //
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToDoubles(Codecs.doublesToBase64( //
                 doubleValues, ByteOrder.LITTLE_ENDIAN), ByteOrder.LITTLE_ENDIAN), doubleValues));
-        Assert.assertTrue(Arrays.equals(Base64.base64ToInts(Base64.intsToBase64( //
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToInts(Codecs.intsToBase64( //
                 intValues, ByteOrder.LITTLE_ENDIAN), ByteOrder.LITTLE_ENDIAN), intValues));
-        Assert.assertTrue(Arrays.equals(Base64.base64ToLongs(Base64.longsToBase64( //
+        Assert.assertTrue(Arrays.equals(Codecs.base64ToLongs(Codecs.longsToBase64( //
                 longValues, ByteOrder.LITTLE_ENDIAN), ByteOrder.LITTLE_ENDIAN), longValues));
     }
 
@@ -110,7 +111,7 @@ public class CodecTest {
 
         byte[] byteValues = Arithmetic.nextBytes(len);
 
-        Assert.assertTrue(Arrays.equals(Hex.hexToBytes(Hex.bytesToHex(byteValues)), byteValues));
+        Assert.assertTrue(Arrays.equals(Codecs.hexToBytes(Codecs.bytesToHex(byteValues)), byteValues));
     }
 
     /**

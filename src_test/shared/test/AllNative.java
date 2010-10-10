@@ -92,7 +92,7 @@ public class AllNative {
             return;
         }
 
-        Control.checkTrue(ArrayBase.OpKernel.useNative() && ImageOps.ImKernel.useNative(), //
+        Control.checkTrue(ArrayBase.OpKernel.useRegisteredKernel() && ImageOps.ImKernel.useRegisteredKernel(), //
                 "Could not link native library");
 
         ArrayBase.IOKernel.useMatlabIO();

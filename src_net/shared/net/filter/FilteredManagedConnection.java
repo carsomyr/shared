@@ -101,23 +101,23 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         this.filter = new OOBFilter<ByteBuffer, T>() {
 
             @Override
-            public void getInbound(Queue<ByteBuffer> inputs, Queue<T> outputs) {
+            public void applyInbound(Queue<ByteBuffer> inputs, Queue<T> outputs) {
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
 
             @Override
-            public void getOutbound(Queue<T> inputs, Queue<ByteBuffer> outputs) {
+            public void applyOutbound(Queue<T> inputs, Queue<ByteBuffer> outputs) {
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
 
             @Override
-            public void getInboundOOB(Queue<ByteBuffer> inputs, Queue<OOBEvent> inputEvts, //
+            public void applyInboundOOB(Queue<ByteBuffer> inputs, Queue<OOBEvent> inputEvts, //
                     Queue<T> outputs, Queue<OOBEvent> outputEvts) {
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
 
             @Override
-            public void getOutboundOOB(Queue<T> inputs, Queue<OOBEvent> inputEvts, //
+            public void applyOutboundOOB(Queue<T> inputs, Queue<OOBEvent> inputEvts, //
                     Queue<ByteBuffer> outputs, Queue<OOBEvent> outputEvts) {
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
@@ -143,7 +143,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
                 this.outbounds.add(output);
             }
 
-            this.filter.getOutbound(this.outboundsReadOnly, this.outboundsFilteredWriteOnly);
+            this.filter.applyOutbound(this.outboundsReadOnly, this.outboundsFilteredWriteOnly);
 
             int remaining = 0;
 
@@ -171,7 +171,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     public void onReceive(ByteBuffer bb) {
 
         this.inbounds.add(bb);
-        this.filter.getInbound(this.inboundsReadOnly, this.inboundsFilteredWriteOnly);
+        this.filter.applyInbound(this.inboundsReadOnly, this.inboundsFilteredWriteOnly);
 
         onReceive(this.inboundsFiltered);
     }
@@ -220,7 +220,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         }
 
         this.inboundEvts.add(evt);
-        this.filter.getInboundOOB( //
+        this.filter.applyInboundOOB( //
                 this.inboundsReadOnly, this.inboundEvtsReadOnly, //
                 this.inboundsFilteredWriteOnly, this.inboundEvtsFilteredWriteOnly);
 
@@ -232,7 +232,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         synchronized (this) {
 
             this.outboundEvts.add(evt);
-            this.filter.getOutboundOOB( //
+            this.filter.applyOutboundOOB( //
                     this.outboundsReadOnly, this.outboundEvtsReadOnly, //
                     this.outboundsFilteredWriteOnly, this.outboundEvtsFilteredWriteOnly);
 

@@ -158,7 +158,7 @@ public class ClientServerTest {
                 break;
 
             case ERROR:
-                this.log.info("Connection has encountered an error.", getError());
+                this.log.info("Connection has encountered an error.", getException());
                 break;
 
             default:
@@ -172,7 +172,7 @@ public class ClientServerTest {
         }
 
         @Override
-        public void getInbound(Queue<ByteBuffer> inputs, Queue<String> outputs) {
+        public void applyInbound(Queue<ByteBuffer> inputs, Queue<String> outputs) {
 
             for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
 
@@ -184,7 +184,7 @@ public class ClientServerTest {
         }
 
         @Override
-        public void getOutbound(Queue<String> inputs, Queue<ByteBuffer> outputs) {
+        public void applyOutbound(Queue<String> inputs, Queue<ByteBuffer> outputs) {
 
             for (String str; (str = inputs.poll()) != null;) {
                 outputs.add(ByteBuffer.wrap(str.getBytes()));

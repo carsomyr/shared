@@ -60,7 +60,7 @@ public class ModalArrayKernel implements ArrayKernel {
      * 
      * @return {@code true} if and only if an implementation could be obtained without resorting to the default kernel.
      */
-    public boolean useNative() {
+    public boolean useRegisteredKernel() {
 
         this.opKernel = Services.createService(ArrayKernel.class);
 

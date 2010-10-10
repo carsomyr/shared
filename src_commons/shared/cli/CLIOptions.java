@@ -72,17 +72,17 @@ public @interface CLIOptions {
         /**
          * Whether arguments are optional.
          */
-        public boolean optionalArgs() default false;
+        public boolean hasOptionalArgs() default false;
 
         /**
          * The minimum number of arguments that can be expected. Use {@code -1} to denote an unlimited number.
          */
-        public int numArgs() default 1;
+        public int nArgs() default 1;
 
         /**
          * Whether the {@link Option} is required.
          */
-        public boolean requiredOpt() default false;
+        public boolean required() default false;
 
         /**
          * The argument name.

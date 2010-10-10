@@ -142,7 +142,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
          * Runs the event processing loop.
          */
         @Override
-        protected void runUnchecked() {
+        protected void doRun() {
 
             loop: for (; this.run;) {
 
@@ -162,7 +162,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
         }
 
         @Override
-        protected void runFinalizer() {
+        protected void doFinally() {
             this.finalizer.run();
         }
     }

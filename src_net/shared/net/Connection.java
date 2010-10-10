@@ -177,18 +177,18 @@ public interface Connection extends Closeable, Executor {
     public void setEnabled(OperationType type, boolean enabled);
 
     /**
-     * Gets the error that occurred.
+     * Gets the exception that occurred.
      */
-    public Throwable getError();
+    public Throwable getException();
 
     /**
-     * Sets the error and triggers connection closure.
+     * Sets the exception and triggers connection closure.
      * 
      * @param exception
      *            the exception.
      * @see ClosingType#ERROR
      */
-    public void setError(Throwable exception);
+    public void setException(Throwable exception);
 
     /**
      * Executes the given code snippet on this connection's manager thread.

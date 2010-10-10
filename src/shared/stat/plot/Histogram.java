@@ -131,7 +131,7 @@ public class Histogram implements Plottable {
     }
 
     @Override
-    public boolean getPropertyEnabled(String property) {
+    public boolean isPropertyEnabled(String property) {
         return false;
     }
 

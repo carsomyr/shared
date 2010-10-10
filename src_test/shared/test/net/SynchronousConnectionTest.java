@@ -172,7 +172,7 @@ public class SynchronousConnectionTest {
         final Thread r = new CoreThread("Receiver Thread") {
 
             @Override
-            protected void runUnchecked() throws Exception {
+            protected void doRun() throws Exception {
 
                 SynchronousConnectionTest sct = SynchronousConnectionTest.this;
 
@@ -265,7 +265,7 @@ public class SynchronousConnectionTest {
         final Thread s = new CoreThread("Sender Thread") {
 
             @Override
-            protected void runUnchecked() throws Exception {
+            protected void doRun() throws Exception {
 
                 SynchronousConnectionTest sct = SynchronousConnectionTest.this;
 

@@ -80,7 +80,7 @@ public class FrameFilterFactory<C extends Connection> //
             ByteBuffer frameBuffer = ByteBuffer.allocate(fff.minimumSize);
 
             @Override
-            public void getInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
+            public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
                 assert !Thread.holdsLock(connection);
 
@@ -129,7 +129,7 @@ public class FrameFilterFactory<C extends Connection> //
             }
 
             @Override
-            public void getOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
+            public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
                 assert Thread.holdsLock(connection);
 
