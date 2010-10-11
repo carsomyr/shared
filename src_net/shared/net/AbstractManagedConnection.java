@@ -779,7 +779,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         }
 
         if (bytesRead == -1) {
-            this.thread.handleClosingEOS(this);
+            this.thread.handleClosingEos(this);
         }
     }
 

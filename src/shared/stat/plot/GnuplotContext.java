@@ -56,7 +56,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
     /**
      * An array of operating system dependent arguments to execute Gnuplot.
      */
-    final protected static String[] GnuplotExecArgs;
+    final protected static String[] gnuplotExecArgs;
 
     /**
      * The property that toggles the legend.
@@ -79,7 +79,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
     final public static String PROPERTY_COLORMAP = "colormap";
 
     static {
-        GnuplotExecArgs = new String[] { "gnuplot" };
+        gnuplotExecArgs = new String[] { "gnuplot" };
     }
 
     final List<Gnuplot> plots;
@@ -160,7 +160,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         try {
 
-            Control.execAndWaitFor(in, out, errOut, GnuplotExecArgs);
+            Control.execAndWaitFor(in, out, errOut, gnuplotExecArgs);
 
         } catch (IOException e) {
 
@@ -460,7 +460,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
             this.datasets = datasets;
             this.dataTitles = shared.util.Arrays.newArray(String.class, nClasses, "");
-            this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.Points);
+            this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.points);
 
             for (int i = 0, n = 2 * this.nDims; i < n; i += 2) {
 

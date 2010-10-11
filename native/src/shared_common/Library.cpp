@@ -26,9 +26,9 @@
 static jclass libraryClass = NULL;
 static jclass servicesClass = NULL;
 
-static jmethodID registerServiceMethodID;
+static jmethodID registerServiceMethodId;
 
-static jfieldID initializedFieldID;
+static jfieldID initializedFieldId;
 
 jint Library::OnLoad(JavaVM *jvm, void *reserved) {
 
@@ -49,10 +49,10 @@ jint Library::OnLoad(JavaVM *jvm, void *reserved) {
         servicesClass = (jclass) Common::newWeakGlobalRef(env, //
                 Common::findClass(env, "shared/util/Services"));
 
-        initializedFieldID = Common::getStaticFieldID(env, libraryClass, //
-                "Initialized", "Z");
+        initializedFieldId = Common::getStaticFieldId(env, libraryClass, //
+                "initialized", "Z");
 
-        registerServiceMethodID = Common::getStaticMethodID(env, servicesClass, //
+        registerServiceMethodId = Common::getStaticMethodId(env, servicesClass, //
                 "registerService", "(Ljava/lang/Class;Ljava/lang/Class;)V");
 
         //
@@ -69,12 +69,12 @@ jint Library::OnLoad(JavaVM *jvm, void *reserved) {
 
         Library::init(env);
         Library::registerService(env, //
-                "shared/fft/FFTService", "sharedx/fftw/FFTWService");
+                "shared/fft/FftService", "sharedx/fftw/FftwService");
 
 #endif
 
         // Set the initialization flag to true.
-        env->SetStaticBooleanField(libraryClass, initializedFieldID, JNI_TRUE);
+        env->SetStaticBooleanField(libraryClass, initializedFieldId, JNI_TRUE);
 
     } catch (std::exception &e) {
 
@@ -106,7 +106,7 @@ void Library::OnUnload(JavaVM *jvm, void *reserved) {
     //
 
     // Set the initialization flag to false.
-    env->SetStaticBooleanField(libraryClass, initializedFieldID, JNI_FALSE);
+    env->SetStaticBooleanField(libraryClass, initializedFieldId, JNI_FALSE);
 
     Common::deleteWeakGlobalRef(env, servicesClass);
     Common::deleteWeakGlobalRef(env, libraryClass);
@@ -118,7 +118,7 @@ void Library::registerService(JNIEnv *env, //
     jclass specClass = Common::findClass(env, specClassName);
     jclass implClass = Common::findClass(env, implClassName);
 
-    env->CallStaticVoidMethod(servicesClass, registerServiceMethodID, specClass, implClass);
+    env->CallStaticVoidMethod(servicesClass, registerServiceMethodId, specClass, implClass);
 
     if (env->ExceptionCheck()) {
         throw std::runtime_error("shared.util.Services#registerService invocation failed");

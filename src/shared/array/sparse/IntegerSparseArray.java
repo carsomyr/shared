@@ -29,7 +29,7 @@
 package shared.array.sparse;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.opKernel;
 
 import java.util.Formatter;
 
@@ -49,7 +49,7 @@ public class IntegerSparseArray extends ProtoSparseArray<IntegerSparseArray, int
     /**
      * An empty array.
      */
-    final protected static int[] Empty = new int[] {};
+    final protected static int[] empty = new int[] {};
 
     /**
      * Default constructor.
@@ -62,7 +62,7 @@ public class IntegerSparseArray extends ProtoSparseArray<IntegerSparseArray, int
      * Internal constructor with a distinctive signature.
      */
     protected IntegerSparseArray(int unused, int[] dims) {
-        super(new SparseArrayState<int[]>(Empty, dims), //
+        super(new SparseArrayState<int[]>(empty, dims), //
                 dims, DEFAULT_ORDER.strides(dims), createDimensionOffsets(dims));
 
         Control.checkTrue(dims.length > 0);
@@ -94,14 +94,14 @@ public class IntegerSparseArray extends ProtoSparseArray<IntegerSparseArray, int
 
         if (value == null) {
 
-            state = new SparseArrayState<int[]>(Empty, dims);
+            state = new SparseArrayState<int[]>(empty, dims);
 
         } else {
 
             int[] values = Arrays.newArray(Arithmetic.product(dims), value.intValue());
 
-            state = OpKernel.insertSparse( //
-                    Empty, dims, strides, dimOffsets, EmptyIndices, //
+            state = opKernel.insertSparse( //
+                    empty, dims, strides, dimOffsets, emptyIndices, //
                     values, Arithmetic.range(values.length));
         }
 
@@ -120,7 +120,7 @@ public class IntegerSparseArray extends ProtoSparseArray<IntegerSparseArray, int
 
     @Override
     protected int[] empty() {
-        return Empty;
+        return empty;
     }
 
     @Override

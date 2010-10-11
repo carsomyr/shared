@@ -37,7 +37,7 @@ import shared.metaclass.Loader.LoadableResources;
 import shared.metaclass.RegistryClassLoader;
 import shared.test.array.AllArrayOperationTests;
 import shared.test.image.AllImageTests;
-import shared.test.stat.AllMLTests;
+import shared.test.stat.AllMlTests;
 import shared.util.Control;
 
 /**
@@ -87,20 +87,20 @@ public class AllNative {
 
         } catch (RuntimeException e) {
 
-            Tests.Log.debug("Requisite native library not found. Skipping tests.");
+            Tests.log.debug("Requisite native library not found. Skipping tests.");
 
             return;
         }
 
-        Control.checkTrue(ArrayBase.OpKernel.useRegisteredKernel() && ImageOps.ImKernel.useRegisteredKernel(), //
+        Control.checkTrue(ArrayBase.opKernel.useRegisteredKernel() && ImageOps.imKernel.useRegisteredKernel(), //
                 "Could not link native library");
 
-        ArrayBase.IOKernel.useMatlabIO();
-        ArrayBase.FFTService.useJava();
+        ArrayBase.ioKernel.useMatlabIo();
+        ArrayBase.fftService.useJava();
 
         Tests.runTests("Native Tests", //
                 AllArrayOperationTests.class, //
-                AllMLTests.class, //
+                AllMlTests.class, //
                 AllImageTests.class);
     }
 

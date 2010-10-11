@@ -29,9 +29,9 @@
 package shared.array;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.FieldPrecision;
-import static shared.array.ArrayBase.FieldWidth;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.fieldPrecision;
+import static shared.array.ArrayBase.fieldWidth;
+import static shared.array.ArrayBase.opKernel;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -121,7 +121,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
         }
 
         String format = String.format("%%%d.%df +%%%d.%dfi", //
-                FieldWidth, FieldPrecision, FieldWidth, FieldPrecision);
+                fieldWidth, fieldPrecision, fieldWidth, fieldPrecision);
 
         values = ArrayBase.formatRescale(f, exponent, values);
 
@@ -405,7 +405,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
      * Supports the a* series of operations.
      */
     protected double[] applyKernelComplexAccumulatorOperation(int type) {
-        return OpKernel.caOp(type, this.values);
+        return opKernel.caOp(type, this.values);
     }
 
     /**
@@ -422,7 +422,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
         R res = wrapDown(INVALID_PARITY, a.order, newDims, a.order.strides(newDims));
 
-        OpKernel.convert(type, a.values, true, res.values, false);
+        opKernel.convert(type, a.values, true, res.values, false);
 
         return res;
     }
@@ -439,7 +439,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
         C res = wrap(parity, a.order, a.dims, a.strides);
 
-        OpKernel.eOp(type, a.values, b.values, res.values, true);
+        opKernel.eOp(type, a.values, b.values, res.values, true);
 
         return res;
     }
@@ -454,7 +454,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
 
         C a = (C) this;
 
-        OpKernel.eOp(type, a.values, b.values, a.values, false);
+        opKernel.eOp(type, a.values, b.values, a.values, false);
 
         return a;
     }
@@ -465,7 +465,7 @@ abstract public class AbstractComplexArray<C extends AbstractComplexArray<C, R>,
     @SuppressWarnings("unchecked")
     protected C applyKernelComplexUnaryOperation(double aRe, double aIm, int type) {
 
-        OpKernel.cuOp(type, aRe, aIm, this.values);
+        opKernel.cuOp(type, aRe, aIm, this.values);
 
         return (C) this;
     }

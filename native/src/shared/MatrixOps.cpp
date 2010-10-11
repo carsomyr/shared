@@ -68,14 +68,14 @@ template<class T> inline void MatrixOps::mulProxy(JNIEnv *env, //
         throw std::runtime_error("Invalid array lengths");
     }
 
-    ArrayPinHandler lhsVH(env, lhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-    ArrayPinHandler rhsVH(env, rhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-    ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+    ArrayPinHandler lhsVh(env, lhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler rhsVh(env, rhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
     // NO JNI AFTER THIS POINT!
 
-    T *lhsVArr = (T *) lhsVH.get();
-    T *rhsVArr = (T *) rhsVH.get();
-    T *dstVArr = (T *) dstVH.get();
+    T *lhsVArr = (T *) lhsVh.get();
+    T *rhsVArr = (T *) rhsVh.get();
+    T *dstVArr = (T *) dstVh.get();
 
     MatrixOps::mul<T>(lhsVArr, rhsVArr, inner, dstVArr, lhsR, rhsC, zero);
 }
@@ -134,12 +134,12 @@ template<class T> inline void MatrixOps::diagProxy(JNIEnv *env, //
         throw std::runtime_error("Invalid array lengths");
     }
 
-    ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-    ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+    ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
     // NO JNI AFTER THIS POINT!
 
-    T *srcVArr = (T *) srcVH.get();
-    T *dstVArr = (T *) dstVH.get();
+    T *srcVArr = (T *) srcVh.get();
+    T *dstVArr = (T *) dstVh.get();
 
     MatrixOps::diag<T>(srcVArr, dstVArr, size);
 }

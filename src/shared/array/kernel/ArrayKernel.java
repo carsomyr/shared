@@ -613,7 +613,7 @@ public interface ArrayKernel extends Service {
      *            the old dimensions.
      * @param oldS
      *            the old strides.
-     * @param oldDO
+     * @param oldDo
      *            the old dimension offsets.
      * @param oldI
      *            the old physical indices. Invariant: Sorted in ascending order, and does not contain duplicates.
@@ -626,7 +626,7 @@ public interface ArrayKernel extends Service {
      * @return the {@link SparseArrayState}.
      */
     public <V> SparseArrayState<V> insertSparse( //
-            V oldV, int[] oldD, int[] oldS, int[] oldDO, int[] oldI, //
+            V oldV, int[] oldD, int[] oldS, int[] oldDo, int[] oldI, //
             V newV, int[] newI);
 
     /**
@@ -640,13 +640,13 @@ public interface ArrayKernel extends Service {
      *            the source dimensions.
      * @param srcS
      *            the source strides.
-     * @param srcDO
+     * @param srcDo
      *            the source dimension offsets.
      * @param srcI
      *            the source physical indices. Invariant: Sorted in ascending order, and does not contain duplicates.
-     * @param srcIO
+     * @param srcIo
      *            the source indirection offsets.
-     * @param srcII
+     * @param srcIi
      *            the source indirections.
      * @param dstV
      *            the destination values.
@@ -654,22 +654,22 @@ public interface ArrayKernel extends Service {
      *            the destination dimensions.
      * @param dstS
      *            the destination strides.
-     * @param dstDO
+     * @param dstDo
      *            the destination dimension offsets.
      * @param dstI
      *            the destination physical indices. Invariant: Sorted in ascending order, and does not contain
      *            duplicates.
-     * @param dstIO
+     * @param dstIo
      *            the destination indirection offsets.
-     * @param dstII
+     * @param dstIi
      *            the destination indirections.
      * @param <V>
      *            the storage array type.
      * @return the {@link SparseArrayState}.
      */
     public <V> SparseArrayState<V> sliceSparse(int[] slices, //
-            V srcV, int[] srcD, int[] srcS, int[] srcDO, //
-            int[] srcI, int[] srcIO, int[] srcII, //
-            V dstV, int[] dstD, int[] dstS, int[] dstDO, //
-            int[] dstI, int[] dstIO, int[] dstII);
+            V srcV, int[] srcD, int[] srcS, int[] srcDo, //
+            int[] srcI, int[] srcIo, int[] srcIi, //
+            V dstV, int[] dstD, int[] dstS, int[] dstDo, //
+            int[] dstI, int[] dstIo, int[] dstIi);
 }

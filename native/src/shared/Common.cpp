@@ -188,7 +188,7 @@ jclass Common::findClass(JNIEnv *env, const char *name) {
     return clazz;
 }
 
-jfieldID Common::getFieldID(JNIEnv *env, jclass clazz, //
+jfieldID Common::getFieldId(JNIEnv *env, jclass clazz, //
         const char *name, const char *type) {
 
     jfieldID id = env->GetFieldID(clazz, name, type);
@@ -200,7 +200,7 @@ jfieldID Common::getFieldID(JNIEnv *env, jclass clazz, //
     return id;
 }
 
-jfieldID Common::getStaticFieldID(JNIEnv *env, jclass clazz, //
+jfieldID Common::getStaticFieldId(JNIEnv *env, jclass clazz, //
         const char *name, const char *type) {
 
     jfieldID id = env->GetStaticFieldID(clazz, name, type);
@@ -212,7 +212,7 @@ jfieldID Common::getStaticFieldID(JNIEnv *env, jclass clazz, //
     return id;
 }
 
-jmethodID Common::getMethodID(JNIEnv *env, jclass clazz, //
+jmethodID Common::getMethodId(JNIEnv *env, jclass clazz, //
         const char *name, const char *type) {
 
     jmethodID id = env->GetMethodID(clazz, name, type);
@@ -224,7 +224,7 @@ jmethodID Common::getMethodID(JNIEnv *env, jclass clazz, //
     return id;
 }
 
-jmethodID Common::getStaticMethodID(JNIEnv *env, jclass clazz, //
+jmethodID Common::getStaticMethodId(JNIEnv *env, jclass clazz, //
         const char *name, const char *type) {
 
     jmethodID id = env->GetStaticMethodID(clazz, name, type);
@@ -295,7 +295,7 @@ jobjectArray Common::newObjectArray(JNIEnv *env, jint len, jclass clazz) {
     return array;
 }
 
-jstring Common::newStringUTF(JNIEnv *env, const char *utf) {
+jstring Common::newStringUtf(JNIEnv *env, const char *utf) {
 
     jstring str = env->NewStringUTF(utf);
 

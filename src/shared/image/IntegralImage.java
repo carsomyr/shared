@@ -54,11 +54,11 @@ public class IntegralImage extends RealArray {
         int[] srcDims = src.dims();
         int[] dstDims = dst.dims();
 
-        ImageOps.ImKernel.createIntegralImage( //
+        ImageOps.imKernel.createIntegralImage( //
                 src.values(), srcDims, src.order().strides(srcDims), //
                 dst.values(), dstDims, dst.order().strides(dstDims));
 
-        this.ilut = ImageOps.createILUT(nDims());
+        this.ilut = ImageOps.createIlut(nDims());
     }
 
     /**

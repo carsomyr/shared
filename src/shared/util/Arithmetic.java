@@ -40,7 +40,7 @@ public class Arithmetic {
     /**
      * The underlying, shared source of randomness.
      */
-    final protected static Random RandomKernel = new Random(0xdeadbeefcacabeadL);
+    final protected static Random randomKernel = new Random(0xdeadbeefcacabeadL);
 
     /**
      * Computes the maximum.
@@ -526,7 +526,7 @@ public class Arithmetic {
      * @return the random source.
      */
     final public static Random getRandomSource() {
-        return RandomKernel;
+        return randomKernel;
     }
 
     /**
@@ -537,7 +537,7 @@ public class Arithmetic {
      * @return an {@code int} in <code>[{@code 0}, {@code n})</code>.
      */
     final public static int nextInt(int n) {
-        return RandomKernel.nextInt(n);
+        return randomKernel.nextInt(n);
     }
 
     /**
@@ -546,7 +546,7 @@ public class Arithmetic {
      * @return an {@code int} chosen uniformly at random.
      */
     final public static int nextInt() {
-        return RandomKernel.nextInt();
+        return randomKernel.nextInt();
     }
 
     /**
@@ -555,7 +555,7 @@ public class Arithmetic {
      * @return a {@code long} chosen uniformly at random.
      */
     final public static long nextLong() {
-        return RandomKernel.nextLong();
+        return randomKernel.nextLong();
     }
 
     /**
@@ -566,7 +566,7 @@ public class Arithmetic {
      * @return a {@code double} in <code>[{@code 0}, {@code a})</code>.
      */
     final public static double nextDouble(double a) {
-        return a * RandomKernel.nextDouble();
+        return a * randomKernel.nextDouble();
     }
 
     /**
@@ -577,7 +577,7 @@ public class Arithmetic {
      * @return a sample drawn from a Gaussian with mean {@code 0} and standard deviation {@code a}.
      */
     final public static double nextGaussian(double a) {
-        return a * RandomKernel.nextGaussian();
+        return a * randomKernel.nextGaussian();
     }
 
     /**
@@ -591,7 +591,7 @@ public class Arithmetic {
 
         byte[] res = new byte[n];
 
-        RandomKernel.nextBytes(res);
+        randomKernel.nextBytes(res);
 
         return res;
     }
@@ -600,14 +600,14 @@ public class Arithmetic {
      * Seeds the underlying source of randomness with {@link System#nanoTime()}.
      */
     final public static void randomize() {
-        RandomKernel.setSeed(System.nanoTime());
+        randomKernel.setSeed(System.nanoTime());
     }
 
     /**
      * Seeds the underlying source of randomness with {@code 0}.
      */
     final public static void derandomize() {
-        RandomKernel.setSeed(0);
+        randomKernel.setSeed(0);
     }
 
     // Dummy constructor.

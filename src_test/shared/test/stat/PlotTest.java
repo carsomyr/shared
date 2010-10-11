@@ -28,7 +28,7 @@
 
 package shared.test.stat;
 
-import static shared.test.Demo.DemoDir;
+import static shared.test.Demo.demoDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +49,7 @@ import shared.stat.plot.Plot.AxisType;
 import shared.stat.plot.PrecisionRecall;
 import shared.stat.plot.ProbabilityDistribution;
 import shared.stat.plot.ProbabilityDistribution.Mode;
-import shared.stat.plot.ROC;
+import shared.stat.plot.Roc;
 import shared.stat.plot.Scatter;
 import shared.test.Demo;
 import shared.util.Arithmetic;
@@ -179,7 +179,7 @@ public class PlotTest {
                 .setPropertyEnabled("mesh", true) //
                 .setPropertyEnabled("colormap", true) //
                 .setPropertyEnabled("legend", false) //
-                .setDataStyles(DataStyle.Surface) //
+                .setDataStyles(DataStyle.surface) //
                 .setTitle("3D Mesh Plot") //
                 .setViewport(60.0, 15.0) //
                 .setPanelLocation(1, 0) //
@@ -217,10 +217,10 @@ public class PlotTest {
             outcomes[i] = (Arithmetic.nextDouble(1.0) < (1.0 - values[i]) * 0.25) ? false : true;
         }
 
-        ROC roc = new ROC(values, outcomes);
+        Roc roc = new Roc(values, outcomes);
 
         gpc.addPlot(roc) //
-                .setTitle(String.format("%s (auc = %.4f)", roc.getTitle(), roc.getAUCs()[0])) //
+                .setTitle(String.format("%s (auc = %.4f)", roc.getTitle(), roc.getAucs()[0])) //
                 .setPanelLocation(2, 0);
 
         // Random precision-recall curve.
@@ -228,14 +228,14 @@ public class PlotTest {
         PrecisionRecall pr = new PrecisionRecall(values, outcomes);
 
         gpc.addPlot(pr) //
-                .setTitle(String.format("%s (auc = %.4f)", pr.getTitle(), pr.getAUCs()[0])) //
+                .setTitle(String.format("%s (auc = %.4f)", pr.getTitle(), pr.getAucs()[0])) //
                 .setPanelLocation(2, 1);
 
         //
 
-        File epsFile = new File(DemoDir, "gnuplot.eps");
-        File pngFile = new File(DemoDir, "gnuplot.png");
-        File svgFile = new File(DemoDir, "gnuplot.svg");
+        File epsFile = new File(demoDir, "gnuplot.eps");
+        File pngFile = new File(demoDir, "gnuplot.png");
+        File svgFile = new File(demoDir, "gnuplot.svg");
 
         Control.delete(epsFile);
         Control.delete(pngFile);
@@ -247,7 +247,7 @@ public class PlotTest {
 
         URL url = Thread.currentThread().getContextClassLoader().getResource("font/Vera.ttf");
 
-        File file = new File(DemoDir, "Vera.ttf");
+        File file = new File(demoDir, "Vera.ttf");
 
         Control.transfer(url.openStream(), file);
 

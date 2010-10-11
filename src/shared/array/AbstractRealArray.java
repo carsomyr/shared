@@ -29,7 +29,7 @@
 package shared.array;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.opKernel;
 
 import java.util.Arrays;
 
@@ -484,7 +484,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
      * Supports the a* series of operations.
      */
     protected double applyKernelRealAccumulatorOperation(int type) {
-        return OpKernel.raOp(type, this.values);
+        return opKernel.raOp(type, this.values);
     }
 
     /**
@@ -499,7 +499,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
 
         R res = wrap(INVALID_PARITY, a.order, a.dims, a.strides);
 
-        OpKernel.eOp(type, a.values, b.values, res.values, false);
+        opKernel.eOp(type, a.values, b.values, res.values, false);
 
         return res;
     }
@@ -514,7 +514,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
 
         R a = (R) this;
 
-        OpKernel.eOp(type, a.values, b.values, a.values, false);
+        opKernel.eOp(type, a.values, b.values, a.values, false);
 
         return a;
     }
@@ -534,7 +534,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
 
         C res = wrapUp(INVALID_PARITY, DEFAULT_ORDER, newDims, a.order.strides(newDims));
 
-        OpKernel.convert(type, a.values, false, res.values, true);
+        opKernel.convert(type, a.values, false, res.values, true);
 
         return res;
     }
@@ -545,7 +545,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
     @SuppressWarnings("unchecked")
     protected R applyKernelRealUnaryOperation(double a, int type) {
 
-        OpKernel.ruOp(type, a, this.values);
+        opKernel.ruOp(type, a, this.values);
 
         return (R) this;
     }
@@ -568,7 +568,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
 
         R res = wrap(INVALID_PARITY, a.order, newDims, a.order.strides(newDims));
 
-        OpKernel.rrOp(type, //
+        opKernel.rrOp(type, //
                 a.values, a.dims, a.strides, //
                 res.values, res.dims, res.strides, //
                 opDims);
@@ -586,7 +586,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
 
         IntegerArray res = new IntegerArray(a.order, a.dims);
 
-        OpKernel.riOp(type, //
+        opKernel.riOp(type, //
                 a.values, a.dims, a.strides, res.values, //
                 dim);
 
@@ -603,7 +603,7 @@ abstract public class AbstractRealArray<R extends AbstractRealArray<R, C>, C ext
 
         R res = wrap(INVALID_PARITY, a.order, a.dims, a.strides);
 
-        OpKernel.rdOp(type, //
+        opKernel.rdOp(type, //
                 a.values, a.dims, a.strides, res.values, //
                 opDims);
 

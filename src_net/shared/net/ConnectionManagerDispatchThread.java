@@ -52,9 +52,9 @@ import shared.util.RequestFuture;
 
 /**
  * A specialized {@link ConnectionManagerThread} that dispatches newly created connections to
- * {@link ConnectionManagerIOThread}s.
+ * {@link ConnectionManagerIoThread}s.
  * 
- * @apiviz.composedOf shared.net.ConnectionManagerIOThread
+ * @apiviz.composedOf shared.net.ConnectionManagerIoThread
  * @apiviz.composedOf shared.net.AcceptRegistry
  * @author Roy Liu
  */
@@ -62,7 +62,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
     @Override
     protected void onStart() {
-        initFSMs();
+        initFsms();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             }
         }
 
-        for (ConnectionManagerIOThread ioThread : this.ioThreads) {
+        for (ConnectionManagerIoThread ioThread : this.ioThreads) {
             ioThread.onLocal(new InterestEvent<Object>(SHUTDOWN, null));
         }
     }
@@ -112,7 +112,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     }
 
     /**
-     * Starts this thread and its helper {@link ConnectionManagerIOThread}s.
+     * Starts this thread and its helper {@link ConnectionManagerIoThread}s.
      */
     @Override
     public void start() {
@@ -125,11 +125,11 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     }
 
     /**
-     * Dispatches the given connection to a {@link ConnectionManagerIOThread}.
+     * Dispatches the given connection to a {@link ConnectionManagerIoThread}.
      */
     protected void dispatch(AbstractManagedConnection<?> conn) {
 
-        ConnectionManagerIOThread ioThread = this.ioThreads.removeFirst();
+        ConnectionManagerIoThread ioThread = this.ioThreads.removeFirst();
         this.ioThreads.add(ioThread);
 
         // Break the connection's relationship with this thread.
@@ -320,14 +320,14 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
     /**
      * Handles a request to get the list of connections, which is an aggregate of the lists reported by helper
-     * {@link ConnectionManagerIOThread}s.
+     * {@link ConnectionManagerIoThread}s.
      */
     @SuppressWarnings("unchecked")
     protected void handleGetConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
 
         List<AbstractManagedConnection<?>> res = new ArrayList<AbstractManagedConnection<?>>();
 
-        for (ConnectionManagerIOThread ioThread : this.ioThreads) {
+        for (ConnectionManagerIoThread ioThread : this.ioThreads) {
             res.addAll((List<AbstractManagedConnection<?>>) ioThread.request(GET_CONNECTIONS));
         }
 
@@ -431,7 +431,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     };
 
     final AcceptRegistry acceptRegistry;
-    final LinkedList<ConnectionManagerIOThread> ioThreads;
+    final LinkedList<ConnectionManagerIoThread> ioThreads;
     final int backlogSize;
 
     /**
@@ -442,10 +442,10 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
         this.acceptRegistry = new AcceptRegistry(this.selector, this.backlogSize);
 
-        this.ioThreads = new LinkedList<ConnectionManagerIOThread>();
+        this.ioThreads = new LinkedList<ConnectionManagerIoThread>();
 
         for (int i = 0; i < nThreads; i++) {
-            this.ioThreads.add(new ConnectionManagerIOThread(String.format("%s/IO-%d", name, i), this));
+            this.ioThreads.add(new ConnectionManagerIoThread(String.format("%s/IO-%d", name, i), this));
         }
 
         this.backlogSize = backlogSize;

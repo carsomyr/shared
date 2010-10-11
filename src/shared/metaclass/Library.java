@@ -38,13 +38,13 @@ public class Library {
     /**
      * Whether the native library is loaded. Native code sets this to {@code true}.
      */
-    protected static boolean Initialized = false;
+    protected static boolean initialized = false;
 
     /**
      * Gets whether the native library has been loaded.
      */
     final public static boolean isInitialized() {
-        return Initialized;
+        return initialized;
     }
 
     /**

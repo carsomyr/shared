@@ -60,7 +60,7 @@ public class Demo {
     /**
      * The demo directory.
      */
-    final public static File DemoDir = new File("demo");
+    final public static File demoDir = new File("demo");
 
     /**
      * Delegates to {@link Loader#run(String, Object)}.
@@ -93,8 +93,8 @@ public class Demo {
      */
     final public static void createDemoDir() {
 
-        if (!DemoDir.exists()) {
-            DemoDir.mkdirs();
+        if (!demoDir.exists()) {
+            demoDir.mkdirs();
         }
     }
 

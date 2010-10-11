@@ -34,28 +34,28 @@ import shared.array.RealArray;
 import shared.util.Control;
 
 /**
- * A specialization of {@link FFTCache} for {@link RealArray}s and {@link ComplexArray}s.
+ * A specialization of {@link FftCache} for {@link RealArray}s and {@link ComplexArray}s.
  * 
  * @apiviz.owns shared.fft.Cacheable
  * @author Roy Liu
  */
-public class ConvolutionCache extends FFTCache<ComplexArray, RealArray> {
+public class ConvolutionCache extends FftCache<ComplexArray, RealArray> {
 
     /**
      * A global instance.
      */
-    protected static ConvolutionCache Instance = null;
+    protected static ConvolutionCache instance = null;
 
     /**
      * Gets the global instance.
      */
     final public static ConvolutionCache getInstance() {
 
-        if (Instance == null) {
-            Instance = new ConvolutionCache();
+        if (instance == null) {
+            instance = new ConvolutionCache();
         }
 
-        return Instance;
+        return instance;
     }
 
     /**

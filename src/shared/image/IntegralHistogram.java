@@ -63,11 +63,11 @@ public class IntegralHistogram extends RealArray {
         Control.checkTrue(src.order() == membership.order(), //
                 "Indexing order mismatch");
 
-        ImageOps.ImKernel.createIntegralHistogram( //
+        ImageOps.imKernel.createIntegralHistogram( //
                 src.values(), srcDims, src.order().strides(srcDims), membership.values(), //
                 dst.values(), dstDims, dst.order().strides(dstDims));
 
-        this.ilut = ImageOps.createILUT(nDims() - 1);
+        this.ilut = ImageOps.createIlut(nDims() - 1);
     }
 
     /**

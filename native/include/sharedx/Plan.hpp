@@ -23,7 +23,7 @@
 
 #include <Common.hpp>
 
-#include <JNIHeadersXWrap.hpp>
+#include <JniHeadersXWrap.hpp>
 
 #include <fftw3.h>
 

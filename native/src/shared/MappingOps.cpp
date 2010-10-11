@@ -100,11 +100,11 @@ void MappingOps::assign(JNIEnv *env, ArrayPinHandler::jarray_type type, //
     case ArrayPinHandler::DOUBLE:
 
     {
-        ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
 
-        jdouble *srcVArr = (jdouble *) srcVH.get();
-        jdouble *dstVArr = (jdouble *) dstVH.get();
+        jdouble *srcVArr = (jdouble *) srcVh.get();
+        jdouble *dstVArr = (jdouble *) dstVh.get();
 
         for (jint i = 0; i < nIndices; i++) {
             dstVArr[dstIndices[i]] = srcVArr[srcIndices[i]];
@@ -116,11 +116,11 @@ void MappingOps::assign(JNIEnv *env, ArrayPinHandler::jarray_type type, //
     case ArrayPinHandler::INT:
 
     {
-        ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
 
-        jint *srcVArr = (jint *) srcVH.get();
-        jint *dstVArr = (jint *) dstVH.get();
+        jint *srcVArr = (jint *) srcVh.get();
+        jint *dstVArr = (jint *) dstVh.get();
 
         for (jint i = 0; i < nIndices; i++) {
             dstVArr[dstIndices[i]] = srcVArr[srcIndices[i]];

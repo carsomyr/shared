@@ -82,7 +82,7 @@ public class Control {
     /**
      * A null {@link OutputStream} to which writes have no effect.
      */
-    final public static OutputStream NullOutputStream = new OutputStream() {
+    final public static OutputStream nullOutputStream = new OutputStream() {
 
         @Override
         public void write(int b) throws IOException {
@@ -92,7 +92,7 @@ public class Control {
     /**
      * A null {@link InputStream} that has nothing to read.
      */
-    final public static InputStream NullInputStream = new InputStream() {
+    final public static InputStream nullInputStream = new InputStream() {
 
         @Override
         public int read() throws IOException {
@@ -103,19 +103,19 @@ public class Control {
     /**
      * A timestamp local to the current thread in support of {@link #tick()} and {@link #tock()}.
      */
-    final protected static ThreadLocal<Long> TimestampLocal = new ThreadLocal<Long>();
+    final protected static ThreadLocal<Long> timestampLocal = new ThreadLocal<Long>();
 
     /**
      * A mapping of environment variables local to the current thread in support of {@link #beginEnvironment()} and
      * {@link #endEnvironment()}.
      */
-    final protected static ThreadLocal<Map<String, String>> EnvironmentLocal = new ThreadLocal<Map<String, String>>();
+    final protected static ThreadLocal<Map<String, String>> environmentLocal = new ThreadLocal<Map<String, String>>();
 
     /**
      * An implementation of {@link EntityResolver} that finds external entities on the class path of the current
      * thread's context class loader.
      */
-    final public static EntityResolver ClasspathResolver = new EntityResolver() {
+    final public static EntityResolver classpathResolver = new EntityResolver() {
 
         @Override
         public InputSource resolveEntity(String publicId, String systemId) {
@@ -136,7 +136,7 @@ public class Control {
      * An implementation of {@link ErrorHandler} that immediately throws any {@link SAXException} passed to it,
      * regardless of severity.
      */
-    final public static ErrorHandler StrictErrorHandler = new ErrorHandler() {
+    final public static ErrorHandler strictErrorHandler = new ErrorHandler() {
 
         @Override
         public void error(SAXParseException exception) throws SAXException {
@@ -157,7 +157,7 @@ public class Control {
     /**
      * A {@link DocumentBuilder} local to the current thread.
      */
-    final protected static ThreadLocal<DocumentBuilder> BuilderLocal = new ThreadLocal<DocumentBuilder>() {
+    final protected static ThreadLocal<DocumentBuilder> builderLocal = new ThreadLocal<DocumentBuilder>() {
 
         @Override
         protected DocumentBuilder initialValue() {
@@ -170,8 +170,8 @@ public class Control {
                 dbf.setFeature("http://apache.org/xml/features/validation/dynamic", true);
 
                 DocumentBuilder db = dbf.newDocumentBuilder();
-                db.setEntityResolver(ClasspathResolver);
-                db.setErrorHandler(StrictErrorHandler);
+                db.setEntityResolver(classpathResolver);
+                db.setErrorHandler(strictErrorHandler);
 
                 return db;
 
@@ -185,7 +185,7 @@ public class Control {
     /**
      * A {@link Transformer} local to the current thread.
      */
-    final protected static ThreadLocal<Transformer> TransformerLocal = new ThreadLocal<Transformer>() {
+    final protected static ThreadLocal<Transformer> transformerLocal = new ThreadLocal<Transformer>() {
 
         @Override
         protected Transformer initialValue() {
@@ -269,10 +269,10 @@ public class Control {
      */
     final public static void tick() {
 
-        checkTrue(TimestampLocal.get() == null, //
+        checkTrue(timestampLocal.get() == null, //
                 "Must call tock() before tick()");
 
-        TimestampLocal.set(System.currentTimeMillis());
+        timestampLocal.set(System.currentTimeMillis());
     }
 
     /**
@@ -282,12 +282,12 @@ public class Control {
      */
     final public static long tock() {
 
-        Long timestamp = TimestampLocal.get();
+        Long timestamp = timestampLocal.get();
 
         checkTrue(timestamp != null, //
                 "Must call tick() before tock()");
 
-        TimestampLocal.set(null);
+        timestampLocal.set(null);
 
         return System.currentTimeMillis() - timestamp;
     }
@@ -812,7 +812,7 @@ public class Control {
 
         ProcessBuilder pb = new ProcessBuilder(execArgs);
 
-        Map<String, String> env = EnvironmentLocal.get();
+        Map<String, String> env = environmentLocal.get();
 
         if (env != null) {
             pb.environment().putAll(env);
@@ -938,7 +938,7 @@ public class Control {
      *             when something goes awry.
      */
     final public static int execAndWaitFor(String... execArgs) throws IOException {
-        return execAndWaitFor(NullInputStream, NullOutputStream, NullOutputStream, execArgs);
+        return execAndWaitFor(nullInputStream, nullOutputStream, nullOutputStream, execArgs);
     }
 
     /**
@@ -953,7 +953,7 @@ public class Control {
      *             when something goes awry.
      */
     final public static int execAndWaitFor(InputStream parentIn, String... execArgs) throws IOException {
-        return execAndWaitFor(parentIn, NullOutputStream, NullOutputStream, execArgs);
+        return execAndWaitFor(parentIn, nullOutputStream, nullOutputStream, execArgs);
     }
 
     /**
@@ -968,7 +968,7 @@ public class Control {
      *             when something goes awry.
      */
     final public static int execAndWaitFor(OutputStream parentOut, String... execArgs) throws IOException {
-        return execAndWaitFor(NullInputStream, parentOut, parentOut, execArgs);
+        return execAndWaitFor(nullInputStream, parentOut, parentOut, execArgs);
     }
 
     /**
@@ -994,12 +994,12 @@ public class Control {
      */
     final public static Map<String, String> beginEnvironment() {
 
-        checkTrue(EnvironmentLocal.get() == null, //
+        checkTrue(environmentLocal.get() == null, //
                 "Must call endEnvironment() before beginEnvironment()");
 
         Map<String, String> env = new HashMap<String, String>();
 
-        EnvironmentLocal.set(env);
+        environmentLocal.set(env);
 
         return env;
     }
@@ -1009,10 +1009,10 @@ public class Control {
      */
     final public static void endEnvironment() {
 
-        checkTrue(EnvironmentLocal.get() != null, //
+        checkTrue(environmentLocal.get() != null, //
                 "Must call beginEnvironment() before endEnvironment()");
 
-        EnvironmentLocal.set(null);
+        environmentLocal.set(null);
     }
 
     /**
@@ -1080,7 +1080,7 @@ public class Control {
      * Creates a new {@link Document}.
      */
     final public static Document newDocument() {
-        return BuilderLocal.get().newDocument();
+        return builderLocal.get().newDocument();
     }
 
     /**
@@ -1123,7 +1123,7 @@ public class Control {
 
         try {
 
-            return BuilderLocal.get().parse(in);
+            return builderLocal.get().parse(in);
 
         } catch (RuntimeException e) {
 
@@ -1144,7 +1144,7 @@ public class Control {
 
         try {
 
-            TransformerLocal.get().transform(new DOMSource(node), new StreamResult(sw));
+            transformerLocal.get().transform(new DOMSource(node), new StreamResult(sw));
 
         } catch (TransformerException e) {
 

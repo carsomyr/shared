@@ -142,13 +142,13 @@ public class NativeArrayKernel implements ArrayKernel {
 
     @Override
     final public native <V> SparseArrayState<V> insertSparse( //
-            V oldV, int[] oldD, int[] oldS, int[] oldDO, int[] oldI, //
-            V newV, int[] newLI);
+            V oldV, int[] oldD, int[] oldS, int[] oldDo, int[] oldI, //
+            V newV, int[] newLi);
 
     @Override
     final public native <V> SparseArrayState<V> sliceSparse(int[] slices, //
-            V srcV, int[] srcD, int[] srcS, int[] srcDO, //
-            int[] srcI, int[] srcIO, int[] srcII, //
-            V dstV, int[] dstD, int[] dstS, int[] dstDO, //
-            int[] dstI, int[] dstIO, int[] dstII);
+            V srcV, int[] srcD, int[] srcS, int[] srcDo, //
+            int[] srcI, int[] srcIo, int[] srcIi, //
+            V dstV, int[] dstD, int[] dstS, int[] dstDo, //
+            int[] dstI, int[] dstIo, int[] dstIi);
 }

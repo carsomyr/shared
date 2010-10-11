@@ -28,7 +28,7 @@
 
 package shared.test.array;
 
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.opKernel;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -58,7 +58,7 @@ public class MatrixTest {
      */
     @BeforeClass
     final public static void initClass() {
-        OpKernel.derandomize();
+        opKernel.derandomize();
     }
 
     /**
@@ -181,10 +181,10 @@ public class MatrixTest {
     }
 
     /**
-     * Tests {@link Matrix#mSVD()}.
+     * Tests {@link Matrix#mSvd()}.
      */
     @Test
-    public void testMSVD() {
+    public void testMSvd() {
 
         int size = 120;
 
@@ -195,7 +195,7 @@ public class MatrixTest {
             }
 
             RealArray r = new RealArray(size / i, i).uRnd(1.0);
-            RealArray[] svds = r.mSVD();
+            RealArray[] svds = r.mSvd();
 
             Control.checkTrue(r.eSub(svds[0].mMul(svds[1]).mMul(svds[2].mTranspose())) //
                     .uAbs().aSum() < 1e-8);

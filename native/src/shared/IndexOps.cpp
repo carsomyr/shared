@@ -75,15 +75,15 @@ inline jint *IndexOps::findProxy(JNIEnv *env, //
 
         // Initialize pinned arrays.
 
-        ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcDH(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcSH(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcDh(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcSh(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         ArrayPinHandler indicesH(env, logical, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         // NO JNI AFTER THIS POINT!
 
-        jint *srcVArr = (jint *) srcVH.get();
-        jint *srcDArr = (jint *) srcDH.get();
-        jint *srcSArr = (jint *) srcSH.get();
+        jint *srcVArr = (jint *) srcVh.get();
+        jint *srcDArr = (jint *) srcDh.get();
+        jint *srcSArr = (jint *) srcSh.get();
         jint *logicalArr = (jint *) indicesH.get();
 
         MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);

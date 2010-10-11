@@ -48,7 +48,7 @@ public class SparseOps {
      */
     @SuppressWarnings("unchecked")
     final public static <V> SparseArrayState<V> insert( //
-            V oldV, int[] oldD, int[] oldS, int[] oldDO, int[] oldI, //
+            V oldV, int[] oldD, int[] oldS, int[] oldDo, int[] oldI, //
             V newV, int[] newI) {
 
         int nDims = oldD.length;
@@ -63,7 +63,7 @@ public class SparseOps {
         MappingOps.checkDimensions(Arithmetic.product(oldD), oldD, oldS);
 
         for (int dim = 0; dim < nDims; dim++) {
-            Control.checkTrue(oldDO[dim + 1] - oldDO[dim] - 1 == oldD[dim], //
+            Control.checkTrue(oldDo[dim + 1] - oldDo[dim] - 1 == oldD[dim], //
                     "Invalid arguments");
         }
 
@@ -91,7 +91,7 @@ public class SparseOps {
         int[][] mergeResult = merge( //
                 oldI, Arithmetic.range(oldLen), //
                 newI, Arithmetic.range(newLen), //
-                oldD, oldS, oldDO);
+                oldD, oldS, oldDo);
 
         int[] newIndirections = mergeResult[3];
 
@@ -110,10 +110,10 @@ public class SparseOps {
      * .
      */
     final public static <V> SparseArrayState<V> slice(int[] slices, //
-            V srcV, int[] srcD, int[] srcS, int[] srcDO, //
-            int[] srcI, int[] srcIO, int[] srcII, //
-            V dstV, int[] dstD, int[] dstS, int[] dstDO, //
-            int[] dstI, int[] dstIO, int[] dstII) {
+            V srcV, int[] srcD, int[] srcS, int[] srcDo, //
+            int[] srcI, int[] srcIo, int[] srcIi, //
+            V dstV, int[] dstD, int[] dstS, int[] dstDo, //
+            int[] dstI, int[] dstIo, int[] dstIi) {
 
         int nSlices = slices.length / 3;
         int nDims = srcD.length;
@@ -126,12 +126,12 @@ public class SparseOps {
                 && slices.length % 3 == 0 //
                 && srcLen == srcI.length //
                 && dstLen == dstI.length //
-                && srcDO.length == nDims + 1 //
-                && srcIO.length == Arithmetic.sum(srcD) + nDims //
-                && srcII.length == nDims * srcLen //
-                && dstDO.length == nDims + 1 //
-                && dstIO.length == Arithmetic.sum(dstD) + nDims //
-                && dstII.length == nDims * dstLen, //
+                && srcDo.length == nDims + 1 //
+                && srcIo.length == Arithmetic.sum(srcD) + nDims //
+                && srcIi.length == nDims * srcLen //
+                && dstDo.length == nDims + 1 //
+                && dstIo.length == Arithmetic.sum(dstD) + nDims //
+                && dstIi.length == nDims * dstLen, //
                 "Invalid arguments");
 
         MappingOps.checkDimensions(Arithmetic.product(srcD), srcD, srcS);
@@ -152,14 +152,14 @@ public class SparseOps {
         }
 
         for (int dim = 0; dim < nDims; dim++) {
-            Control.checkTrue((srcDO[dim + 1] - srcDO[dim] - 1 == srcD[dim]) //
-                    && (dstDO[dim + 1] - dstDO[dim] - 1 == dstD[dim]), //
+            Control.checkTrue((srcDo[dim + 1] - srcDo[dim] - 1 == srcD[dim]) //
+                    && (dstDo[dim + 1] - dstDo[dim] - 1 == dstD[dim]), //
                     "Invalid arguments");
         }
 
         //
 
-        int offsetArrayLen = srcDO[nDims];
+        int offsetArrayLen = srcDo[nDims];
 
         int[] srcSliceCounts = new int[nDims];
         int[] lookupCounts = new int[offsetArrayLen];
@@ -173,7 +173,7 @@ public class SparseOps {
             int dim = slices[i + 2];
 
             srcSliceCounts[dim]++;
-            lookupCounts[srcDO[dim] + srcIndex]++;
+            lookupCounts[srcDo[dim] + srcIndex]++;
         }
 
         //
@@ -193,11 +193,11 @@ public class SparseOps {
 
             for (int dimIndex = 0; dimIndex < dimSize; dimIndex++) {
 
-                lookupOffsets[srcDO[dim] + dimIndex] = lookupOffset;
-                lookupOffset += lookupCounts[srcDO[dim] + dimIndex];
+                lookupOffsets[srcDo[dim] + dimIndex] = lookupOffset;
+                lookupOffset += lookupCounts[srcDo[dim] + dimIndex];
             }
 
-            lookupOffsets[srcDO[dim] + dimSize] = lookupOffset;
+            lookupOffsets[srcDo[dim] + dimSize] = lookupOffset;
         }
 
         sliceOffsets[nDims] = sliceOffset;
@@ -220,11 +220,11 @@ public class SparseOps {
 
             srcSlices[sliceOffsets[dim] + srcSliceCounts[dim]] = srcIndex;
             dstSlices[sliceOffsets[dim] + srcSliceCounts[dim]] = dstIndex;
-            dstLookups[lookupOffsets[srcDO[dim] + srcIndex] //
-                    + lookupCounts[srcDO[dim] + srcIndex]] = dstIndex;
+            dstLookups[lookupOffsets[srcDo[dim] + srcIndex] //
+                    + lookupCounts[srcDo[dim] + srcIndex]] = dstIndex;
 
             srcSliceCounts[dim]++;
-            lookupCounts[srcDO[dim] + srcIndex]++;
+            lookupCounts[srcDo[dim] + srcIndex]++;
         }
 
         //
@@ -238,20 +238,20 @@ public class SparseOps {
             dstSliceCounts[dim] = normalize(dstSlices, sliceOffsets[dim], sliceOffsets[dim + 1]);
 
             for (int dimIndex = 0, dimSize = srcD[dim]; dimIndex < dimSize; dimIndex++) {
-                lookupCounts[srcDO[dim] + dimIndex] = normalize(dstLookups, //
-                        lookupOffsets[srcDO[dim] + dimIndex], //
-                        lookupOffsets[srcDO[dim] + dimIndex + 1]);
+                lookupCounts[srcDo[dim] + dimIndex] = normalize(dstLookups, //
+                        lookupOffsets[srcDo[dim] + dimIndex], //
+                        lookupOffsets[srcDo[dim] + dimIndex + 1]);
             }
         }
 
         //
 
         int[] srcIndirections = getSlicedIndirections(sliceOffsets, srcSliceCounts, srcSlices, //
-                srcDO, srcIO, srcII, srcD);
+                srcDo, srcIo, srcIi, srcD);
         int nSrcIndirections = srcIndirections.length;
 
         int[] dstIndirections = getSlicedIndirections(sliceOffsets, dstSliceCounts, dstSlices, //
-                dstDO, dstIO, dstII, dstD);
+                dstDo, dstIo, dstIi, dstD);
         int nDstIndirections = dstIndirections.length;
 
         //
@@ -277,7 +277,7 @@ public class SparseOps {
 
                 int logicalIndex = physical / srcS[dim];
 
-                mapLen *= lookupCounts[srcDO[dim] + logicalIndex];
+                mapLen *= lookupCounts[srcDo[dim] + logicalIndex];
 
                 physical %= srcS[dim];
             }
@@ -308,7 +308,7 @@ public class SparseOps {
                 logical[dim] = physical / srcS[dim];
 
                 newIndices[indirectionOffset] += dstS[dim] //
-                        * dstLookups[lookupOffsets[srcDO[dim] + logical[dim]]];
+                        * dstLookups[lookupOffsets[srcDo[dim] + logical[dim]]];
 
                 physical %= srcS[dim];
             }
@@ -317,8 +317,8 @@ public class SparseOps {
 
             for (int dim = nDims - 1, blockSize = 1, size; dim >= 0; blockSize *= size, dim--) {
 
-                int start = lookupOffsets[srcDO[dim] + logical[dim]];
-                size = lookupCounts[srcDO[dim] + logical[dim]];
+                int start = lookupOffsets[srcDo[dim] + logical[dim]];
+                size = lookupCounts[srcDo[dim] + logical[dim]];
 
                 for (int offset = indirectionOffset + blockSize, //
                 offsetEnd = indirectionOffset + blockSize * size, n = start + 1; //
@@ -380,7 +380,7 @@ public class SparseOps {
         newIndirections = res[1];
 
         return assign(dstV, srcV, merge(oldIndices, oldIndirections, newIndices, newIndirections, //
-                dstD, dstS, dstDO));
+                dstD, dstS, dstDo));
     }
 
     /**

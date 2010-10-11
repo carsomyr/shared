@@ -41,7 +41,7 @@ public class Scatter implements Plottable {
     /**
      * The generic axis range.
      */
-    final protected static double[] AxisRange = new double[] { 0.0, 1.0 };
+    final protected static double[] axisRange = new double[] { 0.0, 1.0 };
 
     final RealArray[] datasets;
     final String[] dataTitles;
@@ -62,7 +62,7 @@ public class Scatter implements Plottable {
 
         this.datasets = datasets;
         this.dataTitles = PlotBase.createDefaultTitles(nClasses);
-        this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.Points);
+        this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.points);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class Scatter implements Plottable {
 
     @Override
     public double[] getAxisRange(AxisType axisType) {
-        return AxisRange;
+        return axisRange;
     }
 
     @Override

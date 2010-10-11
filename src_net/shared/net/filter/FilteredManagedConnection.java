@@ -34,7 +34,7 @@ import java.util.Queue;
 import shared.event.Handler;
 import shared.net.AbstractManagedConnection;
 import shared.net.ConnectionManager;
-import shared.net.filter.OOBEvent.OOBEventType;
+import shared.net.filter.OobEvent.OobEventType;
 
 /**
  * An abstract base class implementing much of {@link FilteredConnection}.
@@ -60,17 +60,17 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     final Queue<ByteBuffer> outboundsFiltered;
     final Queue<ByteBuffer> outboundsFilteredWriteOnly;
 
-    final Queue<OOBEvent> inboundEvts;
-    final Queue<OOBEvent> inboundEvtsReadOnly;
-    final Queue<OOBEvent> inboundEvtsFiltered;
-    final Queue<OOBEvent> inboundEvtsFilteredWriteOnly;
+    final Queue<OobEvent> inboundEvts;
+    final Queue<OobEvent> inboundEvtsReadOnly;
+    final Queue<OobEvent> inboundEvtsFiltered;
+    final Queue<OobEvent> inboundEvtsFilteredWriteOnly;
 
-    final Queue<OOBEvent> outboundEvts;
-    final Queue<OOBEvent> outboundEvtsReadOnly;
-    final Queue<OOBEvent> outboundEvtsFiltered;
-    final Queue<OOBEvent> outboundEvtsFilteredWriteOnly;
+    final Queue<OobEvent> outboundEvts;
+    final Queue<OobEvent> outboundEvtsReadOnly;
+    final Queue<OobEvent> outboundEvtsFiltered;
+    final Queue<OobEvent> outboundEvtsFilteredWriteOnly;
 
-    OOBFilter<ByteBuffer, T> filter;
+    OobFilter<ByteBuffer, T> filter;
 
     /**
      * Default constructor.
@@ -98,7 +98,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         this.outboundEvtsFiltered = Filters.createQueue();
         this.outboundEvtsFilteredWriteOnly = Filters.writeOnlyQueue(this.outboundEvtsFiltered);
 
-        this.filter = new OOBFilter<ByteBuffer, T>() {
+        this.filter = new OobFilter<ByteBuffer, T>() {
 
             @Override
             public void applyInbound(Queue<ByteBuffer> inputs, Queue<T> outputs) {
@@ -111,14 +111,14 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
             }
 
             @Override
-            public void applyInboundOOB(Queue<ByteBuffer> inputs, Queue<OOBEvent> inputEvts, //
-                    Queue<T> outputs, Queue<OOBEvent> outputEvts) {
+            public void applyInboundOob(Queue<ByteBuffer> inputs, Queue<OobEvent> inputEvts, //
+                    Queue<T> outputs, Queue<OobEvent> outputEvts) {
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
 
             @Override
-            public void applyOutboundOOB(Queue<T> inputs, Queue<OOBEvent> inputEvts, //
-                    Queue<ByteBuffer> outputs, Queue<OOBEvent> outputEvts) {
+            public void applyOutboundOob(Queue<T> inputs, Queue<OobEvent> inputEvts, //
+                    Queue<ByteBuffer> outputs, Queue<OobEvent> outputEvts) {
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
         };
@@ -128,7 +128,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     @Override
     public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory) {
 
-        this.filter = Filters.asOOBFilter(filterFactory.newFilter((C) this));
+        this.filter = Filters.asOobFilter(filterFactory.newFilter((C) this));
 
         return (C) this;
     }
@@ -158,7 +158,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     @Override
     public void onBind() {
 
-        onOOBEvent(OOBEventType.BIND, null, new Handler<Queue<T>>() {
+        onOobEvent(OobEventType.BIND, null, new Handler<Queue<T>>() {
 
             @Override
             public void handle(Queue<T> inputs) {
@@ -179,27 +179,27 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     @Override
     public void onClosing(final ClosingType type, ByteBuffer bb) {
 
-        final OOBEventType eventType;
+        final OobEventType eventType;
 
         switch (type) {
 
         case EOS:
-            eventType = OOBEventType.CLOSING_EOS;
+            eventType = OobEventType.CLOSING_EOS;
             break;
 
         case USER:
-            eventType = OOBEventType.CLOSING_USER;
+            eventType = OobEventType.CLOSING_USER;
             break;
 
         case ERROR:
-            eventType = OOBEventType.CLOSING_ERROR;
+            eventType = OobEventType.CLOSING_ERROR;
             break;
 
         default:
             throw new IllegalArgumentException("Invalid closing type");
         }
 
-        onOOBEvent(eventType, bb, new Handler<Queue<T>>() {
+        onOobEvent(eventType, bb, new Handler<Queue<T>>() {
 
             @Override
             public void handle(Queue<T> inputs) {
@@ -209,18 +209,18 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     }
 
     /**
-     * Propagates an {@link OOBEvent} through the underlying {@link OOBFilter}.
+     * Propagates an {@link OobEvent} through the underlying {@link OobFilter}.
      */
-    protected void onOOBEvent(OOBEventType type, ByteBuffer bb, Handler<Queue<T>> handler) {
+    protected void onOobEvent(OobEventType type, ByteBuffer bb, Handler<Queue<T>> handler) {
 
-        OOBEvent evt = new OOBEvent(type, null);
+        OobEvent evt = new OobEvent(type, null);
 
         if (bb != null) {
             this.inbounds.add(bb);
         }
 
         this.inboundEvts.add(evt);
-        this.filter.applyInboundOOB( //
+        this.filter.applyInboundOob( //
                 this.inboundsReadOnly, this.inboundEvtsReadOnly, //
                 this.inboundsFilteredWriteOnly, this.inboundEvtsFilteredWriteOnly);
 
@@ -232,7 +232,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         synchronized (this) {
 
             this.outboundEvts.add(evt);
-            this.filter.applyOutboundOOB( //
+            this.filter.applyOutboundOob( //
                     this.outboundsReadOnly, this.outboundEvtsReadOnly, //
                     this.outboundsFilteredWriteOnly, this.outboundEvtsFilteredWriteOnly);
 

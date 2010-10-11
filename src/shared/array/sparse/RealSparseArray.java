@@ -29,9 +29,9 @@
 package shared.array.sparse;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.FieldPrecision;
-import static shared.array.ArrayBase.FieldWidth;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.fieldPrecision;
+import static shared.array.ArrayBase.fieldWidth;
+import static shared.array.ArrayBase.opKernel;
 
 import java.util.Formatter;
 
@@ -51,7 +51,7 @@ public class RealSparseArray extends ProtoSparseArray<RealSparseArray, double[],
     /**
      * An empty array.
      */
-    final protected static double[] Empty = new double[] {};
+    final protected static double[] empty = new double[] {};
 
     /**
      * Default constructor.
@@ -64,7 +64,7 @@ public class RealSparseArray extends ProtoSparseArray<RealSparseArray, double[],
      * Internal constructor with a distinctive signature.
      */
     protected RealSparseArray(int unused, int[] dims) {
-        super(new SparseArrayState<double[]>(Empty, dims), //
+        super(new SparseArrayState<double[]>(empty, dims), //
                 dims, DEFAULT_ORDER.strides(dims), createDimensionOffsets(dims));
 
         Control.checkTrue(dims.length > 0);
@@ -96,14 +96,14 @@ public class RealSparseArray extends ProtoSparseArray<RealSparseArray, double[],
 
         if (value == null) {
 
-            state = new SparseArrayState<double[]>(Empty, dims);
+            state = new SparseArrayState<double[]>(empty, dims);
 
         } else {
 
             double[] values = Arrays.newArray(Arithmetic.product(dims), value.doubleValue());
 
-            state = OpKernel.insertSparse( //
-                    Empty, dims, strides, dimOffsets, EmptyIndices, //
+            state = opKernel.insertSparse( //
+                    empty, dims, strides, dimOffsets, emptyIndices, //
                     values, Arithmetic.range(values.length));
         }
 
@@ -122,7 +122,7 @@ public class RealSparseArray extends ProtoSparseArray<RealSparseArray, double[],
 
     @Override
     protected double[] empty() {
-        return Empty;
+        return empty;
     }
 
     @Override
@@ -171,7 +171,7 @@ public class RealSparseArray extends ProtoSparseArray<RealSparseArray, double[],
             return f.toString();
         }
 
-        String valueFormat = String.format("%%%d.%df", FieldWidth, FieldPrecision);
+        String valueFormat = String.format("%%%d.%df", fieldWidth, fieldPrecision);
         String indexFormat = String.format("%%%dd", exponentIndex + 2);
 
         ArrayBase.formatSparseArray(f, valueFormat, indexFormat, //

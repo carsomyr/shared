@@ -40,13 +40,13 @@ void LinearAlgebraOps::eigs(JNIEnv *env, jobject thisObj, //
             throw std::runtime_error("Invalid arguments");
         }
 
-        ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler vecVH(env, vecV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
-        ArrayPinHandler valVH(env, valV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler vecVh(env, vecV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler valVh(env, valV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
 
-        jdouble *srcVArr = (jdouble *) srcVH.get();
-        jdouble *vecVArr = (jdouble *) vecVH.get();
-        jdouble *valVArr = (jdouble *) valVH.get();
+        jdouble *srcVArr = (jdouble *) srcVh.get();
+        jdouble *vecVArr = (jdouble *) vecVh.get();
+        jdouble *valVArr = (jdouble *) valVh.get();
 
         MallocHandler allH(sizeof(jdouble) * srcLen);
         jdouble *all = (jdouble *) allH.get();

@@ -112,7 +112,7 @@ public class ElementOps {
         public double op(double a, double b);
     }
 
-    final static RealBinaryOperation REAddOp = new RealBinaryOperation() {
+    final static RealBinaryOperation reAddOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double b) {
@@ -120,7 +120,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RESubOp = new RealBinaryOperation() {
+    final static RealBinaryOperation reSubOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double b) {
@@ -128,7 +128,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation REMulOp = new RealBinaryOperation() {
+    final static RealBinaryOperation reMulOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double b) {
@@ -136,7 +136,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation REDivOp = new RealBinaryOperation() {
+    final static RealBinaryOperation reDivOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double b) {
@@ -144,7 +144,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation REMaxOp = new RealBinaryOperation() {
+    final static RealBinaryOperation reMaxOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double b) {
@@ -152,7 +152,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation REMinOp = new RealBinaryOperation() {
+    final static RealBinaryOperation reMinOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double b) {
@@ -171,7 +171,7 @@ public class ElementOps {
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm);
     }
 
-    final static ComplexBinaryOperation CEAddOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation ceAddOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm) {
@@ -181,7 +181,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexBinaryOperation CESubOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation ceSubOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm) {
@@ -191,7 +191,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexBinaryOperation CEMulOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation ceMulOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm) {
@@ -201,7 +201,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexBinaryOperation CEDivOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation ceDivOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double bRe, double bIm) {
@@ -222,7 +222,7 @@ public class ElementOps {
         public int op(int a, int b);
     }
 
-    final static IntegerBinaryOperation IEAddOp = new IntegerBinaryOperation() {
+    final static IntegerBinaryOperation ieAddOp = new IntegerBinaryOperation() {
 
         @Override
         public int op(int a, int b) {
@@ -230,7 +230,7 @@ public class ElementOps {
         }
     };
 
-    final static IntegerBinaryOperation IESubOp = new IntegerBinaryOperation() {
+    final static IntegerBinaryOperation ieSubOp = new IntegerBinaryOperation() {
 
         @Override
         public int op(int a, int b) {
@@ -238,7 +238,7 @@ public class ElementOps {
         }
     };
 
-    final static IntegerBinaryOperation IEMulOp = new IntegerBinaryOperation() {
+    final static IntegerBinaryOperation ieMulOp = new IntegerBinaryOperation() {
 
         @Override
         public int op(int a, int b) {
@@ -246,7 +246,7 @@ public class ElementOps {
         }
     };
 
-    final static IntegerBinaryOperation IEMaxOp = new IntegerBinaryOperation() {
+    final static IntegerBinaryOperation ieMaxOp = new IntegerBinaryOperation() {
 
         @Override
         public int op(int a, int b) {
@@ -254,7 +254,7 @@ public class ElementOps {
         }
     };
 
-    final static IntegerBinaryOperation IEMinOp = new IntegerBinaryOperation() {
+    final static IntegerBinaryOperation ieMinOp = new IntegerBinaryOperation() {
 
         @Override
         public int op(int a, int b) {
@@ -273,7 +273,7 @@ public class ElementOps {
         public double op(double aRe, double aIm);
     }
 
-    final static ComplexToRealOperation CToRAbsOp = new ComplexToRealOperation() {
+    final static ComplexToRealOperation cToRAbsOp = new ComplexToRealOperation() {
 
         @Override
         public double op(double aRe, double aIm) {
@@ -281,7 +281,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexToRealOperation CToRReOp = new ComplexToRealOperation() {
+    final static ComplexToRealOperation cToRReOp = new ComplexToRealOperation() {
 
         @Override
         public double op(double aRe, double aIm) {
@@ -289,7 +289,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexToRealOperation CToRImOp = new ComplexToRealOperation() {
+    final static ComplexToRealOperation cToRImOp = new ComplexToRealOperation() {
 
         @Override
         public double op(double aRe, double aIm) {
@@ -308,7 +308,7 @@ public class ElementOps {
         public void op(double[] res, double a);
     }
 
-    final static RealToComplexOperation RToCReOp = new RealToComplexOperation() {
+    final static RealToComplexOperation rToCReOp = new RealToComplexOperation() {
 
         @Override
         public void op(double[] res, double a) {
@@ -318,7 +318,7 @@ public class ElementOps {
         }
     };
 
-    final static RealToComplexOperation RToCImOp = new RealToComplexOperation() {
+    final static RealToComplexOperation rToCImOp = new RealToComplexOperation() {
 
         @Override
         public void op(double[] res, double a) {
@@ -328,7 +328,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUAbsOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruAbsOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -336,7 +336,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUPowOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruPowOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -344,7 +344,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUExpOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruExpOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -352,7 +352,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RURndOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruRndOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -360,7 +360,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RULogOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruLogOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -368,7 +368,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUSqrtOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruSqrtOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -376,7 +376,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUSqrOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruSqrOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -384,7 +384,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUInvOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruInvOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -392,7 +392,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUCosOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruCosOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -400,7 +400,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUSinOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruSinOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -408,7 +408,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUAtanOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruAtanOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -416,7 +416,7 @@ public class ElementOps {
         }
     };
 
-    final static RealBinaryOperation RUFillOp = new RealBinaryOperation() {
+    final static RealBinaryOperation ruFillOp = new RealBinaryOperation() {
 
         @Override
         public double op(double a, double v) {
@@ -424,7 +424,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexBinaryOperation CUExpOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation cuExpOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
@@ -434,7 +434,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexBinaryOperation CURndOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation cuRndOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
@@ -444,7 +444,7 @@ public class ElementOps {
         }
     };
 
-    final static ComplexBinaryOperation CUConjOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation cuConjOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
@@ -454,51 +454,51 @@ public class ElementOps {
         }
     };
 
-    final static ComplexBinaryOperation CUCosOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation cuCosOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
 
-            CEMulOp.op(res, 0.0, 1.0, vRe, vIm);
-            CUExpOp.op(res, Double.NaN, Double.NaN, res[0], res[1]);
+            ceMulOp.op(res, 0.0, 1.0, vRe, vIm);
+            cuExpOp.op(res, Double.NaN, Double.NaN, res[0], res[1]);
 
             double xRe = res[0];
             double xIm = res[1];
 
-            CEMulOp.op(res, 0.0, -1.0, vRe, vIm);
-            CUExpOp.op(res, Double.NaN, Double.NaN, res[0], res[1]);
+            ceMulOp.op(res, 0.0, -1.0, vRe, vIm);
+            cuExpOp.op(res, Double.NaN, Double.NaN, res[0], res[1]);
 
             double yRe = res[0];
             double yIm = res[1];
 
-            CEAddOp.op(res, xRe, xIm, yRe, yIm);
-            CEDivOp.op(res, res[0], res[1], 2.0, 0.0);
+            ceAddOp.op(res, xRe, xIm, yRe, yIm);
+            ceDivOp.op(res, res[0], res[1], 2.0, 0.0);
         }
     };
 
-    final static ComplexBinaryOperation CUSinOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation cuSinOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
 
-            CEMulOp.op(res, 0.0, 1.0, vRe, vIm);
-            CUExpOp.op(res, Double.NaN, Double.NaN, res[0], res[1]);
+            ceMulOp.op(res, 0.0, 1.0, vRe, vIm);
+            cuExpOp.op(res, Double.NaN, Double.NaN, res[0], res[1]);
 
             double xRe = res[0];
             double xIm = res[1];
 
-            CEMulOp.op(res, 0.0, -1.0, vRe, vIm);
-            CUExpOp.op(res, Double.NaN, Double.NaN, res[0], res[1]);
+            ceMulOp.op(res, 0.0, -1.0, vRe, vIm);
+            cuExpOp.op(res, Double.NaN, Double.NaN, res[0], res[1]);
 
             double yRe = res[0];
             double yIm = res[1];
 
-            CESubOp.op(res, xRe, xIm, yRe, yIm);
-            CEDivOp.op(res, res[0], res[1], 0.0, 2.0);
+            ceSubOp.op(res, xRe, xIm, yRe, yIm);
+            ceDivOp.op(res, res[0], res[1], 0.0, 2.0);
         }
     };
 
-    final static ComplexBinaryOperation CUFillOp = new ComplexBinaryOperation() {
+    final static ComplexBinaryOperation cuFillOp = new ComplexBinaryOperation() {
 
         @Override
         public void op(double[] res, double aRe, double aIm, double vRe, double vIm) {
@@ -508,7 +508,7 @@ public class ElementOps {
         }
     };
 
-    final static IntegerBinaryOperation IUFillOp = new IntegerBinaryOperation() {
+    final static IntegerBinaryOperation iuFillOp = new IntegerBinaryOperation() {
 
         @Override
         public int op(int a, int v) {
@@ -527,7 +527,7 @@ public class ElementOps {
         public double op(double[] srcV);
     }
 
-    final static RealAccumulatorOperation RASumOp = new RealAccumulatorOperation() {
+    final static RealAccumulatorOperation raSumOp = new RealAccumulatorOperation() {
 
         @Override
         public double op(double[] srcV) {
@@ -535,7 +535,7 @@ public class ElementOps {
         }
     };
 
-    final static RealAccumulatorOperation RAProdOp = new RealAccumulatorOperation() {
+    final static RealAccumulatorOperation raProdOp = new RealAccumulatorOperation() {
 
         @Override
         public double op(double[] srcV) {
@@ -543,7 +543,7 @@ public class ElementOps {
         }
     };
 
-    final static RealAccumulatorOperation RAMaxOp = new RealAccumulatorOperation() {
+    final static RealAccumulatorOperation raMaxOp = new RealAccumulatorOperation() {
 
         @Override
         public double op(double[] srcV) {
@@ -551,7 +551,7 @@ public class ElementOps {
         }
     };
 
-    final static RealAccumulatorOperation RAMinOp = new RealAccumulatorOperation() {
+    final static RealAccumulatorOperation raMinOp = new RealAccumulatorOperation() {
 
         @Override
         public double op(double[] srcV) {
@@ -559,7 +559,7 @@ public class ElementOps {
         }
     };
 
-    final static RealAccumulatorOperation RAVarOp = new RealAccumulatorOperation() {
+    final static RealAccumulatorOperation raVarOp = new RealAccumulatorOperation() {
 
         @Override
         public double op(double[] srcV) {
@@ -567,7 +567,7 @@ public class ElementOps {
         }
     };
 
-    final static RealAccumulatorOperation RAEntOp = new RealAccumulatorOperation() {
+    final static RealAccumulatorOperation raEntOp = new RealAccumulatorOperation() {
 
         @Override
         public double op(double[] srcV) {
@@ -586,7 +586,7 @@ public class ElementOps {
         public double[] op(double[] srcV);
     }
 
-    final static ComplexAccumulatorOperation CASumOp = new ComplexAccumulatorOperation() {
+    final static ComplexAccumulatorOperation caSumOp = new ComplexAccumulatorOperation() {
 
         @Override
         public double[] op(double[] srcV) {
@@ -594,14 +594,14 @@ public class ElementOps {
             double[] res = new double[2];
 
             for (int i = 0, n = srcV.length; i < n; i += 2) {
-                CEAddOp.op(res, res[0], res[1], srcV[i], srcV[i + 1]);
+                ceAddOp.op(res, res[0], res[1], srcV[i], srcV[i + 1]);
             }
 
             return res;
         }
     };
 
-    final static ComplexAccumulatorOperation CAProdOp = new ComplexAccumulatorOperation() {
+    final static ComplexAccumulatorOperation caProdOp = new ComplexAccumulatorOperation() {
 
         @Override
         public double[] op(double[] srcV) {
@@ -609,7 +609,7 @@ public class ElementOps {
             double[] res = new double[] { 1.0, 0.0 };
 
             for (int i = 0, n = srcV.length; i < n; i += 2) {
-                CEMulOp.op(res, res[0], res[1], srcV[i], srcV[i + 1]);
+                ceMulOp.op(res, res[0], res[1], srcV[i], srcV[i + 1]);
             }
 
             return res;
@@ -626,27 +626,27 @@ public class ElementOps {
         switch (type) {
 
         case RA_SUM:
-            op = RASumOp;
+            op = raSumOp;
             break;
 
         case RA_PROD:
-            op = RAProdOp;
+            op = raProdOp;
             break;
 
         case RA_ENT:
-            op = RAEntOp;
+            op = raEntOp;
             break;
 
         case RA_VAR:
-            op = RAVarOp;
+            op = raVarOp;
             break;
 
         case RA_MAX:
-            op = RAMaxOp;
+            op = raMaxOp;
             break;
 
         case RA_MIN:
-            op = RAMinOp;
+            op = raMinOp;
             break;
 
         default:
@@ -666,11 +666,11 @@ public class ElementOps {
         switch (type) {
 
         case CA_SUM:
-            op = CASumOp;
+            op = caSumOp;
             break;
 
         case CA_PROD:
-            op = CAProdOp;
+            op = caProdOp;
             break;
 
         default:
@@ -692,59 +692,59 @@ public class ElementOps {
         switch (type) {
 
         case RU_ADD:
-            op = REAddOp;
+            op = reAddOp;
             break;
 
         case RU_MUL:
-            op = REMulOp;
+            op = reMulOp;
             break;
 
         case RU_EXP:
-            op = RUExpOp;
+            op = ruExpOp;
             break;
 
         case RU_LOG:
-            op = RULogOp;
+            op = ruLogOp;
             break;
 
         case RU_POW:
-            op = RUPowOp;
+            op = ruPowOp;
             break;
 
         case RU_RND:
-            op = RURndOp;
+            op = ruRndOp;
             break;
 
         case RU_ABS:
-            op = RUAbsOp;
+            op = ruAbsOp;
             break;
 
         case RU_SQRT:
-            op = RUSqrtOp;
+            op = ruSqrtOp;
             break;
 
         case RU_SQR:
-            op = RUSqrOp;
+            op = ruSqrOp;
             break;
 
         case RU_INV:
-            op = RUInvOp;
+            op = ruInvOp;
             break;
 
         case RU_COS:
-            op = RUCosOp;
+            op = ruCosOp;
             break;
 
         case RU_SIN:
-            op = RUSinOp;
+            op = ruSinOp;
             break;
 
         case RU_ATAN:
-            op = RUAtanOp;
+            op = ruAtanOp;
             break;
 
         case RU_FILL:
-            op = RUFillOp;
+            op = ruFillOp;
             break;
 
         case RU_SHUFFLE:
@@ -774,35 +774,35 @@ public class ElementOps {
         switch (type) {
 
         case CU_ADD:
-            op = CEAddOp;
+            op = ceAddOp;
             break;
 
         case CU_MUL:
-            op = CEMulOp;
+            op = ceMulOp;
             break;
 
         case CU_EXP:
-            op = CUExpOp;
+            op = cuExpOp;
             break;
 
         case CU_RND:
-            op = CURndOp;
+            op = cuRndOp;
             break;
 
         case CU_CONJ:
-            op = CUConjOp;
+            op = cuConjOp;
             break;
 
         case CU_COS:
-            op = CUCosOp;
+            op = cuCosOp;
             break;
 
         case CU_SIN:
-            op = CUSinOp;
+            op = cuSinOp;
             break;
 
         case CU_FILL:
-            op = CUFillOp;
+            op = cuFillOp;
             break;
 
         case CU_SHUFFLE:
@@ -848,15 +848,15 @@ public class ElementOps {
         switch (type) {
 
         case IU_ADD:
-            op = IEAddOp;
+            op = ieAddOp;
             break;
 
         case IU_MUL:
-            op = IEMulOp;
+            op = ieMulOp;
             break;
 
         case IU_FILL:
-            op = IUFillOp;
+            op = iuFillOp;
             break;
 
         case IU_SHUFFLE:
@@ -890,19 +890,19 @@ public class ElementOps {
                 switch (type) {
 
                 case CE_ADD:
-                    op = CEAddOp;
+                    op = ceAddOp;
                     break;
 
                 case CE_SUB:
-                    op = CESubOp;
+                    op = ceSubOp;
                     break;
 
                 case CE_MUL:
-                    op = CEMulOp;
+                    op = ceMulOp;
                     break;
 
                 case CE_DIV:
-                    op = CEDivOp;
+                    op = ceDivOp;
                     break;
 
                 default:
@@ -930,27 +930,27 @@ public class ElementOps {
                 switch (type) {
 
                 case RE_ADD:
-                    op = REAddOp;
+                    op = reAddOp;
                     break;
 
                 case RE_SUB:
-                    op = RESubOp;
+                    op = reSubOp;
                     break;
 
                 case RE_MUL:
-                    op = REMulOp;
+                    op = reMulOp;
                     break;
 
                 case RE_DIV:
-                    op = REDivOp;
+                    op = reDivOp;
                     break;
 
                 case RE_MAX:
-                    op = REMaxOp;
+                    op = reMaxOp;
                     break;
 
                 case RE_MIN:
-                    op = REMinOp;
+                    op = reMinOp;
                     break;
 
                 default:
@@ -975,23 +975,23 @@ public class ElementOps {
             switch (type) {
 
             case IE_ADD:
-                op = IEAddOp;
+                op = ieAddOp;
                 break;
 
             case IE_SUB:
-                op = IESubOp;
+                op = ieSubOp;
                 break;
 
             case IE_MUL:
-                op = IEMulOp;
+                op = ieMulOp;
                 break;
 
             case IE_MAX:
-                op = IEMaxOp;
+                op = ieMaxOp;
                 break;
 
             case IE_MIN:
-                op = IEMinOp;
+                op = ieMinOp;
                 break;
 
             default:
@@ -1025,11 +1025,11 @@ public class ElementOps {
             switch (type) {
 
             case R_TO_C_RE:
-                op = RToCReOp;
+                op = rToCReOp;
                 break;
 
             case R_TO_C_IM:
-                op = RToCImOp;
+                op = rToCImOp;
                 break;
 
             default:
@@ -1058,15 +1058,15 @@ public class ElementOps {
             switch (type) {
 
             case C_TO_R_ABS:
-                op = CToRAbsOp;
+                op = cToRAbsOp;
                 break;
 
             case C_TO_R_RE:
-                op = CToRReOp;
+                op = cToRReOp;
                 break;
 
             case C_TO_R_IM:
-                op = CToRImOp;
+                op = cToRImOp;
                 break;
 
             default:

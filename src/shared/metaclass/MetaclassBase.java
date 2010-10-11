@@ -59,13 +59,13 @@ public class MetaclassBase {
     /**
      * A weak mapping from {@link ResourceRegistry}s to {@link TemporaryFileSet}s.
      */
-    final protected static Map<ResourceRegistry, TemporaryFileSet> RRToTFSMap = //
+    final protected static Map<ResourceRegistry, TemporaryFileSet> rrToTfsMap = //
     new WeakHashMap<ResourceRegistry, TemporaryFileSet>();
 
     /**
      * A weak set of {@link TemporaryFileSet}s.
      */
-    final protected static Set<TemporaryFileSet> TFSs = //
+    final protected static Set<TemporaryFileSet> tfss = //
     Collections.newSetFromMap(new WeakHashMap<TemporaryFileSet, Boolean>());
 
     static {
@@ -76,8 +76,8 @@ public class MetaclassBase {
             public void run() {
 
                 Set<TemporaryFileSet> reapSets = new HashSet<TemporaryFileSet>();
-                reapSets.addAll(RRToTFSMap.values());
-                reapSets.addAll(TFSs);
+                reapSets.addAll(rrToTfsMap.values());
+                reapSets.addAll(tfss);
 
                 for (TemporaryFileSet files : reapSets) {
                     files.run();
@@ -161,13 +161,13 @@ public class MetaclassBase {
 
             synchronized (MetaclassBase.class) {
 
-                TemporaryFileSet files = RRToTFSMap.get(registry);
+                TemporaryFileSet files = rrToTfsMap.get(registry);
 
                 if (files == null) {
 
                     files = new TemporaryFileSet();
-                    RRToTFSMap.put(registry, files);
-                    TFSs.add(files);
+                    rrToTfsMap.put(registry, files);
+                    tfss.add(files);
                 }
 
                 files.add(f);

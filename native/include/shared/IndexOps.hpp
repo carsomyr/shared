@@ -24,7 +24,7 @@
 #include <Common.hpp>
 #include <MappingOps.hpp>
 
-#include <JNIHeadersWrap.hpp>
+#include <JniHeadersWrap.hpp>
 
 #ifndef _Included_IndexOps
 #define _Included_IndexOps

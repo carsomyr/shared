@@ -29,7 +29,7 @@
 package shared.array.sparse;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.opKernel;
 
 import java.util.Arrays;
 
@@ -58,7 +58,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
     /**
      * An empty array of indices.
      */
-    final protected static int[] EmptyIndices = new int[] {};
+    final protected static int[] emptyIndices = new int[] {};
 
     /**
      * The {@link SparseArrayState}.
@@ -199,7 +199,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         SparseArrayState<V> srcState = src.state;
 
-        src.state = OpKernel.insertSparse( //
+        src.state = opKernel.insertSparse( //
                 srcState.values, src.dims, src.strides, src.dimOffsets, srcState.indices, //
                 values, newI);
 
@@ -281,7 +281,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         SparseArrayState<V> srcState = src.state;
         SparseArrayState<V> dstState = dst.state;
 
-        dst.state = OpKernel.sliceSparse(slices, //
+        dst.state = opKernel.sliceSparse(slices, //
                 srcState.values, src.dims, src.strides, src.dimOffsets, //
                 srcState.indices, srcState.indirectionOffsets, srcState.indirections, //
                 dstState.values, dst.dims, dst.strides, dst.dimOffsets, //
@@ -301,7 +301,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         SparseArrayState<V> srcState = src.state;
         SparseArrayState<V> dstState = dst.state;
 
-        dst.state = OpKernel.sliceSparse(ArrayBase.canonicalizeSlices(srcSlices, src.dims, dstSlices, dst.dims), //
+        dst.state = opKernel.sliceSparse(ArrayBase.canonicalizeSlices(srcSlices, src.dims, dstSlices, dst.dims), //
                 srcState.values, src.dims, src.strides, src.dimOffsets, //
                 srcState.indices, srcState.indirectionOffsets, srcState.indirections, //
                 dstState.values, dst.dims, dst.strides, dst.dimOffsets, //
@@ -321,7 +321,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         SparseArrayState<V> srcState = src.state;
         SparseArrayState<V> dstState = dst.state;
 
-        dst.state = OpKernel.sliceSparse(ArrayBase.canonicalizeSlices(src.dims, dst.dims, dstSlices), //
+        dst.state = opKernel.sliceSparse(ArrayBase.canonicalizeSlices(src.dims, dst.dims, dstSlices), //
                 srcState.values, src.dims, src.strides, src.dimOffsets, //
                 srcState.indices, srcState.indirectionOffsets, srcState.indirections, //
                 dstState.values, dst.dims, dst.strides, dst.dimOffsets, //
@@ -367,7 +367,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         SparseArrayState<V> srcState = src.state;
         SparseArrayState<V> dstState = dst.state;
 
-        dst.state = OpKernel.sliceSparse(ArrayBase.canonicalizeSlices(nSlices, src.dims, srcSlices), //
+        dst.state = opKernel.sliceSparse(ArrayBase.canonicalizeSlices(nSlices, src.dims, srcSlices), //
                 srcState.values, src.dims, src.strides, src.dimOffsets, //
                 srcState.indices, srcState.indirectionOffsets, srcState.indirections, //
                 dstState.values, dst.dims, dst.strides, dst.dimOffsets, //
@@ -443,8 +443,8 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
             newIndices[i] = newPhysical;
         }
 
-        return wrap(OpKernel.insertSparse( //
-                empty(), newDims, newStrides, newDimOffsets, EmptyIndices, //
+        return wrap(opKernel.insertSparse( //
+                empty(), newDims, newStrides, newDimOffsets, emptyIndices, //
                 srcState.values, newIndices), newDims, newStrides, newDimOffsets);
     }
 
@@ -504,7 +504,7 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
         SparseArrayState<V> srcState = src.state;
         SparseArrayState<V> dstState = dst.state;
 
-        dst.state = OpKernel.sliceSparse(ArrayBase.createReverseSlices(src.dims, opDims), //
+        dst.state = opKernel.sliceSparse(ArrayBase.createReverseSlices(src.dims, opDims), //
                 srcState.values, src.dims, src.strides, src.dimOffsets, //
                 srcState.indices, srcState.indirectionOffsets, srcState.indirections, //
                 dstState.values, dst.dims, dst.strides, dst.dimOffsets, //
@@ -526,8 +526,8 @@ abstract public class ProtoSparseArray<T extends ProtoSparseArray<T, V, E, D>, V
 
         SparseArrayState<V> srcState = src.state;
 
-        T dst = wrap(OpKernel.insertSparse( //
-                empty(), dims, strides, dimOffsets, EmptyIndices, //
+        T dst = wrap(opKernel.insertSparse( //
+                empty(), dims, strides, dimOffsets, emptyIndices, //
                 srcState.values, srcState.indices), dims, strides, dimOffsets);
 
         return dst;

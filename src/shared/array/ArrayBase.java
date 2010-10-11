@@ -32,9 +32,9 @@ import java.lang.reflect.Array;
 import java.util.Formatter;
 
 import shared.array.Array.IndexingOrder;
-import shared.array.kernel.ModalArrayIOKernel;
+import shared.array.kernel.ModalArrayIoKernel;
 import shared.array.kernel.ModalArrayKernel;
-import shared.fft.ModalFFTService;
+import shared.fft.ModalFftService;
 import shared.util.Arithmetic;
 import shared.util.Control;
 
@@ -48,17 +48,17 @@ public class ArrayBase {
     /**
      * The array operations kernel.
      */
-    final public static ModalArrayKernel OpKernel = new ModalArrayKernel();
+    final public static ModalArrayKernel opKernel = new ModalArrayKernel();
 
     /**
      * The array I/O kernel.
      */
-    final public static ModalArrayIOKernel IOKernel = new ModalArrayIOKernel();
+    final public static ModalArrayIoKernel ioKernel = new ModalArrayIoKernel();
 
     /**
      * A global service providing access to FFT operations.
      */
-    final public static ModalFFTService FFTService = new ModalFFTService();
+    final public static ModalFftService fftService = new ModalFftService();
 
     /**
      * The default storage order shall be {@link IndexingOrder#FAR}.
@@ -68,12 +68,12 @@ public class ArrayBase {
     /**
      * The field width to use when printing.
      */
-    public static int FieldWidth = 8;
+    public static int fieldWidth = 8;
 
     /**
      * The field precision to use when printing.
      */
-    public static int FieldPrecision = 2;
+    public static int fieldPrecision = 2;
 
     /**
      * Canonicalizes the alternate slicing specification.
@@ -214,7 +214,7 @@ public class ArrayBase {
     }
 
     /**
-     * Sets the formatting parameters {@link #FieldWidth} and {@link #FieldPrecision}.
+     * Sets the formatting parameters {@link #fieldWidth} and {@link #fieldPrecision}.
      * 
      * @param width
      *            the number width.
@@ -226,8 +226,8 @@ public class ArrayBase {
         Control.checkTrue(width >= precision + 4 && precision >= 1, //
                 "Invalid formatting parameters");
 
-        FieldWidth = width;
-        FieldPrecision = precision;
+        fieldWidth = width;
+        fieldPrecision = precision;
     }
 
     /**
@@ -314,7 +314,7 @@ public class ArrayBase {
      */
     final public static double[] formatRescale(Formatter f, int exponent, double[] values) {
 
-        if (FieldWidth < exponent + FieldPrecision + 4 || exponent < 0) {
+        if (fieldWidth < exponent + fieldPrecision + 4 || exponent < 0) {
 
             f.format("%n[rescale 10^%d]%n", exponent);
 

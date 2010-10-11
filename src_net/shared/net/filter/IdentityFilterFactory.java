@@ -43,12 +43,12 @@ import shared.net.Connection;
  * @author Roy Liu
  */
 public class IdentityFilterFactory<T, C extends Connection> //
-        implements FilterFactory<OOBFilter<T, T>, T, T, C>, OOBFilter<T, T> {
+        implements FilterFactory<OobFilter<T, T>, T, T, C>, OobFilter<T, T> {
 
     /**
      * The global {@link IdentityFilterFactory} instance.
      */
-    final protected static IdentityFilterFactory<?, ?> Instance = new IdentityFilterFactory<Object, Connection>();
+    final protected static IdentityFilterFactory<?, ?> instance = new IdentityFilterFactory<Object, Connection>();
 
     /**
      * Gets the global instance.
@@ -60,7 +60,7 @@ public class IdentityFilterFactory<T, C extends Connection> //
      */
     @SuppressWarnings("unchecked")
     final public static <T, C extends Connection> IdentityFilterFactory<T, C> getInstance() {
-        return (IdentityFilterFactory<T, C>) Instance;
+        return (IdentityFilterFactory<T, C>) instance;
     }
 
     /**
@@ -70,8 +70,8 @@ public class IdentityFilterFactory<T, C extends Connection> //
      *            the input and output type.
      */
     @SuppressWarnings("unchecked")
-    final public static <T> OOBFilter<T, T> newFilter() {
-        return (OOBFilter<T, T>) Instance;
+    final public static <T> OobFilter<T, T> newFilter() {
+        return (OobFilter<T, T>) instance;
     }
 
     /**
@@ -91,25 +91,25 @@ public class IdentityFilterFactory<T, C extends Connection> //
     }
 
     @Override
-    public void applyInboundOOB( //
-            Queue<T> inputs, Queue<OOBEvent> inputEvts, //
-            Queue<T> outputs, Queue<OOBEvent> outputEvts) {
+    public void applyInboundOob( //
+            Queue<T> inputs, Queue<OobEvent> inputEvts, //
+            Queue<T> outputs, Queue<OobEvent> outputEvts) {
 
         Filters.transfer(inputEvts, outputEvts);
         applyInbound(inputs, outputs);
     }
 
     @Override
-    public void applyOutboundOOB( //
-            Queue<T> inputs, Queue<OOBEvent> inputEvts, //
-            Queue<T> outputs, Queue<OOBEvent> outputEvts) {
+    public void applyOutboundOob( //
+            Queue<T> inputs, Queue<OobEvent> inputEvts, //
+            Queue<T> outputs, Queue<OobEvent> outputEvts) {
 
         Filters.transfer(inputEvts, outputEvts);
         applyOutbound(inputs, outputs);
     }
 
     @Override
-    public OOBFilter<T, T> newFilter(C connection) {
+    public OobFilter<T, T> newFilter(C connection) {
         return newFilter();
     }
 }

@@ -107,7 +107,7 @@ public class Histogram implements Plottable {
         this.yrange = new double[] { 0, maxCount };
 
         this.dataTitles = PlotBase.createDefaultTitles(nClasses);
-        this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.Bars);
+        this.dataStyles = shared.util.Arrays.newArray(DataStyle.class, nClasses, DataStyle.bars);
     }
 
     @Override

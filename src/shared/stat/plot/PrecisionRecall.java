@@ -40,7 +40,7 @@ public class PrecisionRecall extends ErrorDistribution {
     /**
      * The <code>x</code>-axis range.
      */
-    final protected static double[] XRange = new double[] { 1.0, 0.0 };
+    final protected static double[] xRange = new double[] { 1.0, 0.0 };
 
     final double[] yrange;
 
@@ -91,7 +91,7 @@ public class PrecisionRecall extends ErrorDistribution {
 
     @Override
     protected double[] getXAxisRange() {
-        return XRange;
+        return xRange;
     }
 
     @Override

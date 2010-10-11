@@ -722,7 +722,7 @@ public class RealArrayTest {
      * Tests dimension reduce functions.
      */
     @Test
-    public void testRROps() {
+    public void testRrOps() {
 
         RealArray a = new RealArray(new double[] {
                 //
@@ -942,7 +942,7 @@ public class RealArrayTest {
      * Tests dimension index functions.
      */
     @Test
-    public void testRIOps() {
+    public void testRiOps() {
 
         RealArray a = new RealArray(new double[] {
                 //
@@ -1279,7 +1279,7 @@ public class RealArrayTest {
      * Tests dimension functions.
      */
     @Test
-    public void testRDOps() {
+    public void testRdOps() {
 
         RealArray a = new RealArray(new double[] {
                 //

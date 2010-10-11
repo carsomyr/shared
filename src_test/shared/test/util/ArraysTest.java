@@ -48,7 +48,7 @@ public class ArraysTest {
     /**
      * The canonical {@link Comparator} for {@link Double}s, except in reverse.
      */
-    final protected static Comparator<Double> ReverseDoubleComparator = new Comparator<Double>() {
+    final protected static Comparator<Double> reverseDoubleComparator = new Comparator<Double>() {
 
         @Override
         public int compare(Double lhs, Double rhs) {
@@ -102,22 +102,22 @@ public class ArraysTest {
         Assert.assertTrue(Arrays.binarySearchNearest(objectList, -4.25, RoundingMode.DOWN) == 1);
 
         Assert.assertTrue(Arrays.binarySearchNearest( //
-                reverseArray, 8.0, ReverseDoubleComparator) == 1);
+                reverseArray, 8.0, reverseDoubleComparator) == 1);
         Assert.assertTrue(Arrays.binarySearchNearest( //
-                reverseArray, 0.75, ReverseDoubleComparator) == 4);
+                reverseArray, 0.75, reverseDoubleComparator) == 4);
         Assert.assertTrue(Arrays.binarySearchNearest( //
-                reverseArray, -7.75, ReverseDoubleComparator, RoundingMode.UP) == 9);
+                reverseArray, -7.75, reverseDoubleComparator, RoundingMode.UP) == 9);
         Assert.assertTrue(Arrays.binarySearchNearest( //
-                reverseArray, -4.25, ReverseDoubleComparator, RoundingMode.DOWN) == 8);
+                reverseArray, -4.25, reverseDoubleComparator, RoundingMode.DOWN) == 8);
 
         Assert.assertTrue(Arrays.binarySearchNearest( //
-                reverseList, 8.0, ReverseDoubleComparator) == 1);
+                reverseList, 8.0, reverseDoubleComparator) == 1);
         Assert.assertTrue(Arrays.binarySearchNearest( //
-                reverseList, 0.75, ReverseDoubleComparator) == 4);
+                reverseList, 0.75, reverseDoubleComparator) == 4);
         Assert.assertTrue(Arrays.binarySearchNearest( //
-                reverseList, -7.75, ReverseDoubleComparator, RoundingMode.UP) == 9);
+                reverseList, -7.75, reverseDoubleComparator, RoundingMode.UP) == 9);
         Assert.assertTrue(Arrays.binarySearchNearest( //
-                reverseList, -4.25, ReverseDoubleComparator, RoundingMode.DOWN) == 8);
+                reverseList, -4.25, reverseDoubleComparator, RoundingMode.DOWN) == 8);
     }
 
     /**
@@ -150,11 +150,11 @@ public class ArraysTest {
         Assert.assertTrue(0 < Arrays.compare( //
                 new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0 }, //
                 new Double[] { 1.0, 2.0, 3.0, 6.0, 6.0 }, //
-                ReverseDoubleComparator));
+                reverseDoubleComparator));
         Assert.assertTrue(0 > Arrays.compare( //
                 new Double[] { 1.0, 2.0, 3.0, 6.0, 6.0 }, //
                 new Double[] { 1.0, 2.0, 3.0, 4.0, 5.0 }, //
-                ReverseDoubleComparator));
+                reverseDoubleComparator));
     }
 
     /**

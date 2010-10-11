@@ -37,13 +37,13 @@ import shared.array.Array;
 /**
  * A suite encompassing all {@link Array} utility tests.
  * 
- * @apiviz.owns shared.test.array.ArrayIOKernelTest
+ * @apiviz.owns shared.test.array.ArrayIoKernelTest
  * @author Roy Liu
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = {
 //
-ArrayIOKernelTest.class //
+ArrayIoKernelTest.class //
 })
 public class AllArrayUtilTests {
 

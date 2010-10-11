@@ -81,16 +81,16 @@ MappingResult *MappingOps::sliceProxy(JNIEnv *env, //
     }
 
     ArrayPinHandler slicesH(env, slices, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-    ArrayPinHandler srcDH(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-    ArrayPinHandler srcSH(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-    ArrayPinHandler dstDH(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-    ArrayPinHandler dstSH(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler srcDh(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler srcSh(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler dstDh(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler dstSh(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
 
     jint *slicesArr = (jint *) slicesH.get();
-    jint *srcDArr = (jint *) srcDH.get();
-    jint *srcSArr = (jint *) srcSH.get();
-    jint *dstDArr = (jint *) dstDH.get();
-    jint *dstSArr = (jint *) dstSH.get();
+    jint *srcDArr = (jint *) srcDh.get();
+    jint *srcSArr = (jint *) srcSh.get();
+    jint *dstDArr = (jint *) dstDh.get();
+    jint *dstSArr = (jint *) dstSh.get();
 
     return slice(slicesArr, nSlices / 3, srcDArr, srcSArr, srcLen, dstDArr, dstSArr, dstLen, nDims);
 }

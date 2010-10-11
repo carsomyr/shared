@@ -73,27 +73,27 @@ public class DataStyle implements EnumType<DataStyle.DataStyleType> {
     /**
      * The default style for {@link DataStyleType#LINES}.
      */
-    final public static DataStyle Lines = new DataStyle(DataStyleType.LINES);
+    final public static DataStyle lines = new DataStyle(DataStyleType.LINES);
 
     /**
      * The default style for {@link DataStyleType#POINTS}.
      */
-    final public static DataStyle Points = new DataStyle(DataStyleType.POINTS);
+    final public static DataStyle points = new DataStyle(DataStyleType.POINTS);
 
     /**
      * The default style for {@link DataStyleType#LINESPOINTS}.
      */
-    final public static DataStyle LinesPoints = new DataStyle(DataStyleType.LINESPOINTS);
+    final public static DataStyle linesPoints = new DataStyle(DataStyleType.LINESPOINTS);
 
     /**
      * The default style for {@link DataStyleType#BARS}.
      */
-    final public static DataStyle Bars = new DataStyle(DataStyleType.BARS);
+    final public static DataStyle bars = new DataStyle(DataStyleType.BARS);
 
     /**
      * The default style for {@link DataStyleType#SURFACE}.
      */
-    final public static DataStyle Surface = new DataStyle(DataStyleType.SURFACE);
+    final public static DataStyle surface = new DataStyle(DataStyleType.SURFACE);
 
     final DataStyleType type;
 

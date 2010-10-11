@@ -24,7 +24,7 @@
 #include <Common.hpp>
 #include <MappingOps.hpp>
 
-#include <JNIHeadersWrap.hpp>
+#include <JniHeadersWrap.hpp>
 
 #ifndef _Included_DimensionOps
 #define _Included_DimensionOps

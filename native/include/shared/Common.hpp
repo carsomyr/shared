@@ -27,7 +27,7 @@
 #include <cstring>
 #include <stdexcept>
 
-#include <JNIWrap.hpp>
+#include <JniWrap.hpp>
 
 #ifndef _Included_Common
 #define _Included_Common
@@ -490,7 +490,7 @@ public:
      *      the type.
      * @return the field identifier.
      */
-    static jfieldID getFieldID(JNIEnv *env, //
+    static jfieldID getFieldId(JNIEnv *env, //
             jclass clazz, const char *name, const char *type);
 
     /**
@@ -506,7 +506,7 @@ public:
      *      the type.
      * @return the static field identifier.
      */
-    static jfieldID getStaticFieldID(JNIEnv *env, //
+    static jfieldID getStaticFieldId(JNIEnv *env, //
             jclass clazz, const char *name, const char *type);
 
     /**
@@ -522,7 +522,7 @@ public:
      *      the type.
      * @return the method identifier.
      */
-    static jmethodID getMethodID(JNIEnv *env, //
+    static jmethodID getMethodId(JNIEnv *env, //
             jclass clazz, const char *name, const char *type);
 
     /**
@@ -538,7 +538,7 @@ public:
      *      the type.
      * @return the static method identifier.
      */
-    static jmethodID getStaticMethodID(JNIEnv *env, //
+    static jmethodID getStaticMethodId(JNIEnv *env, //
             jclass clazz, const char *name, const char *type);
 
     /**
@@ -617,7 +617,7 @@ public:
      *      the null-terminated string.
      * @return the Java string.
      */
-    static jstring newStringUTF(JNIEnv *env, const char *utf);
+    static jstring newStringUtf(JNIEnv *env, const char *utf);
 };
 
 #endif

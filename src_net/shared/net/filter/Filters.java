@@ -381,7 +381,7 @@ public class Filters {
     }
 
     /**
-     * Wraps the given {@link Filter} with an {@link OOBFilter} adapter that has trivial behavior on {@link OOBEvent}s.
+     * Wraps the given {@link Filter} with an {@link OobFilter} adapter that has trivial behavior on {@link OobEvent}s.
      * 
      * @param filter
      *            the {@link Filter}.
@@ -389,11 +389,11 @@ public class Filters {
      *            the inbound type.
      * @param <O>
      *            the outbound type.
-     * @return the {@link OOBFilter} adapter, or the original {@link Filter} if it is already an instance.
+     * @return the {@link OobFilter} adapter, or the original {@link Filter} if it is already an instance.
      */
-    final public static <I, O> OOBFilter<I, O> asOOBFilter(final Filter<I, O> filter) {
+    final public static <I, O> OobFilter<I, O> asOobFilter(final Filter<I, O> filter) {
 
-        return (filter instanceof OOBFilter<?, ?>) ? (OOBFilter<I, O>) filter : new OOBFilter<I, O>() {
+        return (filter instanceof OobFilter<?, ?>) ? (OobFilter<I, O>) filter : new OobFilter<I, O>() {
 
             @Override
             public void applyInbound(Queue<I> inputs, Queue<O> outputs) {
@@ -406,18 +406,18 @@ public class Filters {
             }
 
             @Override
-            public void applyInboundOOB( //
-                    Queue<I> inputs, Queue<OOBEvent> inputEvts, //
-                    Queue<O> outputs, Queue<OOBEvent> outputEvts) {
+            public void applyInboundOob( //
+                    Queue<I> inputs, Queue<OobEvent> inputEvts, //
+                    Queue<O> outputs, Queue<OobEvent> outputEvts) {
 
                 transfer(inputEvts, outputEvts);
                 applyInbound(inputs, outputs);
             }
 
             @Override
-            public void applyOutboundOOB( //
-                    Queue<O> inputs, Queue<OOBEvent> inputEvts, //
-                    Queue<I> outputs, Queue<OOBEvent> outputEvts) {
+            public void applyOutboundOob( //
+                    Queue<O> inputs, Queue<OobEvent> inputEvts, //
+                    Queue<I> outputs, Queue<OobEvent> outputEvts) {
 
                 transfer(inputEvts, outputEvts);
                 applyOutbound(inputs, outputs);

@@ -43,12 +43,12 @@ public class ImageOps {
     /**
      * The image processing kernel.
      */
-    public static ModalImageKernel ImKernel = new ModalImageKernel();
+    public static ModalImageKernel imKernel = new ModalImageKernel();
 
     /**
      * Creates an index lookup table for speedy index calculations.
      */
-    final public static int[] createILUT(int nDims) {
+    final public static int[] createIlut(int nDims) {
 
         int stride = nDims + 1;
         int[] ilut = new int[(1 << nDims) * stride];

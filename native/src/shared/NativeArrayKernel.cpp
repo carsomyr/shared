@@ -24,11 +24,11 @@
 #include <NativeArrayKernel.hpp>
 
 static jclass jclassClass = NULL;
-static jmethodID isAssignableFromMethodID;
-static jmethodID getComponentTypeMethodID;
+static jmethodID isAssignableFromMethodId;
+static jmethodID getComponentTypeMethodId;
 
 static jclass sparseArrayStateClass = NULL;
-static jmethodID sparseArrayStateMethodID;
+static jmethodID sparseArrayStateMethodId;
 
 static jclass jintArrayClass = NULL;
 static jclass jdoubleArrayClass = NULL;
@@ -38,9 +38,9 @@ void NativeArrayKernel::init(JNIEnv *env) {
 
     jclassClass = (jclass) Common::newWeakGlobalRef(env, //
             Common::findClass(env, "java/lang/Class"));
-    isAssignableFromMethodID = Common::getMethodID(env, jclassClass, //
+    isAssignableFromMethodId = Common::getMethodId(env, jclassClass, //
             "isAssignableFrom", "(Ljava/lang/Class;)Z");
-    getComponentTypeMethodID = Common::getMethodID(env, jclassClass, //
+    getComponentTypeMethodId = Common::getMethodId(env, jclassClass, //
             "getComponentType", "()Ljava/lang/Class;");
 
     jintArrayClass = (jclass) Common::newWeakGlobalRef(env, //
@@ -52,7 +52,7 @@ void NativeArrayKernel::init(JNIEnv *env) {
 
     sparseArrayStateClass = (jclass) Common::newWeakGlobalRef(env, //
             Common::findClass(env, "shared/array/sparse/SparseArrayState"));
-    sparseArrayStateMethodID = Common::getMethodID(env, sparseArrayStateClass, //
+    sparseArrayStateMethodId = Common::getMethodId(env, sparseArrayStateClass, //
             "<init>", "(Ljava/lang/Object;[I[I[I)V");
 }
 
@@ -76,7 +76,7 @@ jboolean NativeArrayKernel::isJdoubleArray(JNIEnv *env, jobject obj) {
 
 jboolean NativeArrayKernel::isAssignableFrom(JNIEnv *env, jclass to, jclass from) {
 
-    jboolean res = env->CallBooleanMethod(to, isAssignableFromMethodID, from);
+    jboolean res = env->CallBooleanMethod(to, isAssignableFromMethodId, from);
 
     if (env->ExceptionCheck()) {
         throw std::runtime_error("java.lang.Class#isAssignableFrom invocation failed");
@@ -87,7 +87,7 @@ jboolean NativeArrayKernel::isAssignableFrom(JNIEnv *env, jclass to, jclass from
 
 jclass NativeArrayKernel::getComponentType(JNIEnv *env, jclass clazz) {
 
-    jclass res = (jclass) env->CallObjectMethod(clazz, getComponentTypeMethodID);
+    jclass res = (jclass) env->CallObjectMethod(clazz, getComponentTypeMethodId);
 
     if (env->ExceptionCheck()) {
         throw std::runtime_error("java.lang.Class#getComponentType invocation failed");
@@ -104,7 +104,7 @@ jobject NativeArrayKernel::newSparseArrayState(JNIEnv *env, //
         jarray values, jintArray indices, //
         jintArray indirectionOffsets, jintArray indirections) {
 
-    jobject res = env->NewObject(sparseArrayStateClass, sparseArrayStateMethodID, //
+    jobject res = env->NewObject(sparseArrayStateClass, sparseArrayStateMethodId, //
             values, indices, indirectionOffsets, indirections);
 
     if (env->ExceptionCheck()) {

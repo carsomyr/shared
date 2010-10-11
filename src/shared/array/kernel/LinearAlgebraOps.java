@@ -28,8 +28,8 @@
 
 package shared.array.kernel;
 
-import static shared.array.kernel.ElementOps.CEDivOp;
-import static shared.array.kernel.ElementOps.CToRAbsOp;
+import static shared.array.kernel.ElementOps.cToRAbsOp;
+import static shared.array.kernel.ElementOps.ceDivOp;
 import shared.util.Arithmetic;
 import shared.util.Control;
 
@@ -77,7 +77,7 @@ public class LinearAlgebraOps {
                 // Compute 2-norm of k-th column without under/overflow.
                 sV[k] = 0;
                 for (int i = k; i < nRows; i++) {
-                    sV[k] = CToRAbsOp.op(sV[k], a[srcStrideRow * (i) + srcStrideCol * (k)]);
+                    sV[k] = cToRAbsOp.op(sV[k], a[srcStrideRow * (i) + srcStrideCol * (k)]);
                 }
                 if (sV[k] != 0.0) {
                     if (a[srcStrideRow * (k) + srcStrideCol * (k)] < 0.0) {
@@ -126,7 +126,7 @@ public class LinearAlgebraOps {
                 // Compute 2-norm without under/overflow.
                 e[k] = 0;
                 for (int i = k + 1; i < nCols; i++) {
-                    e[k] = CToRAbsOp.op(e[k], e[i]);
+                    e[k] = cToRAbsOp.op(e[k], e[i]);
                 }
                 if (e[k] != 0.0) {
                     if (e[k + 1] < 0.0) {
@@ -302,7 +302,7 @@ public class LinearAlgebraOps {
                 double f = e[p - 2];
                 e[p - 2] = 0.0;
                 for (int j = p - 2; j >= k; j--) {
-                    double t = CToRAbsOp.op(sV[j], f);
+                    double t = cToRAbsOp.op(sV[j], f);
                     double cs = sV[j] / t;
                     double sn = f / t;
                     sV[j] = t;
@@ -326,7 +326,7 @@ public class LinearAlgebraOps {
                 double f = e[k - 1];
                 e[k - 1] = 0.0;
                 for (int j = k; j < p; j++) {
-                    double t = CToRAbsOp.op(sV[j], f);
+                    double t = cToRAbsOp.op(sV[j], f);
                     double cs = sV[j] / t;
                     double sn = f / t;
                     sV[j] = t;
@@ -372,7 +372,7 @@ public class LinearAlgebraOps {
                 // Chase zeros.
 
                 for (int j = k; j < p - 1; j++) {
-                    double t = CToRAbsOp.op(f, g);
+                    double t = cToRAbsOp.op(f, g);
                     double cs = f / t;
                     double sn = g / t;
                     if (j != k) {
@@ -388,7 +388,7 @@ public class LinearAlgebraOps {
                                 * vV[vStrideRow * (i) + (j + 1)];
                         vV[vStrideRow * (i) + (j)] = t;
                     }
-                    t = CToRAbsOp.op(f, g);
+                    t = cToRAbsOp.op(f, g);
                     cs = f / t;
                     sn = g / t;
                     sV[j] = t;
@@ -948,7 +948,7 @@ public class LinearAlgebraOps {
                     h[hStrideRow * (n - 1) + (n - 1)] = q / h[hStrideRow * (n) + (n - 1)];
                     h[hStrideRow * (n - 1) + (n)] = -(h[hStrideRow * (n) + (n)] - p) / h[hStrideRow * (n) + (n - 1)];
                 } else {
-                    CEDivOp.op(cDiv, //
+                    ceDivOp.op(cDiv, //
                             0.0, -h[hStrideRow * (n - 1) + (n)], //
                             h[hStrideRow * (n - 1) + (n - 1)] - p, q);
                     h[hStrideRow * (n - 1) + (n - 1)] = cDiv[0];
@@ -973,7 +973,7 @@ public class LinearAlgebraOps {
                     } else {
                         l = i;
                         if (valV[2 * (i) + 1] == 0) {
-                            CEDivOp.op(cDiv, //
+                            ceDivOp.op(cDiv, //
                                     -ra, -sa, w, q);
                             h[hStrideRow * (i) + (n - 1)] = cDiv[0];
                             h[hStrideRow * (i) + (n)] = cDiv[1];
@@ -989,7 +989,7 @@ public class LinearAlgebraOps {
                             if (vr == 0.0 && vi == 0.0) {
                                 vr = eps * norm * (Math.abs(w) + Math.abs(q) + Math.abs(x) + Math.abs(y) + Math.abs(z));
                             }
-                            CEDivOp.op(cDiv, //
+                            ceDivOp.op(cDiv, //
                                     x * r - z * ra + q * sa, //
                                     x * s - z * sa - q * ra, //
                                     vr, vi);
@@ -1003,7 +1003,7 @@ public class LinearAlgebraOps {
                                         * h[hStrideRow * (i) + (n - 1)])
                                         / x;
                             } else {
-                                CEDivOp.op(cDiv, //
+                                ceDivOp.op(cDiv, //
                                         -r - y * h[hStrideRow * (i) + (n - 1)], //
                                         -s - y * h[hStrideRow * (i) + (n)], //
                                         z, q);
@@ -1153,29 +1153,29 @@ public class LinearAlgebraOps {
      * 
      * @param lu
      *            the LU matrix.
-     * @param nLUCols
+     * @param nLuCols
      *            the number of columns in the LU matrix.
      * @param dstV
      *            the destination matrix.
      * @param nDstVCols
      *            the number of columns in the destination matrix.
      */
-    final protected static void luSolve(double[] lu, int nLUCols, double[] dstV, int nDstVCols) {
+    final protected static void luSolve(double[] lu, int nLuCols, double[] dstV, int nDstVCols) {
 
-        int luStrideRow = nLUCols;
+        int luStrideRow = nLuCols;
         int vStrideRow = nDstVCols;
 
         // Solve L*Y = B(piv,:)
-        for (int k = 0; k < nLUCols; k++) {
-            for (int i = k + 1; i < nLUCols; i++) {
+        for (int k = 0; k < nLuCols; k++) {
+            for (int i = k + 1; i < nLuCols; i++) {
                 for (int j = 0; j < nDstVCols; j++) {
                     dstV[vStrideRow * (i) + (j)] -= dstV[vStrideRow * (k) + (j)] * lu[luStrideRow * (i) + (k)];
                 }
             }
         }
         // Solve U*X = Y;
-        for (int k = nLUCols - 1; k >= 0; k--) {
-            for (int j = 0; j < nLUCols; j++) {
+        for (int k = nLuCols - 1; k >= 0; k--) {
+            for (int j = 0; j < nLuCols; j++) {
                 dstV[vStrideRow * (k) + (j)] /= lu[luStrideRow * (k) + (k)];
             }
             for (int i = 0; i < k; i++) {

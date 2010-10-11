@@ -29,9 +29,9 @@
 package shared.array;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.FFTService;
-import static shared.array.ArrayBase.FieldPrecision;
-import static shared.array.ArrayBase.FieldWidth;
+import static shared.array.ArrayBase.fftService;
+import static shared.array.ArrayBase.fieldPrecision;
+import static shared.array.ArrayBase.fieldWidth;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -134,7 +134,7 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
             return f.toString();
         }
 
-        String format = String.format("%%%d.%df", FieldWidth, FieldPrecision);
+        String format = String.format("%%%d.%df", fieldWidth, fieldPrecision);
 
         values = ArrayBase.formatRescale(f, exponent, values);
 
@@ -180,7 +180,7 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
         // Very important: Derive the original size from the parity.
         U dst = wrapUp(this.dims[this.dims.length - 1] % 2, DEFAULT_ORDER, newDims, this.order.strides(newDims));
 
-        FFTService.rfft(this.dims, values(), dst.values());
+        fftService.rfft(this.dims, values(), dst.values());
 
         return dst;
     }
@@ -194,7 +194,7 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
 
         D dst = wrapDown(INVALID_PARITY, DEFAULT_ORDER, newDims, this.order.strides(newDims));
 
-        FFTService.rifft(dst.dims, values(), dst.values());
+        fftService.rifft(dst.dims, values(), dst.values());
 
         return dst;
     }
@@ -303,11 +303,11 @@ abstract public class AbstractArray<T extends AbstractArray<T, U, D, E>, U exten
         switch (direction) {
 
         case +1:
-            FFTService.fft(Arrays.copyOf(a.dims, a.dims.length - 1), a.values, res.values);
+            fftService.fft(Arrays.copyOf(a.dims, a.dims.length - 1), a.values, res.values);
             break;
 
         case -1:
-            FFTService.ifft(Arrays.copyOf(a.dims, a.dims.length - 1), a.values, res.values);
+            fftService.ifft(Arrays.copyOf(a.dims, a.dims.length - 1), a.values, res.values);
             break;
 
         default:

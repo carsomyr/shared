@@ -24,7 +24,7 @@
 #include <SparseOps.hpp>
 
 jobject SparseOps::insert(JNIEnv *env, jobject thisObj, //
-        jobject oldV, jintArray oldD, jintArray oldS, jintArray oldDO, jintArray oldI, //
+        jobject oldV, jintArray oldD, jintArray oldS, jintArray oldDo, jintArray oldI, //
         jobject newV, jintArray newI) {
 
     jobject res = NULL;
@@ -33,7 +33,7 @@ jobject SparseOps::insert(JNIEnv *env, jobject thisObj, //
 
     try {
 
-        if (!oldV || !oldD || !oldS || !oldDO || !oldI || !newV || !newI) {
+        if (!oldV || !oldD || !oldS || !oldDo || !oldI || !newV || !newI) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -44,7 +44,7 @@ jobject SparseOps::insert(JNIEnv *env, jobject thisObj, //
         //
 
         mergeResult = mergeProxy(env, //
-                (jarray) oldV, oldD, oldS, oldDO, oldI, //
+                (jarray) oldV, oldD, oldS, oldDo, oldI, //
                 (jarray) newV, newI);
 
         //
@@ -64,7 +64,7 @@ jobject SparseOps::insert(JNIEnv *env, jobject thisObj, //
 }
 
 MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
-        jarray oldV, jintArray oldD, jintArray oldS, jintArray oldDO, jintArray oldI, //
+        jarray oldV, jintArray oldD, jintArray oldS, jintArray oldDo, jintArray oldI, //
         jarray newV, jintArray newI) {
 
     MergeResult *mergeResult = NULL;
@@ -78,21 +78,21 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         if ((nDims != env->GetArrayLength(oldS))
                 || (oldLen != env->GetArrayLength(oldI))
                 || (newLen != env->GetArrayLength(newI))
-                || (nDims + 1 != env->GetArrayLength(oldDO))) {
+                || (nDims + 1 != env->GetArrayLength(oldDo))) {
             throw std::runtime_error("Invalid arguments");
         }
 
-        ArrayPinHandler oldDH(env, oldD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler oldSH(env, oldS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler oldDOH(env, oldDO, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler oldIH(env, oldI, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler newIH(env, newI, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler oldDh(env, oldD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler oldSh(env, oldS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler oldDoh(env, oldDo, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler oldIh(env, oldI, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler newIh(env, newI, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
 
-        jint *oldDArr = (jint *) oldDH.get();
-        jint *oldSArr = (jint *) oldSH.get();
-        jint *oldDOArr = (jint *) oldDOH.get();
-        jint *oldIArr = (jint *) oldIH.get();
-        jint *newIArr = (jint *) newIH.get();
+        jint *oldDArr = (jint *) oldDh.get();
+        jint *oldSArr = (jint *) oldSh.get();
+        jint *oldDoArr = (jint *) oldDoh.get();
+        jint *oldIArr = (jint *) oldIh.get();
+        jint *newIArr = (jint *) newIh.get();
 
         jint prodD = Common::product(oldDArr, nDims, (jint) 1);
 
@@ -100,7 +100,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         for (jint dim = 0; dim < nDims; dim++) {
 
-            if (oldDOArr[dim + 1] - oldDOArr[dim] - 1 != oldDArr[dim]) {
+            if (oldDoArr[dim + 1] - oldDoArr[dim] - 1 != oldDArr[dim]) {
                 throw std::runtime_error("Invalid arguments");
             }
         }
@@ -143,7 +143,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         mergeResult = merge( //
                 oldIArr, oldIndirections, oldLen, //
                 newIArr, newIndirections, newLen, //
-                oldDArr, oldSArr, oldDOArr, nDims);
+                oldDArr, oldSArr, oldDoArr, nDims);
 
         // Copy the new assignments into the permutation and then copy back.
 

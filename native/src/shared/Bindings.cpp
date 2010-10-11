@@ -163,20 +163,20 @@ JNIEXPORT jintArray JNICALL Java_shared_array_jni_NativeArrayKernel_find(JNIEnv 
 }
 
 JNIEXPORT jobject JNICALL Java_shared_array_jni_NativeArrayKernel_insertSparse(JNIEnv *env, jobject thisObj, //
-        jobject oldV, jintArray oldD, jintArray oldS, jintArray oldDO, jintArray oldI, //
-        jobject newV, jintArray newLI) {
-    return SparseOps::insert(env, thisObj, oldV, oldD, oldS, oldDO, oldI, newV, newLI);
+        jobject oldV, jintArray oldD, jintArray oldS, jintArray oldDo, jintArray oldI, //
+        jobject newV, jintArray newLi) {
+    return SparseOps::insert(env, thisObj, oldV, oldD, oldS, oldDo, oldI, newV, newLi);
 }
 
 JNIEXPORT jobject JNICALL Java_shared_array_jni_NativeArrayKernel_sliceSparse(JNIEnv *env, jobject thisObj, //
         jintArray slices, //
-        jobject srcV, jintArray srcD, jintArray srcS, jintArray srcDO, //
-        jintArray srcI, jintArray srcIO, jintArray srcII, //
-        jobject dstV, jintArray dstD, jintArray dstS, jintArray dstDO, //
-        jintArray dstI, jintArray dstIO, jintArray dstII) {
+        jobject srcV, jintArray srcD, jintArray srcS, jintArray srcDo, //
+        jintArray srcI, jintArray srcIo, jintArray srcIi, //
+        jobject dstV, jintArray dstD, jintArray dstS, jintArray dstDo, //
+        jintArray dstI, jintArray dstIo, jintArray dstIi) {
     return SparseOps::slice(env, thisObj, slices, //
-            srcV, srcD, srcS, srcDO, //
-            srcI, srcIO, srcII, //
-            dstV, dstD, dstS, dstDO, //
-            dstI, dstIO, dstII);
+            srcV, srcD, srcS, srcDo, //
+            srcI, srcIo, srcIi, //
+            dstV, dstD, dstS, dstDo, //
+            dstI, dstIo, dstIi);
 }

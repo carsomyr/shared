@@ -28,8 +28,8 @@
 
 package shared.array;
 
-import static shared.array.ArrayBase.IOKernel;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.ioKernel;
+import static shared.array.ArrayBase.opKernel;
 import static shared.array.kernel.ArrayKernel.I_TO_R;
 
 import java.util.Arrays;
@@ -128,7 +128,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
     @Override
     public byte[] getBytes() {
-        return IOKernel.getBytes(this);
+        return ioKernel.getBytes(this);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
         IntegerArray a = this;
 
-        return OpKernel.find(a.values, a.dims, a.strides, s);
+        return opKernel.find(a.values, a.dims, a.strides, s);
     }
 
     /**
@@ -218,7 +218,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
         RealArray res = new RealArray(a.order, a.dims);
 
-        OpKernel.convert(I_TO_R, a.values, false, res.values, false);
+        opKernel.convert(I_TO_R, a.values, false, res.values, false);
 
         return res;
     }
@@ -342,7 +342,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
         IntegerArray a = this;
         IntegerArray res = wrap(a.order, a.dims, a.strides);
 
-        OpKernel.eOp(type, a.values, b.values, res.values, false);
+        opKernel.eOp(type, a.values, b.values, res.values, false);
 
         return res;
     }
@@ -356,7 +356,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
 
         IntegerArray a = this;
 
-        OpKernel.eOp(type, a.values, b.values, a.values, false);
+        opKernel.eOp(type, a.values, b.values, a.values, false);
 
         return a;
     }
@@ -366,7 +366,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
      */
     protected IntegerArray applyKernelIntegerUnaryOperation(int a, int type) {
 
-        OpKernel.iuOp(type, a, this.values);
+        opKernel.iuOp(type, a, this.values);
 
         return this;
     }
@@ -392,7 +392,7 @@ public class IntegerArray extends ProtoArray<IntegerArray, int[], Integer> {
      * Parses an array from {@code byte}s.
      */
     final public static IntegerArray parse(byte[] data) {
-        return IOKernel.parse(data);
+        return ioKernel.parse(data);
     }
 
     /**

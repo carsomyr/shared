@@ -28,8 +28,8 @@
 
 package shared.array;
 
-import static shared.array.ArrayBase.IOKernel;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.ioKernel;
+import static shared.array.ArrayBase.opKernel;
 
 import java.util.Arrays;
 
@@ -116,7 +116,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
      */
     @SuppressWarnings("unchecked")
     public byte[] getBytes() {
-        return IOKernel.getBytes((T) this);
+        return ioKernel.getBytes((T) this);
     }
 
     /**
@@ -148,7 +148,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         Control.checkTrue(src != dst, //
                 "Source and destination cannot be the same");
 
-        OpKernel.map(bounds, //
+        opKernel.map(bounds, //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -163,7 +163,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         Control.checkTrue(src != dst, //
                 "Source and destination cannot be the same");
 
-        OpKernel.slice(slices, //
+        opKernel.slice(slices, //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -180,7 +180,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         int[] slices = ArrayBase.canonicalizeSlices(srcSlices, src.dims, dstSlices, dst.dims);
 
-        OpKernel.slice(slices, //
+        opKernel.slice(slices, //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -195,7 +195,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
         Control.checkTrue(src != dst, //
                 "Source and destination cannot be the same");
 
-        OpKernel.slice(ArrayBase.canonicalizeSlices(src.dims, dst.dims, dstSlices), //
+        opKernel.slice(ArrayBase.canonicalizeSlices(src.dims, dst.dims, dstSlices), //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -235,7 +235,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         T dst = wrap(src.order, dstDims, src.order.strides(dstDims));
 
-        OpKernel.slice(ArrayBase.canonicalizeSlices(nSlices, src.dims, srcSlices), //
+        opKernel.slice(ArrayBase.canonicalizeSlices(nSlices, src.dims, srcSlices), //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -264,7 +264,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
             mappingBounds[offset + 2] = dst.dims[dim];
         }
 
-        OpKernel.map(mappingBounds, //
+        opKernel.map(mappingBounds, //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -304,7 +304,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
             copy[dim] = dst.strides[permutation[dim]];
         }
 
-        OpKernel.map(mappingBounds, //
+        opKernel.map(mappingBounds, //
                 src.values, src.dims, src.strides, //
                 dst.values, src.dims, copy);
 
@@ -329,7 +329,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         T dst = wrap(src.order, src.dims, src.strides);
 
-        OpKernel.map(mappingBounds, //
+        opKernel.map(mappingBounds, //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -361,7 +361,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         T dst = wrap(src.order, newDims, src.order.strides(newDims));
 
-        OpKernel.map(mappingBounds, //
+        opKernel.map(mappingBounds, //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -375,7 +375,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
 
         T dst = wrap(src.order, src.dims, src.strides);
 
-        OpKernel.slice(ArrayBase.createReverseSlices(src.dims, opDims), //
+        opKernel.slice(ArrayBase.createReverseSlices(src.dims, opDims), //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 
@@ -476,7 +476,7 @@ abstract public class ProtoArray<T extends ProtoArray<T, V, E>, V, E> implements
             mappingBounds[offset + 2] = src.dims[dim];
         }
 
-        OpKernel.map(mappingBounds, //
+        opKernel.map(mappingBounds, //
                 src.values, src.dims, src.strides, //
                 dst.values, dst.dims, dst.strides);
 

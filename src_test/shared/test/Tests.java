@@ -48,7 +48,7 @@ public class Tests {
     /**
      * The instance used for logging.
      */
-    final public static Logger Log = LoggerFactory.getLogger(Tests.class);
+    final public static Logger log = LoggerFactory.getLogger(Tests.class);
 
     /**
      * Runs a batch of <a href="http://www.junit.org/">JUnit</a> tests.
@@ -66,7 +66,7 @@ public class Tests {
 
             @Override
             public void testRunStarted(Description description) throws Exception {
-                Log.debug(String.format("Running \"%s\".", name));
+                log.debug(String.format("Running \"%s\".", name));
             }
 
             @Override
@@ -76,23 +76,23 @@ public class Tests {
 
             @Override
             public void testFinished(Description description) throws Exception {
-                Log.debug(String.format("    %s (%d ms)", description, Control.tock()));
+                log.debug(String.format("    %s (%d ms)", description, Control.tock()));
             }
 
             @Override
             public void testFailure(Failure failure) throws Exception {
-                Log.debug(String.format("    Exception: %s", //
+                log.debug(String.format("    Exception: %s", //
                         failure.getDescription()), failure.getException());
             }
 
             @Override
             public void testIgnored(Description description) throws Exception {
-                Log.debug(String.format("    Ignored: %s", description));
+                log.debug(String.format("    Ignored: %s", description));
             }
 
             @Override
             public void testRunFinished(Result result) throws Exception {
-                Log.debug(String.format("Results (total, failures) = (%d, %d).", //
+                log.debug(String.format("Results (total, failures) = (%d, %d).", //
                         result.getRunCount(), result.getFailureCount()));
             }
         });

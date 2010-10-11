@@ -29,7 +29,7 @@
 package shared.array.sparse;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.opKernel;
 
 import java.lang.reflect.Array;
 import java.util.Formatter;
@@ -99,8 +99,8 @@ public class ObjectSparseArray<T> extends ProtoSparseArray<ObjectSparseArray<T>,
 
             T[] values = Arrays.newArray(getComponentType(), Arithmetic.product(dims), value);
 
-            state = OpKernel.insertSparse( //
-                    empty(), dims, strides, dimOffsets, EmptyIndices, //
+            state = opKernel.insertSparse( //
+                    empty(), dims, strides, dimOffsets, emptyIndices, //
                     values, Arithmetic.range(values.length));
         }
 

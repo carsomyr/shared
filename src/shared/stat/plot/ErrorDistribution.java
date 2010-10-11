@@ -34,7 +34,7 @@ import shared.util.Arrays;
 import shared.util.Control;
 
 /**
- * A base class for {@link PrecisionRecall} and {@link ROC}.
+ * A base class for {@link PrecisionRecall} and {@link Roc}.
  * 
  * @author Roy Liu
  */
@@ -92,13 +92,13 @@ abstract public class ErrorDistribution implements Plottable {
         }
 
         this.dataTitles = PlotBase.createDefaultTitles(nClasses);
-        this.dataStyles = Arrays.newArray(DataStyle.class, nClasses, DataStyle.Lines);
+        this.dataStyles = Arrays.newArray(DataStyle.class, nClasses, DataStyle.lines);
     }
 
     /**
      * Gets the AUCs (area under curves).
      */
-    public double[] getAUCs() {
+    public double[] getAucs() {
 
         double[] aucs = new double[this.datasets.length];
 

@@ -28,7 +28,7 @@
 
 package shared.test.array;
 
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.opKernel;
 
 import java.util.Arrays;
 
@@ -61,7 +61,7 @@ public class ArrayKernelTest {
     @Test
     public void testOperations() {
 
-        ArrayKernel kernel = OpKernel;
+        ArrayKernel kernel = opKernel;
 
         double[] v;
 

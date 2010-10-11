@@ -102,7 +102,7 @@ public class ProbabilityDistribution extends Histogram {
             maxDensity = Math.max(maxDensity, dataset.subarray(0, dataset.size(0), 1, 2).aMax());
         }
 
-        Arrays.fill(this.dataStyles, DataStyle.Lines);
+        Arrays.fill(this.dataStyles, DataStyle.lines);
 
         this.yrange[0] = 0.0;
         this.yrange[1] = (mode == Mode.PDF) ? maxDensity : 1.0;

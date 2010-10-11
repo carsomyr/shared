@@ -59,7 +59,7 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
     /**
      * An array of all four wildcard combinations.
      */
-    final protected static String[] WildcardCombinations = new String[] { "**", "* ", " *", "  " };
+    final protected static String[] wildcardCombinations = new String[] { "**", "* ", " *", "  " };
 
     final ObjectArray<StateHandler> backingArray;
 
@@ -76,7 +76,7 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
 
         final Map<String, List<StateHandler>> handlersMap = new HashMap<String, List<StateHandler>>();
 
-        for (String str : WildcardCombinations) {
+        for (String str : wildcardCombinations) {
             handlersMap.put(str, new ArrayList<StateHandler>());
         }
 
@@ -207,7 +207,7 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
         int[] rowRange = Arithmetic.range(this.backingArray.size(0));
         int[] colRange = Arithmetic.range(this.backingArray.size(1));
 
-        for (String key : WildcardCombinations) {
+        for (String key : wildcardCombinations) {
 
             for (StateHandler stateHandler : handlersMap.get(key)) {
 

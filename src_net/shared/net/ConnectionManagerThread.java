@@ -289,7 +289,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * Initializes the underlying {@link StateTable}s.
      */
-    protected void initFSMs() {
+    protected void initFsms() {
 
         this.fsm = new StateTable<AbstractManagedConnectionStatus, InterestEventType, InterestEvent<?>>( //
                 this, AbstractManagedConnectionStatus.class, InterestEventType.class);
@@ -412,7 +412,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * Handles a connection end-of-stream notification.
      */
-    protected void handleClosingEOS(AbstractManagedConnection<?> conn) {
+    protected void handleClosingEos(AbstractManagedConnection<?> conn) {
 
         try {
 

@@ -23,4 +23,4 @@
 
 #include <Library.hpp>
 
-#include <JNIWrap.hpp>
+#include <JniWrap.hpp>

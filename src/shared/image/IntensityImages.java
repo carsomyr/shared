@@ -54,17 +54,17 @@ public class IntensityImages {
     /**
      * A mapping of color names to interpolating colormaps.
      */
-    final protected static Map<String, int[]> Colormaps;
+    final protected static Map<String, int[]> colormaps;
 
     static {
 
-        Colormaps = new HashMap<String, int[]>();
+        colormaps = new HashMap<String, int[]>();
 
-        Colormaps.put("gray", createInterpolatingColormap( //
+        colormaps.put("gray", createInterpolatingColormap( //
                 0, 0xFF000000, //
                 255, 0xFFFFFFFF));
 
-        Colormaps.put("jet", createInterpolatingColormap( //
+        colormaps.put("jet", createInterpolatingColormap( //
                 0, 0xFF000080, //
                 31, 0xFF0000FF, //
                 95, 0xFF00FFFF, //
@@ -94,7 +94,7 @@ public class IntensityImages {
         Control.checkTrue(rangeMax > rangeMin, //
                 "Invalid intensity range");
 
-        int[] colormap = Colormaps.get(cmName);
+        int[] colormap = colormaps.get(cmName);
 
         Control.checkTrue(colormap != null, //
                 "Invalid colormap name");
@@ -239,18 +239,18 @@ public class IntensityImages {
             Control.checkTrue(diff > 0, //
                     "Invalid arguments");
 
-            int srcARGB = values[i - 1];
-            int dstARGB = values[i];
+            int srcArgb = values[i - 1];
+            int dstArgb = values[i];
 
-            int aSrc = (srcARGB >>> 24) & 0xFF;
-            int rSrc = (srcARGB >>> 16) & 0xFF;
-            int gSrc = (srcARGB >>> 8) & 0xFF;
-            int bSrc = srcARGB & 0xFF;
+            int aSrc = (srcArgb >>> 24) & 0xFF;
+            int rSrc = (srcArgb >>> 16) & 0xFF;
+            int gSrc = (srcArgb >>> 8) & 0xFF;
+            int bSrc = srcArgb & 0xFF;
 
-            double aIncr = (((dstARGB >>> 24) & 0xFF) - aSrc) / (double) diff;
-            double rIncr = (((dstARGB >>> 16) & 0xFF) - rSrc) / (double) diff;
-            double gIncr = (((dstARGB >>> 8) & 0xFF) - gSrc) / (double) diff;
-            double bIncr = ((dstARGB & 0xFF) - bSrc) / (double) diff;
+            double aIncr = (((dstArgb >>> 24) & 0xFF) - aSrc) / (double) diff;
+            double rIncr = (((dstArgb >>> 16) & 0xFF) - rSrc) / (double) diff;
+            double gIncr = (((dstArgb >>> 8) & 0xFF) - gSrc) / (double) diff;
+            double bIncr = ((dstArgb & 0xFF) - bSrc) / (double) diff;
 
             for (int j = lower; j <= upper; j++) {
 

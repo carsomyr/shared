@@ -25,16 +25,16 @@
 
 static jclass planClass = NULL;
 
-static jfieldID typeFieldID;
-static jfieldID dimsFieldID;
-static jfieldID memFieldID;
+static jfieldID typeFieldId;
+static jfieldID dimsFieldId;
+static jfieldID memFieldId;
 
 void Plan::init(JNIEnv *env) {
 
     planClass = (jclass) Common::newWeakGlobalRef(env, Common::findClass(env, "sharedx/fftw/Plan"));
-    typeFieldID = Common::getFieldID(env, planClass, "type", "I");
-    dimsFieldID = Common::getFieldID(env, planClass, "dims", "[I");
-    memFieldID = Common::getFieldID(env, planClass, "memory", "[B");
+    typeFieldId = Common::getFieldId(env, planClass, "type", "I");
+    dimsFieldId = Common::getFieldId(env, planClass, "dims", "[I");
+    memFieldId = Common::getFieldId(env, planClass, "memory", "[B");
 }
 
 void Plan::destroy(JNIEnv *env) {
@@ -49,9 +49,9 @@ void Plan::transform(JNIEnv *env, jobject thisObj, jdoubleArray in, jdoubleArray
             throw std::runtime_error("Invalid arguments");
         }
 
-        jint type = env->GetIntField(thisObj, typeFieldID);
-        jintArray dims = (jintArray) env->GetObjectField(thisObj, dimsFieldID);
-        jbyteArray mem = (jbyteArray) env->GetObjectField(thisObj, memFieldID);
+        jint type = env->GetIntField(thisObj, typeFieldId);
+        jintArray dims = (jintArray) env->GetObjectField(thisObj, dimsFieldId);
+        jbyteArray mem = (jbyteArray) env->GetObjectField(thisObj, memFieldId);
 
         if (!mem) {
             throw std::runtime_error("The byte array reference was not properly initialized");
@@ -142,7 +142,7 @@ jbyteArray Plan::create(JNIEnv *env, jobject thisObj, jint type, jintArray dims,
 
 void Plan::destroy(JNIEnv *env, jobject thisObj) {
 
-    jbyteArray mem = (jbyteArray) env->GetObjectField(thisObj, memFieldID);
+    jbyteArray mem = (jbyteArray) env->GetObjectField(thisObj, memFieldId);
 
     // Null field value; perhaps the constructor didn't finish. Return immediately because there is nothing to clean up.
     if (!mem) {
@@ -188,7 +188,7 @@ jstring Plan::exportWisdom(JNIEnv *env) {
 
         MonitorHandler monitorH(env, (jobject) planClass);
 
-        res = Common::newStringUTF(env, str);
+        res = Common::newStringUtf(env, str);
 
     } catch (std::exception &e) {
 

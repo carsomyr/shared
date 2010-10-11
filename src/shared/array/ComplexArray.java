@@ -29,8 +29,8 @@
 package shared.array;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.IOKernel;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.ioKernel;
+import static shared.array.ArrayBase.opKernel;
 import shared.util.Arithmetic;
 import shared.util.Control;
 
@@ -111,7 +111,7 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
         // Matrices are already in matrix order.
         ComplexArray res = new ComplexArray(a.dims[0], b.dims[1], 2);
 
-        OpKernel.mul(a.values, b.values, a.dims[0], b.dims[1], res.values, true);
+        opKernel.mul(a.values, b.values, a.dims[0], b.dims[1], res.values, true);
 
         return res;
     }
@@ -130,7 +130,7 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
         // Matrices are already in matrix order.
         ComplexArray res = new ComplexArray(n, 1, 2);
 
-        OpKernel.diag(a.values, res.values, n, true);
+        opKernel.diag(a.values, res.values, n, true);
 
         return res;
     }
@@ -148,7 +148,7 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
 
     @Override
     public byte[] getBytes() {
-        return IOKernel.getBytes(this);
+        return ioKernel.getBytes(this);
     }
 
     /**
@@ -166,11 +166,11 @@ public class ComplexArray extends AbstractComplexArray<ComplexArray, RealArray> 
      * Parses an array from {@code byte}s.
      */
     final public static ComplexArray parse(byte[] data) {
-        return IOKernel.parse(data);
+        return ioKernel.parse(data);
     }
 
     @Override
-    public ComplexArray[] mSVD() {
+    public ComplexArray[] mSvd() {
         throw new UnsupportedOperationException("Complex matrices currently do not support " //
                 + "singular value decompositions");
     }

@@ -25,7 +25,7 @@
 #include <MappingOps.hpp>
 #include <NativeArrayKernel.hpp>
 
-#include <JNIHeadersWrap.hpp>
+#include <JniHeadersWrap.hpp>
 
 #ifndef _Included_SparseOps
 #define _Included_SparseOps
@@ -343,13 +343,13 @@ public:
      *      the source dimensions.
      * @param srcS
      *      the source strides.
-     * @param srcDO
+     * @param srcDo
      *      the source dimension offsets.
      * @param srcI
      *      the source physical indices. Invariant: Sorted in ascending order, and does not contain duplicates.
-     * @param srcIO
+     * @param srcIo
      *      the source indirection offsets.
-     * @param srcII
+     * @param srcIi
      *      the source indirections.
      * @param dstV
      *      the destination values.
@@ -357,22 +357,22 @@ public:
      *      the destination dimensions.
      * @param dstS
      *      the destination strides.
-     * @param dstDO
+     * @param dstDo
      *      the destination dimension offsets.
      * @param dstI
      *      the destination physical indices. Invariant: Sorted in ascending order, and does not contain duplicates.
-     * @param dstIO
+     * @param dstIo
      *      the destination indirection offsets.
-     * @param dstII
+     * @param dstIi
      *      the destination indirections.
      * @return the sparse array.
      */
     static jobject slice(JNIEnv *env, jobject thisObj, //
             jintArray slices, //
-            jobject srcV, jintArray srcD, jintArray srcS, jintArray srcDO, //
-            jintArray srcI, jintArray srcIO, jintArray srcII, //
-            jobject dstV, jintArray dstD, jintArray dstS, jintArray dstDO, //
-            jintArray dstI, jintArray dstIO, jintArray dstII);
+            jobject srcV, jintArray srcD, jintArray srcS, jintArray srcDo, //
+            jintArray srcI, jintArray srcIo, jintArray srcIi, //
+            jobject dstV, jintArray dstD, jintArray dstS, jintArray dstDo, //
+            jintArray dstI, jintArray dstIo, jintArray dstIi);
 
     /**
      * Inserts elements into a sparse array.
@@ -387,7 +387,7 @@ public:
      *      the old dimensions.
      * @param oldS
      *      the old strides.
-     * @param oldDO
+     * @param oldDo
      *      the old dimension offsets.
      * @param oldI
      *      the old physical indices. Invariant: Sorted in ascending order, and does not contain duplicates.
@@ -398,7 +398,7 @@ public:
      * @return the sparse array.
      */
     static jobject insert(JNIEnv *env, jobject thisObj, //
-            jobject oldV, jintArray oldD, jintArray oldS, jintArray oldDO, jintArray oldI, //
+            jobject oldV, jintArray oldD, jintArray oldS, jintArray oldDo, jintArray oldI, //
             jobject newV, jintArray newI);
 
 private:

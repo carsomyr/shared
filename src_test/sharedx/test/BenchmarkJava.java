@@ -28,7 +28,7 @@
 
 package sharedx.test;
 
-import static shared.array.ArrayBase.FFTService;
+import static shared.array.ArrayBase.fftService;
 import static sharedx.fftw.Plan.FFTW_ESTIMATE;
 import static sharedx.fftw.Plan.FFTW_EXHAUSTIVE;
 import static sharedx.fftw.Plan.FFTW_MEASURE;
@@ -83,7 +83,7 @@ public class BenchmarkJava implements BenchmarkSpecification {
             throw new IllegalStateException("Invalid FFTW execution mode");
         }
 
-        FFTService.setHint("mode", modeStr);
+        fftService.setHint("mode", modeStr);
 
         ComplexArray tmp = new ComplexArray(SIZE, SIZE, 2);
 

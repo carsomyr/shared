@@ -41,7 +41,7 @@ public class Combinatorics {
     /**
      * A lookup table of coefficients in support of {@link #gammaLn(double)}.
      */
-    final protected static double[] GammaLnCoefficients = new double[] {
+    final protected static double[] gammaLnCoefficients = new double[] {
             //
             76.18009172947146, -86.50532032941677, //
             24.01409824083091, -1.231739572450155, //
@@ -207,8 +207,8 @@ public class Combinatorics {
         double t = x + 4.5 - (x - 0.5) * Math.log(x + 4.5);
         double sum = 1.000000000190015;
 
-        for (int j = 0, n = GammaLnCoefficients.length; j < n; j++, x++) {
-            sum += GammaLnCoefficients[j] / x;
+        for (int j = 0, n = gammaLnCoefficients.length; j < n; j++, x++) {
+            sum += gammaLnCoefficients[j] / x;
         }
 
         return -t + Math.log(2.5066282746310005 * sum);

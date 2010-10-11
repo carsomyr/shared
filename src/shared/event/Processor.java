@@ -111,7 +111,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
         /**
          * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
          */
-        final protected static Runnable NullRunnable = new Runnable() {
+        final protected static Runnable nullRunnable = new Runnable() {
 
             @Override
             public void run() {
@@ -131,7 +131,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
 
             this.eq = new LinkedBlockingQueue<T>();
 
-            this.finalizer = NullRunnable;
+            this.finalizer = nullRunnable;
             this.run = true;
 
             setDaemon(true);

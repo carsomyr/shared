@@ -40,7 +40,7 @@ import shared.event.StateTable;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
 import shared.net.SourceType;
-import shared.test.net.TestXMLEvent.TestXMLEventType;
+import shared.test.net.TestXmlEvent.TestXmlEventType;
 import shared.util.Arithmetic;
 import shared.util.Control;
 
@@ -51,7 +51,7 @@ import shared.util.Control;
  * @apiviz.owns shared.test.net.AbstractTestVerifier.VerifierStatus
  * @author Roy Liu
  */
-abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, SourceType>> //
+abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, SourceType>> //
         implements Verifier, SourceLocal<T>, EnumStatus<AbstractTestVerifier.VerifierStatus> {
 
     /**
@@ -178,10 +178,10 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
     /**
      * A subclass of {@link AbstractTestVerifier} that maintains receiver state.
      */
-    abstract protected static class AbstractReceiverVerifier<T extends Event<T, TestXMLEventType, SourceType>> //
+    abstract protected static class AbstractReceiverVerifier<T extends Event<T, TestXmlEventType, SourceType>> //
             extends AbstractTestVerifier<T> {
 
-        final StateTable<VerifierStatus, TestXMLEventType, T> fsm;
+        final StateTable<VerifierStatus, TestXmlEventType, T> fsm;
 
         @Transition(currentState = "VIRGIN", eventType = "SEQUENCE", nextState = "RUN")
         final Handler<T> handleVirginToRun = new Handler<T>() {
@@ -225,7 +225,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
                 @Transition(currentState = "*", eventType = "ERROR"), //
                 @Transition(currentState = "*", eventType = "END_OF_STREAM") //
         })
-        final Handler<T> handleEOS = new Handler<T>() {
+        final Handler<T> handleEos = new Handler<T>() {
 
             @Override
             public void handle(T evt) {
@@ -243,8 +243,8 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
         protected AbstractReceiverVerifier() {
             super(Long.MIN_VALUE, Integer.MIN_VALUE);
 
-            this.fsm = new StateTable<VerifierStatus, TestXMLEventType, T>(this, //
-                    VerifierStatus.class, TestXMLEventType.class);
+            this.fsm = new StateTable<VerifierStatus, TestXmlEventType, T>(this, //
+                    VerifierStatus.class, TestXmlEventType.class);
         }
 
         @Override
@@ -261,10 +261,10 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
     /**
      * A subclass of {@link AbstractTestVerifier} that maintains sender state.
      */
-    abstract protected static class AbstractSenderVerifier<T extends Event<T, TestXMLEventType, SourceType>> //
+    abstract protected static class AbstractSenderVerifier<T extends Event<T, TestXmlEventType, SourceType>> //
             extends AbstractTestVerifier<T> {
 
-        final StateTable<VerifierStatus, TestXMLEventType, T> fsm;
+        final StateTable<VerifierStatus, TestXmlEventType, T> fsm;
 
         @Transition(currentState = "VIRGIN", eventType = "SEQUENCE", nextState = "RUN")
         final Handler<T> handleVirginToRun = new Handler<T>() {
@@ -329,7 +329,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
                 @Transition(currentState = "*", eventType = "ERROR"), //
                 @Transition(currentState = "*", eventType = "END_OF_STREAM") //
         })
-        final Handler<T> handleEOS = new Handler<T>() {
+        final Handler<T> handleEos = new Handler<T>() {
 
             @Override
             public void handle(T evt) {
@@ -351,8 +351,8 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXMLEventType, 
 
             this.meanMessageSize = meanMessageSize;
 
-            this.fsm = new StateTable<VerifierStatus, TestXMLEventType, T>(this, //
-                    VerifierStatus.class, TestXMLEventType.class);
+            this.fsm = new StateTable<VerifierStatus, TestXmlEventType, T>(this, //
+                    VerifierStatus.class, TestXmlEventType.class);
         }
 
         @Override

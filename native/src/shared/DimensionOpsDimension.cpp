@@ -61,17 +61,17 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
 
         // Initialize pinned arrays.
 
-        ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcDH(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcSH(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcDh(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcSh(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
         ArrayPinHandler opDimsH(env, opDims, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         // NO JNI AFTER THIS POINT!
 
-        jdouble *srcVArr = (jdouble *) srcVH.get();
-        jint *srcDArr = (jint *) srcDH.get();
-        jint *srcSArr = (jint *) srcSH.get();
-        jdouble *dstVArr = (jdouble *) dstVH.get();
+        jdouble *srcVArr = (jdouble *) srcVh.get();
+        jint *srcDArr = (jint *) srcDh.get();
+        jint *srcSArr = (jint *) srcSh.get();
+        jdouble *dstVArr = (jdouble *) dstVh.get();
         jint *opDimsArr = (jint *) opDimsH.get();
 
         MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);

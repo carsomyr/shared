@@ -45,7 +45,7 @@ public class Services {
     /**
      * A global instance.
      */
-    final protected static Services Instance = new Services();
+    final protected static Services instance = new Services();
 
     final ConcurrentMap<Class<? extends Service>, Reference<Class<? extends Service>>> serviceMap;
     final ReferenceReaper<Class<? extends Service>> rr;
@@ -71,7 +71,7 @@ public class Services {
     @SuppressWarnings("unchecked")
     public static <A extends Service> A createService(Class<? super A> specClass) {
 
-        Reference<Class<? extends Service>> ref = Instance.serviceMap.get(specClass);
+        Reference<Class<? extends Service>> ref = instance.serviceMap.get(specClass);
 
         if (ref == null) {
             return null;
@@ -109,11 +109,11 @@ public class Services {
      */
     public static <A extends Service> void registerService(final Class<A> specClass, Class<? extends A> implClass) {
 
-        Instance.serviceMap.put(specClass, Instance.rr.wrap(ReferenceType.WEAK, implClass, new Runnable() {
+        instance.serviceMap.put(specClass, instance.rr.wrap(ReferenceType.WEAK, implClass, new Runnable() {
 
             @Override
             public void run() {
-                Instance.serviceMap.remove(specClass);
+                instance.serviceMap.remove(specClass);
             }
         }));
     }

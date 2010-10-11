@@ -69,7 +69,7 @@ public class DimensionOps {
         public void op(double[] working, int[] workingIndices, int size, int stride);
     }
 
-    final static RealReduceOperation RRSumOp = new RealReduceOperation() {
+    final static RealReduceOperation rrSumOp = new RealReduceOperation() {
 
         @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
@@ -83,7 +83,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealReduceOperation RRProdOp = new RealReduceOperation() {
+    final static RealReduceOperation rrProdOp = new RealReduceOperation() {
 
         @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
@@ -97,7 +97,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealReduceOperation RRMaxOp = new RealReduceOperation() {
+    final static RealReduceOperation rrMaxOp = new RealReduceOperation() {
 
         @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
@@ -111,7 +111,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealReduceOperation RRMinOp = new RealReduceOperation() {
+    final static RealReduceOperation rrMinOp = new RealReduceOperation() {
 
         @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
@@ -125,7 +125,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealReduceOperation RRVarOp = new RealReduceOperation() {
+    final static RealReduceOperation rrVarOp = new RealReduceOperation() {
 
         @Override
         public void op(double[] working, int[] workingIndices, int size, int stride) {
@@ -166,7 +166,7 @@ public class DimensionOps {
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride);
     }
 
-    final static RealIndexOperation RIMaxOp = new RealIndexOperation() {
+    final static RealIndexOperation riMaxOp = new RealIndexOperation() {
 
         @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
@@ -210,7 +210,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealIndexOperation RIMinOp = new RealIndexOperation() {
+    final static RealIndexOperation riMinOp = new RealIndexOperation() {
 
         @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
@@ -254,7 +254,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealIndexOperation RIZeroOp = new RealIndexOperation() {
+    final static RealIndexOperation riZeroOp = new RealIndexOperation() {
 
         @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
@@ -290,7 +290,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealIndexOperation RIGZeroOp = new RealIndexOperation() {
+    final static RealIndexOperation riGZeroOp = new RealIndexOperation() {
 
         @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
@@ -326,7 +326,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealIndexOperation RILZeroOp = new RealIndexOperation() {
+    final static RealIndexOperation riLZeroOp = new RealIndexOperation() {
 
         @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
@@ -362,7 +362,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealIndexOperation RISortOp = new RealIndexOperation() {
+    final static RealIndexOperation riSortOp = new RealIndexOperation() {
 
         @Override
         public void op(double[] srcV, int[] srcIndices, int[] dstV, int size, int stride) {
@@ -388,7 +388,7 @@ public class DimensionOps {
         public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims);
     }
 
-    final static RealDimensionOperation RDSumOp = new RealDimensionOperation() {
+    final static RealDimensionOperation rdSumOp = new RealDimensionOperation() {
 
         @Override
         public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims) {
@@ -436,7 +436,7 @@ public class DimensionOps {
         }
     };
 
-    final static RealDimensionOperation RDProdOp = new RealDimensionOperation() {
+    final static RealDimensionOperation rdProdOp = new RealDimensionOperation() {
 
         @Override
         public void op(double[] srcV, int[] srcD, int[] srcS, double[] dstV, int[] opDims) {
@@ -531,23 +531,23 @@ public class DimensionOps {
         switch (type) {
 
         case RR_SUM:
-            op = RRSumOp;
+            op = rrSumOp;
             break;
 
         case RR_PROD:
-            op = RRProdOp;
+            op = rrProdOp;
             break;
 
         case RR_MAX:
-            op = RRMaxOp;
+            op = rrMaxOp;
             break;
 
         case RR_MIN:
-            op = RRMinOp;
+            op = rrMinOp;
             break;
 
         case RR_VAR:
-            op = RRVarOp;
+            op = rrVarOp;
             break;
 
         default:
@@ -623,27 +623,27 @@ public class DimensionOps {
         switch (type) {
 
         case RI_MAX:
-            op = RIMaxOp;
+            op = riMaxOp;
             break;
 
         case RI_MIN:
-            op = RIMinOp;
+            op = riMinOp;
             break;
 
         case RI_ZERO:
-            op = RIZeroOp;
+            op = riZeroOp;
             break;
 
         case RI_GZERO:
-            op = RIGZeroOp;
+            op = riGZeroOp;
             break;
 
         case RI_LZERO:
-            op = RILZeroOp;
+            op = riLZeroOp;
             break;
 
         case RI_SORT:
-            op = RISortOp;
+            op = riSortOp;
             break;
 
         default:
@@ -682,11 +682,11 @@ public class DimensionOps {
         switch (type) {
 
         case RD_SUM:
-            op = RDSumOp;
+            op = rdSumOp;
             break;
 
         case RD_PROD:
-            op = RDProdOp;
+            op = rdProdOp;
             break;
 
         default:

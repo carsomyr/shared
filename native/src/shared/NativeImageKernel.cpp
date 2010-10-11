@@ -49,20 +49,20 @@ void NativeImageKernel::createIntegralImage(JNIEnv *env, jobject thisObj, //
             throw std::runtime_error("Invalid arguments");
         }
 
-        ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcDH(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcSH(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
-        ArrayPinHandler dstDH(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstSH(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcDh(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcSh(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler dstDh(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstSh(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         // NO JNI AFTER THIS POINT!
 
-        jdouble *srcVArr = (jdouble *) srcVH.get();
-        jint *srcDArr = (jint *) srcDH.get();
-        jint *srcSArr = (jint *) srcSH.get();
-        jdouble *dstVArr = (jdouble *) dstVH.get();
-        jint *dstDArr = (jint *) dstDH.get();
-        jint *dstSArr = (jint *) dstSH.get();
+        jdouble *srcVArr = (jdouble *) srcVh.get();
+        jint *srcDArr = (jint *) srcDh.get();
+        jint *srcSArr = (jint *) srcSh.get();
+        jdouble *dstVArr = (jdouble *) dstVh.get();
+        jint *dstDArr = (jint *) dstDh.get();
+        jint *dstSArr = (jint *) dstSh.get();
 
         MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
         MappingOps::checkDimensions(dstDArr, dstSArr, nDims, dstLen);
@@ -149,22 +149,22 @@ void NativeImageKernel::createIntegralHistogram(JNIEnv *env, jobject thisObj, //
             throw std::runtime_error("Invalid arguments");
         }
 
-        ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcDH(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcSH(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler memVH(env, memV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
-        ArrayPinHandler dstDH(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstSH(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcDh(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcSh(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler memVh(env, memV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler dstDh(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstSh(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         // NO JNI AFTER THIS POINT!
 
-        jdouble *srcVArr = (jdouble *) srcVH.get();
-        jint *srcDArr = (jint *) srcDH.get();
-        jint *srcSArr = (jint *) srcSH.get();
-        jint *memVArr = (jint *) memVH.get();
-        jdouble *dstVArr = (jdouble *) dstVH.get();
-        jint *dstDArr = (jint *) dstDH.get();
-        jint *dstSArr = (jint *) dstSH.get();
+        jdouble *srcVArr = (jdouble *) srcVh.get();
+        jint *srcDArr = (jint *) srcDh.get();
+        jint *srcSArr = (jint *) srcSh.get();
+        jint *memVArr = (jint *) memVh.get();
+        jdouble *dstVArr = (jdouble *) dstVh.get();
+        jint *dstDArr = (jint *) dstDh.get();
+        jint *dstSArr = (jint *) dstSh.get();
 
         MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);
         MappingOps::checkDimensions(dstDArr, dstSArr, nDims + 1, dstLen);

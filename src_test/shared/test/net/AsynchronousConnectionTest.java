@@ -28,7 +28,7 @@
 
 package shared.test.net;
 
-import static shared.test.net.AllNetTests.Parameterizations;
+import static shared.test.net.AllNetTests.parameterizations;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -50,44 +50,44 @@ import shared.net.Connection.InitializationType;
 import shared.net.ConnectionManager;
 import shared.net.filter.ChainFilterFactory;
 import shared.net.filter.FrameFilterFactory;
-import shared.net.filter.SSLFilterFactory;
-import shared.net.filter.XMLFilterFactory;
-import shared.test.net.TestXMLEvent.DataXMLEvent;
-import shared.test.net.TestXMLEvent.ReceiverXMLVerifier;
-import shared.test.net.TestXMLEvent.SenderXMLVerifier;
-import shared.test.net.TestXMLEvent.SequenceXMLEvent;
+import shared.net.filter.SslFilterFactory;
+import shared.net.filter.XmlFilterFactory;
+import shared.test.net.TestXmlEvent.DataXmlEvent;
+import shared.test.net.TestXmlEvent.ReceiverXmlVerifier;
+import shared.test.net.TestXmlEvent.SenderXmlVerifier;
+import shared.test.net.TestXmlEvent.SequenceXmlEvent;
 import shared.util.Arithmetic;
 import shared.util.Control;
 
 /**
  * A class of unit tests for {@link ConnectionManager}.
  * 
- * @apiviz.composedOf shared.test.net.TestXMLEvent.ReceiverXMLVerifier
- * @apiviz.composedOf shared.test.net.TestXMLEvent.SenderXMLVerifier
- * @apiviz.composedOf shared.test.net.TestXMLConnection
+ * @apiviz.composedOf shared.test.net.TestXmlEvent.ReceiverXmlVerifier
+ * @apiviz.composedOf shared.test.net.TestXmlEvent.SenderXmlVerifier
+ * @apiviz.composedOf shared.test.net.TestXmlConnection
  * @author Roy Liu
  */
 @RunWith(value = Parameterized.class)
 public class AsynchronousConnectionTest {
 
     /**
-     * The server {@link SSLFilterFactory}.
+     * The server {@link SslFilterFactory}.
      */
-    final protected static SSLFilterFactory<TestXMLConnection> ServerSSLFilterFactory = //
-    AllNetTests.createServerSSLFilterFactory();
+    final protected static SslFilterFactory<TestXmlConnection> serverSslFilterFactory = //
+    AllNetTests.createServerSslFilterFactory();
 
     /**
-     * The client {@link SSLFilterFactory}.
+     * The client {@link SslFilterFactory}.
      */
-    final protected static SSLFilterFactory<TestXMLConnection> ClientSSLFilterFactory = //
-    AllNetTests.createClientSSLFilterFactory();
+    final protected static SslFilterFactory<TestXmlConnection> clientSslFilterFactory = //
+    AllNetTests.createClientSslFilterFactory();
 
     final InetSocketAddress remoteAddress;
     final long delay;
     final int messageLength;
     final int nMessages;
     final int nConnections;
-    final boolean useSSL;
+    final boolean useSsl;
 
     ConnectionManager rcm;
     ConnectionManager scm;
@@ -102,7 +102,7 @@ public class AsynchronousConnectionTest {
         this.messageLength = Integer.parseInt(p.getProperty("message_length"));
         this.nMessages = Integer.parseInt(p.getProperty("n_messages"));
         this.nConnections = Integer.parseInt(p.getProperty("n_async_conns"));
-        this.useSSL = p.getProperty("use_ssl").equals("yes");
+        this.useSsl = p.getProperty("use_ssl").equals("yes");
     }
 
     /**
@@ -110,7 +110,7 @@ public class AsynchronousConnectionTest {
      */
     @Parameters
     final public static Collection<Object[]> parameters() {
-        return Parameterizations;
+        return parameterizations;
     }
 
     /**
@@ -124,7 +124,7 @@ public class AsynchronousConnectionTest {
     }
 
     /**
-     * Tests the {@link ConnectionManager} transport mechanism. The sender sends {@link DataXMLEvent}s to the receiver,
+     * Tests the {@link ConnectionManager} transport mechanism. The sender sends {@link DataXmlEvent}s to the receiver,
      * whereupon the results are checked.
      * 
      * @exception Exception
@@ -143,24 +143,24 @@ public class AsynchronousConnectionTest {
         int maxMessageSize = this.messageLength << 6;
         int bufferSize = this.messageLength << 2;
 
-        FrameFilterFactory<TestXMLConnection> fff = new FrameFilterFactory<TestXMLConnection>( //
+        FrameFilterFactory<TestXmlConnection> fff = new FrameFilterFactory<TestXmlConnection>( //
                 minMessageSize, maxMessageSize);
 
         List<AbstractTestVerifier<?>> verifiers = new ArrayList<AbstractTestVerifier<?>>();
 
         for (int i = 0, n = this.nConnections; i < n; i++) {
 
-            ReceiverXMLVerifier xmlV = new ReceiverXMLVerifier();
+            ReceiverXmlVerifier xmlV = new ReceiverXmlVerifier();
 
-            TestXMLConnection xmlRConn = new TestXMLConnection(String.format("r_xml_%d", i), //
+            TestXmlConnection xmlRConn = new TestXmlConnection(String.format("r_xml_%d", i), //
                     minMessageSize, maxMessageSize, this.rcm, xmlV) //
                     .setBufferSize(bufferSize);
 
-            if (this.useSSL) {
-                xmlRConn.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXMLConnection>() //
-                        .add(ServerSSLFilterFactory) //
+            if (this.useSsl) {
+                xmlRConn.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXmlConnection>() //
+                        .add(serverSslFilterFactory) //
                         .add(fff) //
-                        .add(XMLFilterFactory.getInstance()) //
+                        .add(XmlFilterFactory.getInstance()) //
                         .add(xmlRConn));
             }
 
@@ -175,17 +175,17 @@ public class AsynchronousConnectionTest {
 
             long seqNo = Arithmetic.nextInt(4096);
 
-            SenderXMLVerifier xmlV = new SenderXMLVerifier(seqNo, this.nMessages, this.messageLength);
+            SenderXmlVerifier xmlV = new SenderXmlVerifier(seqNo, this.nMessages, this.messageLength);
 
-            TestXMLConnection xmlSConn = new TestXMLConnection(String.format("s_xml_%d", i), //
+            TestXmlConnection xmlSConn = new TestXmlConnection(String.format("s_xml_%d", i), //
                     minMessageSize, maxMessageSize, this.scm, xmlV) //
                     .setBufferSize(bufferSize);
 
-            if (this.useSSL) {
-                xmlSConn.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXMLConnection>() //
-                        .add(ClientSSLFilterFactory) //
+            if (this.useSsl) {
+                xmlSConn.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXmlConnection>() //
+                        .add(clientSslFilterFactory) //
                         .add(fff) //
-                        .add(XMLFilterFactory.getInstance()) //
+                        .add(XmlFilterFactory.getInstance()) //
                         .add(xmlSConn));
             }
 
@@ -193,7 +193,7 @@ public class AsynchronousConnectionTest {
 
             // The asynchronous sockets specification allows us to write data before connecting; we should test this
             // case.
-            xmlSConn.onRemote(new SequenceXMLEvent(seqNo, this.nMessages, null));
+            xmlSConn.onRemote(new SequenceXmlEvent(seqNo, this.nMessages, null));
 
             // Wait for connection establishment.
             fut.get();

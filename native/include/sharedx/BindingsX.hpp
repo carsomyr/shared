@@ -24,4 +24,4 @@
 #include <Benchmark.hpp>
 #include <Plan.hpp>
 
-#include <JNIHeadersXWrap.hpp>
+#include <JniHeadersXWrap.hpp>

@@ -215,21 +215,21 @@ public class ModalArrayKernel implements ArrayKernel {
 
     @Override
     public <V> SparseArrayState<V> insertSparse( //
-            V oldV, int[] oldD, int[] oldS, int[] oldDO, int[] oldI, //
+            V oldV, int[] oldD, int[] oldS, int[] oldDo, int[] oldI, //
             V newV, int[] newI) {
-        return this.opKernel.insertSparse(oldV, oldD, oldS, oldDO, oldI, newV, newI);
+        return this.opKernel.insertSparse(oldV, oldD, oldS, oldDo, oldI, newV, newI);
     }
 
     @Override
     public <V> SparseArrayState<V> sliceSparse(int[] slices, //
-            V srcV, int[] srcD, int[] srcS, int[] srcDO, //
-            int[] srcI, int[] srcIO, int[] srcII, //
-            V dstV, int[] dstD, int[] dstS, int[] dstDO, //
-            int[] dstI, int[] dstIO, int[] dstII) {
+            V srcV, int[] srcD, int[] srcS, int[] srcDo, //
+            int[] srcI, int[] srcIo, int[] srcIi, //
+            V dstV, int[] dstD, int[] dstS, int[] dstDo, //
+            int[] dstI, int[] dstIo, int[] dstIi) {
         return this.opKernel.sliceSparse(slices, //
-                srcV, srcD, srcS, srcDO, //
-                srcI, srcIO, srcII, //
-                dstV, dstD, dstS, dstDO, //
-                dstI, dstIO, dstII);
+                srcV, srcD, srcS, srcDo, //
+                srcI, srcIo, srcIi, //
+                dstV, dstD, dstS, dstDo, //
+                dstI, dstIo, dstIi);
     }
 }

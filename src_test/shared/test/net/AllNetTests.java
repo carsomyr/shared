@@ -51,9 +51,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import shared.net.ConnectionManager;
 import shared.net.filter.FilteredConnection;
-import shared.net.filter.SSLEngineFactory.Mode;
-import shared.net.filter.SSLFilter;
-import shared.net.filter.SSLFilterFactory;
+import shared.net.filter.SslEngineFactory.Mode;
+import shared.net.filter.SslFilter;
+import shared.net.filter.SslFilterFactory;
 
 /**
  * A suite encompassing all networking tests.
@@ -83,16 +83,16 @@ public class AllNetTests {
     /**
      * The classes of {@link Logger}s used in this test.
      */
-    final protected static Class<?>[] LoggerClasses = new Class[] {
+    final protected static Class<?>[] loggerClasses = new Class[] {
             //
             ConnectionManager.class, //
-            SSLFilter.class //
+            SslFilter.class //
     };
 
     /**
      * The unit test parameterizations.
      */
-    final protected static Collection<Object[]> Parameterizations;
+    final protected static Collection<Object[]> parameterizations;
 
     /**
      * Whether the logging {@link Level} should be set low enough so as to enable debugging messages to appear.
@@ -114,15 +114,15 @@ public class AllNetTests {
             throw new RuntimeException(e);
         }
 
-        Properties pNoSSL = (Properties) p.clone();
-        pNoSSL.setProperty("use_ssl", "no");
-        Object[] paramsNoSSL = new Object[] { pNoSSL };
+        Properties pNoSsl = (Properties) p.clone();
+        pNoSsl.setProperty("use_ssl", "no");
+        Object[] paramsNoSsl = new Object[] { pNoSsl };
 
-        Properties pSSL = (Properties) p.clone();
-        pSSL.setProperty("use_ssl", "yes");
-        Object[] paramsSSL = new Object[] { pSSL };
+        Properties pSsl = (Properties) p.clone();
+        pSsl.setProperty("use_ssl", "yes");
+        Object[] paramsSsl = new Object[] { pSsl };
 
-        Parameterizations = Arrays.asList(new Object[][] { paramsNoSSL, paramsSSL });
+        parameterizations = Arrays.asList(new Object[][] { paramsNoSsl, paramsSsl });
 
         DEBUG = p.getProperty("debug").equals("yes");
     }
@@ -135,7 +135,7 @@ public class AllNetTests {
 
         Level debugLevel = DEBUG ? Level.DEBUG : Level.INFO;
 
-        for (Class<?> loggerClass : LoggerClasses) {
+        for (Class<?> loggerClass : loggerClasses) {
             Logger.getLogger(loggerClass).setLevel(debugLevel);
         }
     }
@@ -195,25 +195,25 @@ public class AllNetTests {
     }
 
     /**
-     * Creates a client-side {@link SSLFilterFactory}.
+     * Creates a client-side {@link SslFilterFactory}.
      * 
      * @param <C>
      *            the {@link FilteredConnection} type.
      */
-    final protected static <C extends FilteredConnection<C, ?>> SSLFilterFactory<C> createClientSSLFilterFactory() {
-        return new SSLFilterFactory<C>() //
+    final protected static <C extends FilteredConnection<C, ?>> SslFilterFactory<C> createClientSslFilterFactory() {
+        return new SslFilterFactory<C>() //
                 .setMode(Mode.CLIENT) //
                 .setTrustManagers(getTrustManagers());
     }
 
     /**
-     * Creates a server-side {@link SSLFilterFactory}.
+     * Creates a server-side {@link SslFilterFactory}.
      * 
      * @param <C>
      *            the {@link FilteredConnection} type.
      */
-    final protected static <C extends FilteredConnection<C, ?>> SSLFilterFactory<C> createServerSSLFilterFactory() {
-        return new SSLFilterFactory<C>() //
+    final protected static <C extends FilteredConnection<C, ?>> SslFilterFactory<C> createServerSslFilterFactory() {
+        return new SslFilterFactory<C>() //
                 .setMode(Mode.SERVER) //
                 .setKeyManagers(getKeyManagers(KEYSTORE_PATHNAME, KEYSTORE_PASSWORD)) //
                 .setTrustManagers(getTrustManagers());

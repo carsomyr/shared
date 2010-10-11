@@ -75,21 +75,21 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
 
         // Initialize pinned arrays.
 
-        ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcDH(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcSH(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
-        ArrayPinHandler dstDH(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstSH(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcDh(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcSh(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler dstDh(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstSh(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         ArrayPinHandler opDimsH(env, opDims, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
         // NO JNI AFTER THIS POINT!
 
-        jdouble *srcVArr = (jdouble *) srcVH.get();
-        jint *srcDArr = (jint *) srcDH.get();
-        jint *srcSArr = (jint *) srcSH.get();
-        jdouble *dstVArr = (jdouble *) dstVH.get();
-        jint *dstDArr = (jint *) dstDH.get();
-        jint *dstSArr = (jint *) dstSH.get();
+        jdouble *srcVArr = (jdouble *) srcVh.get();
+        jint *srcDArr = (jint *) srcDh.get();
+        jint *srcSArr = (jint *) srcSh.get();
+        jdouble *dstVArr = (jdouble *) dstVh.get();
+        jint *dstDArr = (jint *) dstDh.get();
+        jint *dstSArr = (jint *) dstSh.get();
         jint *opDimsArr = (jint *) opDimsH.get();
 
         MappingOps::checkDimensions(srcDArr, srcSArr, nDims, srcLen);

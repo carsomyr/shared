@@ -421,10 +421,10 @@ template<class T> inline T ElementOps::accumulatorOpProxy(JNIEnv *env, T (*op)(c
 
     jint logicalLen = srcLen / (complex ? 2 : 1);
 
-    ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
     // NO JNI AFTER THIS POINT!
 
-    return op((T *) srcVH.get(), logicalLen);
+    return op((T *) srcVh.get(), logicalLen);
 }
 
 template<class T> inline void ElementOps::unaryOpProxy(JNIEnv *env, void (*op)(T, T *, jint),
@@ -442,10 +442,10 @@ template<class T> inline void ElementOps::unaryOpProxy(JNIEnv *env, void (*op)(T
 
     jint logicalLen = srcLen / (complex ? 2 : 1);
 
-    ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+    ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
     // NO JNI AFTER THIS POINT!
 
-    op(argument, (T *) srcVH.get(), logicalLen);
+    op(argument, (T *) srcVh.get(), logicalLen);
 }
 
 template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, jarray lhsV, jarray rhsV, jarray dstV,
@@ -573,12 +573,12 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
 
         jint logicalLen = dstLen / (complex ? 2 : 1);
 
-        ArrayPinHandler lhsVH(env, lhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler rhsVH(env, rhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler lhsVh(env, lhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler rhsVh(env, rhsV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
         // NO JNI AFTER THIS POINT!
 
-        op((T *) lhsVH.get(), (T *) rhsVH.get(), (T *) dstVH.get(), logicalLen);
+        op((T *) lhsVh.get(), (T *) rhsVh.get(), (T *) dstVh.get(), logicalLen);
 
     } catch (std::exception &e) {
 
@@ -604,11 +604,11 @@ template<class S, class T> inline void ElementOps::convertProxy(JNIEnv *env, voi
         throw std::runtime_error("Invalid array lengths");
     }
 
-    ArrayPinHandler srcVH(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-    ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+    ArrayPinHandler srcVh(env, srcV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+    ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
     // NO JNI AFTER THIS POINT!
 
-    op((S *) srcVH.get(), (T *) dstVH.get(), logicalLen);
+    op((S *) srcVh.get(), (T *) dstVh.get(), logicalLen);
 }
 
 template<class T> inline void ElementOps::eAdd(const T *a, const T *b, T *r, jint len) {

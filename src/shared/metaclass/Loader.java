@@ -162,10 +162,10 @@ public class Loader {
 
         //
 
-        RegistryClassLoader bootstrapCL = new RegistryClassLoader(useDelegation ? cl : null);
+        RegistryClassLoader bootstrapCl = new RegistryClassLoader(useDelegation ? cl : null);
 
         for (String packageName : resources.packages()) {
-            bootstrapCL.addPackage(packageName);
+            bootstrapCl.addPackage(packageName);
         }
 
         //
@@ -179,7 +179,7 @@ public class Loader {
                 throw new IllegalArgumentException(String.format("Jar \"%s\" not found", pathname));
             }
 
-            bootstrapCL.addRegistry(new JarRegistry(new JarInputStream(in)));
+            bootstrapCl.addRegistry(new JarRegistry(new JarInputStream(in)));
         }
 
         //
@@ -192,21 +192,21 @@ public class Loader {
                 throw new IllegalArgumentException(String.format("Folder \"%s\" is not a directory", pathname));
             }
 
-            bootstrapCL.addRegistry(new FileSystemRegistry(folder));
+            bootstrapCl.addRegistry(new FileSystemRegistry(folder));
         }
 
         //
 
         for (String resourceName : resourceNamesMap.get("native")) {
-            bootstrapCL.loadLibrary(resourceName);
+            bootstrapCl.loadLibrary(resourceName);
         }
 
         //
 
         Class<? extends Annotation> entryPointClass = //
-        (Class<? extends Annotation>) Class.forName(EntryPoint.class.getName(), true, bootstrapCL);
+        (Class<? extends Annotation>) Class.forName(EntryPoint.class.getName(), true, bootstrapCl);
 
-        Class<?> targetClass = Class.forName(targetName, false, bootstrapCL);
+        Class<?> targetClass = Class.forName(targetName, false, bootstrapCl);
 
         Method method = null;
 
@@ -229,7 +229,7 @@ public class Loader {
 
         try {
 
-            currentThread.setContextClassLoader(bootstrapCL);
+            currentThread.setContextClassLoader(bootstrapCl);
 
             method.invoke(null, invocationArg);
 

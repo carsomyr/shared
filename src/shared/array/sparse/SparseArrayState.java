@@ -42,7 +42,7 @@ public class SparseArrayState<V> {
     /**
      * An empty array.
      */
-    final protected static int[] Empty = new int[] {};
+    final protected static int[] empty = new int[] {};
 
     /**
      * The values.
@@ -81,8 +81,8 @@ public class SparseArrayState<V> {
     public SparseArrayState(V emptyValues, int[] dims) {
 
         this.values = emptyValues;
-        this.indices = Empty;
+        this.indices = empty;
         this.indirectionOffsets = new int[Arithmetic.sum(dims) + dims.length];
-        this.indirections = Empty;
+        this.indirections = empty;
     }
 }

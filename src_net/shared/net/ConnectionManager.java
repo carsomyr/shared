@@ -54,21 +54,21 @@ public class ConnectionManager implements Closeable {
     /**
      * A {@link WeakReference} to the global instance.
      */
-    protected static WeakReference<ConnectionManager> DefaultInstanceRef = new WeakReference<ConnectionManager>(null);
+    protected static WeakReference<ConnectionManager> defaultInstanceRef = new WeakReference<ConnectionManager>(null);
 
     /**
      * A global lock for the entire class.
      */
-    final protected static Object ClassLock = new Object();
+    final protected static Object classLock = new Object();
 
     /**
      * Gets the global instance.
      */
     final public static ConnectionManager getInstance() {
 
-        synchronized (ClassLock) {
+        synchronized (classLock) {
 
-            ConnectionManager cm = DefaultInstanceRef.get();
+            ConnectionManager cm = defaultInstanceRef.get();
 
             if (cm != null) {
 
@@ -84,7 +84,7 @@ public class ConnectionManager implements Closeable {
 
             cm = new ConnectionManager("DefaultCM");
 
-            DefaultInstanceRef = new WeakReference<ConnectionManager>(cm);
+            defaultInstanceRef = new WeakReference<ConnectionManager>(cm);
 
             return cm;
         }

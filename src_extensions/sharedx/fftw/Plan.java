@@ -63,8 +63,8 @@ public class Plan extends PlanKey {
     public String toString() {
         return String.format("%s[%s, %s, %s]", //
                 Plan.class.getSimpleName(), //
-                FFTWService.typeToString(this.type), Arrays.toString(this.dims), //
-                FFTWService.modeToString(this.mode));
+                FftwService.typeToString(this.type), Arrays.toString(this.dims), //
+                FftwService.modeToString(this.mode));
     }
 
     /**

@@ -133,7 +133,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * Sets a read {@link Resolver} for when an end-of-stream has been reached.
      */
-    protected void setInResolverEOS() {
+    protected void setInResolverEos() {
 
         this.inResolver = new Resolver() {
 
@@ -292,17 +292,17 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             for (ByteBuffer bb = null; (bb = inputs.peek()) != null && !disableReads;) {
 
-                ByteBuffer receiveBB = this.in.buffer;
+                ByteBuffer receiveBb = this.in.buffer;
 
-                receiveBB.compact();
+                receiveBb.compact();
 
-                int size = Math.min(bb.remaining(), receiveBB.remaining());
+                int size = Math.min(bb.remaining(), receiveBb.remaining());
                 int save = bb.position();
 
-                receiveBB.put(bb.array(), save, size).flip();
+                receiveBb.put(bb.array(), save, size).flip();
                 bb.position(save + size);
 
-                disableReads = (receiveBB.remaining() == receiveBB.capacity()) //
+                disableReads = (receiveBb.remaining() == receiveBb.capacity()) //
                         && bb.hasRemaining();
 
                 if (!bb.hasRemaining()) {
@@ -334,7 +334,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
                 e = new IOException("Connection closed");
 
-                setInResolverEOS();
+                setInResolverEos();
                 setOutResolverError(e);
 
                 // Append the remainders onto the incoming buffer.

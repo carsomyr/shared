@@ -25,10 +25,10 @@
 
 jobject SparseOps::slice(JNIEnv *env, jobject thisObj, //
         jintArray slices, //
-        jobject srcV, jintArray srcD, jintArray srcS, jintArray srcDO, //
-        jintArray srcI, jintArray srcIO, jintArray srcII, //
-        jobject dstV, jintArray dstD, jintArray dstS, jintArray dstDO, //
-        jintArray dstI, jintArray dstIO, jintArray dstII) {
+        jobject srcV, jintArray srcD, jintArray srcS, jintArray srcDo, //
+        jintArray srcI, jintArray srcIo, jintArray srcIi, //
+        jobject dstV, jintArray dstD, jintArray dstS, jintArray dstDo, //
+        jintArray dstI, jintArray dstIo, jintArray dstIi) {
 
     jobject res = NULL;
 
@@ -37,10 +37,10 @@ jobject SparseOps::slice(JNIEnv *env, jobject thisObj, //
     try {
 
         if (!slices
-                || !srcV || !srcD || !srcS || !srcDO
-                || !srcI || !srcIO || !srcII
-                || !dstV || !dstD || !dstS || !dstDO
-                || !dstI || !dstIO || !dstII) {
+                || !srcV || !srcD || !srcS || !srcDo
+                || !srcI || !srcIo || !srcIi
+                || !dstV || !dstD || !dstS || !dstDo
+                || !dstI || !dstIo || !dstIi) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -51,10 +51,10 @@ jobject SparseOps::slice(JNIEnv *env, jobject thisObj, //
         //
 
         mergeResult = mergeProxy(env, slices, //
-                (jarray) srcV, srcD, srcS, srcDO, //
-                srcI, srcIO, srcII, //
-                (jarray) dstV, dstD, dstS, dstDO, //
-                dstI, dstIO, dstII);
+                (jarray) srcV, srcD, srcS, srcDo, //
+                srcI, srcIo, srcIi, //
+                (jarray) dstV, dstD, dstS, dstDo, //
+                dstI, dstIo, dstIi);
 
         //
 
@@ -74,10 +74,10 @@ jobject SparseOps::slice(JNIEnv *env, jobject thisObj, //
 
 MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jintArray slices, //
-        jarray srcV, jintArray srcD, jintArray srcS, jintArray srcDO, //
-        jintArray srcI, jintArray srcIO, jintArray srcII, //
-        jarray dstV, jintArray dstD, jintArray dstS, jintArray dstDO, //
-        jintArray dstI, jintArray dstIO, jintArray dstII) {
+        jarray srcV, jintArray srcD, jintArray srcS, jintArray srcDo, //
+        jintArray srcI, jintArray srcIo, jintArray srcIi, //
+        jarray dstV, jintArray dstD, jintArray dstS, jintArray dstDo, //
+        jintArray dstI, jintArray dstIo, jintArray dstIi) {
 
     MergeResult *mergeResult = NULL;
 
@@ -86,8 +86,8 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint srcLen = env->GetArrayLength(srcV);
         jint dstLen = env->GetArrayLength(dstV);
         jint nDims = env->GetArrayLength(srcD);
-        jint srcIOLen = env->GetArrayLength(srcIO);
-        jint dstIOLen = env->GetArrayLength(dstIO);
+        jint srcIoLen = env->GetArrayLength(srcIo);
+        jint dstIoLen = env->GetArrayLength(dstIo);
 
         jint nSlices = env->GetArrayLength(slices) / 3;
 
@@ -97,43 +97,43 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
                 || (env->GetArrayLength(slices) % 3)
                 || (srcLen != env->GetArrayLength(srcI))
                 || (dstLen != env->GetArrayLength(dstI))
-                || (nDims + 1 != env->GetArrayLength(srcDO))
-                || (nDims * srcLen != env->GetArrayLength(srcII))
-                || (nDims + 1 != env->GetArrayLength(dstDO))
-                || (nDims * dstLen != env->GetArrayLength(dstII))) {
+                || (nDims + 1 != env->GetArrayLength(srcDo))
+                || (nDims * srcLen != env->GetArrayLength(srcIi))
+                || (nDims + 1 != env->GetArrayLength(dstDo))
+                || (nDims * dstLen != env->GetArrayLength(dstIi))) {
             throw std::runtime_error("Invalid arguments");
         }
 
         ArrayPinHandler slicesH(env, slices, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcDH(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcSH(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcIH(env, srcI, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcDOH(env, srcDO, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcIOH(env, srcIO, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler srcIIH(env, srcII, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstDH(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstSH(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstIH(env, dstI, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstDOH(env, dstDO, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstIOH(env, dstIO, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstIIH(env, dstII, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcDh(env, srcD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcSh(env, srcS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcIh(env, srcI, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcDoh(env, srcDo, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcIoh(env, srcIo, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler srcIih(env, srcIi, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstDh(env, dstD, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstSh(env, dstS, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstIh(env, dstI, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstDoh(env, dstDo, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstIoh(env, dstIo, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstIih(env, dstIi, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
 
         jint *slicesArr = (jint *) slicesH.get();
-        jint *srcDArr = (jint *) srcDH.get();
-        jint *srcSArr = (jint *) srcSH.get();
-        jint *srcIArr = (jint *) srcIH.get();
-        jint *srcDOArr = (jint *) srcDOH.get();
-        jint *srcIOArr = (jint *) srcIOH.get();
-        jint *srcIIArr = (jint *) srcIIH.get();
-        jint *dstDArr = (jint *) dstDH.get();
-        jint *dstSArr = (jint *) dstSH.get();
-        jint *dstIArr = (jint *) dstIH.get();
-        jint *dstDOArr = (jint *) dstDOH.get();
-        jint *dstIOArr = (jint *) dstIOH.get();
-        jint *dstIIArr = (jint *) dstIIH.get();
+        jint *srcDArr = (jint *) srcDh.get();
+        jint *srcSArr = (jint *) srcSh.get();
+        jint *srcIArr = (jint *) srcIh.get();
+        jint *srcDoArr = (jint *) srcDoh.get();
+        jint *srcIoArr = (jint *) srcIoh.get();
+        jint *srcIiArr = (jint *) srcIih.get();
+        jint *dstDArr = (jint *) dstDh.get();
+        jint *dstSArr = (jint *) dstSh.get();
+        jint *dstIArr = (jint *) dstIh.get();
+        jint *dstDoArr = (jint *) dstDoh.get();
+        jint *dstIoArr = (jint *) dstIoh.get();
+        jint *dstIiArr = (jint *) dstIih.get();
 
-        if ((srcIOLen != Common::sum(srcDArr, nDims, (jint) 0) + nDims)
-                || (dstIOLen != Common::sum(dstDArr, nDims, (jint) 0) + nDims)) {
+        if ((srcIoLen != Common::sum(srcDArr, nDims, (jint) 0) + nDims)
+                || (dstIoLen != Common::sum(dstDArr, nDims, (jint) 0) + nDims)) {
             throw std::runtime_error("Invalid arguments");
         }
 
@@ -158,15 +158,15 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         for (jint dim = 0; dim < nDims; dim++) {
 
-            if ((srcDOArr[dim + 1] - srcDOArr[dim] - 1 != srcDArr[dim])
-                    || (dstDOArr[dim + 1] - dstDOArr[dim] - 1 != dstDArr[dim])) {
+            if ((srcDoArr[dim + 1] - srcDoArr[dim] - 1 != srcDArr[dim])
+                    || (dstDoArr[dim + 1] - dstDoArr[dim] - 1 != dstDArr[dim])) {
                 throw std::runtime_error("Invalid arguments");
             }
         }
 
         //
 
-        jint offsetArrayLen = srcDOArr[nDims];
+        jint offsetArrayLen = srcDoArr[nDims];
 
         MallocHandler all0H(sizeof(jint) * (2 * nDims + 2 * offsetArrayLen + 1 + srcLen + dstLen));
         jint *all0 = (jint *) all0H.get();
@@ -186,7 +186,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
             jint dim = slicesArr[i + 2];
 
             srcSliceCounts[dim]++;
-            lookupCounts[srcDOArr[dim] + srcIndex]++;
+            lookupCounts[srcDoArr[dim] + srcIndex]++;
         }
 
         //
@@ -203,11 +203,11 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
             for (jint dimIndex = 0; dimIndex < dimSize; dimIndex++) {
 
-                lookupOffsets[srcDOArr[dim] + dimIndex] = lookupOffset;
-                lookupOffset += lookupCounts[srcDOArr[dim] + dimIndex];
+                lookupOffsets[srcDoArr[dim] + dimIndex] = lookupOffset;
+                lookupOffset += lookupCounts[srcDoArr[dim] + dimIndex];
             }
 
-            lookupOffsets[srcDOArr[dim] + dimSize] = lookupOffset;
+            lookupOffsets[srcDoArr[dim] + dimSize] = lookupOffset;
         }
 
         sliceOffsets[nDims] = sliceOffset;
@@ -232,10 +232,10 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
             srcSlices[sliceOffsets[dim] + srcSliceCounts[dim]] = srcIndex;
             dstSlices[sliceOffsets[dim] + srcSliceCounts[dim]] = dstIndex;
-            dstLookups[lookupOffsets[srcDOArr[dim] + srcIndex] + lookupCounts[srcDOArr[dim] + srcIndex]] = dstIndex;
+            dstLookups[lookupOffsets[srcDoArr[dim] + srcIndex] + lookupCounts[srcDoArr[dim] + srcIndex]] = dstIndex;
 
             srcSliceCounts[dim]++;
-            lookupCounts[srcDOArr[dim] + srcIndex]++;
+            lookupCounts[srcDoArr[dim] + srcIndex]++;
         }
 
         //
@@ -249,9 +249,9 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
             dstSliceCounts[dim] = normalize(dstSlices, sliceOffsets[dim], sliceOffsets[dim + 1]);
 
             for (jint dimIndex = 0, dimSize = srcDArr[dim]; dimIndex < dimSize; dimIndex++) {
-                lookupCounts[srcDOArr[dim] + dimIndex] = normalize(dstLookups, //
-                        lookupOffsets[srcDOArr[dim] + dimIndex], //
-                        lookupOffsets[srcDOArr[dim] + dimIndex + 1]);
+                lookupCounts[srcDoArr[dim] + dimIndex] = normalize(dstLookups, //
+                        lookupOffsets[srcDoArr[dim] + dimIndex], //
+                        lookupOffsets[srcDoArr[dim] + dimIndex + 1]);
             }
         }
 
@@ -260,14 +260,14 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
         jint nSrcIndirections;
 
         getSlicedIndirections(sliceOffsets, srcSliceCounts, srcSlices, //
-                srcDOArr, srcIOArr, srcIIArr, srcLen, //
+                srcDoArr, srcIoArr, srcIiArr, srcLen, //
                 srcDArr, nDims, //
                 srcIndirections, nSrcIndirections);
 
         jint nDstIndirections;
 
         getSlicedIndirections(sliceOffsets, dstSliceCounts, dstSlices, //
-                dstDOArr, dstIOArr, dstIIArr, dstLen, //
+                dstDoArr, dstIoArr, dstIiArr, dstLen, //
                 dstDArr, nDims, //
                 dstIndirections, nDstIndirections);
 
@@ -301,7 +301,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
                 jint logicalIndex = physical / srcSArr[dim];
 
-                mapLen *= lookupCounts[srcDOArr[dim] + logicalIndex];
+                mapLen *= lookupCounts[srcDoArr[dim] + logicalIndex];
 
                 physical %= srcSArr[dim];
             }
@@ -335,7 +335,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
                 logical[dim] = physical / srcSArr[dim];
 
-                newIndices[indirectionOffset] += dstSArr[dim] * dstLookups[lookupOffsets[srcDOArr[dim] + logical[dim]]];
+                newIndices[indirectionOffset] += dstSArr[dim] * dstLookups[lookupOffsets[srcDoArr[dim] + logical[dim]]];
 
                 physical %= srcSArr[dim];
             }
@@ -347,8 +347,8 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
             for (jint dim = nDims - 1, blockSize = 1, size; dim >= 0; blockSize *= size, dim--) {
 
-                jint start = lookupOffsets[srcDOArr[dim] + logical[dim]];
-                size = lookupCounts[srcDOArr[dim] + logical[dim]];
+                jint start = lookupOffsets[srcDoArr[dim] + logical[dim]];
+                size = lookupCounts[srcDoArr[dim] + logical[dim]];
 
                 for (jint offset = indirectionOffset + blockSize,
                         offsetEnd = indirectionOffset + blockSize * size, n = start + 1;
@@ -409,7 +409,7 @@ MergeResult *SparseOps::mergeProxy(JNIEnv *env, //
 
         mergeResult = merge(oldIndices, oldIndirections, dstLen - nDstIndirections,
                 resNewIndices, resNewIndirections, resLen,
-                dstDArr, dstSArr, dstDOArr, nDims);
+                dstDArr, dstSArr, dstDoArr, nDims);
 
         return mergeResult;
 

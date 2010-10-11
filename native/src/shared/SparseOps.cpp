@@ -41,13 +41,13 @@ jobject SparseOps::createSparseArrayState(JNIEnv *env, //
     {
         jdoubleArray dstV = Common::newDoubleArray(env, mergeResult->count);
 
-        ArrayPinHandler oldVH(env, oldV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler newVH(env, newV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler oldVh(env, oldV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler newVh(env, newV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
 
-        jdouble *oldVArr = (jdouble *) oldVH.get();
-        jdouble *newVArr = (jdouble *) newVH.get();
-        jdouble *dstVArr = (jdouble *) dstVH.get();
+        jdouble *oldVArr = (jdouble *) oldVh.get();
+        jdouble *newVArr = (jdouble *) newVh.get();
+        jdouble *dstVArr = (jdouble *) dstVh.get();
 
         for (jint i = 0, n = mergeResult->oldLen; i < n; i++) {
             dstVArr[oldAssignments[i]] = oldVArr[oldIndirections[i]];
@@ -67,13 +67,13 @@ jobject SparseOps::createSparseArrayState(JNIEnv *env, //
     {
         jintArray dstV = Common::newIntArray(env, mergeResult->count);
 
-        ArrayPinHandler oldVH(env, oldV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler newVH(env, newV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
-        ArrayPinHandler dstVH(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
+        ArrayPinHandler oldVh(env, oldV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler newVh(env, newV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_ONLY);
+        ArrayPinHandler dstVh(env, dstV, ArrayPinHandler::PRIMITIVE, ArrayPinHandler::READ_WRITE);
 
-        jint *oldVArr = (jint *) oldVH.get();
-        jint *newVArr = (jint *) newVH.get();
-        jint *dstVArr = (jint *) dstVH.get();
+        jint *oldVArr = (jint *) oldVh.get();
+        jint *newVArr = (jint *) newVh.get();
+        jint *dstVArr = (jint *) dstVh.get();
 
         for (jint i = 0, n = mergeResult->oldLen; i < n; i++) {
             dstVArr[oldAssignments[i]] = oldVArr[oldIndirections[i]];

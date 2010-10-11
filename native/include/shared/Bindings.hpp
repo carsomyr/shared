@@ -30,4 +30,4 @@
 #include <SparseOps.hpp>
 #include <NativeImageKernel.hpp>
 
-#include <JNIHeadersWrap.hpp>
+#include <JniHeadersWrap.hpp>

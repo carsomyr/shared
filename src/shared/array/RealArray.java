@@ -29,8 +29,8 @@
 package shared.array;
 
 import static shared.array.ArrayBase.DEFAULT_ORDER;
-import static shared.array.ArrayBase.IOKernel;
-import static shared.array.ArrayBase.OpKernel;
+import static shared.array.ArrayBase.ioKernel;
+import static shared.array.ArrayBase.opKernel;
 import shared.util.Arithmetic;
 import shared.util.Arrays;
 import shared.util.Control;
@@ -127,7 +127,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
 
         RealArray res = new RealArray(DEFAULT_ORDER, a.dims[0], b.dims[1]);
 
-        OpKernel.mul(a.values, b.values, a.dims[0], b.dims[1], res.values, false);
+        opKernel.mul(a.values, b.values, a.dims[0], b.dims[1], res.values, false);
 
         return res;
     }
@@ -147,7 +147,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
 
         RealArray res = new RealArray(DEFAULT_ORDER, size, 1);
 
-        OpKernel.diag(a.values, res.values, size, false);
+        opKernel.diag(a.values, res.values, size, false);
 
         return res;
     }
@@ -166,7 +166,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
     }
 
     @Override
-    public RealArray[] mSVD() {
+    public RealArray[] mSvd() {
 
         RealArray a = this;
 
@@ -205,7 +205,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
 
         double[] sV = new double[nColsT];
 
-        OpKernel.svd(a.values, matStrideRow, matStrideCol, u.values(), sV, v.values(), nRowsT, nColsT);
+        opKernel.svd(a.values, matStrideRow, matStrideCol, u.values(), sV, v.values(), nRowsT, nColsT);
 
         double[] sValues = s.values();
 
@@ -233,7 +233,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
 
         double[] eigValues = new double[2 * size];
 
-        OpKernel.eigs(a.values, eigVectors.values, eigValues, size);
+        opKernel.eigs(a.values, eigVectors.values, eigValues, size);
 
         RealArray eigValueMatrix = new RealArray(size, size);
 
@@ -277,14 +277,14 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
 
         RealArray res = new RealArray(DEFAULT_ORDER, size, size);
 
-        OpKernel.invert(a.values, res.values, size);
+        opKernel.invert(a.values, res.values, size);
 
         return res;
     }
 
     @Override
     public byte[] getBytes() {
-        return IOKernel.getBytes(this);
+        return ioKernel.getBytes(this);
     }
 
     /**
@@ -302,7 +302,7 @@ public class RealArray extends AbstractRealArray<RealArray, ComplexArray> implem
      * Parses an array from {@code byte}s.
      */
     final public static RealArray parse(byte[] data) {
-        return IOKernel.parse(data);
+        return ioKernel.parse(data);
     }
 
     /**

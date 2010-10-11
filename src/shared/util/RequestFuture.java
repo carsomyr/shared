@@ -42,7 +42,7 @@ public class RequestFuture<T> extends FutureTask<T> {
     /**
      * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
      */
-    final protected static Runnable NullRunnable = new Runnable() {
+    final protected static Runnable nullRunnable = new Runnable() {
 
         @Override
         public void run() {
@@ -53,7 +53,7 @@ public class RequestFuture<T> extends FutureTask<T> {
      * Default constructor.
      */
     public RequestFuture() {
-        super(NullRunnable, null);
+        super(nullRunnable, null);
     }
 
     /**

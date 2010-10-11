@@ -46,7 +46,7 @@ import shared.net.Connection;
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class ChainFilterFactory<I, O, C extends Connection> implements FilterFactory<OOBFilter<I, O>, I, O, C> {
+public class ChainFilterFactory<I, O, C extends Connection> implements FilterFactory<OobFilter<I, O>, I, O, C> {
 
     FilterFactory<? extends Filter<Object, Object>, Object, Object, ? super C>[] factories;
 
@@ -85,22 +85,22 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
 
     @SuppressWarnings("unchecked")
     @Override
-    public OOBFilter<I, O> newFilter(C connection) {
+    public OobFilter<I, O> newFilter(C connection) {
 
         final int nFilters = this.factories.length;
 
-        final OOBFilter<Object, Object>[] filters = new OOBFilter[nFilters];
+        final OobFilter<Object, Object>[] filters = new OobFilter[nFilters];
         final Queue<Object>[] inboundsReadOnly = new Queue[nFilters - 1];
         final Queue<Object>[] inboundsWriteOnly = new Queue[nFilters - 1];
         final Queue<Object>[] outboundsReadOnly = new Queue[nFilters - 1];
         final Queue<Object>[] outboundsWriteOnly = new Queue[nFilters - 1];
-        final Queue<OOBEvent>[] inboundEvtsReadOnly = new Queue[nFilters - 1];
-        final Queue<OOBEvent>[] inboundEvtsWriteOnly = new Queue[nFilters - 1];
-        final Queue<OOBEvent>[] outboundEvtsReadOnly = new Queue[nFilters - 1];
-        final Queue<OOBEvent>[] outboundEvtsWriteOnly = new Queue[nFilters - 1];
+        final Queue<OobEvent>[] inboundEvtsReadOnly = new Queue[nFilters - 1];
+        final Queue<OobEvent>[] inboundEvtsWriteOnly = new Queue[nFilters - 1];
+        final Queue<OobEvent>[] outboundEvtsReadOnly = new Queue[nFilters - 1];
+        final Queue<OobEvent>[] outboundEvtsWriteOnly = new Queue[nFilters - 1];
 
         for (int i = 0; i < nFilters; i++) {
-            filters[i] = Filters.asOOBFilter(this.factories[i].newFilter(connection));
+            filters[i] = Filters.asOobFilter(this.factories[i].newFilter(connection));
         }
 
         for (int i = 0, n = nFilters - 1; i < n; i++) {
@@ -113,16 +113,16 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
             outboundsReadOnly[i] = Filters.readOnlyQueue(outbounds);
             outboundsWriteOnly[i] = Filters.writeOnlyQueue(outbounds);
 
-            Queue<OOBEvent> inboundEvts = Filters.createQueue();
+            Queue<OobEvent> inboundEvts = Filters.createQueue();
             inboundEvtsReadOnly[i] = Filters.readOnlyQueue(inboundEvts);
             inboundEvtsWriteOnly[i] = Filters.writeOnlyQueue(inboundEvts);
 
-            Queue<OOBEvent> outboundEvts = Filters.createQueue();
+            Queue<OobEvent> outboundEvts = Filters.createQueue();
             outboundEvtsReadOnly[i] = Filters.readOnlyQueue(outboundEvts);
             outboundEvtsWriteOnly[i] = Filters.writeOnlyQueue(outboundEvts);
         }
 
-        return new OOBFilter<I, O>() {
+        return new OobFilter<I, O>() {
 
             @Override
             public void applyInbound(Queue<I> inputs, Queue<O> outputs) {
@@ -171,29 +171,29 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
             }
 
             @Override
-            public void applyInboundOOB( //
-                    Queue<I> inputs, Queue<OOBEvent> inputEvts, //
-                    Queue<O> outputs, Queue<OOBEvent> outputEvts) {
+            public void applyInboundOob( //
+                    Queue<I> inputs, Queue<OobEvent> inputEvts, //
+                    Queue<O> outputs, Queue<OobEvent> outputEvts) {
 
                 switch (filters.length) {
 
                 case 1:
-                    ((OOBFilter<I, O>) filters[0]).applyInboundOOB(inputs, inputEvts, outputs, outputEvts);
+                    ((OobFilter<I, O>) filters[0]).applyInboundOob(inputs, inputEvts, outputs, outputEvts);
                     break;
 
                 default:
 
-                    ((OOBFilter<I, Object>) filters[0]).applyInboundOOB( //
+                    ((OobFilter<I, Object>) filters[0]).applyInboundOob( //
                             inputs, inputEvts, //
                             inboundsWriteOnly[0], inboundEvtsWriteOnly[0]);
 
                     for (int i = 1, n = nFilters - 1; i < n; i++) {
-                        filters[i].applyInboundOOB( //
+                        filters[i].applyInboundOob( //
                                 inboundsReadOnly[i - 1], inboundEvtsReadOnly[i - 1], //
                                 inboundsWriteOnly[i], inboundEvtsWriteOnly[i]);
                     }
 
-                    ((OOBFilter<Object, O>) filters[nFilters - 1]).applyInboundOOB( //
+                    ((OobFilter<Object, O>) filters[nFilters - 1]).applyInboundOob( //
                             inboundsReadOnly[nFilters - 2], inboundEvtsReadOnly[nFilters - 2], //
                             outputs, outputEvts);
 
@@ -202,29 +202,29 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
             }
 
             @Override
-            public void applyOutboundOOB( //
-                    Queue<O> inputs, Queue<OOBEvent> inputEvts, //
-                    Queue<I> outputs, Queue<OOBEvent> outputEvts) {
+            public void applyOutboundOob( //
+                    Queue<O> inputs, Queue<OobEvent> inputEvts, //
+                    Queue<I> outputs, Queue<OobEvent> outputEvts) {
 
                 switch (filters.length) {
 
                 case 1:
-                    ((OOBFilter<I, O>) filters[0]).applyOutboundOOB(inputs, inputEvts, outputs, outputEvts);
+                    ((OobFilter<I, O>) filters[0]).applyOutboundOob(inputs, inputEvts, outputs, outputEvts);
                     break;
 
                 default:
 
-                    ((OOBFilter<Object, O>) filters[nFilters - 1]).applyOutboundOOB( //
+                    ((OobFilter<Object, O>) filters[nFilters - 1]).applyOutboundOob( //
                             inputs, inputEvts, //
                             outboundsWriteOnly[nFilters - 2], outboundEvtsWriteOnly[nFilters - 2]);
 
                     for (int i = nFilters - 2; i >= 1; i--) {
-                        filters[i].applyOutboundOOB( //
+                        filters[i].applyOutboundOob( //
                                 outboundsReadOnly[i], outboundEvtsReadOnly[i], //
                                 outboundsWriteOnly[i - 1], outboundEvtsWriteOnly[i - 1]);
                     }
 
-                    ((OOBFilter<I, Object>) filters[0]).applyOutboundOOB( //
+                    ((OobFilter<I, Object>) filters[0]).applyOutboundOob( //
                             outboundsReadOnly[0], outboundEvtsReadOnly[0], //
                             outputs, outputEvts);
 

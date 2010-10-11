@@ -75,8 +75,8 @@ public class ClientServerTest {
     @Test
     public void testTransport() {
 
-        UTF8Connection clientConnection = new UTF8Connection("Client");
-        UTF8Connection serverConnection = new UTF8Connection("Server");
+        Utf8Connection clientConnection = new Utf8Connection("Client");
+        Utf8Connection serverConnection = new Utf8Connection("Server");
 
         int port = 10101;
 
@@ -111,8 +111,8 @@ public class ClientServerTest {
     /**
      * An internal {@link Connection} class for demo purposes.
      */
-    protected static class UTF8Connection extends FilteredManagedConnection<UTF8Connection, String> //
-            implements FilterFactory<Filter<ByteBuffer, String>, ByteBuffer, String, UTF8Connection>, //
+    protected static class Utf8Connection extends FilteredManagedConnection<Utf8Connection, String> //
+            implements FilterFactory<Filter<ByteBuffer, String>, ByteBuffer, String, Utf8Connection>, //
             Filter<ByteBuffer, String> {
 
         final Logger log;
@@ -120,14 +120,14 @@ public class ClientServerTest {
         /**
          * Default constructor.
          */
-        protected UTF8Connection(String name) {
+        protected Utf8Connection(String name) {
             super(name, ConnectionManager.getInstance());
 
             this.log = LoggerFactory.getLogger( //
                     String.format("%s.%s", ClientServerTest.class.getName(), name));
 
-            setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, UTF8Connection>() //
-                    .add(new FrameFilterFactory<UTF8Connection>()) //
+            setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, Utf8Connection>() //
+                    .add(new FrameFilterFactory<Utf8Connection>()) //
                     .add(this));
         }
 
@@ -167,7 +167,7 @@ public class ClientServerTest {
         }
 
         @Override
-        public Filter<ByteBuffer, String> newFilter(UTF8Connection connection) {
+        public Filter<ByteBuffer, String> newFilter(Utf8Connection connection) {
             return this;
         }
 

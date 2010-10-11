@@ -74,7 +74,7 @@ public interface Matrix<T extends Matrix<T, E>, E> extends Array<T, E> {
      * 
      * @return the matrices U, S, and V.
      */
-    public T[] mSVD();
+    public T[] mSvd();
 
     /**
      * Gets the eigenvectors and eigenvalues of this matrix.

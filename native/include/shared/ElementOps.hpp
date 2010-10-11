@@ -24,7 +24,7 @@
 #include <Common.hpp>
 #include <NativeArrayKernel.hpp>
 
-#include <JNIHeadersWrap.hpp>
+#include <JniHeadersWrap.hpp>
 
 #ifndef _Included_ElementOps
 #define _Included_ElementOps

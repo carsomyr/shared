@@ -35,7 +35,7 @@ import shared.metaclass.Loader.EntryPoint;
 import shared.metaclass.Loader.LoadableResources;
 import shared.metaclass.RegistryClassLoader;
 import shared.test.Tests;
-import shared.test.fft.AllFFTTests;
+import shared.test.fft.AllFftTests;
 import shared.util.Control;
 
 /**
@@ -84,16 +84,16 @@ public class AllX {
 
         } catch (RuntimeException e) {
 
-            Tests.Log.debug("Requisite native library not found. Skipping tests.");
+            Tests.log.debug("Requisite native library not found. Skipping tests.");
 
             return;
         }
 
-        Control.checkTrue(ArrayBase.OpKernel.useRegisteredKernel() && ArrayBase.FFTService.useRegisteredService(), //
+        Control.checkTrue(ArrayBase.opKernel.useRegisteredKernel() && ArrayBase.fftService.useRegisteredService(), //
                 "Could not link native library");
 
         Tests.runTests("Extension Module Tests", //
-                AllFFTTests.class, //
+                AllFftTests.class, //
                 BenchmarkJava.class, //
                 BenchmarkNative.class);
     }

@@ -222,7 +222,7 @@ public class IntegerArrayTest {
      * Tests {@link IntegerArray#ndgrid(int...)}.
      */
     @Test
-    public void testNDGrid() {
+    public void testNdGrid() {
 
         IntegerArray[] arrays = IntegerArray.ndgrid(-3, 0, 1, 3, 0, -1, 6, 0, -2);
 

@@ -28,7 +28,7 @@
 
 package shared.test.net;
 
-import static shared.test.net.AllNetTests.Parameterizations;
+import static shared.test.net.AllNetTests.parameterizations;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +53,7 @@ import org.junit.runners.Parameterized.Parameters;
 import shared.net.Connection.InitializationType;
 import shared.net.ConnectionManager;
 import shared.net.SynchronousManagedConnection;
-import shared.net.filter.SSLFilterFactory;
+import shared.net.filter.SslFilterFactory;
 import shared.util.Control;
 import shared.util.CoreThread;
 
@@ -66,23 +66,23 @@ import shared.util.CoreThread;
 public class SynchronousConnectionTest {
 
     /**
-     * The server {@link SSLFilterFactory}.
+     * The server {@link SslFilterFactory}.
      */
-    final protected static SSLFilterFactory<SynchronousManagedConnection> ServerSSLFilterFactory = //
-    AllNetTests.createServerSSLFilterFactory();
+    final protected static SslFilterFactory<SynchronousManagedConnection> serverSslFilterFactory = //
+    AllNetTests.createServerSslFilterFactory();
 
     /**
-     * The client {@link SSLFilterFactory}.
+     * The client {@link SslFilterFactory}.
      */
-    final protected static SSLFilterFactory<SynchronousManagedConnection> ClientSSLFilterFactory = //
-    AllNetTests.createClientSSLFilterFactory();
+    final protected static SslFilterFactory<SynchronousManagedConnection> clientSslFilterFactory = //
+    AllNetTests.createClientSslFilterFactory();
 
     final InetSocketAddress remoteAddress;
     final long delay;
     final int messageLength;
     final int nMessages;
     final int nConnections;
-    final boolean useSSL;
+    final boolean useSsl;
 
     ConnectionManager rcm, scm;
 
@@ -96,7 +96,7 @@ public class SynchronousConnectionTest {
         this.messageLength = Integer.parseInt(p.getProperty("message_length"));
         this.nMessages = Integer.parseInt(p.getProperty("n_messages"));
         this.nConnections = Integer.parseInt(p.getProperty("n_sync_conns"));
-        this.useSSL = p.getProperty("use_ssl").equals("yes");
+        this.useSsl = p.getProperty("use_ssl").equals("yes");
     }
 
     /**
@@ -104,7 +104,7 @@ public class SynchronousConnectionTest {
      */
     @Parameters
     final public static Collection<Object[]> parameters() {
-        return Parameterizations;
+        return parameterizations;
     }
 
     /**
@@ -163,8 +163,8 @@ public class SynchronousConnectionTest {
                 String.format("r-%d", index), this.rcm) //
                 .setBufferSize(bufferSize);
 
-        if (this.useSSL) {
-            receiver.setFilterFactory(ServerSSLFilterFactory);
+        if (this.useSsl) {
+            receiver.setFilterFactory(serverSslFilterFactory);
         }
 
         final AtomicBoolean success = new AtomicBoolean(false);
@@ -256,8 +256,8 @@ public class SynchronousConnectionTest {
                 String.format("s-%d", index), this.scm) //
                 .setBufferSize(bufferSize);
 
-        if (this.useSSL) {
-            sender.setFilterFactory(ClientSSLFilterFactory);
+        if (this.useSsl) {
+            sender.setFilterFactory(clientSslFilterFactory);
         }
 
         final AtomicBoolean success = new AtomicBoolean(false);

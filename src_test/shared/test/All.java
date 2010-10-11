@@ -36,11 +36,11 @@ import shared.metaclass.Loader.EntryPoint;
 import shared.metaclass.Loader.LoadableResources;
 import shared.test.array.AllArrayOperationTests;
 import shared.test.array.AllArrayUtilTests;
-import shared.test.fft.AllFFTTests;
+import shared.test.fft.AllFftTests;
 import shared.test.image.AllImageTests;
 import shared.test.net.AllNetTests;
 import shared.test.parallel.AllParallelTests;
-import shared.test.stat.AllMLTests;
+import shared.test.stat.AllMlTests;
 import shared.test.stat.AllStatUtilTests;
 import shared.test.util.AllUtilTests;
 
@@ -81,10 +81,10 @@ public class All {
     @EntryPoint
     public static void main0(String[] args) {
 
-        ArrayBase.OpKernel.useJava();
-        ArrayBase.IOKernel.useMatlabIO();
-        ArrayBase.FFTService.useJava();
-        ImageOps.ImKernel.useJava();
+        ArrayBase.opKernel.useJava();
+        ArrayBase.ioKernel.useMatlabIo();
+        ArrayBase.fftService.useJava();
+        ImageOps.imKernel.useJava();
 
         Logging.configureLog4J("shared/log4j.xml");
         Logging.configureLog4J("shared/net/log4j.xml");
@@ -94,10 +94,10 @@ public class All {
                 AllUtilTests.class, //
                 AllArrayOperationTests.class, //
                 AllArrayUtilTests.class, //
-                AllFFTTests.class, //
+                AllFftTests.class, //
                 AllImageTests.class, //
                 AllParallelTests.class, //
-                AllMLTests.class, //
+                AllMlTests.class, //
                 AllStatUtilTests.class, //
                 AllNetTests.class);
     }
