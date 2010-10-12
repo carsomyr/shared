@@ -28,45 +28,44 @@
 
 package shared.net.filter;
 
-import shared.event.Event;
+import shared.event.Source;
 import shared.net.SourceType;
 
 /**
- * Defines an {@link Event} for conveying out-of-band information that doesn't belong in data.
+ * A minimal implementation of {@link OobEvent} that can be subclassed into user-defined events.
  * 
- * @apiviz.owns shared.net.filter.OobEvent.OobEventType
  * @author Roy Liu
  */
-public interface OobEvent extends Event<OobEvent, OobEvent.OobEventType, SourceType> {
+public class BaseOobEvent implements OobEvent {
+
+    final OobEventType type;
+    final Source<OobEvent, SourceType> source;
 
     /**
-     * An enumeration of {@link OobEvent} types.
+     * Default constructor.
      */
-    public enum OobEventType {
+    public BaseOobEvent(OobEventType type, Source<OobEvent, SourceType> source) {
 
-        /**
-         * Denotes a user-defined event.
-         */
-        USER, //
+        this.type = type;
+        this.source = source;
+    }
 
-        /**
-         * Denotes connection binding.
-         */
-        BIND, //
+    @Override
+    public OobEventType getType() {
+        return this.type;
+    }
 
-        /**
-         * Denotes connection closure by end-of-stream.
-         */
-        CLOSING_EOS, //
+    @Override
+    public Source<OobEvent, SourceType> getSource() {
+        return this.source;
+    }
 
-        /**
-         * Denotes connection closure by user request.
-         */
-        CLOSING_USER, //
-
-        /**
-         * Denotes connection closure by error.
-         */
-        CLOSING_ERROR;
+    /**
+     * Creates a human-readable representation of this event.
+     */
+    @Override
+    public String toString() {
+        return String.format("%s[%s, %s]", //
+                getClass().getSimpleName(), this.type, this.source);
     }
 }

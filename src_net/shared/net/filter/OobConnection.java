@@ -28,45 +28,20 @@
 
 package shared.net.filter;
 
-import shared.event.Event;
-import shared.net.SourceType;
+import shared.net.Connection;
 
 /**
- * Defines an {@link Event} for conveying out-of-band information that doesn't belong in data.
+ * Defines a {@link Connection} that can react to user-defined {@link OobEvent}s.
  * 
- * @apiviz.owns shared.net.filter.OobEvent.OobEventType
  * @author Roy Liu
  */
-public interface OobEvent extends Event<OobEvent, OobEvent.OobEventType, SourceType> {
+public interface OobConnection extends Connection {
 
     /**
-     * An enumeration of {@link OobEvent} types.
+     * On receipt of a user-defined {@link OobEvent}.
+     * 
+     * @param evt
+     *            the {@link OobEvent}.
      */
-    public enum OobEventType {
-
-        /**
-         * Denotes a user-defined event.
-         */
-        USER, //
-
-        /**
-         * Denotes connection binding.
-         */
-        BIND, //
-
-        /**
-         * Denotes connection closure by end-of-stream.
-         */
-        CLOSING_EOS, //
-
-        /**
-         * Denotes connection closure by user request.
-         */
-        CLOSING_USER, //
-
-        /**
-         * Denotes connection closure by error.
-         */
-        CLOSING_ERROR;
-    }
+    public void onOob(OobEvent evt);
 }

@@ -28,13 +28,19 @@
 
 package shared.net.filter;
 
+import static shared.net.filter.OobEvent.OobEventType.BIND;
+import static shared.net.filter.OobEvent.OobEventType.CLOSING_EOS;
+import static shared.net.filter.OobEvent.OobEventType.CLOSING_ERROR;
+import static shared.net.filter.OobEvent.OobEventType.CLOSING_USER;
+import static shared.net.filter.OobEvent.OobEventType.USER;
+
 import java.nio.ByteBuffer;
 import java.util.Queue;
 
-import shared.event.Handler;
 import shared.net.AbstractManagedConnection;
 import shared.net.ConnectionManager;
 import shared.net.filter.OobEvent.OobEventType;
+import shared.util.Control;
 
 /**
  * An abstract base class implementing much of {@link FilteredConnection}.
@@ -48,11 +54,12 @@ import shared.net.filter.OobEvent.OobEventType;
  */
 abstract public class FilteredManagedConnection<C extends FilteredManagedConnection<C, T>, T> //
         extends AbstractManagedConnection<C> //
-        implements FilteredConnection<C, T> {
+        implements FilteredConnection<C, T>, OobConnection {
 
     final Queue<ByteBuffer> inbounds;
     final Queue<ByteBuffer> inboundsReadOnly;
     final Queue<T> inboundsFiltered;
+    final Queue<T> inboundsFilteredReadOnly;
     final Queue<T> inboundsFilteredWriteOnly;
 
     final Queue<T> outbounds;
@@ -81,6 +88,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         this.inbounds = Filters.createQueue();
         this.inboundsReadOnly = Filters.readOnlyQueue(this.inbounds);
         this.inboundsFiltered = Filters.createQueue();
+        this.inboundsFilteredReadOnly = Filters.readOnlyQueue(this.inboundsFiltered);
         this.inboundsFilteredWriteOnly = Filters.writeOnlyQueue(this.inboundsFiltered);
 
         this.outbounds = Filters.createQueue();
@@ -155,14 +163,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
 
     @Override
     public void onBind() {
-
-        onOobEvent(OobEventType.BIND, null, new Handler<Queue<T>>() {
-
-            @Override
-            public void handle(Queue<T> inputs) {
-                onBind(inputs);
-            }
-        });
+        onOob(new BaseOobEvent(BIND, null), null);
     }
 
     @Override
@@ -171,7 +172,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         this.inbounds.add(bb);
         this.filter.applyInbound(this.inboundsReadOnly, this.inboundsFilteredWriteOnly);
 
-        onReceive(this.inboundsFiltered);
+        onReceive(this.inboundsFilteredReadOnly);
     }
 
     @Override
@@ -182,36 +183,43 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         switch (type) {
 
         case EOS:
-            eventType = OobEventType.CLOSING_EOS;
+            eventType = CLOSING_EOS;
             break;
 
         case USER:
-            eventType = OobEventType.CLOSING_USER;
+            eventType = CLOSING_USER;
             break;
 
         case ERROR:
-            eventType = OobEventType.CLOSING_ERROR;
+            eventType = CLOSING_ERROR;
             break;
 
         default:
             throw new IllegalArgumentException("Invalid closing type");
         }
 
-        onOobEvent(eventType, bb, new Handler<Queue<T>>() {
+        onOob(new BaseOobEvent(eventType, null), bb);
+    }
+
+    @Override
+    public void onOob(final OobEvent evt) {
+
+        Control.checkTrue(evt.getType() == USER, //
+                "User-defined out-of-band events must have type USER");
+
+        execute(new Runnable() {
 
             @Override
-            public void handle(Queue<T> inputs) {
-                onClosing(type, inputs);
+            public void run() {
+                onOob(evt, null);
             }
         });
     }
 
     /**
-     * Propagates an {@link OobEvent} through the underlying {@link OobFilter}.
+     * Propagates the given {@link OobEvent} through the underlying {@link OobFilter}.
      */
-    protected void onOobEvent(OobEventType type, ByteBuffer bb, Handler<Queue<T>> handler) {
-
-        OobEvent evt = new OobEvent(type, null);
+    protected void onOob(OobEvent evt, ByteBuffer bb) {
 
         if (bb != null) {
             this.inbounds.add(bb);
@@ -222,7 +230,31 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         this.filter.applyInboundOob(this.inboundEvtsReadOnly, this.inboundEvtsFilteredWriteOnly);
         this.filter.applyInbound(this.inboundsReadOnly, this.inboundsFilteredWriteOnly);
 
-        handler.handle(this.inboundsFiltered);
+        switch (evt.getType()) {
+
+        case BIND:
+            onBind(this.inboundsFilteredReadOnly);
+            break;
+
+        case CLOSING_EOS:
+            onClosing(ClosingType.EOS, this.inboundsFilteredReadOnly);
+            break;
+
+        case CLOSING_USER:
+            onClosing(ClosingType.USER, this.inboundsFilteredReadOnly);
+            break;
+
+        case CLOSING_ERROR:
+            onClosing(ClosingType.ERROR, this.inboundsFilteredReadOnly);
+            break;
+
+        case USER:
+            // Do nothing.
+            break;
+
+        default:
+            throw new IllegalArgumentException("Invalid event type");
+        }
 
         // We can't do anything with events that are filtering byproducts.
         this.inboundEvtsFiltered.clear();
