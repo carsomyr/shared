@@ -111,14 +111,12 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
             }
 
             @Override
-            public void applyInboundOob(Queue<ByteBuffer> inputs, Queue<OobEvent> inputEvts, //
-                    Queue<T> outputs, Queue<OobEvent> outputEvts) {
+            public void applyInboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
 
             @Override
-            public void applyOutboundOob(Queue<T> inputs, Queue<OobEvent> inputEvts, //
-                    Queue<ByteBuffer> outputs, Queue<OobEvent> outputEvts) {
+            public void applyOutboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
         };
@@ -219,10 +217,10 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
             this.inbounds.add(bb);
         }
 
+        // Propagate OOB information and filter.
         this.inboundEvts.add(evt);
-        this.filter.applyInboundOob( //
-                this.inboundsReadOnly, this.inboundEvtsReadOnly, //
-                this.inboundsFilteredWriteOnly, this.inboundEvtsFilteredWriteOnly);
+        this.filter.applyInboundOob(this.inboundEvtsReadOnly, this.inboundEvtsFilteredWriteOnly);
+        this.filter.applyInbound(this.inboundsReadOnly, this.inboundsFilteredWriteOnly);
 
         handler.handle(this.inboundsFiltered);
 
@@ -231,10 +229,10 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
 
         synchronized (this) {
 
+            // Propagate OOB information and filter.
             this.outboundEvts.add(evt);
-            this.filter.applyOutboundOob( //
-                    this.outboundsReadOnly, this.outboundEvtsReadOnly, //
-                    this.outboundsFilteredWriteOnly, this.outboundEvtsFilteredWriteOnly);
+            this.filter.applyOutboundOob(this.outboundEvtsReadOnly, this.outboundEvtsFilteredWriteOnly);
+            this.filter.applyOutbound(this.outboundsReadOnly, this.outboundsFilteredWriteOnly);
 
             for (; (bb = this.outboundsFiltered.poll()) != null;) {
                 send(bb);

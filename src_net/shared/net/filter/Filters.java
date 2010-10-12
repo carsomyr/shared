@@ -406,21 +406,13 @@ public class Filters {
             }
 
             @Override
-            public void applyInboundOob( //
-                    Queue<I> inputs, Queue<OobEvent> inputEvts, //
-                    Queue<O> outputs, Queue<OobEvent> outputEvts) {
-
-                transfer(inputEvts, outputEvts);
-                applyInbound(inputs, outputs);
+            public void applyInboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
+                transfer(inputs, outputs);
             }
 
             @Override
-            public void applyOutboundOob( //
-                    Queue<O> inputs, Queue<OobEvent> inputEvts, //
-                    Queue<I> outputs, Queue<OobEvent> outputEvts) {
-
-                transfer(inputEvts, outputEvts);
-                applyOutbound(inputs, outputs);
+            public void applyOutboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
+                transfer(inputs, outputs);
             }
         };
     }

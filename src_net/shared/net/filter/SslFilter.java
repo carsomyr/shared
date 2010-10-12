@@ -353,20 +353,14 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
     }
 
     @Override
-    public void applyInboundOob( //
-            Queue<ByteBuffer> inputs, Queue<OobEvent> inputEvts, //
-            Queue<ByteBuffer> outputs, Queue<OobEvent> outputEvts) {
-
-        Filters.transfer(inputEvts, outputEvts);
-        applyInbound(inputs, outputs);
+    public void applyInboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
+        Filters.transfer(inputs, outputs);
     }
 
     @Override
-    public void applyOutboundOob( //
-            Queue<ByteBuffer> inputs, Queue<OobEvent> inputEvts, //
-            Queue<ByteBuffer> outputs, Queue<OobEvent> outputEvts) {
+    public void applyOutboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
 
-        for (OobEvent evt; (evt = inputEvts.poll()) != null;) {
+        for (OobEvent evt; (evt = inputs.poll()) != null;) {
 
             switch (evt.getType()) {
 
@@ -375,10 +369,8 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
                 break;
             }
 
-            outputEvts.add(evt);
+            outputs.add(evt);
         }
-
-        applyOutbound(inputs, outputs);
     }
 
     /**
