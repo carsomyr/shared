@@ -136,7 +136,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         conn.deregisterKey();
 
         // Acquire the connection monitor to shut out external requests.
-        synchronized (conn) {
+        synchronized (conn.getLock()) {
 
             conn.setThread(ioThread);
             ioThread.onLocal(new InterestEvent<Object>(DISPATCH, conn.getProxy()));

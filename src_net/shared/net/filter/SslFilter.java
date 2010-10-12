@@ -95,7 +95,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
     @Override
     public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-        assert !Thread.holdsLock(this.connection);
+        assert !Thread.holdsLock(this.connection.getLock());
 
         this.decryptBuffer.compact();
 
@@ -183,7 +183,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                     debug("[%s] inbound %s.", this.connection, result);
 
-                    synchronized (this.connection) {
+                    synchronized (this.connection.getLock()) {
                         runDelegatedTasks();
                     }
 
@@ -227,7 +227,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
     @Override
     public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-        assert Thread.holdsLock(this.connection);
+        assert Thread.holdsLock(this.connection.getLock());
 
         this.encryptBuffer.compact();
 
@@ -378,7 +378,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
      */
     protected void runDelegatedTasks() {
 
-        assert Thread.holdsLock(this.connection);
+        assert Thread.holdsLock(this.connection.getLock());
 
         for (Runnable r = null; (r = this.engine.getDelegatedTask()) != null;) {
 

@@ -143,7 +143,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         public int write(ByteBuffer bb) {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            assert Thread.holdsLock(amc);
+            assert Thread.holdsLock(amc.getLock());
 
             amc.writeBuffer = Buffers.append(amc.writeBuffer, bb, 1);
 
@@ -160,7 +160,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         public int write(ByteBuffer bb) {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            assert Thread.holdsLock(amc);
+            assert Thread.holdsLock(amc.getLock());
 
             assert (amc.writeBuffer.position() == 0);
 
@@ -202,7 +202,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         public int write(ByteBuffer bb) {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            assert Thread.holdsLock(amc);
+            assert Thread.holdsLock(amc.getLock());
 
             // Set the position to the limit to simulate that we have read all bytes.
             bb.position(bb.limit());
@@ -220,13 +220,14 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         public void run() {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            assert !Thread.holdsLock(amc);
+            Object lock = amc.getLock();
+            assert !Thread.holdsLock(lock);
 
             final boolean disableWrites;
 
             try {
 
-                synchronized (amc) {
+                synchronized (lock) {
 
                     for (amc.writeBuffer.flip(); //
                     amc.writeBuffer.hasRemaining() && amc.channel.write(amc.writeBuffer) > 0;) {
@@ -246,7 +247,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                         // Notify anyone waiting for restoration of the write-through handler.
                         amc.setWriteThroughHandler();
-                        amc.notifyAll();
+                        lock.notifyAll();
                     }
                 }
 
@@ -273,13 +274,14 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         public void run() {
 
             AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            assert !Thread.holdsLock(amc);
+            Object lock = amc.getLock();
+            assert !Thread.holdsLock(lock);
 
             final boolean closeConnection;
 
             try {
 
-                synchronized (amc) {
+                synchronized (lock) {
 
                     for (amc.writeBuffer.flip(); //
                     amc.writeBuffer.hasRemaining() && amc.channel.write(amc.writeBuffer) > 0;) {
@@ -317,7 +319,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     @Override
     public <R, T> Future<R> init(InitializationType type, T argument) {
 
-        synchronized (this) {
+        synchronized (getLock()) {
 
             Control.checkTrue(!isSubmitted(), //
                     "The connection has already been submitted");
@@ -353,11 +355,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             public R get() throws InterruptedException, ExecutionException {
 
                 AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
+                Object lock = amc.getLock();
 
-                synchronized (amc) {
+                synchronized (lock) {
 
                     for (; !isDone();) {
-                        amc.wait();
+                        lock.wait();
                     }
                 }
 
@@ -373,15 +376,16 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                     throws InterruptedException, ExecutionException, TimeoutException {
 
                 AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
+                Object lock = amc.getLock();
 
                 long timeoutMillis = unit.toMillis(timeout);
 
-                synchronized (amc) {
+                synchronized (lock) {
 
                     for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
                     !isDone() && remaining > 0; //
                     remaining = end - System.currentTimeMillis()) {
-                        amc.wait(remaining);
+                        lock.wait(remaining);
                     }
 
                     if (!isDone()) {
@@ -439,7 +443,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     public int send(ByteBuffer bb) {
 
         // All send operations are performed under the protection of the connection monitor.
-        synchronized (this) {
+        synchronized (getLock()) {
             return this.writeHandler.write(bb);
         }
     }
@@ -477,9 +481,14 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     @Override
+    public Object getLock() {
+        return this;
+    }
+
+    @Override
     public InetSocketAddress getLocalAddress() {
 
-        synchronized (this) {
+        synchronized (getLock()) {
             return (this.channel != null) ? (InetSocketAddress) this.channel.socket().getLocalSocketAddress() : null;
         }
     }
@@ -487,7 +496,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     @Override
     public InetSocketAddress getRemoteAddress() {
 
-        synchronized (this) {
+        synchronized (getLock()) {
             return (this.channel != null) ? (InetSocketAddress) this.channel.socket().getRemoteSocketAddress() : null;
         }
     }
@@ -618,10 +627,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     protected void setStateMask(int stateMask) {
 
-        synchronized (this) {
+        Object lock = getLock();
+
+        synchronized (lock) {
 
             this.stateMask = stateMask;
-            notifyAll();
+            lock.notifyAll();
         }
     }
 
@@ -699,7 +710,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         this.readBuffer = ByteBuffer.allocate(this.bufferSize);
 
-        synchronized (this) {
+        synchronized (getLock()) {
             this.writeBuffer = Buffers.resize((ByteBuffer) this.writeBuffer.flip(), this.bufferSize);
         }
     }
@@ -828,7 +839,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     protected void doClosing(ClosingType type) {
 
         // All writes shall now be buffered.
-        synchronized (this) {
+        synchronized (getLock()) {
             setBufferedHandler();
         }
 
@@ -875,7 +886,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     protected void doClose() {
 
         // Writes to the connection will now have no effect.
-        synchronized (this) {
+        synchronized (getLock()) {
             setNullHandler();
         }
 

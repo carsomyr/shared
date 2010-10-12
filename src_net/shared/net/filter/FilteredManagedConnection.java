@@ -143,7 +143,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     public int sendOutbound(T output) {
 
         // All outbound filtering is done under the protection of the connection monitor.
-        synchronized (this) {
+        synchronized (getLock()) {
 
             if (output != null) {
                 this.outbounds.add(output);
@@ -259,7 +259,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
         // We can't do anything with events that are filtering byproducts.
         this.inboundEvtsFiltered.clear();
 
-        synchronized (this) {
+        synchronized (getLock()) {
 
             // Propagate OOB information and filter.
             this.outboundEvts.add(evt);

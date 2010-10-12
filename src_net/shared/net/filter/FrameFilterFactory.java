@@ -82,7 +82,7 @@ public class FrameFilterFactory<C extends Connection> //
             @Override
             public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-                assert !Thread.holdsLock(connection);
+                assert !Thread.holdsLock(connection.getLock());
 
                 for (ByteBuffer bb = null; (bb = inputs.peek()) != null;) {
 
@@ -131,7 +131,7 @@ public class FrameFilterFactory<C extends Connection> //
             @Override
             public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-                assert Thread.holdsLock(connection);
+                assert Thread.holdsLock(connection.getLock());
 
                 for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
 

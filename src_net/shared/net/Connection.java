@@ -191,6 +191,11 @@ public interface Connection extends Closeable, Executor {
     public void setException(Throwable exception);
 
     /**
+     * Gets the monitor for enforcing mutual exclusion over operations on this connection.
+     */
+    public Object getLock();
+
+    /**
      * Executes the given code snippet on this connection's manager thread.
      * 
      * @param r

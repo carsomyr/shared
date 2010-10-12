@@ -243,7 +243,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     public InputStream getInputStream() {
 
-        synchronized (this) {
+        synchronized (getLock()) {
 
             Control.checkTrue(isBound(), //
                     "Connection must be bound");
@@ -257,7 +257,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     public OutputStream getOutputStream() {
 
-        synchronized (this) {
+        synchronized (getLock()) {
 
             Control.checkTrue(isBound(), //
                     "Connection must be bound");
@@ -269,7 +269,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     @Override
     public void onBind(Queue<ByteBuffer> inputs) {
 
-        synchronized (this) {
+        synchronized (getLock()) {
 
             // Set the initial read/write resolvers.
             setInResolverEnabled();
@@ -286,9 +286,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         boolean disableReads = false;
 
-        synchronized (this) {
+        Object lock = getLock();
 
-            notifyAll();
+        synchronized (lock) {
+
+            lock.notifyAll();
 
             for (ByteBuffer bb = null; (bb = inputs.peek()) != null && !disableReads;) {
 
@@ -326,7 +328,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         final IOException e;
 
-        synchronized (this) {
+        synchronized (getLock()) {
 
             switch (type) {
 
@@ -386,7 +388,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         try {
 
-            wait();
+            getLock().wait();
 
         } catch (InterruptedException e) {
 
@@ -418,7 +420,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             SynchronousManagedConnection smc = SynchronousManagedConnection.this;
 
-            synchronized (smc) {
+            synchronized (smc.getLock()) {
 
                 for (; !smc.isClosed() && !this.buffer.hasRemaining();) {
                     smc.waitInterruptibly();
@@ -459,7 +461,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 return 0;
             }
 
-            synchronized (smc) {
+            synchronized (smc.getLock()) {
 
                 for (; !smc.isClosed() && !this.buffer.hasRemaining();) {
                     smc.waitInterruptibly();
@@ -480,7 +482,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             SynchronousManagedConnection smc = SynchronousManagedConnection.this;
 
-            synchronized (smc) {
+            synchronized (smc.getLock()) {
                 return this.buffer.remaining();
             }
         }
@@ -518,7 +520,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             SynchronousManagedConnection smc = SynchronousManagedConnection.this;
 
-            synchronized (smc) {
+            synchronized (smc.getLock()) {
 
                 for (int size, length = 1; length > 0; length -= size) {
 
@@ -549,7 +551,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 throw new IndexOutOfBoundsException("Invalid offset/length");
             }
 
-            synchronized (smc) {
+            synchronized (smc.getLock()) {
 
                 for (int size; length > 0; offset += size, length -= size) {
 

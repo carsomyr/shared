@@ -196,7 +196,7 @@ abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends 
             @Override
             public void applyInbound(Queue<Element> inputs, Queue<T> outputs) {
 
-                assert !Thread.holdsLock(connection);
+                assert !Thread.holdsLock(connection.getLock());
 
                 for (Element elt; (elt = inputs.poll()) != null;) {
                     outputs.add(parse(elt));
@@ -206,7 +206,7 @@ abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends 
             @Override
             public void applyOutbound(Queue<T> inputs, Queue<Element> outputs) {
 
-                assert Thread.holdsLock(connection);
+                assert Thread.holdsLock(connection.getLock());
 
                 for (T evt; (evt = inputs.poll()) != null;) {
                     outputs.add(evt.toDom());
