@@ -274,9 +274,4 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
             this.outboundEvtsFiltered.clear();
         }
     }
-
-    @Override
-    public void onClose() {
-        // No further action is required.
-    }
 }

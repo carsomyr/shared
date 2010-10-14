@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (c) 2005 Roy Liu<br>
+ * Copyright (c) 2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -29,17 +29,15 @@
 package shared.net;
 
 import java.net.InetSocketAddress;
-import java.net.Socket;
 
 /**
- * Defines a container for {@link Socket} information that would otherwise be hidden by the {@link Connection}
- * interface.
+ * Defines a socket-based {@link Connection}.
  * 
- * @param <T>
- *            the parameterization lower bounded by {@link SocketInformation} itself.
+ * @param <C>
+ *            the parameterization lower bounded by {@link SocketConnection} itself.
  * @author Roy Liu
  */
-public interface SocketInformation<T extends SocketInformation<T>> {
+public interface SocketConnection<C extends SocketConnection<C>> extends Connection {
 
     /**
      * Gets the local address.
@@ -62,20 +60,5 @@ public interface SocketInformation<T extends SocketInformation<T>> {
      * @param bufferSize
      *            the buffer size.
      */
-    public T setBufferSize(int bufferSize);
-
-    /**
-     * Checks if this connection has been submitted.
-     */
-    public boolean isSubmitted();
-
-    /**
-     * Checks if this connection has been bound.
-     */
-    public boolean isBound();
-
-    /**
-     * Checks if this connection has been closed.
-     */
-    public boolean isClosed();
+    public C setBufferSize(int bufferSize);
 }

@@ -71,7 +71,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected void setInResolverEnabled() {
 
-        if (isClosed()) {
+        if ((this.stateMask & FLAG_CLOSED) != 0) {
             return;
         }
 
@@ -97,7 +97,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      */
     protected void setInResolverDisabled() {
 
-        if (isClosed()) {
+        if ((this.stateMask & FLAG_CLOSED) != 0) {
             return;
         }
 
@@ -209,11 +209,23 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         };
     }
 
+    /**
+     * A bit flag indicating that the associated connection has been bound.
+     */
+    final protected static int FLAG_BOUND = 1 << 0;
+
+    /**
+     * A bit flag indicating that the associated connection has been closed.
+     */
+    final protected static int FLAG_CLOSED = 1 << 1;
+
     Resolver inResolver;
     Resolver outResolver;
 
     ManagedInputStream in;
     ManagedOutputStream out;
+
+    int stateMask;
 
     /**
      * Default constructor.
@@ -226,6 +238,8 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         this.in = null;
         this.out = null;
+
+        this.stateMask = 0;
 
         IdentityFilterFactory<ByteBuffer, SynchronousManagedConnection> iff = IdentityFilterFactory.getInstance();
         setFilterFactory(iff);
@@ -245,7 +259,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         synchronized (getLock()) {
 
-            Control.checkTrue(isBound(), //
+            Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
                     "Connection must be bound");
 
             return this.in;
@@ -259,7 +273,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         synchronized (getLock()) {
 
-            Control.checkTrue(isBound(), //
+            Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
                     "Connection must be bound");
 
             return this.out;
@@ -278,6 +292,8 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             // Initialize input/output streams.
             this.in = new ManagedInputStream();
             this.out = new ManagedOutputStream();
+
+            this.stateMask |= FLAG_BOUND;
         }
     }
 
@@ -378,6 +394,18 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         }
     }
 
+    @Override
+    public void onClose() {
+
+        Object lock = getLock();
+
+        synchronized (lock) {
+
+            this.stateMask |= FLAG_CLOSED;
+            lock.notifyAll();
+        }
+    }
+
     /**
      * Waits interruptibly on this connection's monitor.
      * 
@@ -422,7 +450,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             synchronized (smc.getLock()) {
 
-                for (; !smc.isClosed() && !this.buffer.hasRemaining();) {
+                for (; (smc.stateMask & FLAG_CLOSED) == 0 && !this.buffer.hasRemaining();) {
                     smc.waitInterruptibly();
                 }
 
@@ -463,7 +491,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
             synchronized (smc.getLock()) {
 
-                for (; !smc.isClosed() && !this.buffer.hasRemaining();) {
+                for (; (smc.stateMask & FLAG_CLOSED) == 0 && !this.buffer.hasRemaining();) {
                     smc.waitInterruptibly();
                 }
 

@@ -67,8 +67,7 @@ import shared.util.Control;
  * @author Roy Liu
  */
 abstract public class AbstractManagedConnection<C extends AbstractManagedConnection<C>> //
-        implements Connection, SocketInformation<C>, //
-        EnumStatus<AbstractManagedConnection.AbstractManagedConnectionStatus> {
+        implements SocketConnection<C>, EnumStatus<AbstractManagedConnection.AbstractManagedConnectionStatus> {
 
     /**
      * An enumeration of connection states.
@@ -321,10 +320,10 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         synchronized (getLock()) {
 
-            Control.checkTrue(!isSubmitted(), //
+            Control.checkTrue((this.stateMask & FLAG_SUBMITTED) == 0, //
                     "The connection has already been submitted");
 
-            setStateMask(this.stateMask | FLAG_SUBMITTED);
+            this.stateMask |= FLAG_SUBMITTED;
         }
 
         final InterestEventType eventType;
@@ -402,7 +401,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
             @Override
             public boolean isDone() {
-                return isBound() || isClosed();
+
+                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
+
+                synchronized (amc.getLock()) {
+                    return (amc.stateMask & (FLAG_BOUND | FLAG_CLOSED)) != 0;
+                }
             }
 
             @Override
@@ -489,7 +493,11 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     public InetSocketAddress getLocalAddress() {
 
         synchronized (getLock()) {
-            return (this.channel != null) ? (InetSocketAddress) this.channel.socket().getLocalSocketAddress() : null;
+
+            Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
+                    "Connection must be bound");
+
+            return (InetSocketAddress) this.channel.socket().getLocalSocketAddress();
         }
     }
 
@@ -497,7 +505,11 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     public InetSocketAddress getRemoteAddress() {
 
         synchronized (getLock()) {
-            return (this.channel != null) ? (InetSocketAddress) this.channel.socket().getRemoteSocketAddress() : null;
+
+            Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
+                    "Connection must be bound");
+
+            return (InetSocketAddress) this.channel.socket().getRemoteSocketAddress();
         }
     }
 
@@ -513,21 +525,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         this.bufferSize = bufferSize;
 
         return (C) this;
-    }
-
-    @Override
-    public boolean isSubmitted() {
-        return (this.stateMask & FLAG_SUBMITTED) != 0;
-    }
-
-    @Override
-    public boolean isBound() {
-        return (this.stateMask & FLAG_BOUND) != 0;
-    }
-
-    @Override
-    public boolean isClosed() {
-        return (this.stateMask & FLAG_CLOSED) != 0;
     }
 
     @Override
@@ -620,20 +617,6 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     protected ProxySource<C> getProxy() {
         return this.proxy;
-    }
-
-    /**
-     * Sets the state bit mask.
-     */
-    protected void setStateMask(int stateMask) {
-
-        Object lock = getLock();
-
-        synchronized (lock) {
-
-            this.stateMask = stateMask;
-            lock.notifyAll();
-        }
     }
 
     /**
@@ -746,9 +729,17 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     protected void doBind() {
 
+        Object lock = getLock();
+
         onBind();
 
-        setStateMask(this.stateMask | FLAG_BOUND);
+        // Regardless of whether or not execution reaches this point, monitor notification will happen when the
+        // connection is closed.
+        synchronized (lock) {
+
+            this.stateMask |= FLAG_BOUND;
+            lock.notifyAll();
+        }
     }
 
     /**
@@ -885,8 +876,10 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      */
     protected void doClose() {
 
+        Object lock = getLock();
+
         // Writes to the connection will now have no effect.
-        synchronized (getLock()) {
+        synchronized (lock) {
             setNullHandler();
         }
 
@@ -899,7 +892,11 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         } finally {
 
-            setStateMask(this.stateMask | FLAG_CLOSED);
+            synchronized (lock) {
+
+                this.stateMask |= FLAG_CLOSED;
+                lock.notifyAll();
+            }
         }
     }
 }

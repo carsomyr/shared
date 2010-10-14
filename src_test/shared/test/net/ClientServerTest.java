@@ -167,6 +167,11 @@ public class ClientServerTest {
         }
 
         @Override
+        public void onClose() {
+            this.log.info("Connection is now closed.");
+        }
+
+        @Override
         public Filter<ByteBuffer, String> newFilter(Utf8Connection connection) {
             return this;
         }

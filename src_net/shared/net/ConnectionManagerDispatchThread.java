@@ -187,6 +187,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             this.acceptRegistry.removePending(conn);
 
             conn.setup(channel);
+            conn.doBind();
 
             debug("Accepted [%s] at \"%s\".", conn, conn.getLocalAddress());
 
@@ -213,6 +214,8 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             // It had better be the case that this method either throws an exception or returns true.
             Control.checkTrue(((SocketChannel) conn.getKey().channel()).finishConnect(), //
                     "Expected to finish connecting");
+
+            conn.doBind();
 
             debug("Connected [%s] to \"%s\".", conn, conn.getRemoteAddress());
 
@@ -298,6 +301,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             // Set up the connection and simulate deferred writes.
             conn.setup(chan);
+            conn.doBind();
 
             debug("Registered [%s].", conn);
 

@@ -219,4 +219,9 @@ abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends 
     public void onBind(Queue<T> inputs) {
         // Do nothing.
     }
+
+    @Override
+    public void onClose() {
+        // Do nothing.
+    }
 }

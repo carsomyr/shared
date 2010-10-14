@@ -96,7 +96,6 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
 
             // Set up the connection and simulate deferred writes.
             conn.registerKey(this.selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-            conn.doBind();
 
             debug("Received as dispatch [%s].", conn);
 
