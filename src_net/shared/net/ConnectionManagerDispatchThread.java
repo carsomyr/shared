@@ -34,19 +34,24 @@ import static shared.net.InterestEvent.InterestEventType.SHUTDOWN;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import shared.event.Handler;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
 import shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus;
-import shared.net.AcceptRegistry.Entry;
+import shared.net.ConnectionManagerDispatchThread.AcceptRegistry.Entry;
 import shared.util.Control;
 import shared.util.RequestFuture;
 
@@ -54,8 +59,8 @@ import shared.util.RequestFuture;
  * A specialized {@link ConnectionManagerThread} that dispatches newly created connections to
  * {@link ConnectionManagerIoThread}s.
  * 
+ * @apiviz.composedOf shared.net.ConnectionManagerDispatchThread.AcceptRegistry
  * @apiviz.composedOf shared.net.ConnectionManagerIoThread
- * @apiviz.composedOf shared.net.AcceptRegistry
  * @author Roy Liu
  */
 public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
@@ -444,7 +449,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     protected ConnectionManagerDispatchThread(String name, int backlogSize, int nThreads) {
         super(String.format("%s/Dispatch", name));
 
-        this.acceptRegistry = new AcceptRegistry(this.selector, this.backlogSize);
+        this.acceptRegistry = new AcceptRegistry();
 
         this.ioThreads = new LinkedList<ConnectionManagerIoThread>();
 
@@ -453,5 +458,143 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         }
 
         this.backlogSize = backlogSize;
+    }
+
+    /**
+     * A bookkeeping class for storing pending accepts on listening sockets.
+     * 
+     * @apiviz.composedOf shared.net.ConnectionManagerDispatchThread.AcceptRegistry.Entry
+     */
+    protected class AcceptRegistry {
+
+        final Map<InetSocketAddress, Entry> addressToEntryMap;
+        final Map<AbstractManagedConnection<?>, Entry> connectionToEntryMap;
+
+        /**
+         * Default constructor.
+         */
+        protected AcceptRegistry() {
+
+            this.addressToEntryMap = new HashMap<InetSocketAddress, Entry>();
+            this.connectionToEntryMap = new HashMap<AbstractManagedConnection<?>, Entry>();
+        }
+
+        /**
+         * Registers a connection.
+         * 
+         * @throws IOException
+         *             when something goes awry.
+         */
+        protected Entry register(AbstractManagedConnection<?> conn, InetSocketAddress address) throws IOException {
+
+            Entry entry = this.addressToEntryMap.get(address);
+
+            if (entry == null) {
+
+                entry = new Entry(address);
+                this.addressToEntryMap.put(entry.getAddress(), entry);
+            }
+
+            entry.getPending().add(conn);
+            this.connectionToEntryMap.put(conn, entry);
+
+            return entry;
+        }
+
+        /**
+         * Removes a pending accept.
+         */
+        protected void removePending(AbstractManagedConnection<?> conn) {
+
+            Entry entry = this.connectionToEntryMap.remove(conn);
+
+            // Null reference. Nothing to do.
+            if (entry == null) {
+                return;
+            }
+
+            Set<AbstractManagedConnection<?>> pending = entry.getPending();
+            InetSocketAddress address = entry.getAddress();
+            SelectionKey key = entry.getKey();
+
+            pending.remove(conn);
+
+            // Close the server socket if it has no remaining accept interests.
+            if (pending.isEmpty()) {
+
+                this.addressToEntryMap.remove(address);
+
+                Control.close(key.channel());
+                key.cancel();
+            }
+        }
+
+        /**
+         * Gets the bound addresses.
+         */
+        protected Set<InetSocketAddress> getAddresses() {
+            return Collections.unmodifiableSet(this.addressToEntryMap.keySet());
+        }
+
+        /**
+         * A container class for information on bound {@link ServerSocket}s.
+         */
+        protected class Entry {
+
+            final InetSocketAddress address;
+            final SelectionKey key;
+            final Set<AbstractManagedConnection<?>> pending;
+
+            /**
+             * Default constructor.
+             * 
+             * @throws IOException
+             *             when a {@link ServerSocket} could not be bound to the given address.
+             */
+            protected Entry(InetSocketAddress address) throws IOException {
+
+                ConnectionManagerDispatchThread thread = ConnectionManagerDispatchThread.this;
+
+                // Bind the server socket.
+                ServerSocketChannel channel = ServerSocketChannel.open();
+
+                ServerSocket socket = channel.socket();
+
+                socket.setReuseAddress(true);
+                socket.bind(address, thread.backlogSize);
+
+                channel.configureBlocking(false);
+
+                // Normalize the recently bound local address.
+                this.address = new InetSocketAddress((address != null) ? address.getAddress() : null, //
+                        ((InetSocketAddress) socket.getLocalSocketAddress()).getPort());
+
+                // Create a SelectionKey for the server socket.
+                this.key = channel.register(thread.selector, SelectionKey.OP_ACCEPT);
+
+                this.pending = new LinkedHashSet<AbstractManagedConnection<?>>();
+            }
+
+            /**
+             * Gets the bound address.
+             */
+            protected InetSocketAddress getAddress() {
+                return this.address;
+            }
+
+            /**
+             * Gets the {@link SelectionKey}.
+             */
+            protected SelectionKey getKey() {
+                return this.key;
+            }
+
+            /**
+             * Gets the pending accepts.
+             */
+            protected Set<AbstractManagedConnection<?>> getPending() {
+                return this.pending;
+            }
+        }
     }
 }
