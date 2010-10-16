@@ -399,7 +399,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
             conn.doClosing(ClosingType.USER);
 
-            debug("Close [%s].", conn);
+            debug("[%s] close.", conn);
 
             conn.setStatus(AbstractManagedConnectionStatus.CLOSING);
 
@@ -418,7 +418,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
             conn.doClosing(ClosingType.EOS);
 
-            debug("EOS [%s].", conn);
+            debug("[%s] EOS.", conn);
 
             conn.setStatus(AbstractManagedConnectionStatus.CLOSING);
 
@@ -435,13 +435,13 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         try {
 
-            debug("Closed [%s].", conn);
+            debug("[%s] closed.", conn);
 
             conn.doClose();
 
         } catch (Throwable t) {
 
-            debug(t, "Ignored exception [%s].", conn);
+            debug(t, "[%s] ignored exception.", conn);
         }
 
         purge(conn);
@@ -461,24 +461,24 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         try {
 
-            debug(exception, "Error [%s].", conn);
+            debug(exception, "[%s] error.", conn);
 
             conn.doError(exception);
 
         } catch (Throwable t) {
 
-            debug(t, "Ignored exception [%s].", conn);
+            debug(t, "[%s] ignored exception.", conn);
         }
 
         try {
 
-            debug("Closed [%s].", conn);
+            debug("[%s] closed.", conn);
 
             conn.doClose();
 
         } catch (Throwable t) {
 
-            debug(t, "Ignored exception [%s].", conn);
+            debug(t, "[%s] ignored exception.", conn);
         }
 
         purge(conn);

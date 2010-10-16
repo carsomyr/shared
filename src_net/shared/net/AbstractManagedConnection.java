@@ -174,7 +174,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                 if (remaining > 0) {
 
-                    amc.thread.debug("Writes deferred [%s].", amc);
+                    amc.thread.debug("[%s] writes deferred.", amc);
 
                     amc.setBufferedHandler();
                     amc.setEnabled(OperationType.WRITE, true);
@@ -242,7 +242,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                             amc.writeBuffer = ByteBuffer.allocate(amc.bufferSize);
                         }
 
-                        amc.thread.debug("Canceled write defer [%s].", amc);
+                        amc.thread.debug("[%s] canceled write defer.", amc);
 
                         // Notify anyone waiting for restoration of the write-through handler.
                         amc.setWriteThroughHandler();

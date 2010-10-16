@@ -189,7 +189,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             conn.setup(channel);
             conn.doBind();
 
-            debug("Accepted [%s] at \"%s\".", conn, conn.getLocalAddress());
+            debug("[%s] accepted at \"%s\".", conn, conn.getLocalAddress());
 
             conn.setStatus(AbstractManagedConnectionStatus.ACTIVE);
 
@@ -217,7 +217,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             conn.doBind();
 
-            debug("Connected [%s] to \"%s\".", conn, conn.getRemoteAddress());
+            debug("[%s] connected to \"%s\".", conn, conn.getRemoteAddress());
 
             conn.setStatus(AbstractManagedConnectionStatus.ACTIVE);
 
@@ -248,7 +248,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             connectImmediately = channel.connect(address);
 
-            debug("Connect [%s] to \"%s\".", conn, address);
+            debug("[%s] connect to \"%s\".", conn, address);
 
             conn.setStatus(AbstractManagedConnectionStatus.CONNECT);
 
@@ -278,7 +278,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             Entry entry = this.acceptRegistry.register(conn, address);
             entry.getKey().attach(entry);
 
-            debug("Listen [%s] at \"%s\" (%d in queue).", //
+            debug("[%s] listen at \"%s\" (%d in queue).", //
                     conn, entry.getAddress(), entry.getPending().size());
 
             conn.setStatus(AbstractManagedConnectionStatus.ACCEPT);
@@ -303,7 +303,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             conn.setup(chan);
             conn.doBind();
 
-            debug("Registered [%s].", conn);
+            debug("[%s] registered.", conn);
 
             conn.setStatus(AbstractManagedConnectionStatus.ACTIVE);
 

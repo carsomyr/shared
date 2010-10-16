@@ -50,6 +50,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import shared.net.ConnectionManager;
+import shared.net.SynchronousManagedConnection;
 import shared.net.filter.FilteredConnection;
 import shared.net.filter.SslEngineFactory.Mode;
 import shared.net.filter.SslFilter;
@@ -86,7 +87,8 @@ public class AllNetTests {
     final protected static Class<?>[] loggerClasses = new Class[] {
             //
             ConnectionManager.class, //
-            SslFilter.class //
+            SslFilter.class, //
+            SynchronousManagedConnection.class //
     };
 
     /**

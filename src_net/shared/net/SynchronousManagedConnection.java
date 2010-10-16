@@ -34,6 +34,9 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import shared.net.filter.FilteredManagedConnection;
 import shared.net.filter.IdentityFilterFactory;
 import shared.util.Control;
@@ -112,7 +115,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 // If running low, request more!
                 if (bb.remaining() <= bb.capacity() >>> 1) {
 
-                    smc.getThread().debug("Reads enabled [%s].", smc);
+                    debug("[%s] reads enabled.", smc);
 
                     smc.setInResolverEnabled();
                     smc.setEnabled(OperationType.READ, true);
@@ -218,6 +221,11 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
      * A bit flag indicating that the associated connection has been closed.
      */
     final protected static int FLAG_CLOSED = 1 << 1;
+
+    /**
+     * The static {@link Logger} instance.
+     */
+    final protected static Logger log = LoggerFactory.getLogger(SynchronousManagedConnection.class);
 
     Resolver inResolver;
     Resolver outResolver;
@@ -331,7 +339,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             // Disable reads if the incoming buffer is full.
             if (disableReads) {
 
-                getThread().debug("Reads disabled [%s].", this);
+                debug("[%s] reads disabled.", this);
 
                 setInResolverDisabled();
                 setEnabled(OperationType.READ, false);
@@ -421,6 +429,16 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         } catch (InterruptedException e) {
 
             throw (IOException) new IOException("Operation was interrupted").initCause(e);
+        }
+    }
+
+    /**
+     * Logs a debugging message.
+     */
+    final protected static void debug(String format, Object... args) {
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format(format, args));
         }
     }
 

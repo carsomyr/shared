@@ -34,6 +34,8 @@ import java.util.concurrent.Executor;
 
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
+import javax.net.ssl.SSLEngineResult.HandshakeStatus;
+import javax.net.ssl.SSLEngineResult.Status;
 import javax.net.ssl.SSLException;
 
 import org.slf4j.Logger;
@@ -113,15 +115,16 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
                         (ByteBuffer) this.readBuffer.compact().flip(), //
                         this.decryptBuffer);
 
+                Status status = result.getStatus();
+                HandshakeStatus handshakeStatus = result.getHandshakeStatus();
+
                 // The first step is to read in TLS packets.
 
-                switch (result.getStatus()) {
+                switch (status) {
 
                 case BUFFER_OVERFLOW:
 
-                    debug("[%s] inbound %s, r=%d, d=%d.", //
-                            this.connection, result, //
-                            this.readBuffer.remaining(), this.decryptBuffer.position());
+                    debugStatusInbound(result);
 
                     // Expand the application buffer.
                     this.decryptBuffer = Buffers.resize( //
@@ -133,16 +136,14 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                 case BUFFER_UNDERFLOW:
 
-                    debug("[%s] inbound %s, r=%d, d=%d.", //
-                            this.connection, result, //
-                            this.readBuffer.remaining(), this.decryptBuffer.position());
+                    debugStatusInbound(result);
 
                     // Break the loop: Wait for the next network buffer read.
                     break loop;
 
                 case CLOSED:
 
-                    debug("[%s] inbound %s.", this.connection, result);
+                    debugStatusInbound(result);
 
                     // Clear the read buffer for good measure.
                     this.readBuffer.clear().flip();
@@ -161,18 +162,18 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                 // The second step is to deal with handshaking.
 
-                switch (result.getHandshakeStatus()) {
+                switch (handshakeStatus) {
 
                 case NEED_UNWRAP:
 
-                    debug("[%s] inbound %s.", this.connection, result);
+                    debugHandshakeStatusInbound(result);
 
                     // Continue the loop: The first step is conveniently calling SSLEngine#unwrap.
                     continue loop;
 
                 case NEED_WRAP:
 
-                    debug("[%s] inbound %s.", this.connection, result);
+                    debugHandshakeStatusInbound(result);
 
                     this.connection.sendOutbound(null);
 
@@ -181,7 +182,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                 case NEED_TASK:
 
-                    debug("[%s] inbound %s.", this.connection, result);
+                    debugHandshakeStatusInbound(result);
 
                     synchronized (this.connection.getLock()) {
                         runDelegatedTasks();
@@ -192,7 +193,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                 case FINISHED:
 
-                    debug("[%s] inbound %s.", this.connection, result);
+                    debugHandshakeStatusInbound(result);
 
                     // Write pending outbound data.
                     this.connection.sendOutbound(null);
@@ -245,15 +246,16 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
                         (ByteBuffer) this.writeBuffer.compact().flip(), //
                         this.encryptBuffer);
 
+                Status status = result.getStatus();
+                HandshakeStatus handshakeStatus = result.getHandshakeStatus();
+
                 // The first step is to write out TLS packets.
 
-                switch (result.getStatus()) {
+                switch (status) {
 
                 case BUFFER_OVERFLOW:
 
-                    debug("[%s] outbound %s, w=%d, e=%d.", //
-                            this.connection, result, //
-                            this.writeBuffer.remaining(), this.encryptBuffer.position());
+                    debugStatusOutbound(result);
 
                     // Expand the network buffer.
                     this.encryptBuffer = Buffers.resize( //
@@ -265,7 +267,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                 case CLOSED:
 
-                    debug("[%s] outbound %s.", this.connection, result);
+                    debugStatusOutbound(result);
 
                     // Clear the write buffer for good measure.
                     this.writeBuffer.clear().flip();
@@ -296,25 +298,25 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                 // The second step is to deal with handshaking.
 
-                switch (result.getHandshakeStatus()) {
+                switch (handshakeStatus) {
 
                 case NEED_UNWRAP:
 
-                    debug("[%s] outbound %s.", this.connection, result);
+                    debugHandshakeStatusOutbound(result);
 
                     // Break the loop: We can't proceed until the remote host responds.
                     break loop;
 
                 case NEED_WRAP:
 
-                    debug("[%s] outbound %s.", this.connection, result);
+                    debugHandshakeStatusOutbound(result);
 
                     // Continue the loop: The first step is conveniently calling SSLEngine#wrap.
                     continue loop;
 
                 case NEED_TASK:
 
-                    debug("[%s] outbound %s.", this.connection, result);
+                    debugHandshakeStatusOutbound(result);
 
                     runDelegatedTasks();
 
@@ -323,7 +325,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                 case FINISHED:
 
-                    debug("[%s] outbound %s.", this.connection, result);
+                    debugHandshakeStatusOutbound(result);
 
                     // Continue the loop: We just finished handshaking.
                     continue loop;
@@ -412,23 +414,45 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
     }
 
     /**
+     * Logs a debugging message based on the current {@link Status} for the inbound direction.
+     */
+    protected void debugStatusInbound(SSLEngineResult result) {
+        debug("[%s] inbound %s, c=%d, r=%d, d=%d.", //
+                this.connection, result.getStatus(), //
+                result.bytesConsumed(), this.readBuffer.remaining(), this.decryptBuffer.position());
+    }
+
+    /**
+     * Logs a debugging message based on the current {@link HandshakeStatus} for the inbound direction.
+     */
+    protected void debugHandshakeStatusInbound(SSLEngineResult result) {
+        debug("[%s] inbound %s, c=%d.", //
+                this.connection, result.getHandshakeStatus(), result.bytesConsumed());
+    }
+
+    /**
+     * Logs a debugging message based on the current {@link Status} for the outbound direction.
+     */
+    protected void debugStatusOutbound(SSLEngineResult result) {
+        debug("[%s] outbound %s, p=%d, w=%d, e=%d.", //
+                this.connection, result.getStatus(), //
+                result.bytesProduced(), this.writeBuffer.remaining(), this.encryptBuffer.position());
+    }
+
+    /**
+     * Logs a debugging message based on the current {@link HandshakeStatus} for the outbound direction.
+     */
+    protected void debugHandshakeStatusOutbound(SSLEngineResult result) {
+        debug("[%s] outbound %s, p=%d.", //
+                this.connection, result.getHandshakeStatus(), result.bytesProduced());
+    }
+
+    /**
      * Logs a debugging message.
      */
     final protected static void debug(String format, Object... args) {
 
         if (log.isDebugEnabled()) {
-
-            for (int i = 0, n = args.length; i < n; i++) {
-
-                if (args[i] instanceof SSLEngineResult) {
-
-                    SSLEngineResult result = (SSLEngineResult) args[i];
-                    args[i] = String.format("Result[%s, %s, c=%d, p=%d]", //
-                            result.getStatus(), result.getHandshakeStatus(), //
-                            result.bytesConsumed(), result.bytesProduced());
-                }
-            }
-
             log.debug(String.format(format, args));
         }
     }
