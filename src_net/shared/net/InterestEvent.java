@@ -97,6 +97,16 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         GET_CONNECTIONS, //
 
         /**
+         * Denotes a request to get the listen backlog size.
+         */
+        GET_BACKLOG_SIZE, //
+
+        /**
+         * Denotes a request to set the listen backlog size.
+         */
+        SET_BACKLOG_SIZE, //
+
+        /**
          * Denotes a request to shut down the manager thread.
          */
         SHUTDOWN;

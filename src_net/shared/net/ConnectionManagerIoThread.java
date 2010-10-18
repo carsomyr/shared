@@ -38,7 +38,6 @@ import shared.event.Handler;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
 import shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus;
-import shared.util.RequestFuture;
 
 /**
  * A specialized {@link ConnectionManagerThread} that reads from and writes to connections.
@@ -108,7 +107,7 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
     /**
      * Handles a request to get the list of connections.
      */
-    protected void handleGetConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
+    protected void handleGetConnections(Request<?, List<AbstractManagedConnection<?>>> request) {
 
         List<AbstractManagedConnection<?>> res = new ArrayList<AbstractManagedConnection<?>>();
 
@@ -121,7 +120,7 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
             }
         }
 
-        future.set(res);
+        request.set(res);
     }
 
     @Transition(currentState = "ACTIVE", eventType = "DISPATCH")
@@ -177,11 +176,11 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
     };
 
     @Transition(currentState = "RUN", eventType = "GET_CONNECTIONS", group = "internal")
-    final Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>> getConnectionsHandler = //
-    new Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>>() {
+    final Handler<InterestEvent<Request<?, List<AbstractManagedConnection<?>>>>> getConnectionsHandler = //
+    new Handler<InterestEvent<Request<?, List<AbstractManagedConnection<?>>>>>() {
 
         @Override
-        public void handle(InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>> evt) {
+        public void handle(InterestEvent<Request<?, List<AbstractManagedConnection<?>>>> evt) {
             handleGetConnections(evt.getArgument());
         }
     };

@@ -119,8 +119,8 @@ public class AsynchronousConnectionTest {
     @Before
     public void init() {
 
-        this.rcm = new ConnectionManager("RCM", this.nConnections);
-        this.scm = new ConnectionManager("SCM", this.nConnections);
+        this.rcm = new ConnectionManager("RCM").setBacklogSize(this.nConnections);
+        this.scm = new ConnectionManager("SCM").setBacklogSize(this.nConnections);
     }
 
     /**

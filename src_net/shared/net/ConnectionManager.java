@@ -28,9 +28,10 @@
 
 package shared.net;
 
-import static shared.net.Constants.DEFAULT_BACKLOG_SIZE;
+import static shared.net.InterestEvent.InterestEventType.GET_BACKLOG_SIZE;
 import static shared.net.InterestEvent.InterestEventType.GET_BOUND_ADDRESSES;
 import static shared.net.InterestEvent.InterestEventType.GET_CONNECTIONS;
+import static shared.net.InterestEvent.InterestEventType.SET_BACKLOG_SIZE;
 
 import java.io.Closeable;
 import java.lang.ref.WeakReference;
@@ -97,41 +98,11 @@ public class ConnectionManager implements Closeable {
      * 
      * @param name
      *            the name.
-     * @param backlogSize
-     *            the listen backlog size.
-     */
-    public ConnectionManager(String name, int backlogSize) {
-
-        this.thread = new ConnectionManagerDispatchThread(name, //
-                backlogSize, Runtime.getRuntime().availableProcessors());
-        this.thread.start();
-    }
-
-    /**
-     * Alternate constructor.
-     * 
-     * @param backlogSize
-     *            the listen backlog size.
-     */
-    public ConnectionManager(int backlogSize) {
-        this("", backlogSize);
-    }
-
-    /**
-     * Alternate constructor.
-     * 
-     * @param name
-     *            the name.
      */
     public ConnectionManager(String name) {
-        this(name, DEFAULT_BACKLOG_SIZE);
-    }
 
-    /**
-     * Alternate constructor.
-     */
-    public ConnectionManager() {
-        this("", DEFAULT_BACKLOG_SIZE);
+        this.thread = new ConnectionManagerDispatchThread(name, Runtime.getRuntime().availableProcessors());
+        this.thread.start();
     }
 
     /**
@@ -154,14 +125,31 @@ public class ConnectionManager implements Closeable {
      * Gets the list of connections.
      */
     public List<AbstractManagedConnection<?>> getConnections() {
-        return this.thread.request(GET_CONNECTIONS);
+        return this.thread.request(GET_CONNECTIONS, null);
     }
 
     /**
      * Gets the list of bound addresses.
      */
     public List<InetSocketAddress> getBoundAddresses() {
-        return this.thread.request(GET_BOUND_ADDRESSES);
+        return this.thread.request(GET_BOUND_ADDRESSES, null);
+    }
+
+    /**
+     * Gets the listen backlog size.
+     */
+    public int getBacklogSize() {
+        return (Integer) this.thread.request(GET_BACKLOG_SIZE, null);
+    }
+
+    /**
+     * Sets the listen backlog size.
+     */
+    public ConnectionManager setBacklogSize(int backlogSize) {
+
+        this.thread.request(SET_BACKLOG_SIZE, backlogSize);
+
+        return this;
     }
 
     /**

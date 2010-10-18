@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
@@ -54,7 +55,6 @@ import shared.net.Connection.ClosingType;
 import shared.net.InterestEvent.InterestEventType;
 import shared.util.Control;
 import shared.util.CoreThread;
-import shared.util.RequestFuture;
 
 /**
  * An abstract base class for {@link ConnectionManager} service threads.
@@ -251,8 +251,8 @@ abstract public class ConnectionManagerThread extends CoreThread //
         // Notify anyone calling #close.
         synchronized (this) {
 
-            for (RequestFuture<?> future : this.futures) {
-                future.setException(this.exception);
+            for (Request<?, ?> request : this.requests) {
+                request.setException(this.exception);
             }
 
             setStatus(ConnectionManagerThreadStatus.CLOSED);
@@ -322,26 +322,30 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * 
      * @param type
      *            the {@link InterestEventType}.
-     * @param <T>
-     *            the result type.
+     * @param argument
+     *            the input argument.
+     * @param <I>
+     *            the input type.
+     * @param <O>
+     *            the output type.
      */
-    protected <T> T request(InterestEventType type) {
+    protected <I, O> O request(InterestEventType type, I argument) {
 
-        RequestFuture<T> fut = new RequestFuture<T>();
+        Request<I, O> request = new Request<I, O>(argument);
 
-        onLocal(new InterestEvent<RequestFuture<T>>(type, fut, null));
+        onLocal(new InterestEvent<Request<I, O>>(type, request, null));
 
         synchronized (this) {
 
             Control.checkTrue(getStatus() == ConnectionManagerThreadStatus.RUN, //
                     "The connection manager thread has exited");
 
-            this.futures.add(fut);
+            this.requests.add(request);
         }
 
         try {
 
-            return fut.get();
+            return request.get();
 
         } catch (RuntimeException e) {
 
@@ -524,9 +528,9 @@ abstract public class ConnectionManagerThread extends CoreThread //
     final protected Queue<InterestEvent<?>> queue;
 
     /**
-     * A weak {@link Set} of {@link RequestFuture}s for cleanup purposes.
+     * A weak {@link Set} of {@link Request}s for cleanup purposes.
      */
-    final protected Set<RequestFuture<?>> futures;
+    final protected Set<Request<?, ?>> requests;
 
     /**
      * The {@link Logger} for debugging messages.
@@ -569,7 +573,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
         }
 
         this.queue = new LinkedBlockingQueue<InterestEvent<?>>();
-        this.futures = Collections.newSetFromMap(new WeakHashMap<RequestFuture<?>, Boolean>());
+        this.requests = Collections.newSetFromMap(new WeakHashMap<Request<?, ?>, Boolean>());
         this.log = LoggerFactory.getLogger(String.format("%s.%s", ConnectionManager.class.getName(), name));
 
         this.fsm = null;
@@ -577,5 +581,60 @@ abstract public class ConnectionManagerThread extends CoreThread //
         this.exception = null;
 
         this.status = ConnectionManagerThreadStatus.RUN;
+    }
+
+    /**
+     * A subclass of {@link FutureTask} for signaling manager threads and retrieving their internal states.
+     * 
+     * @param <I>
+     *            the input type.
+     * @param <O>
+     *            the output type.
+     */
+    public static class Request<I, O> extends FutureTask<O> {
+
+        /**
+         * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
+         */
+        final protected static Runnable nullRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+            }
+        };
+
+        final I argument;
+
+        /**
+         * Default constructor.
+         */
+        public Request(I argument) {
+            super(nullRunnable, null);
+
+            this.argument = argument;
+        }
+
+        /**
+         * Gets the input argument.
+         */
+        public I getArgument() {
+            return this.argument;
+        }
+
+        /**
+         * Gives public visibility to the {@link #set(Object)} method.
+         */
+        @Override
+        public void set(O v) {
+            super.set(v);
+        }
+
+        /**
+         * Gives public visibility to the {@link #setException(Throwable)} method.
+         */
+        @Override
+        public void setException(Throwable t) {
+            super.setException(t);
+        }
     }
 }

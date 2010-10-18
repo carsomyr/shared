@@ -28,6 +28,7 @@
 
 package shared.net;
 
+import static shared.net.Constants.DEFAULT_BACKLOG_SIZE;
 import static shared.net.InterestEvent.InterestEventType.DISPATCH;
 import static shared.net.InterestEvent.InterestEventType.GET_CONNECTIONS;
 import static shared.net.InterestEvent.InterestEventType.SHUTDOWN;
@@ -53,7 +54,6 @@ import shared.event.Transitions.Transition;
 import shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus;
 import shared.net.ConnectionManagerDispatchThread.AcceptRegistry.Entry;
 import shared.util.Control;
-import shared.util.RequestFuture;
 
 /**
  * A specialized {@link ConnectionManagerThread} that dispatches newly created connections to
@@ -323,8 +323,8 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     /**
      * Handles a request to get the list of bound addresses.
      */
-    protected void handleGetBoundAddresses(RequestFuture<List<InetSocketAddress>> future) {
-        future.set(new ArrayList<InetSocketAddress>(this.acceptRegistry.getAddresses()));
+    protected void handleGetBoundAddresses(Request<?, List<InetSocketAddress>> request) {
+        request.set(new ArrayList<InetSocketAddress>(this.acceptRegistry.getAddresses()));
     }
 
     /**
@@ -332,15 +332,41 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
      * {@link ConnectionManagerIoThread}s.
      */
     @SuppressWarnings("unchecked")
-    protected void handleGetConnections(RequestFuture<List<AbstractManagedConnection<?>>> future) {
+    protected void handleGetConnections(Request<?, List<AbstractManagedConnection<?>>> request) {
 
         List<AbstractManagedConnection<?>> res = new ArrayList<AbstractManagedConnection<?>>();
 
         for (ConnectionManagerIoThread ioThread : this.ioThreads) {
-            res.addAll((List<AbstractManagedConnection<?>>) ioThread.request(GET_CONNECTIONS));
+            res.addAll((List<AbstractManagedConnection<?>>) ioThread.request(GET_CONNECTIONS, null));
         }
 
-        future.set(res);
+        request.set(res);
+    }
+
+    /**
+     * Handles a request to get the listen backlog size.
+     */
+    protected void handleGetBacklogSize(Request<?, Integer> request) {
+        request.set(this.backlogSize);
+    }
+
+    /**
+     * Handles a request to set the listen backlog size.
+     */
+    protected void handleSetBacklogSize(Request<Integer, ?> request) {
+
+        int backlogSize = request.getArgument();
+
+        if (backlogSize > 0) {
+
+            this.backlogSize = backlogSize;
+
+            request.set(null);
+
+        } else {
+
+            request.setException(new IllegalArgumentException("Invalid backlog size"));
+        }
     }
 
     @Transition(currentState = "VIRGIN", eventType = "CONNECT")
@@ -411,22 +437,42 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     };
 
     @Transition(currentState = "RUN", eventType = "GET_BOUND_ADDRESSES", group = "internal")
-    final Handler<InterestEvent<RequestFuture<List<InetSocketAddress>>>> getBoundAddressesHandler = //
-    new Handler<InterestEvent<RequestFuture<List<InetSocketAddress>>>>() {
+    final Handler<InterestEvent<Request<?, List<InetSocketAddress>>>> getBoundAddressesHandler = //
+    new Handler<InterestEvent<Request<?, List<InetSocketAddress>>>>() {
 
         @Override
-        public void handle(InterestEvent<RequestFuture<List<InetSocketAddress>>> evt) {
+        public void handle(InterestEvent<Request<?, List<InetSocketAddress>>> evt) {
             handleGetBoundAddresses(evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "GET_CONNECTIONS", group = "internal")
-    final Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>> getConnectionsHandler = //
-    new Handler<InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>>>() {
+    final Handler<InterestEvent<Request<?, List<AbstractManagedConnection<?>>>>> getConnectionsHandler = //
+    new Handler<InterestEvent<Request<?, List<AbstractManagedConnection<?>>>>>() {
 
         @Override
-        public void handle(InterestEvent<RequestFuture<List<AbstractManagedConnection<?>>>> evt) {
+        public void handle(InterestEvent<Request<?, List<AbstractManagedConnection<?>>>> evt) {
             handleGetConnections(evt.getArgument());
+        }
+    };
+
+    @Transition(currentState = "RUN", eventType = "GET_BACKLOG_SIZE", group = "internal")
+    final Handler<InterestEvent<Request<?, Integer>>> getBacklogSizeHandler = //
+    new Handler<InterestEvent<Request<?, Integer>>>() {
+
+        @Override
+        public void handle(InterestEvent<Request<?, Integer>> evt) {
+            handleGetBacklogSize(evt.getArgument());
+        }
+    };
+
+    @Transition(currentState = "RUN", eventType = "SET_BACKLOG_SIZE", group = "internal")
+    final Handler<InterestEvent<Request<Integer, ?>>> setBacklogSizeHandler = //
+    new Handler<InterestEvent<Request<Integer, ?>>>() {
+
+        @Override
+        public void handle(InterestEvent<Request<Integer, ?>> evt) {
+            handleSetBacklogSize(evt.getArgument());
         }
     };
 
@@ -441,12 +487,13 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
     final AcceptRegistry acceptRegistry;
     final LinkedList<ConnectionManagerIoThread> ioThreads;
-    final int backlogSize;
+
+    int backlogSize;
 
     /**
      * Default constructor.
      */
-    protected ConnectionManagerDispatchThread(String name, int backlogSize, int nThreads) {
+    protected ConnectionManagerDispatchThread(String name, int nThreads) {
         super(String.format("%s/Dispatch", name));
 
         this.acceptRegistry = new AcceptRegistry();
@@ -457,7 +504,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             this.ioThreads.add(new ConnectionManagerIoThread(String.format("%s/IO-%d", name, i), this));
         }
 
-        this.backlogSize = backlogSize;
+        this.backlogSize = DEFAULT_BACKLOG_SIZE;
     }
 
     /**
