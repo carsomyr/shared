@@ -28,14 +28,10 @@
 
 package shared.net.nio;
 
-import static shared.net.Constants.DEFAULT_BUFFER_SIZE;
-import static shared.net.nio.NioEvent.NioEventType.ACCEPT;
 import static shared.net.nio.NioEvent.NioEventType.CLOSE;
-import static shared.net.nio.NioEvent.NioEventType.CONNECT;
 import static shared.net.nio.NioEvent.NioEventType.ERROR;
 import static shared.net.nio.NioEvent.NioEventType.EXECUTE;
 import static shared.net.nio.NioEvent.NioEventType.OP;
-import static shared.net.nio.NioEvent.NioEventType.REGISTER;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -50,9 +46,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import shared.event.EnumStatus;
+import shared.event.Handler;
+import shared.event.Source;
 import shared.net.Buffers;
+import shared.net.ConnectionHandler;
+import shared.net.ConnectionHandler.ClosingType;
 import shared.net.SocketConnection;
-import shared.net.nio.NioEvent.NioEventType;
+import shared.net.SourceType;
 import shared.util.Control;
 
 /**
@@ -61,15 +61,13 @@ import shared.util.Control;
  * 
  * @apiviz.composedOf shared.net.nio.NioConnection.WriteHandler
  * @apiviz.owns shared.net.nio.NioConnection.NioConnectionStatus
- * @apiviz.owns shared.net.nio.ProxySource
  * @apiviz.uses shared.net.Buffers
  * @apiviz.uses shared.net.Constants
- * @param <C>
- *            the parameterization lower bounded by {@link NioConnection} itself.
  * @author Roy Liu
  */
-abstract public class NioConnection<C extends NioConnection<C>> //
-        implements SocketConnection<C>, EnumStatus<NioConnection.NioConnectionStatus> {
+public class NioConnection //
+        implements SocketConnection, EnumStatus<NioConnection.NioConnectionStatus>, Source<NioEvent<?>, SourceType>, //
+        Future<NioConnection> {
 
     /**
      * An enumeration of connection states.
@@ -108,19 +106,14 @@ abstract public class NioConnection<C extends NioConnection<C>> //
     }
 
     /**
-     * A bit flag indicating that the connection has been submitted to an {@link NioManager}.
-     */
-    final protected static int FLAG_SUBMITTED = 1 << 0;
-
-    /**
      * A bit flag indicating that the connection has been bound.
      */
-    final protected static int FLAG_BOUND = 1 << 1;
+    final protected static int FLAG_BOUND = 1 << 0;
 
     /**
      * A bit flag indicating that the connection has been closed.
      */
-    final protected static int FLAG_CLOSED = 1 << 2;
+    final protected static int FLAG_CLOSED = 1 << 1;
 
     /**
      * Defines a handler for outgoing data.
@@ -143,7 +136,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
         @Override
         public int write(ByteBuffer bb) {
 
-            NioConnection<C> conn = NioConnection.this;
+            NioConnection conn = NioConnection.this;
             assert Thread.holdsLock(conn.getLock());
 
             conn.writeBuffer = Buffers.append(conn.writeBuffer, bb, 1);
@@ -160,7 +153,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
         @Override
         public int write(ByteBuffer bb) {
 
-            NioConnection<C> conn = NioConnection.this;
+            NioConnection conn = NioConnection.this;
             assert Thread.holdsLock(conn.getLock());
 
             assert (conn.writeBuffer.position() == 0);
@@ -202,7 +195,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
         @Override
         public int write(ByteBuffer bb) {
 
-            NioConnection<C> conn = NioConnection.this;
+            NioConnection conn = NioConnection.this;
             assert Thread.holdsLock(conn.getLock());
 
             // Set the position to the limit to simulate that we have read all bytes.
@@ -220,7 +213,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
         @Override
         public void run() {
 
-            NioConnection<C> conn = NioConnection.this;
+            NioConnection conn = NioConnection.this;
             Object lock = conn.getLock();
             assert !Thread.holdsLock(lock);
 
@@ -274,7 +267,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
         @Override
         public void run() {
 
-            NioConnection<C> conn = NioConnection.this;
+            NioConnection conn = NioConnection.this;
             Object lock = conn.getLock();
             assert !Thread.holdsLock(lock);
 
@@ -307,144 +300,6 @@ abstract public class NioConnection<C extends NioConnection<C>> //
         }
     };
 
-    /**
-     * External thread call -- Submits this connection to its associated {@link NioManager}.
-     * 
-     * @param <T>
-     *            the argument type.
-     * @param type
-     *            the {@link shared.net.Connection.InitializationType}.
-     * @param argument
-     *            the argument.
-     */
-    @Override
-    public <R, T> Future<R> init(InitializationType type, T argument) {
-
-        synchronized (getLock()) {
-
-            Control.checkTrue((this.stateMask & FLAG_SUBMITTED) == 0, //
-                    "The connection has already been submitted");
-
-            this.stateMask |= FLAG_SUBMITTED;
-        }
-
-        final NioEventType eventType;
-
-        switch (type) {
-
-        case CONNECT:
-            eventType = CONNECT;
-            break;
-
-        case ACCEPT:
-            eventType = ACCEPT;
-            break;
-
-        case REGISTER:
-            eventType = REGISTER;
-            break;
-
-        default:
-            throw new IllegalArgumentException("Invalid initialization type");
-        }
-
-        this.manager.initConnection(this, eventType, argument);
-
-        return new Future<R>() {
-
-            @Override
-            public R get() throws InterruptedException, ExecutionException {
-
-                NioConnection<?> conn = NioConnection.this;
-                Object lock = conn.getLock();
-
-                synchronized (lock) {
-
-                    for (; !isDone();) {
-                        lock.wait();
-                    }
-                }
-
-                if (conn.exception != null) {
-                    throw new ExecutionException(conn.exception);
-                }
-
-                return getResult();
-            }
-
-            @Override
-            public R get(long timeout, TimeUnit unit) //
-                    throws InterruptedException, ExecutionException, TimeoutException {
-
-                NioConnection<?> conn = NioConnection.this;
-                Object lock = conn.getLock();
-
-                long timeoutMillis = unit.toMillis(timeout);
-
-                synchronized (lock) {
-
-                    for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
-                    !isDone() && remaining > 0; //
-                    remaining = end - System.currentTimeMillis()) {
-                        lock.wait(remaining);
-                    }
-
-                    if (!isDone()) {
-                        throw new TimeoutException("Operation timed out");
-                    }
-                }
-
-                if (conn.exception != null) {
-                    throw new ExecutionException(conn.exception);
-                }
-
-                return getResult();
-            }
-
-            @Override
-            public boolean isDone() {
-
-                NioConnection<?> conn = NioConnection.this;
-
-                synchronized (conn.getLock()) {
-                    return (conn.stateMask & (FLAG_BOUND | FLAG_CLOSED)) != 0;
-                }
-            }
-
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return false;
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
-
-            /**
-             * Gets the result tailored to the {@link shared.net.Connection.InitializationType}.
-             */
-            @SuppressWarnings("unchecked")
-            protected R getResult() {
-
-                switch (eventType) {
-
-                case CONNECT:
-                    return (R) getLocalAddress();
-
-                case ACCEPT:
-                    return (R) getRemoteAddress();
-
-                case REGISTER:
-                    return null;
-
-                default:
-                    throw new IllegalArgumentException("Invalid event type");
-                }
-            }
-        };
-    }
-
     @Override
     public int send(ByteBuffer bb) {
 
@@ -473,7 +328,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
             throw new IllegalArgumentException("Invalid operation type");
         }
 
-        this.proxy.onLocal(createOpEvent(opType, enabled));
+        onLocal(createOpEvent(opType, enabled));
     }
 
     @Override
@@ -483,7 +338,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
 
     @Override
     public void setException(Throwable exception) {
-        this.proxy.onLocal(new NioEvent<Throwable>(ERROR, exception, this.proxy));
+        onLocal(new NioEvent<Throwable>(ERROR, exception, this));
     }
 
     @Override
@@ -516,35 +371,6 @@ abstract public class NioConnection<C extends NioConnection<C>> //
     }
 
     @Override
-    public int getBufferSize() {
-        return this.bufferSize;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public C setBufferSize(int bufferSize) {
-
-        this.bufferSize = bufferSize;
-
-        return (C) this;
-    }
-
-    @Override
-    public void execute(Runnable r) {
-        this.proxy.onLocal(new NioEvent<Runnable>(EXECUTE, r, this.proxy));
-    }
-
-    @Override
-    public void close() {
-        this.proxy.onLocal(new NioEvent<Object>(CLOSE, this.proxy));
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s[%s]", this.name, this.status);
-    }
-
-    @Override
     public NioConnectionStatus getStatus() {
         return this.status;
     }
@@ -554,16 +380,114 @@ abstract public class NioConnection<C extends NioConnection<C>> //
         this.status = status;
     }
 
-    final NioManager manager;
-    final String name;
-    final ProxySource<C> proxy;
+    @Override
+    public void onLocal(NioEvent<?> evt) {
+
+        // Acquire the connection monitor because the manager thread may change during a handoff.
+        synchronized (getLock()) {
+            this.thread.onLocal(evt);
+        }
+    }
+
+    /**
+     * Waits until this connection has been initialized.
+     * 
+     * @throws InterruptedException
+     *             when this operation is interrupted.
+     * @throws ExecutionException
+     *             when something goes awry.
+     */
+    @Override
+    public NioConnection get() throws InterruptedException, ExecutionException {
+
+        Object lock = getLock();
+
+        synchronized (lock) {
+
+            for (; !isDone();) {
+                lock.wait();
+            }
+        }
+
+        if (this.exception != null) {
+            throw new ExecutionException(this.exception);
+        }
+
+        return this;
+    }
+
+    /**
+     * Waits until this connection has been initialized.
+     * 
+     * @throws InterruptedException
+     *             when this operation is interrupted.
+     * @throws ExecutionException
+     *             when something goes awry.
+     * @throws TimeoutException
+     *             when this operation has timed out.
+     */
+    @Override
+    public NioConnection get(long timeout, TimeUnit unit) //
+            throws InterruptedException, ExecutionException, TimeoutException {
+
+        Object lock = getLock();
+
+        long timeoutMillis = unit.toMillis(timeout);
+
+        synchronized (lock) {
+
+            for (long remaining = timeoutMillis, end = System.currentTimeMillis() + timeoutMillis; //
+            !isDone() && remaining > 0; //
+            remaining = end - System.currentTimeMillis()) {
+                lock.wait(remaining);
+            }
+
+            if (!isDone()) {
+                throw new TimeoutException("Operation timed out");
+            }
+        }
+
+        if (this.exception != null) {
+            throw new ExecutionException(this.exception);
+        }
+
+        return this;
+    }
+
+    /**
+     * Gets whether this connection has been initialized.
+     */
+    @Override
+    public boolean isDone() {
+
+        synchronized (getLock()) {
+            return (this.stateMask & (FLAG_BOUND | FLAG_CLOSED)) != 0;
+        }
+    }
+
+    @Override
+    public void execute(Runnable r) {
+        onLocal(new NioEvent<Runnable>(EXECUTE, r, this));
+    }
+
+    @Override
+    public void close() {
+        onLocal(new NioEvent<Object>(CLOSE, this));
+    }
+
+    @Override
+    public String toString() {
+        return this.handler.toString();
+    }
+
+    final ConnectionHandler<? super NioConnection> handler;
+    final int bufferSize;
 
     NioManagerThread thread;
     WriteHandler writeHandler;
     Runnable internalHandler;
     SelectionKey key;
     SocketChannel channel;
-    int bufferSize;
     ByteBuffer readBuffer;
     ByteBuffer writeBuffer;
     int stateMask;
@@ -573,22 +497,21 @@ abstract public class NioConnection<C extends NioConnection<C>> //
     /**
      * Default constructor.
      * 
-     * @param name
-     *            the name of this connection.
-     * @param manager
-     *            the {@link NioManager} with which this connection will be registered.
+     * @param handler
+     *            the {@link ConnectionHandler} for callbacks.
+     * @param bufferSize
+     *            the network buffer size.
+     * @param thread
+     *            the {@link NioManagerThread} with which this connection will be registered.
      */
-    @SuppressWarnings("unchecked")
-    protected NioConnection(String name, NioManager manager) {
+    protected NioConnection(ConnectionHandler<? super NioConnection> handler, int bufferSize, NioManagerThread thread) {
 
-        this.manager = manager;
-        this.name = name;
-
-        this.proxy = new ProxySource<C>((C) this);
+        this.handler = handler;
+        this.bufferSize = bufferSize;
 
         //
 
-        this.thread = manager.getThread();
+        this.thread = thread;
 
         // The connection starts with writes deferred to the manager.
         this.writeHandler = this.bufferedHandler;
@@ -597,28 +520,15 @@ abstract public class NioConnection<C extends NioConnection<C>> //
         this.key = null;
         this.channel = null;
 
-        this.bufferSize = DEFAULT_BUFFER_SIZE;
-
         this.readBuffer = ByteBuffer.allocate(0);
         this.writeBuffer = ByteBuffer.allocate(0);
 
         this.stateMask = 0;
         this.exception = null;
         this.status = NioConnectionStatus.VIRGIN;
-    }
 
-    /**
-     * Alternate constructor.
-     */
-    protected NioConnection(String name) {
-        this(name, NioManager.getInstance());
-    }
-
-    /**
-     * Gets the {@link ProxySource} representing this connection.
-     */
-    protected ProxySource<C> getProxy() {
-        return this.proxy;
+        // Associate with the handler.
+        this.handler.setConnection(this);
     }
 
     /**
@@ -660,7 +570,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
      * Creates an operation interest change {@link NioEvent} that originates from this connection.
      */
     protected NioEvent<Integer> createOpEvent(int mask, boolean enabled) {
-        return new NioEvent<Integer>(OP, mask | (enabled ? 0x80000000 : 0x0), this.proxy);
+        return new NioEvent<Integer>(OP, mask | (enabled ? 0x80000000 : 0x0), this);
     }
 
     /**
@@ -733,7 +643,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
 
         Object lock = getLock();
 
-        onBind();
+        this.handler.onBind();
 
         // Regardless of whether or not execution reaches this point, monitor notification will happen when the
         // connection is closed.
@@ -767,7 +677,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
                 try {
 
                     // It is the callee's responsibility to actively drain the buffer.
-                    onReceive(this.readBuffer);
+                    this.handler.onReceive(this.readBuffer);
 
                 } finally {
 
@@ -809,7 +719,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
                 try {
 
                     // It is the callee's responsibility to actively drain the buffer.
-                    onReceive(this.readBuffer);
+                    this.handler.onReceive(this.readBuffer);
 
                 } finally {
 
@@ -844,7 +754,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
 
         try {
 
-            onClosing(type, this.readBuffer);
+            this.handler.onClosing(type, this.readBuffer);
 
         } finally {
 
@@ -863,7 +773,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
 
         try {
 
-            onClosing(ClosingType.ERROR, this.readBuffer);
+            this.handler.onClosing(ClosingType.ERROR, this.readBuffer);
 
         } finally {
 
@@ -888,7 +798,7 @@ abstract public class NioConnection<C extends NioConnection<C>> //
 
         try {
 
-            onClose();
+            this.handler.onClose();
 
         } finally {
 
@@ -898,5 +808,45 @@ abstract public class NioConnection<C extends NioConnection<C>> //
                 lock.notifyAll();
             }
         }
+    }
+
+    /**
+     * Does nothing.
+     * 
+     * @return {@code false}, always.
+     */
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return false;
+    }
+
+    /**
+     * Does nothing.
+     * 
+     * @return {@code false}, always.
+     */
+    @Override
+    public boolean isCancelled() {
+        return false;
+    }
+
+    @Override
+    public SourceType getType() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Handler<NioEvent<?>> getHandler() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setHandler(Handler<NioEvent<?>> handler) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onRemote(NioEvent<?> evt) {
+        throw new UnsupportedOperationException();
     }
 }

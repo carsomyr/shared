@@ -34,9 +34,11 @@ import static shared.net.filter.OobEvent.OobEventType.CLOSING_ERROR;
 import static shared.net.filter.OobEvent.OobEventType.CLOSING_USER;
 import static shared.net.filter.OobEvent.OobEventType.USER;
 
+import java.io.Closeable;
 import java.nio.ByteBuffer;
 import java.util.Queue;
 
+import shared.net.Connection;
 import shared.net.filter.BaseOobEvent;
 import shared.net.filter.Filter;
 import shared.net.filter.FilterFactory;
@@ -44,8 +46,6 @@ import shared.net.filter.Filters;
 import shared.net.filter.OobEvent;
 import shared.net.filter.OobEvent.OobEventType;
 import shared.net.filter.OobFilter;
-import shared.net.nio.NioConnection;
-import shared.net.nio.NioManager;
 import shared.util.Control;
 
 /**
@@ -54,13 +54,16 @@ import shared.util.Control;
  * @apiviz.uses shared.net.filter.Filters
  * @param <H>
  *            the parameterization lower bounded by {@link AbstractFilteredHandler} itself.
+ * @param <C>
+ *            the {@link Connection} type.
  * @param <T>
  *            the {@link Filter} inbound type.
  * @author Roy Liu
  */
-abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<H, T>, T> //
-        extends NioConnection<H> //
-        implements FilteredHandler<H, T>, OobHandler {
+abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<H, C, T>, C extends Connection, T> //
+        implements FilteredHandler<H, C, T>, OobHandler<C>, Closeable {
+
+    final String name;
 
     final Queue<ByteBuffer> inbounds;
     final Queue<ByteBuffer> inboundsReadOnly;
@@ -85,11 +88,14 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
 
     OobFilter<ByteBuffer, T> filter;
 
+    C connection;
+
     /**
      * Default constructor.
      */
-    public AbstractFilteredHandler(String name, NioManager manager) {
-        super(name, manager);
+    public AbstractFilteredHandler(String name) {
+
+        this.name = name;
 
         this.inbounds = Filters.createQueue();
         this.inboundsReadOnly = Filters.readOnlyQueue(this.inbounds);
@@ -134,6 +140,8 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
                 throw new UnsupportedOperationException("Please initialize the filter factory");
             }
         };
+
+        this.connection = null;
     }
 
     @SuppressWarnings("unchecked")
@@ -146,10 +154,10 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
     }
 
     @Override
-    public int sendOutbound(T output) {
+    public int send(T output) {
 
         // All outbound filtering is done under the protection of the connection monitor.
-        synchronized (getLock()) {
+        synchronized (this.connection.getLock()) {
 
             if (output != null) {
                 this.outbounds.add(output);
@@ -160,7 +168,7 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
             int remaining = 0;
 
             for (ByteBuffer bb; (bb = this.outboundsFiltered.poll()) != null;) {
-                remaining = send(bb);
+                remaining = this.connection.send(bb);
             }
 
             return remaining;
@@ -213,13 +221,33 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
         Control.checkTrue(evt.getType() == USER, //
                 "User-defined out-of-band events must have type USER");
 
-        execute(new Runnable() {
+        this.connection.execute(new Runnable() {
 
             @Override
             public void run() {
                 onOob(evt, null);
             }
         });
+    }
+
+    @Override
+    public C getConnection() {
+        return this.connection;
+    }
+
+    @Override
+    public void setConnection(C connection) {
+        this.connection = connection;
+    }
+
+    @Override
+    public void close() {
+        Control.close(this.connection);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
     /**
@@ -265,7 +293,7 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
         // We can't do anything with events that are filtering byproducts.
         this.inboundEvtsFiltered.clear();
 
-        synchronized (getLock()) {
+        synchronized (this.connection.getLock()) {
 
             // Propagate OOB information and filter.
             this.outboundEvts.add(evt);
@@ -273,7 +301,7 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
             this.filter.applyOutbound(this.outboundsReadOnly, this.outboundsFilteredWriteOnly);
 
             for (; (bb = this.outboundsFiltered.poll()) != null;) {
-                send(bb);
+                this.connection.send(bb);
             }
 
             // We can't do anything with events that are filtering byproducts.

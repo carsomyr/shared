@@ -57,7 +57,7 @@ import shared.net.handler.FilteredHandler;
  *            the {@link FilteredHandler} type.
  * @author Roy Liu
  */
-public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<ByteBuffer, ByteBuffer> {
+public class SslFilter<H extends FilteredHandler<H, ?, ?>> implements OobFilter<ByteBuffer, ByteBuffer> {
 
     /**
      * The global {@link Logger} instance.
@@ -102,7 +102,7 @@ public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<Byt
     @Override
     public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-        assert !Thread.holdsLock(this.handler.getLock());
+        assert !Thread.holdsLock(this.handler.getConnection().getLock());
 
         this.decryptBuffer.compact();
 
@@ -180,7 +180,7 @@ public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<Byt
 
                     debugHandshakeStatusInbound(result);
 
-                    this.handler.sendOutbound(null);
+                    this.handler.send(null);
 
                     // Break the loop: We can't proceed until the remote host responds.
                     break loop;
@@ -189,7 +189,7 @@ public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<Byt
 
                     debugHandshakeStatusInbound(result);
 
-                    synchronized (this.handler.getLock()) {
+                    synchronized (this.handler.getConnection().getLock()) {
                         runDelegatedTasks();
                     }
 
@@ -201,7 +201,7 @@ public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<Byt
                     debugHandshakeStatusInbound(result);
 
                     // Write pending outbound data.
-                    this.handler.sendOutbound(null);
+                    this.handler.send(null);
 
                     // Continue the loop: We just finished handshaking.
                     continue loop;
@@ -233,7 +233,7 @@ public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<Byt
     @Override
     public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-        assert Thread.holdsLock(this.handler.getLock());
+        assert Thread.holdsLock(this.handler.getConnection().getLock());
 
         this.encryptBuffer.compact();
 
@@ -385,7 +385,7 @@ public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<Byt
      */
     protected void runDelegatedTasks() {
 
-        assert Thread.holdsLock(this.handler.getLock());
+        assert Thread.holdsLock(this.handler.getConnection().getLock());
 
         for (Runnable r = null; (r = this.engine.getDelegatedTask()) != null;) {
 
@@ -408,7 +408,7 @@ public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<Byt
                     } finally {
 
                         // Force a read to get things going again.
-                        sslF.handler.setEnabled(OperationType.READ, true);
+                        sslF.handler.getConnection().setEnabled(OperationType.READ, true);
 
                         debug("[%s] finish delegated task [%s].", //
                                 sslF.handler, rr);

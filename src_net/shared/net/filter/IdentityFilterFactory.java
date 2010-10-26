@@ -30,7 +30,7 @@ package shared.net.filter;
 
 import java.util.Queue;
 
-import shared.net.Connection;
+import shared.net.ConnectionHandler;
 
 /**
  * An implementation of {@link FilterFactory} that creates identity filters, which simply pull values off of the input
@@ -39,16 +39,17 @@ import shared.net.Connection;
  * @param <T>
  *            the inbound and outbound type.
  * @param <H>
- *            the {@link Connection} type.
+ *            the {@link ConnectionHandler} type.
  * @author Roy Liu
  */
-public class IdentityFilterFactory<T, H extends Connection> //
+public class IdentityFilterFactory<T, H extends ConnectionHandler<?>> //
         implements FilterFactory<OobFilter<T, T>, T, T, H>, OobFilter<T, T> {
 
     /**
      * The global {@link IdentityFilterFactory} instance.
      */
-    final protected static IdentityFilterFactory<?, ?> instance = new IdentityFilterFactory<Object, Connection>();
+    final protected static IdentityFilterFactory<?, ?> instance = //
+    new IdentityFilterFactory<Object, ConnectionHandler<?>>();
 
     /**
      * Gets the global instance.
@@ -56,10 +57,10 @@ public class IdentityFilterFactory<T, H extends Connection> //
      * @param <T>
      *            the inbound and outbound type.
      * @param <H>
-     *            the {@link Connection} type.
+     *            the {@link ConnectionHandler} type.
      */
     @SuppressWarnings("unchecked")
-    final public static <T, H extends Connection> IdentityFilterFactory<T, H> getInstance() {
+    final public static <T, H extends ConnectionHandler<?>> IdentityFilterFactory<T, H> getInstance() {
         return (IdentityFilterFactory<T, H>) instance;
     }
 

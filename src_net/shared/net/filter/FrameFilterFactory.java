@@ -31,17 +31,17 @@ package shared.net.filter;
 import java.nio.ByteBuffer;
 import java.util.Queue;
 
-import shared.net.Connection;
+import shared.net.ConnectionHandler;
 import shared.util.Control;
 
 /**
  * An implementation of {@link FilterFactory} for {@code null}-delimited {@code byte} frames.
  * 
  * @param <H>
- *            the {@link Connection} type.
+ *            the {@link ConnectionHandler} type.
  * @author Roy Liu
  */
-public class FrameFilterFactory<H extends Connection> //
+public class FrameFilterFactory<H extends ConnectionHandler<?>> //
         implements FilterFactory<Filter<ByteBuffer, ByteBuffer>, ByteBuffer, ByteBuffer, H> {
 
     final int minimumSize;
@@ -82,7 +82,7 @@ public class FrameFilterFactory<H extends Connection> //
             @Override
             public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-                assert !Thread.holdsLock(handler.getLock());
+                assert !Thread.holdsLock(handler.getConnection().getLock());
 
                 for (ByteBuffer bb = null; (bb = inputs.peek()) != null;) {
 
@@ -131,7 +131,7 @@ public class FrameFilterFactory<H extends Connection> //
             @Override
             public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-                assert Thread.holdsLock(handler.getLock());
+                assert Thread.holdsLock(handler.getConnection().getLock());
 
                 for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
 

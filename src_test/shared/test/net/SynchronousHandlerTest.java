@@ -50,7 +50,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import shared.net.Connection.InitializationType;
+import shared.net.Connection;
+import shared.net.ConnectionManager.InitializationType;
 import shared.net.filter.ssl.SslFilterFactory;
 import shared.net.handler.SynchronousHandler;
 import shared.net.nio.NioManager;
@@ -68,13 +69,13 @@ public class SynchronousHandlerTest {
     /**
      * The server {@link SslFilterFactory}.
      */
-    final protected static SslFilterFactory<SynchronousHandler> serverSslFilterFactory = //
+    final protected static SslFilterFactory<SynchronousHandler<Connection>> serverSslFilterFactory = //
     AllNetTests.createServerSslFilterFactory();
 
     /**
      * The client {@link SslFilterFactory}.
      */
-    final protected static SslFilterFactory<SynchronousHandler> clientSslFilterFactory = //
+    final protected static SslFilterFactory<SynchronousHandler<Connection>> clientSslFilterFactory = //
     AllNetTests.createClientSslFilterFactory();
 
     final InetSocketAddress remoteAddress;
@@ -113,8 +114,10 @@ public class SynchronousHandlerTest {
     @Before
     public void init() {
 
-        this.rcm = NioManager.getInstance();
-        this.scm = new NioManager("SCM");
+        int bufferSize = this.messageLength << 2;
+
+        this.rcm = NioManager.getInstance().setBufferSize(bufferSize);
+        this.scm = new NioManager("SCM").setBufferSize(bufferSize);
     }
 
     /**
@@ -126,20 +129,19 @@ public class SynchronousHandlerTest {
     @Test
     public void testTransport() throws IOException {
 
-        int bufferSize = this.messageLength << 2;
         int basePort = this.remoteAddress.getPort();
         String hostname = this.remoteAddress.getHostName();
 
         List<Verifier> verifiers = new ArrayList<Verifier>();
 
         for (int i = 0, n = this.nConnections, port = basePort; i < n; i++, port++) {
-            verifiers.add(createReceiver(i, bufferSize, new InetSocketAddress(port)));
+            verifiers.add(createReceiver(i, new InetSocketAddress(port)));
         }
 
         Control.sleep(this.delay);
 
         for (int i = 0, n = this.nConnections, port = basePort; i < n; i++, port++) {
-            verifiers.add(createSender(i, bufferSize, new InetSocketAddress(hostname, port)));
+            verifiers.add(createSender(i, new InetSocketAddress(hostname, port)));
         }
 
         // Reverse the verifier list so that we synchronize on senders first and detect any errors that may arise.
@@ -156,12 +158,10 @@ public class SynchronousHandlerTest {
      * @exception IOException
      *                when something goes awry.
      */
-    protected Verifier createReceiver(int index, //
-            int bufferSize, final InetSocketAddress localAddress) throws IOException {
+    protected Verifier createReceiver(int index, final InetSocketAddress localAddress) throws IOException {
 
-        final SynchronousHandler receiver = new SynchronousHandler( //
-                String.format("r-%d", index), this.rcm) //
-                .setBufferSize(bufferSize);
+        final SynchronousHandler<Connection> receiver = //
+        new SynchronousHandler<Connection>(String.format("r-%d", index), this.rcm.getBufferSize());
 
         if (this.useSsl) {
             receiver.setFilterFactory(serverSslFilterFactory);
@@ -175,8 +175,7 @@ public class SynchronousHandlerTest {
             protected void doRun() throws Exception {
 
                 SynchronousHandlerTest sht = SynchronousHandlerTest.this;
-
-                receiver.init(InitializationType.ACCEPT, localAddress).get();
+                sht.rcm.init(InitializationType.ACCEPT, receiver, localAddress).get();
 
                 InputStream in = receiver.getInputStream();
                 OutputStream out = receiver.getOutputStream();
@@ -249,12 +248,10 @@ public class SynchronousHandlerTest {
      * @exception IOException
      *                when something goes awry.
      */
-    protected Verifier createSender(int index, //
-            int bufferSize, final InetSocketAddress remoteAddress) throws IOException {
+    protected Verifier createSender(int index, final InetSocketAddress remoteAddress) throws IOException {
 
-        final SynchronousHandler sender = new SynchronousHandler( //
-                String.format("s-%d", index), this.scm) //
-                .setBufferSize(bufferSize);
+        final SynchronousHandler<Connection> sender = //
+        new SynchronousHandler<Connection>(String.format("s-%d", index), this.scm.getBufferSize());
 
         if (this.useSsl) {
             sender.setFilterFactory(clientSslFilterFactory);
@@ -268,8 +265,7 @@ public class SynchronousHandlerTest {
             protected void doRun() throws Exception {
 
                 SynchronousHandlerTest sht = SynchronousHandlerTest.this;
-
-                sender.init(InitializationType.CONNECT, remoteAddress).get();
+                sht.scm.init(InitializationType.CONNECT, sender, remoteAddress).get();
 
                 InputStream in = sender.getInputStream();
                 OutputStream out = sender.getOutputStream();

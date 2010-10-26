@@ -38,12 +38,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import shared.net.Connection;
-import shared.net.Connection.InitializationType;
+import shared.net.ConnectionManager;
+import shared.net.ConnectionManager.InitializationType;
 import shared.net.filter.ChainFilterFactory;
 import shared.net.filter.Filter;
 import shared.net.filter.FilterFactory;
 import shared.net.filter.FrameFilterFactory;
 import shared.net.handler.AbstractFilteredHandler;
+import shared.net.nio.NioConnection;
 import shared.net.nio.NioManager;
 import shared.test.Demo;
 import shared.util.Control;
@@ -75,25 +77,27 @@ public class ClientServerTest {
     @Test
     public void testTransport() {
 
+        ConnectionManager<NioConnection> cm = NioManager.getInstance();
+
         Utf8Handler clientHandler = new Utf8Handler("Client");
         Utf8Handler serverHandler = new Utf8Handler("Server");
 
         int port = 10101;
 
-        serverHandler.init(InitializationType.ACCEPT, new InetSocketAddress(port));
-        clientHandler.init(InitializationType.CONNECT, new InetSocketAddress("localhost", port));
+        cm.init(InitializationType.ACCEPT, clientHandler, new InetSocketAddress(port));
+        cm.init(InitializationType.CONNECT, serverHandler, new InetSocketAddress("localhost", port));
 
         // Client sends stuff to the server.
-        clientHandler.sendOutbound("hello");
-        clientHandler.sendOutbound("from");
-        clientHandler.sendOutbound("the");
-        clientHandler.sendOutbound("client");
+        clientHandler.send("hello");
+        clientHandler.send("from");
+        clientHandler.send("the");
+        clientHandler.send("client");
 
         // Server sends stuff to the client.
-        serverHandler.sendOutbound("hello");
-        serverHandler.sendOutbound("from");
-        serverHandler.sendOutbound("the");
-        serverHandler.sendOutbound("server");
+        serverHandler.send("hello");
+        serverHandler.send("from");
+        serverHandler.send("the");
+        serverHandler.send("server");
 
         // Allow messages to propagate.
         Control.sleep(1000);
@@ -105,13 +109,13 @@ public class ClientServerTest {
         Control.sleep(1000);
 
         // Free the default manager's threads.
-        NioManager.getInstance().close();
+        cm.close();
     }
 
     /**
      * An internal {@link Connection} class for demo purposes.
      */
-    protected static class Utf8Handler extends AbstractFilteredHandler<Utf8Handler, String> //
+    protected static class Utf8Handler extends AbstractFilteredHandler<Utf8Handler, Connection, String> //
             implements FilterFactory<Filter<ByteBuffer, String>, ByteBuffer, String, Utf8Handler>, //
             Filter<ByteBuffer, String> {
 
@@ -121,7 +125,7 @@ public class ClientServerTest {
          * Default constructor.
          */
         protected Utf8Handler(String name) {
-            super(name, NioManager.getInstance());
+            super(name);
 
             this.log = LoggerFactory.getLogger( //
                     String.format("%s.%s", ClientServerTest.class.getName(), name));
@@ -158,7 +162,7 @@ public class ClientServerTest {
                 break;
 
             case ERROR:
-                this.log.info("Connection has encountered an error.", getException());
+                this.log.info("Connection has encountered an error.", getConnection().getException());
                 break;
 
             default:

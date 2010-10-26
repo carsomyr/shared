@@ -28,7 +28,7 @@
 
 package shared.net.filter;
 
-import shared.net.Connection;
+import shared.net.ConnectionHandler;
 
 /**
  * Defines a factory for creating {@link Filter}s.
@@ -41,10 +41,10 @@ import shared.net.Connection;
  * @param <O>
  *            the outbound type.
  * @param <H>
- *            the {@link Connection} type.
+ *            the {@link ConnectionHandler} type.
  * @author Roy Liu
  */
-public interface FilterFactory<F extends Filter<I, O>, I, O, H extends Connection> {
+public interface FilterFactory<F extends Filter<I, O>, I, O, H extends ConnectionHandler<?>> {
 
     /**
      * Creates a new {@link Filter}.

@@ -31,7 +31,7 @@ package shared.net.filter;
 import java.util.Arrays;
 import java.util.Queue;
 
-import shared.net.Connection;
+import shared.net.ConnectionHandler;
 
 /**
  * An implementation of {@link FilterFactory} that enables chaining of multiple underlying {@link FilterFactory}s.
@@ -43,10 +43,11 @@ import shared.net.Connection;
  * @param <O>
  *            the outbound type.
  * @param <H>
- *            the {@link Connection} type.
+ *            the {@link ConnectionHandler} type.
  * @author Roy Liu
  */
-public class ChainFilterFactory<I, O, H extends Connection> implements FilterFactory<OobFilter<I, O>, I, O, H> {
+public class ChainFilterFactory<I, O, H extends ConnectionHandler<?>> //
+        implements FilterFactory<OobFilter<I, O>, I, O, H> {
 
     FilterFactory<? extends Filter<Object, Object>, Object, Object, ? super H>[] factories;
 

@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import shared.net.Connection.InitializationType;
+import shared.net.ConnectionManager.InitializationType;
 import shared.net.filter.ChainFilterFactory;
 import shared.net.filter.FrameFilterFactory;
 import shared.net.filter.XmlFilterFactory;
@@ -119,8 +119,10 @@ public class AsynchronousHandlerTest {
     @Before
     public void init() {
 
-        this.rcm = new NioManager("RCM").setBacklogSize(this.nConnections);
-        this.scm = new NioManager("SCM").setBacklogSize(this.nConnections);
+        int bufferSize = this.messageLength << 2;
+
+        this.rcm = new NioManager("RCM").setBacklogSize(this.nConnections).setBufferSize(bufferSize);
+        this.scm = new NioManager("SCM").setBacklogSize(this.nConnections).setBufferSize(bufferSize);
     }
 
     /**
@@ -141,8 +143,6 @@ public class AsynchronousHandlerTest {
 
         int minMessageSize = this.messageLength << 3;
         int maxMessageSize = this.messageLength << 6;
-        int bufferSize = this.messageLength << 2;
-
         FrameFilterFactory<TestXmlHandler> fff = new FrameFilterFactory<TestXmlHandler>( //
                 minMessageSize, maxMessageSize);
 
@@ -153,8 +153,7 @@ public class AsynchronousHandlerTest {
             ReceiverXmlVerifier xmlV = new ReceiverXmlVerifier();
 
             TestXmlHandler xmlR = new TestXmlHandler(String.format("r_xml_%d", i), //
-                    minMessageSize, maxMessageSize, this.rcm, xmlV) //
-                    .setBufferSize(bufferSize);
+                    minMessageSize, maxMessageSize, xmlV);
 
             if (this.useSsl) {
                 xmlR.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXmlHandler>() //
@@ -164,7 +163,7 @@ public class AsynchronousHandlerTest {
                         .add(xmlR));
             }
 
-            xmlR.init(InitializationType.ACCEPT, listenAddress);
+            this.rcm.init(InitializationType.ACCEPT, xmlR, listenAddress);
 
             verifiers.add(xmlV);
         }
@@ -178,8 +177,7 @@ public class AsynchronousHandlerTest {
             SenderXmlVerifier xmlV = new SenderXmlVerifier(seqNo, this.nMessages, this.messageLength);
 
             TestXmlHandler xmlS = new TestXmlHandler(String.format("s_xml_%d", i), //
-                    minMessageSize, maxMessageSize, this.scm, xmlV) //
-                    .setBufferSize(bufferSize);
+                    minMessageSize, maxMessageSize, xmlV);
 
             if (this.useSsl) {
                 xmlS.setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, TestXmlHandler>() //
@@ -189,7 +187,7 @@ public class AsynchronousHandlerTest {
                         .add(xmlS));
             }
 
-            Future<?> fut = xmlS.init(InitializationType.CONNECT, connectAddress);
+            Future<?> fut = this.scm.init(InitializationType.CONNECT, xmlS, connectAddress);
 
             // The asynchronous sockets specification allows us to write data before connecting; we should test this
             // case.

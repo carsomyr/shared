@@ -32,20 +32,24 @@ import java.nio.ByteBuffer;
 import java.util.Queue;
 
 import shared.net.Connection;
+import shared.net.ConnectionHandler;
 import shared.net.filter.Filter;
 import shared.net.filter.FilterFactory;
 
 /**
- * Defines a {@link Connection} that uses {@link Filter}s to process inbound and outbound data.
+ * Defines a {@link ConnectionHandler} that uses {@link Filter}s to process inbound and outbound data.
  * 
  * @apiviz.owns shared.net.filter.FilterFactory
  * @param <H>
  *            the parameterization lower bounded by {@link FilteredHandler} itself.
+ * @param <C>
+ *            the {@link Connection} type.
  * @param <T>
  *            the {@link Filter} inbound type.
  * @author Roy Liu
  */
-public interface FilteredHandler<H extends FilteredHandler<H, T>, T> extends Connection {
+public interface FilteredHandler<H extends FilteredHandler<H, C, T>, C extends Connection, T> //
+        extends ConnectionHandler<C> {
 
     /**
      * Sets the {@link FilterFactory} from which appropriate {@link Filter}s will be derived.
@@ -62,7 +66,7 @@ public interface FilteredHandler<H extends FilteredHandler<H, T>, T> extends Con
      *            the output value.
      * @return the number of units remaining to be written.
      */
-    public int sendOutbound(T output);
+    public int send(T output);
 
     /**
      * On binding.
@@ -84,10 +88,10 @@ public interface FilteredHandler<H extends FilteredHandler<H, T>, T> extends Con
      * On closure.
      * 
      * @param type
-     *            the {@link shared.net.Connection.ClosingType}.
+     *            the {@link shared.net.ConnectionHandler.ClosingType}.
      * @param inputs
      *            the input {@link Queue}.
-     * @see shared.net.Connection.ClosingType
+     * @see shared.net.ConnectionHandler.ClosingType
      */
     public void onClosing(ClosingType type, Queue<T> inputs);
 }

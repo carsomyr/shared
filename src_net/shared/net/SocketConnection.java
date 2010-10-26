@@ -33,11 +33,9 @@ import java.net.InetSocketAddress;
 /**
  * Defines a socket-based {@link Connection}.
  * 
- * @param <C>
- *            the parameterization lower bounded by {@link SocketConnection} itself.
  * @author Roy Liu
  */
-public interface SocketConnection<C extends SocketConnection<C>> extends Connection {
+public interface SocketConnection extends Connection {
 
     /**
      * Gets the local address.
@@ -48,17 +46,4 @@ public interface SocketConnection<C extends SocketConnection<C>> extends Connect
      * Gets the remote address.
      */
     public InetSocketAddress getRemoteAddress();
-
-    /**
-     * Gets the read/write buffer size.
-     */
-    public int getBufferSize();
-
-    /**
-     * Sets the read/write buffer size.
-     * 
-     * @param bufferSize
-     *            the buffer size.
-     */
-    public C setBufferSize(int bufferSize);
 }

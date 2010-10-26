@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (c) 2009 Roy Liu<br>
+ * Copyright (c) 2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -26,66 +26,50 @@
  * </p>
  */
 
-package shared.net.nio;
+package shared.net;
 
-import shared.event.Handler;
-import shared.event.Source;
-import shared.net.SourceType;
+import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
- * An event {@link Source} that represents its {@link NioConnection} parent.
+ * Defines a socket-based {@link ConnectionManager}.
  * 
+ * @param <M>
+ *            the parameterization lower bounded by {@link SocketManager} itself.
+ * @param <C>
+ *            the {@link SocketConnection} type.
  * @author Roy Liu
  */
-public class ProxySource<C extends NioConnection<C>> implements Source<NioEvent<?>, SourceType> {
-
-    final C connection;
+public interface SocketManager<M extends SocketManager<M, C>, C extends SocketConnection> extends ConnectionManager<C> {
 
     /**
-     * Default constructor.
+     * Gets the list of bound addresses.
      */
-    protected ProxySource(C connection) {
-        this.connection = connection;
-    }
+    public List<InetSocketAddress> getBoundAddresses();
 
     /**
-     * Gets the parent connection.
+     * Gets the listen backlog size.
      */
-    protected C getConnection() {
-        return this.connection;
-    }
+    public int getBacklogSize();
 
-    @Override
-    public void onLocal(NioEvent<?> evt) {
+    /**
+     * Sets the listen backlog size.
+     * 
+     * @param backlogSize
+     *            the backlog size.
+     */
+    public M setBacklogSize(int backlogSize);
 
-        // Acquire the connection monitor because the manager thread may change during a handoff.
-        synchronized (this.connection.getLock()) {
-            this.connection.getThread().onLocal(evt);
-        }
-    }
+    /**
+     * Gets the read/write buffer size.
+     */
+    public int getBufferSize();
 
-    @Override
-    public void close() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SourceType getType() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Handler<NioEvent<?>> getHandler() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setHandler(Handler<NioEvent<?>> handler) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onRemote(NioEvent<?> evt) {
-        throw new UnsupportedOperationException();
-    }
+    /**
+     * Sets the read/write buffer size.
+     * 
+     * @param bufferSize
+     *            the buffer size.
+     */
+    public M setBufferSize(int bufferSize);
 }

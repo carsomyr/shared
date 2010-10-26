@@ -202,7 +202,7 @@ public class AllNetTests {
      * @param <H>
      *            the {@link FilteredHandler} type.
      */
-    final protected static <H extends FilteredHandler<H, ?>> SslFilterFactory<H> createClientSslFilterFactory() {
+    final protected static <H extends FilteredHandler<H, ?, ?>> SslFilterFactory<H> createClientSslFilterFactory() {
         return new SslFilterFactory<H>() //
                 .setMode(Mode.CLIENT) //
                 .setTrustManagers(getTrustManagers());
@@ -214,7 +214,7 @@ public class AllNetTests {
      * @param <H>
      *            the {@link FilteredHandler} type.
      */
-    final protected static <H extends FilteredHandler<H, ?>> SslFilterFactory<H> createServerSslFilterFactory() {
+    final protected static <H extends FilteredHandler<H, ?, ?>> SslFilterFactory<H> createServerSslFilterFactory() {
         return new SslFilterFactory<H>() //
                 .setMode(Mode.SERVER) //
                 .setKeyManagers(getKeyManagers(KEYSTORE_PATHNAME, KEYSTORE_PASSWORD)) //

@@ -59,8 +59,8 @@ public class NioManagerIoThread extends NioManagerThread {
 
             Object attachment = key.attachment();
 
-            if (attachment instanceof NioConnection<?>) {
-                handleError((NioConnection<?>) attachment, this.exception);
+            if (attachment instanceof NioConnection) {
+                handleError((NioConnection) attachment, this.exception);
             }
         }
 
@@ -70,7 +70,7 @@ public class NioManagerIoThread extends NioManagerThread {
     @Override
     protected void doReadyOps(int readyOps, SelectionKey key) {
 
-        NioConnection<?> conn = (NioConnection<?>) key.attachment();
+        NioConnection conn = (NioConnection) key.attachment();
 
         // Each operation is responsible for its own exception handling.
 
@@ -86,7 +86,7 @@ public class NioManagerIoThread extends NioManagerThread {
     /**
      * Handles a connection dispatch notification.
      */
-    protected void handleDispatch(NioConnection<?> conn) {
+    protected void handleDispatch(NioConnection conn) {
 
         // The connection had better be in the correct state.
         assert (conn.getStatus() == NioConnectionStatus.ACTIVE);
@@ -107,16 +107,16 @@ public class NioManagerIoThread extends NioManagerThread {
     /**
      * Handles a request to get the list of connections.
      */
-    protected void handleGetConnections(Request<?, List<NioConnection<?>>> request) {
+    protected void handleGetConnections(Request<?, List<NioConnection>> request) {
 
-        List<NioConnection<?>> res = new ArrayList<NioConnection<?>>();
+        List<NioConnection> res = new ArrayList<NioConnection>();
 
         for (SelectionKey key : this.selector.keys()) {
 
             Object attachment = key.attachment();
 
-            if (attachment instanceof NioConnection<?>) {
-                res.add((NioConnection<?>) attachment);
+            if (attachment instanceof NioConnection) {
+                res.add((NioConnection) attachment);
             }
         }
 
@@ -128,7 +128,7 @@ public class NioManagerIoThread extends NioManagerThread {
 
         @Override
         public void handle(NioEvent<?> evt) {
-            handleDispatch(((ProxySource<?>) evt.getSource()).getConnection());
+            handleDispatch((NioConnection) evt.getSource());
         }
     };
 
@@ -139,8 +139,7 @@ public class NioManagerIoThread extends NioManagerThread {
         public void handle(NioEvent<Integer> evt) {
 
             int opMask = evt.getArgument();
-            handleOp(((ProxySource<?>) evt.getSource()).getConnection(), //
-                    opMask & 0x7FFFFFFF, (opMask & 0x80000000) != 0);
+            handleOp((NioConnection) evt.getSource(), opMask & 0x7FFFFFFF, (opMask & 0x80000000) != 0);
         }
     };
 
@@ -149,7 +148,7 @@ public class NioManagerIoThread extends NioManagerThread {
 
         @Override
         public void handle(NioEvent<?> evt) {
-            handleClosingUser(((ProxySource<?>) evt.getSource()).getConnection());
+            handleClosingUser((NioConnection) evt.getSource());
         }
     };
 
@@ -162,7 +161,7 @@ public class NioManagerIoThread extends NioManagerThread {
 
         @Override
         public void handle(NioEvent<Throwable> evt) {
-            handleError(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
+            handleError((NioConnection) evt.getSource(), evt.getArgument());
         }
     };
 
@@ -171,16 +170,16 @@ public class NioManagerIoThread extends NioManagerThread {
 
         @Override
         public void handle(NioEvent<Runnable> evt) {
-            handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
+            handleExecute((NioConnection) evt.getSource(), evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "GET_CONNECTIONS", group = "internal")
-    final Handler<NioEvent<Request<?, List<NioConnection<?>>>>> getConnectionsHandler = //
-    new Handler<NioEvent<Request<?, List<NioConnection<?>>>>>() {
+    final Handler<NioEvent<Request<?, List<NioConnection>>>> getConnectionsHandler = //
+    new Handler<NioEvent<Request<?, List<NioConnection>>>>() {
 
         @Override
-        public void handle(NioEvent<Request<?, List<NioConnection<?>>>> evt) {
+        public void handle(NioEvent<Request<?, List<NioConnection>>> evt) {
             handleGetConnections(evt.getArgument());
         }
     };
@@ -206,7 +205,7 @@ public class NioManagerIoThread extends NioManagerThread {
     }
 
     @Override
-    protected void purge(NioConnection<?> conn) {
+    protected void purge(NioConnection conn) {
         // Do nothing.
     }
 }

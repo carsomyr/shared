@@ -26,26 +26,73 @@
  * </p>
  */
 
-package shared.net.handler;
+package shared.net;
 
-import shared.net.Connection;
-import shared.net.ConnectionHandler;
-import shared.net.filter.OobEvent;
+import java.io.Closeable;
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
- * Defines a {@link ConnectionHandler} that can react to user-defined {@link OobEvent}s.
+ * Defines a transport layer for managing {@link Connection}s.
  * 
+ * @apiviz.has shared.net.ConnectionManager.InitializationType - - - argument
  * @param <C>
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public interface OobHandler<C extends Connection> extends ConnectionHandler<C> {
+public interface ConnectionManager<C extends Connection> extends Closeable {
 
     /**
-     * On receipt of a user-defined {@link OobEvent}.
-     * 
-     * @param evt
-     *            the {@link OobEvent}.
+     * An enumeration of the ways in which a connection may be initialized.
      */
-    public void onOob(OobEvent evt);
+    public static enum InitializationType {
+
+        /**
+         * Denotes connecting to a remote address.
+         */
+        CONNECT, //
+
+        /**
+         * Denotes accepting from a local address.
+         */
+        ACCEPT, //
+
+        /**
+         * Denotes registration of an existing, unmanaged connection.
+         */
+        REGISTER;
+    }
+
+    /**
+     * Initializes a {@link Connection}.
+     * 
+     * @param type
+     *            the {@link InitializationType}.
+     * @param handler
+     *            the {@link ConnectionHandler}.
+     * @param argument
+     *            the argument.
+     * @param <T>
+     *            the argument type.
+     * @return a {@link Future} for retrieving the newly initialized {@link Connection}.
+     * @see InitializationType
+     */
+    public <T> Future<C> init(InitializationType type, ConnectionHandler<? super C> handler, T argument);
+
+    /**
+     * Gets the list of {@link Connection}s.
+     */
+    public List<C> getConnections();
+
+    /**
+     * Shuts down this manager and reclaims its resources.
+     */
+    @Override
+    public void close();
+
+    /**
+     * Creates a human-readable representation of this manager.
+     */
+    @Override
+    public String toString();
 }

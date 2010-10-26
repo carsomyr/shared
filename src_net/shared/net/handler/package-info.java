@@ -27,7 +27,7 @@
  */
 
 /**
- * A package of {@link shared.net.Connection} handler implementations.
+ * A package of {@link shared.net.ConnectionHandler} implementations.
  */
 package shared.net.handler;
 

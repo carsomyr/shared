@@ -34,32 +34,32 @@ import java.util.Queue;
 
 import org.w3c.dom.Element;
 
-import shared.net.Connection;
+import shared.net.ConnectionHandler;
 import shared.util.Control;
 
 /**
  * An implementation of {@link FilterFactory} for reading and writing XML DOM {@link Element}s.
  * 
  * @param <H>
- *            the {@link Connection} type.
+ *            the {@link ConnectionHandler} type.
  * @author Roy Liu
  */
-public class XmlFilterFactory<H extends Connection> //
+public class XmlFilterFactory<H extends ConnectionHandler<?>> //
         implements FilterFactory<Filter<ByteBuffer, Element>, ByteBuffer, Element, H>, Filter<ByteBuffer, Element> {
 
     /**
      * The global instance.
      */
-    final protected static XmlFilterFactory<?> instance = new XmlFilterFactory<Connection>();
+    final protected static XmlFilterFactory<?> instance = new XmlFilterFactory<ConnectionHandler<?>>();
 
     /**
      * Gets the global instance.
      * 
      * @param <H>
-     *            the {@link Connection} type.
+     *            the {@link ConnectionHandler} type.
      */
     @SuppressWarnings("unchecked")
-    final public static <H extends Connection> XmlFilterFactory<H> getInstance() {
+    final public static <H extends ConnectionHandler<?>> XmlFilterFactory<H> getInstance() {
         return (XmlFilterFactory<H>) instance;
     }
 

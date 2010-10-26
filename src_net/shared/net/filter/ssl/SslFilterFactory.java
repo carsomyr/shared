@@ -50,7 +50,7 @@ import shared.util.Control;
  *            the {@link FilteredHandler} type.
  * @author Roy Liu
  */
-public class SslFilterFactory<H extends FilteredHandler<H, ?>> //
+public class SslFilterFactory<H extends FilteredHandler<H, ?, ?>> //
         implements FilterFactory<SslFilter<H>, ByteBuffer, ByteBuffer, H>, SslEngineFactory<SslFilterFactory<H>> {
 
     final ExecutorService executor;

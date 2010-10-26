@@ -28,6 +28,8 @@
 
 package shared.net.handler;
 
+import static shared.net.Constants.DEFAULT_BUFFER_SIZE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,24 +40,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import shared.net.Buffers;
+import shared.net.Connection;
+import shared.net.Connection.OperationType;
 import shared.net.filter.IdentityFilterFactory;
-import shared.net.nio.NioConnection;
-import shared.net.nio.NioManager;
 import shared.util.Control;
 
 /**
- * A subclass of {@link NioConnection} with synchronous behavior.
+ * A subclass of {@link AbstractFilteredHandler} with synchronous behavior.
  * 
  * @apiviz.composedOf shared.net.handler.SynchronousHandler.ManagedInputStream
  * @apiviz.composedOf shared.net.handler.SynchronousHandler.ManagedOutputStream
  * @apiviz.composedOf shared.net.handler.SynchronousHandler.Resolver
  * @apiviz.uses shared.net.Buffers
+ * @param <C>
+ *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandler, ByteBuffer> {
+public class SynchronousHandler<C extends Connection> //
+        extends AbstractFilteredHandler<SynchronousHandler<C>, C, ByteBuffer> {
 
     /**
-     * Defines a gadget that supports {@link ManagedInputStream} and {@link ManagedOutputStream}.
+     * Defines a gadget that supports {@link SynchronousHandler.ManagedInputStream} and
+     * {@link SynchronousHandler.ManagedOutputStream}.
      */
     protected interface Resolver {
 
@@ -111,7 +117,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
             @Override
             public int resolve(int size) {
 
-                SynchronousHandler handler = SynchronousHandler.this;
+                SynchronousHandler<C> handler = SynchronousHandler.this;
                 ByteBuffer bb = handler.in.buffer;
 
                 // If running low, request more!
@@ -120,7 +126,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
                     debug("[%s] reads enabled.", handler);
 
                     handler.setInResolverEnabled();
-                    handler.setEnabled(OperationType.READ, true);
+                    handler.getConnection().setEnabled(OperationType.READ, true);
                 }
 
                 if (size > 0) {
@@ -181,8 +187,8 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
             @Override
             public int resolve(int remaining) {
 
-                SynchronousHandler handler = SynchronousHandler.this;
-                return handler.sendOutbound(handler.out.buffer) + handler.out.buffer.remaining();
+                SynchronousHandler<C> handler = SynchronousHandler.this;
+                return handler.send(handler.out.buffer) + handler.out.buffer.remaining();
             }
         };
     }
@@ -197,7 +203,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
             @Override
             public int resolve(int remaining) throws IOException {
 
-                SynchronousHandler handler = SynchronousHandler.this;
+                SynchronousHandler<C> handler = SynchronousHandler.this;
 
                 // If there's nothing left to write, return normally.
                 if (remaining + handler.out.buffer.remaining() == 0) {
@@ -229,6 +235,8 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
      */
     final protected static Logger log = LoggerFactory.getLogger(SynchronousHandler.class);
 
+    final int bufferSize;
+
     Resolver inResolver;
     Resolver outResolver;
 
@@ -240,8 +248,10 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
     /**
      * Default constructor.
      */
-    public SynchronousHandler(String name, NioManager manager) {
-        super(name, manager);
+    public SynchronousHandler(String name, int bufferSize) {
+        super(name);
+
+        this.bufferSize = bufferSize;
 
         this.inResolver = null;
         this.outResolver = null;
@@ -251,7 +261,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
 
         this.stateMask = 0;
 
-        IdentityFilterFactory<ByteBuffer, SynchronousHandler> iff = IdentityFilterFactory.getInstance();
+        IdentityFilterFactory<ByteBuffer, SynchronousHandler<C>> iff = IdentityFilterFactory.getInstance();
         setFilterFactory(iff);
     }
 
@@ -259,7 +269,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
      * Alternate constructor.
      */
     public SynchronousHandler(String name) {
-        this(name, NioManager.getInstance());
+        this(name, DEFAULT_BUFFER_SIZE);
     }
 
     /**
@@ -267,7 +277,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
      */
     public InputStream getInputStream() {
 
-        synchronized (getLock()) {
+        synchronized (getConnection().getLock()) {
 
             Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
                     "Connection must be bound");
@@ -281,7 +291,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
      */
     public OutputStream getOutputStream() {
 
-        synchronized (getLock()) {
+        synchronized (getConnection().getLock()) {
 
             Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
                     "Connection must be bound");
@@ -293,7 +303,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
     @Override
     public void onBind(Queue<ByteBuffer> inputs) {
 
-        synchronized (getLock()) {
+        synchronized (getConnection().getLock()) {
 
             // Set the initial read/write resolvers.
             setInResolverEnabled();
@@ -312,7 +322,8 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
 
         boolean disableReads = false;
 
-        Object lock = getLock();
+        Connection conn = getConnection();
+        Object lock = conn.getLock();
 
         synchronized (lock) {
 
@@ -344,7 +355,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
                 debug("[%s] reads disabled.", this);
 
                 setInResolverDisabled();
-                setEnabled(OperationType.READ, false);
+                conn.setEnabled(OperationType.READ, false);
             }
         }
     }
@@ -352,9 +363,11 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
     @Override
     public void onClosing(ClosingType type, Queue<ByteBuffer> inputs) {
 
+        Connection conn = getConnection();
+
         final IOException e;
 
-        synchronized (getLock()) {
+        synchronized (conn.getLock()) {
 
             switch (type) {
 
@@ -388,7 +401,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
 
             case ERROR:
 
-                e = (IOException) new IOException("Connection encountered an error").initCause(getException());
+                e = (IOException) new IOException("Connection encountered an error").initCause(conn.getException());
 
                 setInResolverError(e);
                 setOutResolverError(e);
@@ -407,7 +420,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
     @Override
     public void onClose() {
 
-        Object lock = getLock();
+        Object lock = getConnection().getLock();
 
         synchronized (lock) {
 
@@ -426,7 +439,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
 
         try {
 
-            getLock().wait();
+            getConnection().getLock().wait();
 
         } catch (InterruptedException e) {
 
@@ -457,7 +470,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
         protected ManagedInputStream() {
 
             // Invariant: The incoming buffer is always in the ready-to-read configuration.
-            this.buffer = (ByteBuffer) ByteBuffer.allocate(getBufferSize()).flip();
+            this.buffer = (ByteBuffer) ByteBuffer.allocate(SynchronousHandler.this.bufferSize).flip();
         }
 
         /**
@@ -466,9 +479,9 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
         @Override
         public int read() throws IOException {
 
-            SynchronousHandler handler = SynchronousHandler.this;
+            SynchronousHandler<C> handler = SynchronousHandler.this;
 
-            synchronized (handler.getLock()) {
+            synchronized (handler.getConnection().getLock()) {
 
                 for (; (handler.stateMask & FLAG_CLOSED) == 0 && !this.buffer.hasRemaining();) {
                     handler.waitInterruptibly();
@@ -495,7 +508,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
         @Override
         public int read(byte[] dst, int offset, int length) throws IOException {
 
-            SynchronousHandler handler = SynchronousHandler.this;
+            SynchronousHandler<C> handler = SynchronousHandler.this;
 
             if (dst == null) {
                 throw new NullPointerException("Null destination array");
@@ -509,7 +522,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
                 return 0;
             }
 
-            synchronized (handler.getLock()) {
+            synchronized (handler.getConnection().getLock()) {
 
                 for (; (handler.stateMask & FLAG_CLOSED) == 0 && !this.buffer.hasRemaining();) {
                     handler.waitInterruptibly();
@@ -528,9 +541,9 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
         @Override
         public int available() {
 
-            SynchronousHandler handler = SynchronousHandler.this;
+            SynchronousHandler<C> handler = SynchronousHandler.this;
 
-            synchronized (handler.getLock()) {
+            synchronized (handler.getConnection().getLock()) {
                 return this.buffer.remaining();
             }
         }
@@ -557,7 +570,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
         protected ManagedOutputStream() {
 
             // Invariant: The outgoing buffer is always in the ready-to-read configuration.
-            this.buffer = (ByteBuffer) ByteBuffer.allocate(getBufferSize()).flip();
+            this.buffer = (ByteBuffer) ByteBuffer.allocate(SynchronousHandler.this.bufferSize).flip();
         }
 
         /**
@@ -566,9 +579,9 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
         @Override
         public void write(int b) throws IOException {
 
-            SynchronousHandler handler = SynchronousHandler.this;
+            SynchronousHandler<C> handler = SynchronousHandler.this;
 
-            synchronized (handler.getLock()) {
+            synchronized (handler.getConnection().getLock()) {
 
                 for (int size, length = 1; length > 0; length -= size) {
 
@@ -589,7 +602,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
         @Override
         public void write(byte[] src, int offset, int length) throws IOException {
 
-            SynchronousHandler handler = SynchronousHandler.this;
+            SynchronousHandler<C> handler = SynchronousHandler.this;
 
             if (src == null) {
                 throw new NullPointerException("Null source array");
@@ -599,7 +612,7 @@ public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandl
                 throw new IndexOutOfBoundsException("Invalid offset/length");
             }
 
-            synchronized (handler.getLock()) {
+            synchronized (handler.getConnection().getLock()) {
 
                 for (int size; length > 0; offset += size, length -= size) {
 

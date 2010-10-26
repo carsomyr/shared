@@ -47,11 +47,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import shared.event.EnumStatus;
-import shared.event.Source;
 import shared.event.SourceLocal;
 import shared.event.StateTable;
-import shared.net.Connection.ClosingType;
-import shared.net.SourceType;
+import shared.net.ConnectionHandler.ClosingType;
 import shared.net.nio.NioConnection.NioConnectionStatus;
 import shared.net.nio.NioEvent.NioEventType;
 import shared.util.Control;
@@ -65,8 +63,7 @@ import shared.util.CoreThread;
  * @author Roy Liu
  */
 abstract public class NioManagerThread extends CoreThread //
-        implements SourceLocal<NioEvent<?>>, Closeable, //
-        EnumStatus<NioManagerThread.NioManagerThreadStatus> {
+        implements SourceLocal<NioEvent<?>>, Closeable, EnumStatus<NioManagerThread.NioManagerThreadStatus> {
 
     /**
      * An enumeration of thread states.
@@ -167,20 +164,20 @@ abstract public class NioManagerThread extends CoreThread //
             // Keep polling for internal events.
             for (NioEvent<?> evt; (evt = this.queue.poll()) != null;) {
 
-                ProxySource<?> stub = (ProxySource<?>) evt.getSource();
+                NioConnection conn = (NioConnection) evt.getSource();
 
-                if (stub == null) {
+                if (conn == null) {
 
                     this.fsmInternal.lookup(this, evt);
 
                 } else {
 
-                    NioManagerThread connThread = stub.getConnection().getThread();
+                    NioManagerThread connThread = conn.getThread();
 
                     // The event was indeed intended for this thread.
                     if (this == connThread) {
 
-                        this.fsm.lookup(stub.getConnection(), evt);
+                        this.fsm.lookup(conn, evt);
 
                     }
                     // The event needs to be redirected to another thread.
@@ -219,11 +216,11 @@ abstract public class NioManagerThread extends CoreThread //
         // Everyone who has a request pending will get an error.
         for (NioEvent<?> evt; (evt = this.queue.poll()) != null;) {
 
-            Source<NioEvent<?>, SourceType> source = evt.getSource();
+            NioConnection conn = (NioConnection) evt.getSource();
 
-            // If the source is not null, then it must be a proxy for a connection.
-            if (source != null) {
-                handleError(((ProxySource<?>) source).getConnection(), this.exception);
+            // If the source is not null, then it must be a connection.
+            if (conn != null) {
+                handleError(conn, this.exception);
             }
         }
 
@@ -376,14 +373,14 @@ abstract public class NioManagerThread extends CoreThread //
     /**
      * A sequence of actions to take when deleting a connection, as far as this thread is concerned.
      */
-    abstract protected void purge(NioConnection<?> conn);
+    abstract protected void purge(NioConnection conn);
 
     //
 
     /**
      * Handles a connection operation interest change request.
      */
-    protected void handleOp(NioConnection<?> conn, int mask, boolean enabled) {
+    protected void handleOp(NioConnection conn, int mask, boolean enabled) {
 
         try {
 
@@ -398,7 +395,7 @@ abstract public class NioManagerThread extends CoreThread //
     /**
      * Handles a connection close request.
      */
-    protected void handleClosingUser(NioConnection<?> conn) {
+    protected void handleClosingUser(NioConnection conn) {
 
         try {
 
@@ -417,7 +414,7 @@ abstract public class NioManagerThread extends CoreThread //
     /**
      * Handles a connection end-of-stream notification.
      */
-    protected void handleClosingEos(NioConnection<?> conn) {
+    protected void handleClosingEos(NioConnection conn) {
 
         try {
 
@@ -436,7 +433,7 @@ abstract public class NioManagerThread extends CoreThread //
     /**
      * Handles a connection closure notification.
      */
-    protected void handleClose(NioConnection<?> conn) {
+    protected void handleClose(NioConnection conn) {
 
         try {
 
@@ -457,7 +454,7 @@ abstract public class NioManagerThread extends CoreThread //
     /**
      * Handles a connection error notification.
      */
-    protected void handleError(NioConnection<?> conn, Throwable exception) {
+    protected void handleError(NioConnection conn, Throwable exception) {
 
         // Connection already invalidated. Nothing to do.
         if (conn.getStatus() == NioConnectionStatus.CLOSED) {
@@ -494,7 +491,7 @@ abstract public class NioManagerThread extends CoreThread //
     /**
      * Handles a request to execute code on this thread.
      */
-    protected void handleExecute(NioConnection<?> conn, Runnable r) {
+    protected void handleExecute(NioConnection conn, Runnable r) {
 
         try {
 

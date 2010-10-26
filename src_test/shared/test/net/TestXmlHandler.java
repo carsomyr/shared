@@ -34,9 +34,9 @@ import static shared.test.net.TestXmlEvent.TestXmlEventType.END_OF_STREAM;
 import org.w3c.dom.Element;
 
 import shared.event.SourceLocal;
+import shared.net.Connection;
 import shared.net.SourceType;
 import shared.net.handler.XmlHandler;
-import shared.net.nio.NioManager;
 import shared.test.net.TestXmlEvent.ErrorXmlEvent;
 
 /**
@@ -45,7 +45,7 @@ import shared.test.net.TestXmlEvent.ErrorXmlEvent;
  * @apiviz.has shared.test.net.TestXmlEvent - - - event
  * @author Roy Liu
  */
-public class TestXmlHandler extends XmlHandler<TestXmlHandler, TestXmlEvent, SourceType> {
+public class TestXmlHandler extends XmlHandler<TestXmlHandler, Connection, TestXmlEvent, SourceType> {
 
     final SourceLocal<TestXmlEvent> receiver;
 
@@ -55,9 +55,8 @@ public class TestXmlHandler extends XmlHandler<TestXmlHandler, TestXmlEvent, Sou
      * @param receiver
      *            the local receiver to which events will be forwarded.
      */
-    public TestXmlHandler(String name, int minimumSize, int maximumSize, //
-            NioManager manager, SourceLocal<TestXmlEvent> receiver) {
-        super(name, CONNECTION, minimumSize, maximumSize, manager);
+    public TestXmlHandler(String name, int minimumSize, int maximumSize, SourceLocal<TestXmlEvent> receiver) {
+        super(name, CONNECTION, minimumSize, maximumSize);
 
         this.receiver = receiver;
     }
@@ -69,7 +68,7 @@ public class TestXmlHandler extends XmlHandler<TestXmlHandler, TestXmlEvent, Sou
 
     @Override
     protected void onError() {
-        onLocal(new ErrorXmlEvent(getException(), this));
+        onLocal(new ErrorXmlEvent(getConnection().getException(), this));
     }
 
     @Override

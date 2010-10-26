@@ -26,26 +26,86 @@
  * </p>
  */
 
-package shared.net.handler;
+package shared.net;
 
-import shared.net.Connection;
-import shared.net.ConnectionHandler;
-import shared.net.filter.OobEvent;
+import java.nio.ByteBuffer;
 
 /**
- * Defines a {@link ConnectionHandler} that can react to user-defined {@link OobEvent}s.
+ * Defines a handler for {@link Connection} callbacks.
  * 
+ * @apiviz.has shared.net.ConnectionHandler.ClosingType - - - argument
  * @param <C>
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public interface OobHandler<C extends Connection> extends ConnectionHandler<C> {
+public interface ConnectionHandler<C extends Connection> {
 
     /**
-     * On receipt of a user-defined {@link OobEvent}.
-     * 
-     * @param evt
-     *            the {@link OobEvent}.
+     * An enumeration of the ways in which a connection may be closed.
      */
-    public void onOob(OobEvent evt);
+    public static enum ClosingType {
+
+        /**
+         * Denotes closure by user request.
+         */
+        USER, //
+
+        /**
+         * Denotes closure by end-of-stream.
+         */
+        EOS, //
+
+        /**
+         * Denotes closure by error.
+         */
+        ERROR;
+    }
+
+    /**
+     * On binding.
+     */
+    public void onBind();
+
+    /**
+     * On receipt of data.
+     * 
+     * @param bb
+     *            the {@link ByteBuffer} containing data.
+     */
+    public void onReceive(ByteBuffer bb);
+
+    /**
+     * On closure.
+     * 
+     * @param type
+     *            the {@link ClosingType}.
+     * @param bb
+     *            the {@link ByteBuffer} containing data. It must be completely drained, as this is the final callback.
+     * @see ClosingType
+     */
+    public void onClosing(ClosingType type, ByteBuffer bb);
+
+    /**
+     * On completion of closure.
+     */
+    public void onClose();
+
+    /**
+     * Gets the {@link Connection} associated with this handler.
+     */
+    public C getConnection();
+
+    /**
+     * Sets the {@link Connection} associated with this handler.
+     * 
+     * @param conn
+     *            the {@link Connection}.
+     */
+    public void setConnection(C conn);
+
+    /**
+     * Creates a human-readable representation of this handler.
+     */
+    @Override
+    public String toString();
 }

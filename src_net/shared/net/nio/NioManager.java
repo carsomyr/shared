@@ -28,16 +28,22 @@
 
 package shared.net.nio;
 
+import static shared.net.Constants.DEFAULT_BUFFER_SIZE;
+import static shared.net.nio.NioEvent.NioEventType.ACCEPT;
+import static shared.net.nio.NioEvent.NioEventType.CONNECT;
 import static shared.net.nio.NioEvent.NioEventType.GET_BACKLOG_SIZE;
 import static shared.net.nio.NioEvent.NioEventType.GET_BOUND_ADDRESSES;
 import static shared.net.nio.NioEvent.NioEventType.GET_CONNECTIONS;
+import static shared.net.nio.NioEvent.NioEventType.REGISTER;
 import static shared.net.nio.NioEvent.NioEventType.SET_BACKLOG_SIZE;
 
-import java.io.Closeable;
 import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import shared.net.ConnectionHandler;
+import shared.net.SocketManager;
 import shared.net.nio.NioEvent.NioEventType;
 import shared.net.nio.NioManagerThread.NioManagerThreadStatus;
 import shared.util.Control;
@@ -50,7 +56,7 @@ import shared.util.Control;
  * @apiviz.uses shared.net.Constants
  * @author Roy Liu
  */
-public class NioManager implements Closeable {
+public class NioManager implements SocketManager<NioManager, NioConnection> {
 
     /**
      * A {@link WeakReference} to the global instance.
@@ -73,7 +79,7 @@ public class NioManager implements Closeable {
 
             if (cm != null) {
 
-                NioManagerThread cmt = cm.getThread();
+                NioManagerThread cmt = cm.thread;
 
                 synchronized (cmt) {
 
@@ -93,6 +99,8 @@ public class NioManager implements Closeable {
 
     final NioManagerDispatchThread thread;
 
+    int bufferSize;
+
     /**
      * Default constructor.
      * 
@@ -103,48 +111,63 @@ public class NioManager implements Closeable {
 
         this.thread = new NioManagerDispatchThread(name, Runtime.getRuntime().availableProcessors());
         this.thread.start();
+
+        this.bufferSize = DEFAULT_BUFFER_SIZE;
     }
 
-    /**
-     * Shuts down the underlying {@link NioManagerThread}. Blocks until shutdown completion.
-     */
     @Override
-    public void close() {
-        Control.close(this.thread);
+    public <T> Future<NioConnection> init(InitializationType type, //
+            ConnectionHandler<? super NioConnection> handler, T argument) {
+
+        final NioEventType eventType;
+
+        switch (type) {
+
+        case CONNECT:
+            eventType = CONNECT;
+            break;
+
+        case ACCEPT:
+            eventType = ACCEPT;
+            break;
+
+        case REGISTER:
+            eventType = REGISTER;
+            break;
+
+        default:
+            throw new IllegalArgumentException("Invalid initialization type");
+        }
+
+        NioConnection conn = new NioConnection(handler, this.bufferSize, this.thread);
+
+        synchronized (this.thread) {
+
+            Control.checkTrue(this.thread.getStatus() == NioManagerThreadStatus.RUN, //
+                    "The connection manager thread has exited");
+
+            this.thread.onLocal(new NioEvent<T>(eventType, argument, conn));
+        }
+
+        return conn;
     }
 
-    /**
-     * Gets the name of the underlying {@link NioManagerThread}.
-     */
     @Override
-    public String toString() {
-        return this.thread.toString();
-    }
-
-    /**
-     * Gets the list of connections.
-     */
-    public List<NioConnection<?>> getConnections() {
+    public List<NioConnection> getConnections() {
         return this.thread.request(GET_CONNECTIONS, null);
     }
 
-    /**
-     * Gets the list of bound addresses.
-     */
+    @Override
     public List<InetSocketAddress> getBoundAddresses() {
         return this.thread.request(GET_BOUND_ADDRESSES, null);
     }
 
-    /**
-     * Gets the listen backlog size.
-     */
+    @Override
     public int getBacklogSize() {
         return (Integer) this.thread.request(GET_BACKLOG_SIZE, null);
     }
 
-    /**
-     * Sets the listen backlog size.
-     */
+    @Override
     public NioManager setBacklogSize(int backlogSize) {
 
         this.thread.request(SET_BACKLOG_SIZE, backlogSize);
@@ -152,28 +175,30 @@ public class NioManager implements Closeable {
         return this;
     }
 
-    /**
-     * Gets the {@link NioManagerDispatchThread}.
-     */
-    protected NioManagerDispatchThread getThread() {
-        return this.thread;
+    @Override
+    public int getBufferSize() {
+        return this.bufferSize;
     }
 
-    /**
-     * Initializes the given connection.
-     * 
-     * @param <T>
-     *            the argument type.
-     */
-    protected <T> void initConnection(NioConnection<?> conn, NioEventType opType, T argument) {
+    @Override
+    public NioManager setBufferSize(int bufferSize) {
 
-        synchronized (this.thread) {
+        Control.checkTrue(bufferSize > 0, //
+                "Invalid buffer size");
 
-            Control.checkTrue(this.thread.getStatus() == NioManagerThreadStatus.RUN, //
-                    "The connection manager thread has exited");
+        this.bufferSize = bufferSize;
 
-            this.thread.onLocal(new NioEvent<T>(opType, argument, conn.getProxy()));
-        }
+        return this;
+    }
+
+    @Override
+    public void close() {
+        Control.close(this.thread);
+    }
+
+    @Override
+    public String toString() {
+        return this.thread.toString();
     }
 
     // A finalizer guardian for the manager thread.

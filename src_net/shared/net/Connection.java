@@ -31,56 +31,16 @@ package shared.net;
 import java.io.Closeable;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
+
+import shared.net.ConnectionHandler.ClosingType;
 
 /**
  * Defines a managed connection.
  * 
+ * @apiviz.has shared.net.Connection.OperationType - - - argument
  * @author Roy Liu
  */
 public interface Connection extends Closeable, Executor {
-
-    /**
-     * An enumeration of the ways in which a connection may be closed.
-     */
-    public static enum ClosingType {
-
-        /**
-         * Denotes closure by user request.
-         */
-        USER, //
-
-        /**
-         * Denotes closure by end-of-stream.
-         */
-        EOS, //
-
-        /**
-         * Denotes closure by error.
-         */
-        ERROR;
-    }
-
-    /**
-     * An enumeration of the ways in which a connection may be initialized.
-     */
-    public static enum InitializationType {
-
-        /**
-         * Denotes connecting to a remote address.
-         */
-        CONNECT, //
-
-        /**
-         * Denotes accepting from a local address.
-         */
-        ACCEPT, //
-
-        /**
-         * Denotes registration of an existing, unmanaged connection.
-         */
-        REGISTER;
-    }
 
     /**
      * An enumeration of the managed operations manipulable by the user.
@@ -98,55 +58,6 @@ public interface Connection extends Closeable, Executor {
         WRITE;
     }
 
-    // Callback methods are not necessarily thread-safe, and thus must execute on internal threads.
-
-    /**
-     * On binding.
-     */
-    public void onBind();
-
-    /**
-     * On receipt of data.
-     * 
-     * @param bb
-     *            the {@link ByteBuffer} containing data.
-     */
-    public void onReceive(ByteBuffer bb);
-
-    /**
-     * On closure.
-     * 
-     * @param type
-     *            the {@link ClosingType}.
-     * @param bb
-     *            the {@link ByteBuffer} containing data. It must be completely drained, as this is the final callback.
-     * @see ClosingType
-     */
-    public void onClosing(ClosingType type, ByteBuffer bb);
-
-    /**
-     * On completion of closure.
-     */
-    public void onClose();
-
-    // User methods must be thread-safe, and thus may execute on any thread.
-
-    /**
-     * Initializes this connection.
-     * 
-     * @param type
-     *            the {@link InitializationType}.
-     * @param argument
-     *            the argument.
-     * @param <R>
-     *            the result type.
-     * @param <T>
-     *            the argument type.
-     * @return a completion {@link Future} for the result.
-     * @see InitializationType
-     */
-    public <R, T> Future<R> init(InitializationType type, T argument);
-
     /**
      * Sends data to the remote host.
      * 
@@ -161,9 +72,9 @@ public interface Connection extends Closeable, Executor {
     /**
      * Enables/disables various managed operations:
      * <ul>
-     * <li>{@link OperationType#READ} -- The {@link #onReceive(ByteBuffer)} callback is enabled/disabled. With argument
-     * {@code true}, this method shall guarantee that {@link #onReceive(ByteBuffer)} will subsequently be called at
-     * least once.</li>
+     * <li>{@link OperationType#READ} -- The {@link ConnectionHandler#onReceive(ByteBuffer)} callback is
+     * enabled/disabled. With argument {@code true}, this method shall guarantee that
+     * {@link ConnectionHandler#onReceive(ByteBuffer)} will subsequently be called at least once.</li>
      * <li>{@link OperationType#WRITE} -- Managed writes of data buffered by the {@link #send(ByteBuffer)} method are
      * enabled/disabled.</li>
      * </ul>
@@ -196,7 +107,7 @@ public interface Connection extends Closeable, Executor {
     public Object getLock();
 
     /**
-     * Executes the given code snippet on this connection's manager thread.
+     * Executes the given code snippet on this connection's {@link ConnectionManager} thread.
      * 
      * @param r
      *            the code snippet to execute.

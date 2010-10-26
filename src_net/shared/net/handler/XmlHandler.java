@@ -36,13 +36,13 @@ import org.w3c.dom.Element;
 import shared.event.Handler;
 import shared.event.Source;
 import shared.event.XmlEvent;
+import shared.net.Connection;
 import shared.net.SourceType;
 import shared.net.filter.ChainFilterFactory;
 import shared.net.filter.Filter;
 import shared.net.filter.FilterFactory;
 import shared.net.filter.FrameFilterFactory;
 import shared.net.filter.XmlFilterFactory;
-import shared.net.nio.NioManager;
 import shared.util.Control;
 
 /**
@@ -52,14 +52,16 @@ import shared.util.Control;
  * @apiviz.owns shared.net.SourceType
  * @param <H>
  *            the parameterization lower bounded by {@link XmlHandler} itself.
+ * @param <C>
+ *            the {@link Connection} type.
  * @param <T>
  *            the {@link XmlEvent} type.
  * @param <S>
  *            the {@link Source} enumeration type.
  * @author Roy Liu
  */
-abstract public class XmlHandler<H extends XmlHandler<H, T, S>, T extends XmlEvent<T, ?, S>, S extends Enum<S>> //
-        extends AbstractFilteredHandler<H, T> //
+abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Connection, T extends XmlEvent<T, ?, S>, S extends Enum<S>> //
+        extends AbstractFilteredHandler<H, C, T> //
         implements Source<T, S>, FilterFactory<Filter<Element, T>, Element, T, H> {
 
     final S type;
@@ -77,11 +79,9 @@ abstract public class XmlHandler<H extends XmlHandler<H, T, S>, T extends XmlEve
      *            the minimum message buffer size.
      * @param maximumSize
      *            the maximum message buffer size.
-     * @param manager
-     *            the {@link NioManager} with which this connection will be registered.
      */
-    public XmlHandler(String name, S type, int minimumSize, int maximumSize, NioManager manager) {
-        super(name, manager);
+    public XmlHandler(String name, S type, int minimumSize, int maximumSize) {
+        super(name);
 
         this.type = type;
 
@@ -102,22 +102,8 @@ abstract public class XmlHandler<H extends XmlHandler<H, T, S>, T extends XmlEve
     /**
      * Alternate constructor.
      */
-    public XmlHandler(String name, S type, int maximumSize, NioManager manager) {
-        this(name, type, maximumSize, maximumSize, manager);
-    }
-
-    /**
-     * Alternate constructor.
-     */
-    public XmlHandler(String name, S type, int minimumSize, int maximumSize) {
-        this(name, type, minimumSize, maximumSize, NioManager.getInstance());
-    }
-
-    /**
-     * Alternate constructor.
-     */
     public XmlHandler(String name, S type, int maximumSize) {
-        this(name, type, maximumSize, maximumSize, NioManager.getInstance());
+        this(name, type, maximumSize, maximumSize);
     }
 
     /**
@@ -151,7 +137,7 @@ abstract public class XmlHandler<H extends XmlHandler<H, T, S>, T extends XmlEve
 
     @Override
     public void onRemote(T evt) {
-        sendOutbound(evt);
+        send(evt);
     }
 
     @Override
@@ -197,7 +183,7 @@ abstract public class XmlHandler<H extends XmlHandler<H, T, S>, T extends XmlEve
             @Override
             public void applyInbound(Queue<Element> inputs, Queue<T> outputs) {
 
-                assert !Thread.holdsLock(handler.getLock());
+                assert !Thread.holdsLock(handler.getConnection().getLock());
 
                 for (Element elt; (elt = inputs.poll()) != null;) {
                     outputs.add(parse(elt));
@@ -207,7 +193,7 @@ abstract public class XmlHandler<H extends XmlHandler<H, T, S>, T extends XmlEve
             @Override
             public void applyOutbound(Queue<T> inputs, Queue<Element> outputs) {
 
-                assert Thread.holdsLock(handler.getLock());
+                assert Thread.holdsLock(handler.getConnection().getLock());
 
                 for (T evt; (evt = inputs.poll()) != null;) {
                     outputs.add(evt.toDom());
