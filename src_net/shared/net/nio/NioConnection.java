@@ -26,16 +26,16 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.nio;
 
 import static shared.net.Constants.DEFAULT_BUFFER_SIZE;
-import static shared.net.InterestEvent.InterestEventType.ACCEPT;
-import static shared.net.InterestEvent.InterestEventType.CLOSE;
-import static shared.net.InterestEvent.InterestEventType.CONNECT;
-import static shared.net.InterestEvent.InterestEventType.ERROR;
-import static shared.net.InterestEvent.InterestEventType.EXECUTE;
-import static shared.net.InterestEvent.InterestEventType.OP;
-import static shared.net.InterestEvent.InterestEventType.REGISTER;
+import static shared.net.nio.NioEvent.NioEventType.ACCEPT;
+import static shared.net.nio.NioEvent.NioEventType.CLOSE;
+import static shared.net.nio.NioEvent.NioEventType.CONNECT;
+import static shared.net.nio.NioEvent.NioEventType.ERROR;
+import static shared.net.nio.NioEvent.NioEventType.EXECUTE;
+import static shared.net.nio.NioEvent.NioEventType.OP;
+import static shared.net.nio.NioEvent.NioEventType.REGISTER;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -50,29 +50,31 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import shared.event.EnumStatus;
-import shared.net.InterestEvent.InterestEventType;
+import shared.net.Buffers;
+import shared.net.SocketConnection;
+import shared.net.nio.NioEvent.NioEventType;
 import shared.util.Control;
 
 /**
- * An abstract asynchronous sockets class internally managed by {@link ConnectionManager}. Instantiating classes must
- * implement callbacks for receipt of data, connecting, accepting, and error handling.
+ * An abstract asynchronous sockets class internally managed by {@link NioManager}. Instantiating classes must implement
+ * callbacks for receipt of data, connecting, accepting, and error handling.
  * 
- * @apiviz.composedOf shared.net.AbstractManagedConnection.WriteHandler
- * @apiviz.owns shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus
- * @apiviz.owns shared.net.ProxySource
+ * @apiviz.composedOf shared.net.nio.NioConnection.WriteHandler
+ * @apiviz.owns shared.net.nio.NioConnection.NioConnectionStatus
+ * @apiviz.owns shared.net.nio.ProxySource
  * @apiviz.uses shared.net.Buffers
  * @apiviz.uses shared.net.Constants
  * @param <C>
- *            the parameterization lower bounded by {@link AbstractManagedConnection} itself.
+ *            the parameterization lower bounded by {@link NioConnection} itself.
  * @author Roy Liu
  */
-abstract public class AbstractManagedConnection<C extends AbstractManagedConnection<C>> //
-        implements SocketConnection<C>, EnumStatus<AbstractManagedConnection.AbstractManagedConnectionStatus> {
+abstract public class NioConnection<C extends NioConnection<C>> //
+        implements SocketConnection<C>, EnumStatus<NioConnection.NioConnectionStatus> {
 
     /**
      * An enumeration of connection states.
      */
-    public enum AbstractManagedConnectionStatus {
+    public enum NioConnectionStatus {
 
         /**
          * The connection is virgin.
@@ -106,7 +108,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * A bit flag indicating that the connection has been submitted to a {@link ConnectionManager}.
+     * A bit flag indicating that the connection has been submitted to an {@link NioManager}.
      */
     final protected static int FLAG_SUBMITTED = 1 << 0;
 
@@ -141,12 +143,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         @Override
         public int write(ByteBuffer bb) {
 
-            AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            assert Thread.holdsLock(amc.getLock());
+            NioConnection<C> conn = NioConnection.this;
+            assert Thread.holdsLock(conn.getLock());
 
-            amc.writeBuffer = Buffers.append(amc.writeBuffer, bb, 1);
+            conn.writeBuffer = Buffers.append(conn.writeBuffer, bb, 1);
 
-            return amc.writeBuffer.position();
+            return conn.writeBuffer.position();
         }
     };
 
@@ -158,34 +160,34 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         @Override
         public int write(ByteBuffer bb) {
 
-            AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            assert Thread.holdsLock(amc.getLock());
+            NioConnection<C> conn = NioConnection.this;
+            assert Thread.holdsLock(conn.getLock());
 
-            assert (amc.writeBuffer.position() == 0);
+            assert (conn.writeBuffer.position() == 0);
 
             try {
 
-                for (; bb.hasRemaining() && amc.channel.write(bb) > 0;) {
+                for (; bb.hasRemaining() && conn.channel.write(bb) > 0;) {
                 }
 
-                amc.writeBuffer = Buffers.append(amc.writeBuffer, bb, 1);
+                conn.writeBuffer = Buffers.append(conn.writeBuffer, bb, 1);
 
-                int remaining = amc.writeBuffer.position();
+                int remaining = conn.writeBuffer.position();
 
                 if (remaining > 0) {
 
-                    amc.thread.debug("[%s] writes deferred.", amc);
+                    conn.thread.debug("[%s] writes deferred.", conn);
 
-                    amc.setBufferedHandler();
-                    amc.setEnabled(OperationType.WRITE, true);
+                    conn.setBufferedHandler();
+                    conn.setEnabled(OperationType.WRITE, true);
                 }
 
                 return remaining;
 
             } catch (Throwable t) {
 
-                amc.setNullHandler();
-                amc.setException(t);
+                conn.setNullHandler();
+                conn.setException(t);
 
                 return 0;
             }
@@ -200,8 +202,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         @Override
         public int write(ByteBuffer bb) {
 
-            AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            assert Thread.holdsLock(amc.getLock());
+            NioConnection<C> conn = NioConnection.this;
+            assert Thread.holdsLock(conn.getLock());
 
             // Set the position to the limit to simulate that we have read all bytes.
             bb.position(bb.limit());
@@ -218,8 +220,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         @Override
         public void run() {
 
-            AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            Object lock = amc.getLock();
+            NioConnection<C> conn = NioConnection.this;
+            Object lock = conn.getLock();
             assert !Thread.holdsLock(lock);
 
             final boolean disableWrites;
@@ -228,38 +230,38 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                 synchronized (lock) {
 
-                    for (amc.writeBuffer.flip(); //
-                    amc.writeBuffer.hasRemaining() && amc.channel.write(amc.writeBuffer) > 0;) {
+                    for (conn.writeBuffer.flip(); //
+                    conn.writeBuffer.hasRemaining() && conn.channel.write(conn.writeBuffer) > 0;) {
                     }
 
-                    amc.writeBuffer.compact();
+                    conn.writeBuffer.compact();
 
-                    disableWrites = (amc.writeBuffer.position() == 0);
+                    disableWrites = (conn.writeBuffer.position() == 0);
 
                     if (disableWrites) {
 
-                        if (amc.writeBuffer.capacity() > amc.bufferSize) {
-                            amc.writeBuffer = ByteBuffer.allocate(amc.bufferSize);
+                        if (conn.writeBuffer.capacity() > conn.bufferSize) {
+                            conn.writeBuffer = ByteBuffer.allocate(conn.bufferSize);
                         }
 
-                        amc.thread.debug("[%s] canceled write defer.", amc);
+                        conn.thread.debug("[%s] canceled write defer.", conn);
 
                         // Notify anyone waiting for restoration of the write-through handler.
-                        amc.setWriteThroughHandler();
+                        conn.setWriteThroughHandler();
                         lock.notifyAll();
                     }
                 }
 
             } catch (Throwable t) {
 
-                amc.thread.handleError(amc, t);
+                conn.thread.handleError(conn, t);
 
                 return;
             }
 
             // No longer under the protection of the monitor, perform the operation interest change.
             if (disableWrites) {
-                amc.thread.handleOp(amc, SelectionKey.OP_WRITE, false);
+                conn.thread.handleOp(conn, SelectionKey.OP_WRITE, false);
             }
         }
     };
@@ -272,8 +274,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
         @Override
         public void run() {
 
-            AbstractManagedConnection<C> amc = AbstractManagedConnection.this;
-            Object lock = amc.getLock();
+            NioConnection<C> conn = NioConnection.this;
+            Object lock = conn.getLock();
             assert !Thread.holdsLock(lock);
 
             final boolean closeConnection;
@@ -282,36 +284,36 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
                 synchronized (lock) {
 
-                    for (amc.writeBuffer.flip(); //
-                    amc.writeBuffer.hasRemaining() && amc.channel.write(amc.writeBuffer) > 0;) {
+                    for (conn.writeBuffer.flip(); //
+                    conn.writeBuffer.hasRemaining() && conn.channel.write(conn.writeBuffer) > 0;) {
                     }
 
-                    amc.writeBuffer.compact();
+                    conn.writeBuffer.compact();
 
-                    closeConnection = (amc.writeBuffer.position() == 0);
+                    closeConnection = (conn.writeBuffer.position() == 0);
                 }
 
             } catch (Throwable t) {
 
-                amc.thread.handleError(amc, t);
+                conn.thread.handleError(conn, t);
 
                 return;
             }
 
             // No longer under the protection of the monitor, close the connection.
             if (closeConnection) {
-                amc.thread.handleClose(amc);
+                conn.thread.handleClose(conn);
             }
         }
     };
 
     /**
-     * External thread call -- Submits this connection to its associated {@link ConnectionManager}.
+     * External thread call -- Submits this connection to its associated {@link NioManager}.
      * 
      * @param <T>
      *            the argument type.
      * @param type
-     *            the {@link Connection.InitializationType}.
+     *            the {@link shared.net.Connection.InitializationType}.
      * @param argument
      *            the argument.
      */
@@ -326,7 +328,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             this.stateMask |= FLAG_SUBMITTED;
         }
 
-        final InterestEventType eventType;
+        final NioEventType eventType;
 
         switch (type) {
 
@@ -353,8 +355,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             @Override
             public R get() throws InterruptedException, ExecutionException {
 
-                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
-                Object lock = amc.getLock();
+                NioConnection<?> conn = NioConnection.this;
+                Object lock = conn.getLock();
 
                 synchronized (lock) {
 
@@ -363,8 +365,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                     }
                 }
 
-                if (amc.exception != null) {
-                    throw new ExecutionException(amc.exception);
+                if (conn.exception != null) {
+                    throw new ExecutionException(conn.exception);
                 }
 
                 return getResult();
@@ -374,8 +376,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             public R get(long timeout, TimeUnit unit) //
                     throws InterruptedException, ExecutionException, TimeoutException {
 
-                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
-                Object lock = amc.getLock();
+                NioConnection<?> conn = NioConnection.this;
+                Object lock = conn.getLock();
 
                 long timeoutMillis = unit.toMillis(timeout);
 
@@ -392,8 +394,8 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
                     }
                 }
 
-                if (amc.exception != null) {
-                    throw new ExecutionException(amc.exception);
+                if (conn.exception != null) {
+                    throw new ExecutionException(conn.exception);
                 }
 
                 return getResult();
@@ -402,10 +404,10 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             @Override
             public boolean isDone() {
 
-                AbstractManagedConnection<?> amc = AbstractManagedConnection.this;
+                NioConnection<?> conn = NioConnection.this;
 
-                synchronized (amc.getLock()) {
-                    return (amc.stateMask & (FLAG_BOUND | FLAG_CLOSED)) != 0;
+                synchronized (conn.getLock()) {
+                    return (conn.stateMask & (FLAG_BOUND | FLAG_CLOSED)) != 0;
                 }
             }
 
@@ -420,7 +422,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
             }
 
             /**
-             * Gets the result tailored to the {@link Connection.InitializationType}.
+             * Gets the result tailored to the {@link shared.net.Connection.InitializationType}.
              */
             @SuppressWarnings("unchecked")
             protected R getResult() {
@@ -481,7 +483,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
     @Override
     public void setException(Throwable exception) {
-        this.proxy.onLocal(new InterestEvent<Throwable>(ERROR, exception, this.proxy));
+        this.proxy.onLocal(new NioEvent<Throwable>(ERROR, exception, this.proxy));
     }
 
     @Override
@@ -529,12 +531,12 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
     @Override
     public void execute(Runnable r) {
-        this.proxy.onLocal(new InterestEvent<Runnable>(EXECUTE, r, this.proxy));
+        this.proxy.onLocal(new NioEvent<Runnable>(EXECUTE, r, this.proxy));
     }
 
     @Override
     public void close() {
-        this.proxy.onLocal(new InterestEvent<Object>(CLOSE, this.proxy));
+        this.proxy.onLocal(new NioEvent<Object>(CLOSE, this.proxy));
     }
 
     @Override
@@ -543,20 +545,20 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     @Override
-    public AbstractManagedConnectionStatus getStatus() {
+    public NioConnectionStatus getStatus() {
         return this.status;
     }
 
     @Override
-    public void setStatus(AbstractManagedConnectionStatus status) {
+    public void setStatus(NioConnectionStatus status) {
         this.status = status;
     }
 
-    final ConnectionManager manager;
+    final NioManager manager;
     final String name;
     final ProxySource<C> proxy;
 
-    ConnectionManagerThread thread;
+    NioManagerThread thread;
     WriteHandler writeHandler;
     Runnable internalHandler;
     SelectionKey key;
@@ -566,7 +568,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     ByteBuffer writeBuffer;
     int stateMask;
     Throwable exception;
-    AbstractManagedConnectionStatus status;
+    NioConnectionStatus status;
 
     /**
      * Default constructor.
@@ -574,10 +576,10 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
      * @param name
      *            the name of this connection.
      * @param manager
-     *            the {@link ConnectionManager} with which this connection will be registered.
+     *            the {@link NioManager} with which this connection will be registered.
      */
     @SuppressWarnings("unchecked")
-    protected AbstractManagedConnection(String name, ConnectionManager manager) {
+    protected NioConnection(String name, NioManager manager) {
 
         this.manager = manager;
         this.name = name;
@@ -602,14 +604,14 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
 
         this.stateMask = 0;
         this.exception = null;
-        this.status = AbstractManagedConnectionStatus.VIRGIN;
+        this.status = NioConnectionStatus.VIRGIN;
     }
 
     /**
      * Alternate constructor.
      */
-    protected AbstractManagedConnection(String name) {
-        this(name, ConnectionManager.getInstance());
+    protected NioConnection(String name) {
+        this(name, NioManager.getInstance());
     }
 
     /**
@@ -641,24 +643,24 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * Gets the {@link ConnectionManagerThread} currently servicing this connection.
+     * Gets the {@link NioManagerThread} currently servicing this connection.
      */
-    protected ConnectionManagerThread getThread() {
+    protected NioManagerThread getThread() {
         return this.thread;
     }
 
     /**
-     * Sets the {@link ConnectionManagerThread} currently servicing this connection.
+     * Sets the {@link NioManagerThread} currently servicing this connection.
      */
-    protected void setThread(ConnectionManagerThread thread) {
+    protected void setThread(NioManagerThread thread) {
         this.thread = thread;
     }
 
     /**
-     * Creates an operation interest change {@link InterestEvent} that originates from this connection.
+     * Creates an operation interest change {@link NioEvent} that originates from this connection.
      */
-    protected InterestEvent<Integer> createOpEvent(int mask, boolean enabled) {
-        return new InterestEvent<Integer>(OP, mask | (enabled ? 0x80000000 : 0x0), this.proxy);
+    protected NioEvent<Integer> createOpEvent(int mask, boolean enabled) {
+        return new NioEvent<Integer>(OP, mask | (enabled ? 0x80000000 : 0x0), this.proxy);
     }
 
     /**
@@ -669,7 +671,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Sets up the {@link SocketChannel} behind this connection.
+     * {@link NioManagerThread} call -- Sets up the {@link SocketChannel} behind this connection.
      * 
      * @throws IOException
      *             when something goes awry.
@@ -699,7 +701,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Registers the underlying {@link SelectionKey}.
+     * {@link NioManagerThread} call -- Registers the underlying {@link SelectionKey}.
      * 
      * @throws IOException
      *             when something goes awry.
@@ -713,7 +715,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Deregisters the underlying {@link SelectionKey}.
+     * {@link NioManagerThread} call -- Deregisters the underlying {@link SelectionKey}.
      */
     protected void deregisterKey() {
 
@@ -725,7 +727,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Finishes connecting/accepting. Does <i>not</i> do own exception handling.
+     * {@link NioManagerThread} call -- Finishes connecting/accepting. Does <i>not</i> do own exception handling.
      */
     protected void doBind() {
 
@@ -743,14 +745,14 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Does a ready write. Does own exception handling.
+     * {@link NioManagerThread} call -- Does a ready write. Does own exception handling.
      */
     protected void doWrite() {
         this.internalHandler.run();
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Does a ready read. Does own exception handling.
+     * {@link NioManagerThread} call -- Does a ready read. Does own exception handling.
      */
     protected void doRead() {
 
@@ -786,8 +788,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Does an operation interest change. Does <i>not</i> do own exception
-     * handling.
+     * {@link NioManagerThread} call -- Does an operation interest change. Does <i>not</i> do own exception handling.
      */
     protected void doOp(int mask, boolean enabled) {
 
@@ -825,7 +826,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Initiates connection closure. Does <i>not</i> do own exception handling.
+     * {@link NioManagerThread} call -- Initiates connection closure. Does <i>not</i> do own exception handling.
      */
     protected void doClosing(ClosingType type) {
 
@@ -852,8 +853,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Sets the exception that occurred. Does <i>not</i> do own exception
-     * handling.
+     * {@link NioManagerThread} call -- Sets the exception that occurred. Does <i>not</i> do own exception handling.
      */
     protected void doError(Throwable exception) {
 
@@ -872,7 +872,7 @@ abstract public class AbstractManagedConnection<C extends AbstractManagedConnect
     }
 
     /**
-     * {@link ConnectionManagerThread} call -- Closes this connection. Does <i>not</i> do own exception handling.
+     * {@link NioManagerThread} call -- Closes this connection. Does <i>not</i> do own exception handling.
      */
     protected void doClose() {
 

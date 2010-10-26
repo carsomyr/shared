@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (c) 2009 Roy Liu<br>
+ * Copyright (c) 2008 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -26,28 +26,55 @@
  * </p>
  */
 
-package shared.net.filter;
+package shared.test.net;
 
-import shared.net.Connection;
+import static shared.net.SourceType.CONNECTION;
+import static shared.test.net.TestXmlEvent.TestXmlEventType.END_OF_STREAM;
+
+import org.w3c.dom.Element;
+
+import shared.event.SourceLocal;
+import shared.net.SourceType;
+import shared.net.handler.XmlHandler;
+import shared.net.nio.NioManager;
+import shared.test.net.TestXmlEvent.ErrorXmlEvent;
 
 /**
- * Defines a factory for creating {@link Filter}s.
+ * A subclass of {@link XmlHandler} for testing purposes.
  * 
- * @apiviz.owns shared.net.filter.Filter
- * @param <F>
- *            the {@link Filter} type.
- * @param <I>
- *            the inbound type.
- * @param <O>
- *            the outbound type.
- * @param <H>
- *            the {@link Connection} type.
+ * @apiviz.has shared.test.net.TestXmlEvent - - - event
  * @author Roy Liu
  */
-public interface FilterFactory<F extends Filter<I, O>, I, O, H extends Connection> {
+public class TestXmlHandler extends XmlHandler<TestXmlHandler, TestXmlEvent, SourceType> {
+
+    final SourceLocal<TestXmlEvent> receiver;
 
     /**
-     * Creates a new {@link Filter}.
+     * Default constructor.
+     * 
+     * @param receiver
+     *            the local receiver to which events will be forwarded.
      */
-    public F newFilter(H handler);
+    public TestXmlHandler(String name, int minimumSize, int maximumSize, //
+            NioManager manager, SourceLocal<TestXmlEvent> receiver) {
+        super(name, CONNECTION, minimumSize, maximumSize, manager);
+
+        this.receiver = receiver;
+    }
+
+    @Override
+    public void onLocal(TestXmlEvent evt) {
+        this.receiver.onLocal(evt);
+    }
+
+    @Override
+    protected void onError() {
+        onLocal(new ErrorXmlEvent(getException(), this));
+    }
+
+    @Override
+    protected TestXmlEvent parse(Element rootElement) {
+        return (rootElement == null) ? new TestXmlEvent(END_OF_STREAM, this) //
+                : TestXmlEvent.parse(rootElement, this);
+    }
 }

@@ -26,7 +26,7 @@
  * </p>
  */
 
-package shared.net.filter;
+package shared.net.filter.ssl;
 
 import java.security.SecureRandom;
 
@@ -37,7 +37,7 @@ import javax.net.ssl.TrustManager;
 /**
  * Defines a configurable factory for creating {@link SSLEngine}s.
  * 
- * @apiviz.has shared.net.filter.SslEngineFactory.Mode - - - argument
+ * @apiviz.has shared.net.filter.ssl.SslEngineFactory.Mode - - - argument
  * @param <T>
  *            the parameterization lower bounded by {@link SslEngineFactory} itself.
  * @author Roy Liu

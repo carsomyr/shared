@@ -26,12 +26,12 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.nio;
 
 import static shared.net.Constants.DEFAULT_BACKLOG_SIZE;
-import static shared.net.InterestEvent.InterestEventType.DISPATCH;
-import static shared.net.InterestEvent.InterestEventType.GET_CONNECTIONS;
-import static shared.net.InterestEvent.InterestEventType.SHUTDOWN;
+import static shared.net.nio.NioEvent.NioEventType.DISPATCH;
+import static shared.net.nio.NioEvent.NioEventType.GET_CONNECTIONS;
+import static shared.net.nio.NioEvent.NioEventType.SHUTDOWN;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -51,19 +51,18 @@ import java.util.Set;
 import shared.event.Handler;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
-import shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus;
-import shared.net.ConnectionManagerDispatchThread.AcceptRegistry.Entry;
+import shared.net.nio.NioConnection.NioConnectionStatus;
+import shared.net.nio.NioManagerDispatchThread.AcceptRegistry.Entry;
 import shared.util.Control;
 
 /**
- * A specialized {@link ConnectionManagerThread} that dispatches newly created connections to
- * {@link ConnectionManagerIoThread}s.
+ * A specialized {@link NioManagerThread} that dispatches newly created connections to {@link NioManagerIoThread}s.
  * 
- * @apiviz.composedOf shared.net.ConnectionManagerDispatchThread.AcceptRegistry
- * @apiviz.composedOf shared.net.ConnectionManagerIoThread
+ * @apiviz.composedOf shared.net.nio.NioManagerDispatchThread.AcceptRegistry
+ * @apiviz.composedOf shared.net.nio.NioManagerIoThread
  * @author Roy Liu
  */
-public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
+public class NioManagerDispatchThread extends NioManagerThread {
 
     @Override
     protected void onStart() {
@@ -80,10 +79,10 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             if (attachment instanceof Entry) {
 
-                Set<AbstractManagedConnection<?>> pending = ((Entry) attachment).getPending();
+                Set<NioConnection<?>> pending = ((Entry) attachment).getPending();
 
                 // Copy the collection to prevent concurrent modification.
-                for (AbstractManagedConnection<?> pendingConn : new ArrayList<AbstractManagedConnection<?>>(pending)) {
+                for (NioConnection<?> pendingConn : new ArrayList<NioConnection<?>>(pending)) {
                     handleError(pendingConn, this.exception);
                 }
 
@@ -92,8 +91,8 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             }
         }
 
-        for (ConnectionManagerIoThread ioThread : this.ioThreads) {
-            ioThread.onLocal(new InterestEvent<Object>(SHUTDOWN, null));
+        for (NioManagerIoThread ioThread : this.ioThreads) {
+            ioThread.onLocal(new NioEvent<Object>(SHUTDOWN, null));
         }
     }
 
@@ -107,22 +106,22 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         }
 
         if ((readyOps & SelectionKey.OP_CONNECT) != 0) {
-            doConnect((AbstractManagedConnection<?>) key.attachment());
+            doConnect((NioConnection<?>) key.attachment());
         }
     }
 
     @Override
-    protected void purge(AbstractManagedConnection<?> conn) {
+    protected void purge(NioConnection<?> conn) {
         this.acceptRegistry.removePending(conn);
     }
 
     /**
-     * Starts this thread and its helper {@link ConnectionManagerIoThread}s.
+     * Starts this thread and its helper {@link NioManagerIoThread}s.
      */
     @Override
     public void start() {
 
-        for (ConnectionManagerThread ioThread : this.ioThreads) {
+        for (NioManagerThread ioThread : this.ioThreads) {
             ioThread.start();
         }
 
@@ -130,11 +129,11 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     }
 
     /**
-     * Dispatches the given connection to a {@link ConnectionManagerIoThread}.
+     * Dispatches the given connection to an {@link NioManagerIoThread}.
      */
-    protected void dispatch(AbstractManagedConnection<?> conn) {
+    protected void dispatch(NioConnection<?> conn) {
 
-        ConnectionManagerIoThread ioThread = this.ioThreads.removeFirst();
+        NioManagerIoThread ioThread = this.ioThreads.removeFirst();
         this.ioThreads.add(ioThread);
 
         // Break the connection's relationship with this thread.
@@ -144,7 +143,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         synchronized (conn.getLock()) {
 
             conn.setThread(ioThread);
-            ioThread.onLocal(new InterestEvent<Object>(DISPATCH, conn.getProxy()));
+            ioThread.onLocal(new NioEvent<Object>(DISPATCH, conn.getProxy()));
         }
     }
 
@@ -156,15 +155,15 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         Entry entry = (Entry) key.attachment();
         ServerSocketChannel ssChannel = (ServerSocketChannel) key.channel();
 
-        Set<AbstractManagedConnection<?>> pending = entry.getPending();
+        Set<NioConnection<?>> pending = entry.getPending();
 
         // We had better have pending accepts.
         assert !pending.isEmpty();
 
-        AbstractManagedConnection<?> conn = pending.iterator().next();
+        NioConnection<?> conn = pending.iterator().next();
 
         // The connection had better be in the correct state.
-        assert (conn.getStatus() == AbstractManagedConnectionStatus.ACCEPT);
+        assert (conn.getStatus() == NioConnectionStatus.ACCEPT);
 
         try {
 
@@ -179,7 +178,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
                 this.acceptRegistry.removePending(conn);
 
                 // Copy the collection to prevent concurrent modification.
-                for (AbstractManagedConnection<?> pendingConn : new ArrayList<AbstractManagedConnection<?>>(pending)) {
+                for (NioConnection<?> pendingConn : new ArrayList<NioConnection<?>>(pending)) {
                     handleError(pendingConn, e);
                 }
 
@@ -196,7 +195,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             debug("[%s] accepted at \"%s\".", conn, conn.getLocalAddress());
 
-            conn.setStatus(AbstractManagedConnectionStatus.ACTIVE);
+            conn.setStatus(NioConnectionStatus.ACTIVE);
 
             dispatch(conn);
 
@@ -209,10 +208,10 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     /**
      * Finishes the connect cycle on a ready connection.
      */
-    protected void doConnect(AbstractManagedConnection<?> conn) {
+    protected void doConnect(NioConnection<?> conn) {
 
         // The connection had better be in the correct state.
-        assert (conn.getStatus() == AbstractManagedConnectionStatus.CONNECT);
+        assert (conn.getStatus() == NioConnectionStatus.CONNECT);
 
         try {
 
@@ -224,7 +223,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             debug("[%s] connected to \"%s\".", conn, conn.getRemoteAddress());
 
-            conn.setStatus(AbstractManagedConnectionStatus.ACTIVE);
+            conn.setStatus(NioConnectionStatus.ACTIVE);
 
             dispatch(conn);
 
@@ -237,10 +236,10 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     /**
      * Handles a connection connect request.
      */
-    protected void handleConnect(AbstractManagedConnection<?> conn, InetSocketAddress address) {
+    protected void handleConnect(NioConnection<?> conn, InetSocketAddress address) {
 
         // The connection had better be in the correct state.
-        assert (conn.getStatus() == AbstractManagedConnectionStatus.VIRGIN);
+        assert (conn.getStatus() == NioConnectionStatus.VIRGIN);
 
         final boolean connectImmediately;
 
@@ -255,7 +254,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             debug("[%s] connect to \"%s\".", conn, address);
 
-            conn.setStatus(AbstractManagedConnectionStatus.CONNECT);
+            conn.setStatus(NioConnectionStatus.CONNECT);
 
         } catch (Throwable t) {
 
@@ -273,10 +272,10 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     /**
      * Handles a connection accept request.
      */
-    protected void handleAccept(AbstractManagedConnection<?> conn, InetSocketAddress address) {
+    protected void handleAccept(NioConnection<?> conn, InetSocketAddress address) {
 
         // The connection had better be in the correct state.
-        assert (conn.getStatus() == AbstractManagedConnectionStatus.VIRGIN);
+        assert (conn.getStatus() == NioConnectionStatus.VIRGIN);
 
         try {
 
@@ -286,7 +285,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             debug("[%s] listen at \"%s\" (%d in queue).", //
                     conn, entry.getAddress(), entry.getPending().size());
 
-            conn.setStatus(AbstractManagedConnectionStatus.ACCEPT);
+            conn.setStatus(NioConnectionStatus.ACCEPT);
 
         } catch (Throwable t) {
 
@@ -297,10 +296,10 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     /**
      * Handles a connection registration request.
      */
-    protected void handleRegister(AbstractManagedConnection<?> conn, SocketChannel chan) {
+    protected void handleRegister(NioConnection<?> conn, SocketChannel chan) {
 
         // The connection had better be in the correct state.
-        assert (conn.getStatus() == AbstractManagedConnectionStatus.VIRGIN);
+        assert (conn.getStatus() == NioConnectionStatus.VIRGIN);
 
         try {
 
@@ -310,7 +309,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             debug("[%s] registered.", conn);
 
-            conn.setStatus(AbstractManagedConnectionStatus.ACTIVE);
+            conn.setStatus(NioConnectionStatus.ACTIVE);
 
             dispatch(conn);
 
@@ -329,15 +328,15 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
     /**
      * Handles a request to get the list of connections, which is an aggregate of the lists reported by helper
-     * {@link ConnectionManagerIoThread}s.
+     * {@link NioManagerIoThread}s.
      */
     @SuppressWarnings("unchecked")
-    protected void handleGetConnections(Request<?, List<AbstractManagedConnection<?>>> request) {
+    protected void handleGetConnections(Request<?, List<NioConnection<?>>> request) {
 
-        List<AbstractManagedConnection<?>> res = new ArrayList<AbstractManagedConnection<?>>();
+        List<NioConnection<?>> res = new ArrayList<NioConnection<?>>();
 
-        for (ConnectionManagerIoThread ioThread : this.ioThreads) {
-            res.addAll((List<AbstractManagedConnection<?>>) ioThread.request(GET_CONNECTIONS, null));
+        for (NioManagerIoThread ioThread : this.ioThreads) {
+            res.addAll((List<NioConnection<?>>) ioThread.request(GET_CONNECTIONS, null));
         }
 
         request.set(res);
@@ -370,28 +369,28 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     }
 
     @Transition(currentState = "VIRGIN", eventType = "CONNECT")
-    final Handler<InterestEvent<InetSocketAddress>> connectHandler = new Handler<InterestEvent<InetSocketAddress>>() {
+    final Handler<NioEvent<InetSocketAddress>> connectHandler = new Handler<NioEvent<InetSocketAddress>>() {
 
         @Override
-        public void handle(InterestEvent<InetSocketAddress> evt) {
+        public void handle(NioEvent<InetSocketAddress> evt) {
             handleConnect(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
 
     @Transition(currentState = "VIRGIN", eventType = "ACCEPT")
-    final Handler<InterestEvent<InetSocketAddress>> acceptHandler = new Handler<InterestEvent<InetSocketAddress>>() {
+    final Handler<NioEvent<InetSocketAddress>> acceptHandler = new Handler<NioEvent<InetSocketAddress>>() {
 
         @Override
-        public void handle(InterestEvent<InetSocketAddress> evt) {
+        public void handle(NioEvent<InetSocketAddress> evt) {
             handleAccept(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
 
     @Transition(currentState = "VIRGIN", eventType = "REGISTER")
-    final Handler<InterestEvent<SocketChannel>> registerHandler = new Handler<InterestEvent<SocketChannel>>() {
+    final Handler<NioEvent<SocketChannel>> registerHandler = new Handler<NioEvent<SocketChannel>>() {
 
         @Override
-        public void handle(InterestEvent<SocketChannel> evt) {
+        public void handle(NioEvent<SocketChannel> evt) {
             handleRegister(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
@@ -401,10 +400,10 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             @Transition(currentState = "CONNECT", eventType = "CLOSE"), //
             @Transition(currentState = "ACCEPT", eventType = "CLOSE") //
     })
-    final Handler<InterestEvent<?>> closeHandler = new Handler<InterestEvent<?>>() {
+    final Handler<NioEvent<?>> closeHandler = new Handler<NioEvent<?>>() {
 
         @Override
-        public void handle(InterestEvent<?> evt) {
+        public void handle(NioEvent<?> evt) {
             handleClose(((ProxySource<?>) evt.getSource()).getConnection());
         }
     };
@@ -415,10 +414,10 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             @Transition(currentState = "CONNECT", eventType = "ERROR"), //
             @Transition(currentState = "ACCEPT", eventType = "ERROR") //
     })
-    final Handler<InterestEvent<Throwable>> errorHandler = new Handler<InterestEvent<Throwable>>() {
+    final Handler<NioEvent<Throwable>> errorHandler = new Handler<NioEvent<Throwable>>() {
 
         @Override
-        public void handle(InterestEvent<Throwable> evt) {
+        public void handle(NioEvent<Throwable> evt) {
             handleError(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
@@ -428,80 +427,80 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             @Transition(currentState = "CONNECT", eventType = "EXECUTE"), //
             @Transition(currentState = "ACCEPT", eventType = "EXECUTE") //
     })
-    final Handler<InterestEvent<Runnable>> executeHandler = new Handler<InterestEvent<Runnable>>() {
+    final Handler<NioEvent<Runnable>> executeHandler = new Handler<NioEvent<Runnable>>() {
 
         @Override
-        public void handle(InterestEvent<Runnable> evt) {
+        public void handle(NioEvent<Runnable> evt) {
             handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "GET_BOUND_ADDRESSES", group = "internal")
-    final Handler<InterestEvent<Request<?, List<InetSocketAddress>>>> getBoundAddressesHandler = //
-    new Handler<InterestEvent<Request<?, List<InetSocketAddress>>>>() {
+    final Handler<NioEvent<Request<?, List<InetSocketAddress>>>> getBoundAddressesHandler = //
+    new Handler<NioEvent<Request<?, List<InetSocketAddress>>>>() {
 
         @Override
-        public void handle(InterestEvent<Request<?, List<InetSocketAddress>>> evt) {
+        public void handle(NioEvent<Request<?, List<InetSocketAddress>>> evt) {
             handleGetBoundAddresses(evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "GET_CONNECTIONS", group = "internal")
-    final Handler<InterestEvent<Request<?, List<AbstractManagedConnection<?>>>>> getConnectionsHandler = //
-    new Handler<InterestEvent<Request<?, List<AbstractManagedConnection<?>>>>>() {
+    final Handler<NioEvent<Request<?, List<NioConnection<?>>>>> getConnectionsHandler = //
+    new Handler<NioEvent<Request<?, List<NioConnection<?>>>>>() {
 
         @Override
-        public void handle(InterestEvent<Request<?, List<AbstractManagedConnection<?>>>> evt) {
+        public void handle(NioEvent<Request<?, List<NioConnection<?>>>> evt) {
             handleGetConnections(evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "GET_BACKLOG_SIZE", group = "internal")
-    final Handler<InterestEvent<Request<?, Integer>>> getBacklogSizeHandler = //
-    new Handler<InterestEvent<Request<?, Integer>>>() {
+    final Handler<NioEvent<Request<?, Integer>>> getBacklogSizeHandler = //
+    new Handler<NioEvent<Request<?, Integer>>>() {
 
         @Override
-        public void handle(InterestEvent<Request<?, Integer>> evt) {
+        public void handle(NioEvent<Request<?, Integer>> evt) {
             handleGetBacklogSize(evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "SET_BACKLOG_SIZE", group = "internal")
-    final Handler<InterestEvent<Request<Integer, ?>>> setBacklogSizeHandler = //
-    new Handler<InterestEvent<Request<Integer, ?>>>() {
+    final Handler<NioEvent<Request<Integer, ?>>> setBacklogSizeHandler = //
+    new Handler<NioEvent<Request<Integer, ?>>>() {
 
         @Override
-        public void handle(InterestEvent<Request<Integer, ?>> evt) {
+        public void handle(NioEvent<Request<Integer, ?>> evt) {
             handleSetBacklogSize(evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "SHUTDOWN", group = "internal")
-    final Handler<InterestEvent<?>> shutdownHandler = new Handler<InterestEvent<?>>() {
+    final Handler<NioEvent<?>> shutdownHandler = new Handler<NioEvent<?>>() {
 
         @Override
-        public void handle(InterestEvent<?> evt) {
+        public void handle(NioEvent<?> evt) {
             handleShutdown();
         }
     };
 
     final AcceptRegistry acceptRegistry;
-    final LinkedList<ConnectionManagerIoThread> ioThreads;
+    final LinkedList<NioManagerIoThread> ioThreads;
 
     int backlogSize;
 
     /**
      * Default constructor.
      */
-    protected ConnectionManagerDispatchThread(String name, int nThreads) {
+    protected NioManagerDispatchThread(String name, int nThreads) {
         super(String.format("%s/Dispatch", name));
 
         this.acceptRegistry = new AcceptRegistry();
 
-        this.ioThreads = new LinkedList<ConnectionManagerIoThread>();
+        this.ioThreads = new LinkedList<NioManagerIoThread>();
 
         for (int i = 0; i < nThreads; i++) {
-            this.ioThreads.add(new ConnectionManagerIoThread(String.format("%s/IO-%d", name, i), this));
+            this.ioThreads.add(new NioManagerIoThread(String.format("%s/IO-%d", name, i), this));
         }
 
         this.backlogSize = DEFAULT_BACKLOG_SIZE;
@@ -510,12 +509,12 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
     /**
      * A bookkeeping class for storing pending accepts on listening sockets.
      * 
-     * @apiviz.composedOf shared.net.ConnectionManagerDispatchThread.AcceptRegistry.Entry
+     * @apiviz.composedOf shared.net.nio.NioManagerDispatchThread.AcceptRegistry.Entry
      */
     protected class AcceptRegistry {
 
         final Map<InetSocketAddress, Entry> addressToEntryMap;
-        final Map<AbstractManagedConnection<?>, Entry> connectionToEntryMap;
+        final Map<NioConnection<?>, Entry> connectionToEntryMap;
 
         /**
          * Default constructor.
@@ -523,7 +522,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         protected AcceptRegistry() {
 
             this.addressToEntryMap = new HashMap<InetSocketAddress, Entry>();
-            this.connectionToEntryMap = new HashMap<AbstractManagedConnection<?>, Entry>();
+            this.connectionToEntryMap = new HashMap<NioConnection<?>, Entry>();
         }
 
         /**
@@ -532,7 +531,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
          * @throws IOException
          *             when something goes awry.
          */
-        protected Entry register(AbstractManagedConnection<?> conn, InetSocketAddress address) throws IOException {
+        protected Entry register(NioConnection<?> conn, InetSocketAddress address) throws IOException {
 
             Entry entry = this.addressToEntryMap.get(address);
 
@@ -551,7 +550,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
         /**
          * Removes a pending accept.
          */
-        protected void removePending(AbstractManagedConnection<?> conn) {
+        protected void removePending(NioConnection<?> conn) {
 
             Entry entry = this.connectionToEntryMap.remove(conn);
 
@@ -560,7 +559,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
                 return;
             }
 
-            Set<AbstractManagedConnection<?>> pending = entry.getPending();
+            Set<NioConnection<?>> pending = entry.getPending();
             InetSocketAddress address = entry.getAddress();
             SelectionKey key = entry.getKey();
 
@@ -590,7 +589,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
 
             final InetSocketAddress address;
             final SelectionKey key;
-            final Set<AbstractManagedConnection<?>> pending;
+            final Set<NioConnection<?>> pending;
 
             /**
              * Default constructor.
@@ -600,7 +599,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
              */
             protected Entry(InetSocketAddress address) throws IOException {
 
-                ConnectionManagerDispatchThread thread = ConnectionManagerDispatchThread.this;
+                NioManagerDispatchThread thread = NioManagerDispatchThread.this;
 
                 // Bind the server socket.
                 ServerSocketChannel channel = ServerSocketChannel.open();
@@ -619,7 +618,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
                 // Create a SelectionKey for the server socket.
                 this.key = channel.register(thread.selector, SelectionKey.OP_ACCEPT);
 
-                this.pending = new LinkedHashSet<AbstractManagedConnection<?>>();
+                this.pending = new LinkedHashSet<NioConnection<?>>();
             }
 
             /**
@@ -639,7 +638,7 @@ public class ConnectionManagerDispatchThread extends ConnectionManagerThread {
             /**
              * Gets the pending accepts.
              */
-            protected Set<AbstractManagedConnection<?>> getPending() {
+            protected Set<NioConnection<?>> getPending() {
                 return this.pending;
             }
         }

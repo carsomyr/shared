@@ -13,7 +13,8 @@ ANT					= java -cp 'build/ant-launcher.jar' \
 
 JSRCS				= $(wildcard src*/*/*.java) \
 					$(wildcard src*/*/*/*.java) \
-					$(wildcard src*/*/*/*/*.java)
+					$(wildcard src*/*/*/*/*.java) \
+					$(wildcard src*/*/*/*/*/*.java)
 
 # C++ Headers, Sources, and Objects
 

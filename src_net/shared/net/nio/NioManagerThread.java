@@ -26,9 +26,9 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.nio;
 
-import static shared.net.InterestEvent.InterestEventType.SHUTDOWN;
+import static shared.net.nio.NioEvent.NioEventType.SHUTDOWN;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -50,27 +50,28 @@ import shared.event.EnumStatus;
 import shared.event.Source;
 import shared.event.SourceLocal;
 import shared.event.StateTable;
-import shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus;
 import shared.net.Connection.ClosingType;
-import shared.net.InterestEvent.InterestEventType;
+import shared.net.SourceType;
+import shared.net.nio.NioConnection.NioConnectionStatus;
+import shared.net.nio.NioEvent.NioEventType;
 import shared.util.Control;
 import shared.util.CoreThread;
 
 /**
- * An abstract base class for {@link ConnectionManager} service threads.
+ * An abstract base class for {@link NioManager} service threads.
  * 
- * @apiviz.owns shared.net.ConnectionManagerThread.ConnectionManagerThreadStatus
- * @apiviz.has shared.net.InterestEvent - - - event
+ * @apiviz.owns shared.net.nio.NioManagerThread.NioManagerThreadStatus
+ * @apiviz.has shared.net.nio.NioEvent - - - event
  * @author Roy Liu
  */
-abstract public class ConnectionManagerThread extends CoreThread //
-        implements SourceLocal<InterestEvent<?>>, Closeable, //
-        EnumStatus<ConnectionManagerThread.ConnectionManagerThreadStatus> {
+abstract public class NioManagerThread extends CoreThread //
+        implements SourceLocal<NioEvent<?>>, Closeable, //
+        EnumStatus<NioManagerThread.NioManagerThreadStatus> {
 
     /**
      * An enumeration of thread states.
      */
-    public enum ConnectionManagerThreadStatus {
+    public enum NioManagerThreadStatus {
 
         /**
          * The thread is running.
@@ -92,7 +93,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * Enqueues the given event and wakes this thread up from a possible {@link Selector#select()}.
      */
     @Override
-    public void onLocal(InterestEvent<?> evt) {
+    public void onLocal(NioEvent<?> evt) {
 
         this.queue.add(evt);
         this.selector.wakeup();
@@ -108,12 +109,12 @@ abstract public class ConnectionManagerThread extends CoreThread //
     }
 
     @Override
-    public ConnectionManagerThreadStatus getStatus() {
+    public NioManagerThreadStatus getStatus() {
         return this.status;
     }
 
     @Override
-    public void setStatus(ConnectionManagerThreadStatus status) {
+    public void setStatus(NioManagerThreadStatus status) {
         this.status = status;
     }
 
@@ -127,7 +128,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         onStart();
 
-        outer: for (; getStatus() == ConnectionManagerThreadStatus.RUN;) {
+        outer: for (; getStatus() == NioManagerThreadStatus.RUN;) {
 
             try {
 
@@ -164,7 +165,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
             }
 
             // Keep polling for internal events.
-            for (InterestEvent<?> evt; (evt = this.queue.poll()) != null;) {
+            for (NioEvent<?> evt; (evt = this.queue.poll()) != null;) {
 
                 ProxySource<?> stub = (ProxySource<?>) evt.getSource();
 
@@ -174,7 +175,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
                 } else {
 
-                    ConnectionManagerThread connThread = stub.getConnection().getThread();
+                    NioManagerThread connThread = stub.getConnection().getThread();
 
                     // The event was indeed intended for this thread.
                     if (this == connThread) {
@@ -195,14 +196,14 @@ abstract public class ConnectionManagerThread extends CoreThread //
     }
 
     /**
-     * Sets the status to {@link ConnectionManagerThreadStatus#CLOSING}, since user code didn't explicitly call
+     * Sets the status to {@link NioManagerThreadStatus#CLOSING}, since user code didn't explicitly call
      * {@link #close()}.
      */
     @Override
     protected void doCatch(Throwable t) {
 
         synchronized (this) {
-            setStatus(ConnectionManagerThreadStatus.CLOSING);
+            setStatus(NioManagerThreadStatus.CLOSING);
         }
 
         this.exception = new IllegalStateException("The connection manager thread has encountered " //
@@ -216,9 +217,9 @@ abstract public class ConnectionManagerThread extends CoreThread //
     protected void doFinally() {
 
         // Everyone who has a request pending will get an error.
-        for (InterestEvent<?> evt; (evt = this.queue.poll()) != null;) {
+        for (NioEvent<?> evt; (evt = this.queue.poll()) != null;) {
 
-            Source<InterestEvent<?>, SourceType> source = evt.getSource();
+            Source<NioEvent<?>, SourceType> source = evt.getSource();
 
             // If the source is not null, then it must be a proxy for a connection.
             if (source != null) {
@@ -255,7 +256,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
                 request.setException(this.exception);
             }
 
-            setStatus(ConnectionManagerThreadStatus.CLOSED);
+            setStatus(NioManagerThreadStatus.CLOSED);
             notifyAll();
         }
 
@@ -268,11 +269,11 @@ abstract public class ConnectionManagerThread extends CoreThread //
     @Override
     public void close() {
 
-        onLocal(new InterestEvent<Object>(SHUTDOWN, null));
+        onLocal(new NioEvent<Object>(SHUTDOWN, null));
 
         synchronized (this) {
 
-            for (; getStatus() != ConnectionManagerThreadStatus.CLOSED;) {
+            for (; getStatus() != NioManagerThreadStatus.CLOSED;) {
 
                 try {
 
@@ -291,10 +292,10 @@ abstract public class ConnectionManagerThread extends CoreThread //
      */
     protected void initFsms() {
 
-        this.fsm = new StateTable<AbstractManagedConnectionStatus, InterestEventType, InterestEvent<?>>( //
-                this, AbstractManagedConnectionStatus.class, InterestEventType.class);
-        this.fsmInternal = new StateTable<ConnectionManagerThreadStatus, InterestEventType, InterestEvent<?>>( //
-                this, ConnectionManagerThreadStatus.class, InterestEventType.class, "internal");
+        this.fsm = new StateTable<NioConnectionStatus, NioEventType, NioEvent<?>>( //
+                this, NioConnectionStatus.class, NioEventType.class);
+        this.fsmInternal = new StateTable<NioManagerThreadStatus, NioEventType, NioEvent<?>>( //
+                this, NioManagerThreadStatus.class, NioEventType.class, "internal");
     }
 
     /**
@@ -321,7 +322,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * Retrieves this thread's internal state. Blocks until request completion.
      * 
      * @param type
-     *            the {@link InterestEventType}.
+     *            the {@link NioEventType}.
      * @param argument
      *            the input argument.
      * @param <I>
@@ -329,15 +330,15 @@ abstract public class ConnectionManagerThread extends CoreThread //
      * @param <O>
      *            the output type.
      */
-    protected <I, O> O request(InterestEventType type, I argument) {
+    protected <I, O> O request(NioEventType type, I argument) {
 
         Request<I, O> request = new Request<I, O>(argument);
 
-        onLocal(new InterestEvent<Request<I, O>>(type, request, null));
+        onLocal(new NioEvent<Request<I, O>>(type, request, null));
 
         synchronized (this) {
 
-            Control.checkTrue(getStatus() == ConnectionManagerThreadStatus.RUN, //
+            Control.checkTrue(getStatus() == NioManagerThreadStatus.RUN, //
                     "The connection manager thread has exited");
 
             this.requests.add(request);
@@ -375,14 +376,14 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * A sequence of actions to take when deleting a connection, as far as this thread is concerned.
      */
-    abstract protected void purge(AbstractManagedConnection<?> conn);
+    abstract protected void purge(NioConnection<?> conn);
 
     //
 
     /**
      * Handles a connection operation interest change request.
      */
-    protected void handleOp(AbstractManagedConnection<?> conn, int mask, boolean enabled) {
+    protected void handleOp(NioConnection<?> conn, int mask, boolean enabled) {
 
         try {
 
@@ -397,7 +398,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * Handles a connection close request.
      */
-    protected void handleClosingUser(AbstractManagedConnection<?> conn) {
+    protected void handleClosingUser(NioConnection<?> conn) {
 
         try {
 
@@ -405,7 +406,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
             debug("[%s] close.", conn);
 
-            conn.setStatus(AbstractManagedConnectionStatus.CLOSING);
+            conn.setStatus(NioConnectionStatus.CLOSING);
 
         } catch (Throwable t) {
 
@@ -416,7 +417,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * Handles a connection end-of-stream notification.
      */
-    protected void handleClosingEos(AbstractManagedConnection<?> conn) {
+    protected void handleClosingEos(NioConnection<?> conn) {
 
         try {
 
@@ -424,7 +425,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
             debug("[%s] EOS.", conn);
 
-            conn.setStatus(AbstractManagedConnectionStatus.CLOSING);
+            conn.setStatus(NioConnectionStatus.CLOSING);
 
         } catch (Throwable t) {
 
@@ -435,7 +436,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * Handles a connection closure notification.
      */
-    protected void handleClose(AbstractManagedConnection<?> conn) {
+    protected void handleClose(NioConnection<?> conn) {
 
         try {
 
@@ -450,16 +451,16 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         purge(conn);
 
-        conn.setStatus(AbstractManagedConnectionStatus.CLOSED);
+        conn.setStatus(NioConnectionStatus.CLOSED);
     }
 
     /**
      * Handles a connection error notification.
      */
-    protected void handleError(AbstractManagedConnection<?> conn, Throwable exception) {
+    protected void handleError(NioConnection<?> conn, Throwable exception) {
 
         // Connection already invalidated. Nothing to do.
-        if (conn.getStatus() == AbstractManagedConnectionStatus.CLOSED) {
+        if (conn.getStatus() == NioConnectionStatus.CLOSED) {
             return;
         }
 
@@ -487,13 +488,13 @@ abstract public class ConnectionManagerThread extends CoreThread //
 
         purge(conn);
 
-        conn.setStatus(AbstractManagedConnectionStatus.CLOSED);
+        conn.setStatus(NioConnectionStatus.CLOSED);
     }
 
     /**
      * Handles a request to execute code on this thread.
      */
-    protected void handleExecute(AbstractManagedConnection<?> conn, Runnable r) {
+    protected void handleExecute(NioConnection<?> conn, Runnable r) {
 
         try {
 
@@ -511,7 +512,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
     protected void handleShutdown() {
 
         synchronized (this) {
-            setStatus(ConnectionManagerThreadStatus.CLOSING);
+            setStatus(NioManagerThreadStatus.CLOSING);
         }
     }
 
@@ -525,7 +526,7 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * The event queue.
      */
-    final protected Queue<InterestEvent<?>> queue;
+    final protected Queue<NioEvent<?>> queue;
 
     /**
      * A weak {@link Set} of {@link Request}s for cleanup purposes.
@@ -540,12 +541,12 @@ abstract public class ConnectionManagerThread extends CoreThread //
     /**
      * The external state machine.
      */
-    protected StateTable<AbstractManagedConnectionStatus, InterestEventType, InterestEvent<?>> fsm;
+    protected StateTable<NioConnectionStatus, NioEventType, NioEvent<?>> fsm;
 
     /**
      * The internal state machine.
      */
-    protected StateTable<ConnectionManagerThreadStatus, InterestEventType, InterestEvent<?>> fsmInternal;
+    protected StateTable<NioManagerThreadStatus, NioEventType, NioEvent<?>> fsmInternal;
 
     /**
      * The exception that caused this thread to exit.
@@ -553,14 +554,14 @@ abstract public class ConnectionManagerThread extends CoreThread //
     protected Throwable exception;
 
     /**
-     * The current {@link ConnectionManagerThreadStatus}.
+     * The current {@link NioManagerThreadStatus}.
      */
-    protected ConnectionManagerThreadStatus status;
+    protected NioManagerThreadStatus status;
 
     /**
      * Default constructor.
      */
-    protected ConnectionManagerThread(String name) {
+    protected NioManagerThread(String name) {
         super(name);
 
         try {
@@ -572,15 +573,15 @@ abstract public class ConnectionManagerThread extends CoreThread //
             throw new RuntimeException(e);
         }
 
-        this.queue = new LinkedBlockingQueue<InterestEvent<?>>();
+        this.queue = new LinkedBlockingQueue<NioEvent<?>>();
         this.requests = Collections.newSetFromMap(new WeakHashMap<Request<?, ?>, Boolean>());
-        this.log = LoggerFactory.getLogger(String.format("%s.%s", ConnectionManager.class.getName(), name));
+        this.log = LoggerFactory.getLogger(String.format("%s.%s", NioManager.class.getName(), name));
 
         this.fsm = null;
         this.fsmInternal = null;
         this.exception = null;
 
-        this.status = ConnectionManagerThreadStatus.RUN;
+        this.status = NioManagerThreadStatus.RUN;
     }
 
     /**

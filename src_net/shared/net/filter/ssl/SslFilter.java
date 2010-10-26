@@ -26,7 +26,7 @@
  * </p>
  */
 
-package shared.net.filter;
+package shared.net.filter.ssl;
 
 import java.nio.ByteBuffer;
 import java.util.Queue;
@@ -43,16 +43,21 @@ import org.slf4j.LoggerFactory;
 
 import shared.net.Buffers;
 import shared.net.Connection.OperationType;
+import shared.net.filter.Filter;
+import shared.net.filter.Filters;
+import shared.net.filter.OobEvent;
+import shared.net.filter.OobFilter;
+import shared.net.handler.FilteredHandler;
 
 /**
  * An implementation of {@link Filter} that encrypts/decrypts traffic using the <a
  * href="http://en.wikipedia.org/wiki/Transport_Layer_Security">SSL/TLS</a> protocol.
  * 
- * @param <C>
- *            the {@link FilteredConnection} type.
+ * @param <H>
+ *            the {@link FilteredHandler} type.
  * @author Roy Liu
  */
-public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<ByteBuffer, ByteBuffer> {
+public class SslFilter<H extends FilteredHandler<H, ?>> implements OobFilter<ByteBuffer, ByteBuffer> {
 
     /**
      * The global {@link Logger} instance.
@@ -60,7 +65,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
     final protected static Logger log = LoggerFactory.getLogger(SslFilter.class);
 
     final SSLEngine engine;
-    final C connection;
+    final H handler;
     final Executor executor;
 
     ByteBuffer encryptBuffer;
@@ -75,15 +80,15 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
      * 
      * @param engine
      *            the {@link SSLEngine} for encryption/decryption of traffic.
-     * @param connection
-     *            the associated {@link FilteredConnection}.
+     * @param handler
+     *            the associated {@link FilteredHandler}.
      * @param executor
      *            the {@link Executor} for carrying out delegated tasks.
      */
-    protected SslFilter(SSLEngine engine, C connection, Executor executor) {
+    protected SslFilter(SSLEngine engine, H handler, Executor executor) {
 
         this.engine = engine;
-        this.connection = connection;
+        this.handler = handler;
         this.executor = executor;
 
         this.encryptBuffer = ByteBuffer.allocate(0);
@@ -97,7 +102,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
     @Override
     public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-        assert !Thread.holdsLock(this.connection.getLock());
+        assert !Thread.holdsLock(this.handler.getLock());
 
         this.decryptBuffer.compact();
 
@@ -175,7 +180,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                     debugHandshakeStatusInbound(result);
 
-                    this.connection.sendOutbound(null);
+                    this.handler.sendOutbound(null);
 
                     // Break the loop: We can't proceed until the remote host responds.
                     break loop;
@@ -184,7 +189,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                     debugHandshakeStatusInbound(result);
 
-                    synchronized (this.connection.getLock()) {
+                    synchronized (this.handler.getLock()) {
                         runDelegatedTasks();
                     }
 
@@ -196,7 +201,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
                     debugHandshakeStatusInbound(result);
 
                     // Write pending outbound data.
-                    this.connection.sendOutbound(null);
+                    this.handler.sendOutbound(null);
 
                     // Continue the loop: We just finished handshaking.
                     continue loop;
@@ -228,7 +233,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
     @Override
     public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-        assert Thread.holdsLock(this.connection.getLock());
+        assert Thread.holdsLock(this.handler.getLock());
 
         this.encryptBuffer.compact();
 
@@ -279,7 +284,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
 
                     if (this.shutdownOutbound) {
 
-                        debug("[%s] shut down outbound.", this.connection);
+                        debug("[%s] shut down outbound.", this.handler);
 
                         // Write out a close_notify.
                         this.engine.closeOutbound();
@@ -380,7 +385,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
      */
     protected void runDelegatedTasks() {
 
-        assert Thread.holdsLock(this.connection.getLock());
+        assert Thread.holdsLock(this.handler.getLock());
 
         for (Runnable r = null; (r = this.engine.getDelegatedTask()) != null;) {
 
@@ -391,10 +396,10 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
                 @Override
                 public void run() {
 
-                    SslFilter<C> sslF = SslFilter.this;
+                    SslFilter<H> sslF = SslFilter.this;
 
                     debug("[%s] begin delegated task [%s].", //
-                            sslF.connection, rr);
+                            sslF.handler, rr);
 
                     try {
 
@@ -403,10 +408,10 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
                     } finally {
 
                         // Force a read to get things going again.
-                        sslF.connection.setEnabled(OperationType.READ, true);
+                        sslF.handler.setEnabled(OperationType.READ, true);
 
                         debug("[%s] finish delegated task [%s].", //
-                                sslF.connection, rr);
+                                sslF.handler, rr);
                     }
                 }
             });
@@ -418,7 +423,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
      */
     protected void debugStatusInbound(SSLEngineResult result) {
         debug("[%s] inbound %s, c=%d, r=%d, d=%d.", //
-                this.connection, result.getStatus(), //
+                this.handler, result.getStatus(), //
                 result.bytesConsumed(), this.readBuffer.remaining(), this.decryptBuffer.position());
     }
 
@@ -427,7 +432,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
      */
     protected void debugHandshakeStatusInbound(SSLEngineResult result) {
         debug("[%s] inbound %s, c=%d.", //
-                this.connection, result.getHandshakeStatus(), result.bytesConsumed());
+                this.handler, result.getHandshakeStatus(), result.bytesConsumed());
     }
 
     /**
@@ -435,7 +440,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
      */
     protected void debugStatusOutbound(SSLEngineResult result) {
         debug("[%s] outbound %s, p=%d, w=%d, e=%d.", //
-                this.connection, result.getStatus(), //
+                this.handler, result.getStatus(), //
                 result.bytesProduced(), this.writeBuffer.remaining(), this.encryptBuffer.position());
     }
 
@@ -444,7 +449,7 @@ public class SslFilter<C extends FilteredConnection<C, ?>> implements OobFilter<
      */
     protected void debugHandshakeStatusOutbound(SSLEngineResult result) {
         debug("[%s] outbound %s, p=%d.", //
-                this.connection, result.getHandshakeStatus(), result.bytesProduced());
+                this.handler, result.getHandshakeStatus(), result.bytesProduced());
     }
 
     /**

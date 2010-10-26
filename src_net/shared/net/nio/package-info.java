@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (c) 2008 Roy Liu<br>
+ * Copyright (c) 2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -26,55 +26,8 @@
  * </p>
  */
 
-package shared.test.net;
-
-import static shared.net.SourceType.CONNECTION;
-import static shared.test.net.TestXmlEvent.TestXmlEventType.END_OF_STREAM;
-
-import org.w3c.dom.Element;
-
-import shared.event.SourceLocal;
-import shared.net.ConnectionManager;
-import shared.net.SourceType;
-import shared.net.XmlConnection;
-import shared.test.net.TestXmlEvent.ErrorXmlEvent;
-
 /**
- * A subclass of {@link XmlConnection} for testing purposes.
- * 
- * @apiviz.has shared.test.net.TestXmlEvent - - - event
- * @author Roy Liu
+ * A package for managed connections built on top of {@link java.nio}.
  */
-public class TestXmlConnection extends XmlConnection<TestXmlConnection, TestXmlEvent, SourceType> {
+package shared.net.nio;
 
-    final SourceLocal<TestXmlEvent> receiver;
-
-    /**
-     * Default constructor.
-     * 
-     * @param receiver
-     *            the local receiver to which events will be forwarded.
-     */
-    public TestXmlConnection(String name, int minimumSize, int maximumSize, //
-            ConnectionManager manager, SourceLocal<TestXmlEvent> receiver) {
-        super(name, CONNECTION, minimumSize, maximumSize, manager);
-
-        this.receiver = receiver;
-    }
-
-    @Override
-    public void onLocal(TestXmlEvent evt) {
-        this.receiver.onLocal(evt);
-    }
-
-    @Override
-    protected void onError() {
-        onLocal(new ErrorXmlEvent(getException(), this));
-    }
-
-    @Override
-    protected TestXmlEvent parse(Element rootElement) {
-        return (rootElement == null) ? new TestXmlEvent(END_OF_STREAM, this) //
-                : TestXmlEvent.parse(rootElement, this);
-    }
-}

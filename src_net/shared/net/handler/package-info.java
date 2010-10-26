@@ -26,22 +26,8 @@
  * </p>
  */
 
-package shared.net.filter;
-
-import shared.net.Connection;
-
 /**
- * Defines a {@link Connection} that can react to user-defined {@link OobEvent}s.
- * 
- * @author Roy Liu
+ * A package of {@link shared.net.Connection} handler implementations.
  */
-public interface OobConnection extends Connection {
+package shared.net.handler;
 
-    /**
-     * On receipt of a user-defined {@link OobEvent}.
-     * 
-     * @param evt
-     *            the {@link OobEvent}.
-     */
-    public void onOob(OobEvent evt);
-}

@@ -26,17 +26,18 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.nio;
 
 import shared.event.Handler;
 import shared.event.Source;
+import shared.net.SourceType;
 
 /**
- * An event {@link Source} that represents its {@link AbstractManagedConnection} parent.
+ * An event {@link Source} that represents its {@link NioConnection} parent.
  * 
  * @author Roy Liu
  */
-public class ProxySource<C extends AbstractManagedConnection<C>> implements Source<InterestEvent<?>, SourceType> {
+public class ProxySource<C extends NioConnection<C>> implements Source<NioEvent<?>, SourceType> {
 
     final C connection;
 
@@ -55,7 +56,7 @@ public class ProxySource<C extends AbstractManagedConnection<C>> implements Sour
     }
 
     @Override
-    public void onLocal(InterestEvent<?> evt) {
+    public void onLocal(NioEvent<?> evt) {
 
         // Acquire the connection monitor because the manager thread may change during a handoff.
         synchronized (this.connection.getLock()) {
@@ -74,17 +75,17 @@ public class ProxySource<C extends AbstractManagedConnection<C>> implements Sour
     }
 
     @Override
-    public Handler<InterestEvent<?>> getHandler() {
+    public Handler<NioEvent<?>> getHandler() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setHandler(Handler<InterestEvent<?>> handler) {
+    public void setHandler(Handler<NioEvent<?>> handler) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onRemote(InterestEvent<?> evt) {
+    public void onRemote(NioEvent<?> evt) {
         throw new UnsupportedOperationException();
     }
 }

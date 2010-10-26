@@ -26,25 +26,26 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.nio;
 
 import shared.event.Event;
 import shared.event.Source;
+import shared.net.SourceType;
 
 /**
- * An internal event class for {@link AbstractManagedConnection} and {@link ConnectionManager}.
+ * An internal event class for {@link NioConnection} and {@link NioManager}.
  * 
- * @apiviz.owns shared.net.InterestEvent.InterestEventType
+ * @apiviz.owns shared.net.nio.NioEvent.NioEventType
  * @param <T>
  *            the argument type.
  * @author Roy Liu
  */
-public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.InterestEventType, SourceType> {
+public class NioEvent<T> implements Event<NioEvent<?>, NioEvent.NioEventType, SourceType> {
 
     /**
-     * An enumeration of {@link InterestEvent} types.
+     * An enumeration of {@link NioEvent} types.
      */
-    public enum InterestEventType {
+    public enum NioEventType {
 
         /**
          * Denotes a connection connect request.
@@ -112,14 +113,14 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
         SHUTDOWN;
     }
 
-    final InterestEventType type;
+    final NioEventType type;
     final T argument;
-    final Source<InterestEvent<?>, SourceType> source;
+    final Source<NioEvent<?>, SourceType> source;
 
     /**
      * Default constructor.
      */
-    protected InterestEvent(InterestEventType type, T argument, Source<InterestEvent<?>, SourceType> source) {
+    protected NioEvent(NioEventType type, T argument, Source<NioEvent<?>, SourceType> source) {
 
         this.type = type;
         this.argument = argument;
@@ -129,17 +130,17 @@ public class InterestEvent<T> implements Event<InterestEvent<?>, InterestEvent.I
     /**
      * Alternate constructor.
      */
-    protected InterestEvent(InterestEventType type, Source<InterestEvent<?>, SourceType> source) {
+    protected NioEvent(NioEventType type, Source<NioEvent<?>, SourceType> source) {
         this(type, null, source);
     }
 
     @Override
-    public InterestEventType getType() {
+    public NioEventType getType() {
         return this.type;
     }
 
     @Override
-    public Source<InterestEvent<?>, SourceType> getSource() {
+    public Source<NioEvent<?>, SourceType> getSource() {
         return this.source;
     }
 

@@ -40,12 +40,12 @@ import shared.util.Control;
 /**
  * An implementation of {@link FilterFactory} for reading and writing XML DOM {@link Element}s.
  * 
- * @param <C>
+ * @param <H>
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class XmlFilterFactory<C extends Connection> //
-        implements FilterFactory<Filter<ByteBuffer, Element>, ByteBuffer, Element, C>, Filter<ByteBuffer, Element> {
+public class XmlFilterFactory<H extends Connection> //
+        implements FilterFactory<Filter<ByteBuffer, Element>, ByteBuffer, Element, H>, Filter<ByteBuffer, Element> {
 
     /**
      * The global instance.
@@ -55,12 +55,12 @@ public class XmlFilterFactory<C extends Connection> //
     /**
      * Gets the global instance.
      * 
-     * @param <C>
+     * @param <H>
      *            the {@link Connection} type.
      */
     @SuppressWarnings("unchecked")
-    final public static <C extends Connection> XmlFilterFactory<C> getInstance() {
-        return (XmlFilterFactory<C>) instance;
+    final public static <H extends Connection> XmlFilterFactory<H> getInstance() {
+        return (XmlFilterFactory<H>) instance;
     }
 
     /**
@@ -103,7 +103,7 @@ public class XmlFilterFactory<C extends Connection> //
     }
 
     @Override
-    public Filter<ByteBuffer, Element> newFilter(C connection) {
+    public Filter<ByteBuffer, Element> newFilter(H handler) {
         return newFilter();
     }
 }

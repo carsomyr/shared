@@ -26,9 +26,9 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.nio;
 
-import static shared.net.InterestEvent.InterestEventType.SHUTDOWN;
+import static shared.net.nio.NioEvent.NioEventType.SHUTDOWN;
 
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
@@ -37,14 +37,14 @@ import java.util.List;
 import shared.event.Handler;
 import shared.event.Transitions;
 import shared.event.Transitions.Transition;
-import shared.net.AbstractManagedConnection.AbstractManagedConnectionStatus;
+import shared.net.nio.NioConnection.NioConnectionStatus;
 
 /**
- * A specialized {@link ConnectionManagerThread} that reads from and writes to connections.
+ * A specialized {@link NioManagerThread} that reads from and writes to connections.
  * 
  * @author Roy Liu
  */
-public class ConnectionManagerIoThread extends ConnectionManagerThread {
+public class NioManagerIoThread extends NioManagerThread {
 
     @Override
     protected void onStart() {
@@ -59,18 +59,18 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
 
             Object attachment = key.attachment();
 
-            if (attachment instanceof AbstractManagedConnection<?>) {
-                handleError((AbstractManagedConnection<?>) attachment, this.exception);
+            if (attachment instanceof NioConnection<?>) {
+                handleError((NioConnection<?>) attachment, this.exception);
             }
         }
 
-        this.parent.onLocal(new InterestEvent<Object>(SHUTDOWN, null));
+        this.parent.onLocal(new NioEvent<Object>(SHUTDOWN, null));
     }
 
     @Override
     protected void doReadyOps(int readyOps, SelectionKey key) {
 
-        AbstractManagedConnection<?> conn = (AbstractManagedConnection<?>) key.attachment();
+        NioConnection<?> conn = (NioConnection<?>) key.attachment();
 
         // Each operation is responsible for its own exception handling.
 
@@ -86,10 +86,10 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
     /**
      * Handles a connection dispatch notification.
      */
-    protected void handleDispatch(AbstractManagedConnection<?> conn) {
+    protected void handleDispatch(NioConnection<?> conn) {
 
         // The connection had better be in the correct state.
-        assert (conn.getStatus() == AbstractManagedConnectionStatus.ACTIVE);
+        assert (conn.getStatus() == NioConnectionStatus.ACTIVE);
 
         try {
 
@@ -107,16 +107,16 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
     /**
      * Handles a request to get the list of connections.
      */
-    protected void handleGetConnections(Request<?, List<AbstractManagedConnection<?>>> request) {
+    protected void handleGetConnections(Request<?, List<NioConnection<?>>> request) {
 
-        List<AbstractManagedConnection<?>> res = new ArrayList<AbstractManagedConnection<?>>();
+        List<NioConnection<?>> res = new ArrayList<NioConnection<?>>();
 
         for (SelectionKey key : this.selector.keys()) {
 
             Object attachment = key.attachment();
 
-            if (attachment instanceof AbstractManagedConnection<?>) {
-                res.add((AbstractManagedConnection<?>) attachment);
+            if (attachment instanceof NioConnection<?>) {
+                res.add((NioConnection<?>) attachment);
             }
         }
 
@@ -124,19 +124,19 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
     }
 
     @Transition(currentState = "ACTIVE", eventType = "DISPATCH")
-    final Handler<InterestEvent<?>> dispatchHandler = new Handler<InterestEvent<?>>() {
+    final Handler<NioEvent<?>> dispatchHandler = new Handler<NioEvent<?>>() {
 
         @Override
-        public void handle(InterestEvent<?> evt) {
+        public void handle(NioEvent<?> evt) {
             handleDispatch(((ProxySource<?>) evt.getSource()).getConnection());
         }
     };
 
     @Transition(currentState = "ACTIVE", eventType = "OP")
-    final Handler<InterestEvent<Integer>> opHandler = new Handler<InterestEvent<Integer>>() {
+    final Handler<NioEvent<Integer>> opHandler = new Handler<NioEvent<Integer>>() {
 
         @Override
-        public void handle(InterestEvent<Integer> evt) {
+        public void handle(NioEvent<Integer> evt) {
 
             int opMask = evt.getArgument();
             handleOp(((ProxySource<?>) evt.getSource()).getConnection(), //
@@ -145,10 +145,10 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
     };
 
     @Transition(currentState = "ACTIVE", eventType = "CLOSE")
-    final Handler<InterestEvent<?>> closeHandler = new Handler<InterestEvent<?>>() {
+    final Handler<NioEvent<?>> closeHandler = new Handler<NioEvent<?>>() {
 
         @Override
-        public void handle(InterestEvent<?> evt) {
+        public void handle(NioEvent<?> evt) {
             handleClosingUser(((ProxySource<?>) evt.getSource()).getConnection());
         }
     };
@@ -158,55 +158,55 @@ public class ConnectionManagerIoThread extends ConnectionManagerThread {
             @Transition(currentState = "ACTIVE", eventType = "ERROR"), //
             @Transition(currentState = "CLOSING", eventType = "ERROR") //
     })
-    final Handler<InterestEvent<Throwable>> errorHandler = new Handler<InterestEvent<Throwable>>() {
+    final Handler<NioEvent<Throwable>> errorHandler = new Handler<NioEvent<Throwable>>() {
 
         @Override
-        public void handle(InterestEvent<Throwable> evt) {
+        public void handle(NioEvent<Throwable> evt) {
             handleError(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
 
     @Transition(currentState = "ACTIVE", eventType = "EXECUTE")
-    final Handler<InterestEvent<Runnable>> executeHandler = new Handler<InterestEvent<Runnable>>() {
+    final Handler<NioEvent<Runnable>> executeHandler = new Handler<NioEvent<Runnable>>() {
 
         @Override
-        public void handle(InterestEvent<Runnable> evt) {
+        public void handle(NioEvent<Runnable> evt) {
             handleExecute(((ProxySource<?>) evt.getSource()).getConnection(), evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "GET_CONNECTIONS", group = "internal")
-    final Handler<InterestEvent<Request<?, List<AbstractManagedConnection<?>>>>> getConnectionsHandler = //
-    new Handler<InterestEvent<Request<?, List<AbstractManagedConnection<?>>>>>() {
+    final Handler<NioEvent<Request<?, List<NioConnection<?>>>>> getConnectionsHandler = //
+    new Handler<NioEvent<Request<?, List<NioConnection<?>>>>>() {
 
         @Override
-        public void handle(InterestEvent<Request<?, List<AbstractManagedConnection<?>>>> evt) {
+        public void handle(NioEvent<Request<?, List<NioConnection<?>>>> evt) {
             handleGetConnections(evt.getArgument());
         }
     };
 
     @Transition(currentState = "RUN", eventType = "SHUTDOWN", group = "internal")
-    final Handler<InterestEvent<?>> shutdownHandler = new Handler<InterestEvent<?>>() {
+    final Handler<NioEvent<?>> shutdownHandler = new Handler<NioEvent<?>>() {
 
         @Override
-        public void handle(InterestEvent<?> evt) {
+        public void handle(NioEvent<?> evt) {
             handleShutdown();
         }
     };
 
-    final ConnectionManagerDispatchThread parent;
+    final NioManagerDispatchThread parent;
 
     /**
      * Default constructor.
      */
-    protected ConnectionManagerIoThread(String name, ConnectionManagerDispatchThread parent) {
+    protected NioManagerIoThread(String name, NioManagerDispatchThread parent) {
         super(name);
 
         this.parent = parent;
     }
 
     @Override
-    protected void purge(AbstractManagedConnection<?> conn) {
+    protected void purge(NioConnection<?> conn) {
         // Do nothing.
     }
 }

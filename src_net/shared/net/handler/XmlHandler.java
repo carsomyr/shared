@@ -26,7 +26,7 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.handler;
 
 import java.nio.ByteBuffer;
 import java.util.Queue;
@@ -36,12 +36,13 @@ import org.w3c.dom.Element;
 import shared.event.Handler;
 import shared.event.Source;
 import shared.event.XmlEvent;
+import shared.net.SourceType;
 import shared.net.filter.ChainFilterFactory;
 import shared.net.filter.Filter;
 import shared.net.filter.FilterFactory;
-import shared.net.filter.FilteredManagedConnection;
 import shared.net.filter.FrameFilterFactory;
 import shared.net.filter.XmlFilterFactory;
+import shared.net.nio.NioManager;
 import shared.util.Control;
 
 /**
@@ -49,17 +50,17 @@ import shared.util.Control;
  * {@link #parse(Element)} for system-specific behavior.
  * 
  * @apiviz.owns shared.net.SourceType
- * @param <C>
- *            the parameterization lower bounded by {@link XmlConnection} itself.
+ * @param <H>
+ *            the parameterization lower bounded by {@link XmlHandler} itself.
  * @param <T>
  *            the {@link XmlEvent} type.
  * @param <S>
  *            the {@link Source} enumeration type.
  * @author Roy Liu
  */
-abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends XmlEvent<T, ?, S>, S extends Enum<S>> //
-        extends FilteredManagedConnection<C, T> //
-        implements Source<T, S>, FilterFactory<Filter<Element, T>, Element, T, C> {
+abstract public class XmlHandler<H extends XmlHandler<H, T, S>, T extends XmlEvent<T, ?, S>, S extends Enum<S>> //
+        extends AbstractFilteredHandler<H, T> //
+        implements Source<T, S>, FilterFactory<Filter<Element, T>, Element, T, H> {
 
     final S type;
 
@@ -77,9 +78,9 @@ abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends 
      * @param maximumSize
      *            the maximum message buffer size.
      * @param manager
-     *            the {@link ConnectionManager} with which this connection will be registered.
+     *            the {@link NioManager} with which this connection will be registered.
      */
-    public XmlConnection(String name, S type, int minimumSize, int maximumSize, ConnectionManager manager) {
+    public XmlHandler(String name, S type, int minimumSize, int maximumSize, NioManager manager) {
         super(name, manager);
 
         this.type = type;
@@ -92,8 +93,8 @@ abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends 
             }
         };
 
-        setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, C>() //
-                .add(new FrameFilterFactory<C>(minimumSize, maximumSize)) //
+        setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, H>() //
+                .add(new FrameFilterFactory<H>(minimumSize, maximumSize)) //
                 .add(XmlFilterFactory.getInstance()) //
                 .add(this));
     }
@@ -101,22 +102,22 @@ abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends 
     /**
      * Alternate constructor.
      */
-    public XmlConnection(String name, S type, int maximumSize, ConnectionManager manager) {
+    public XmlHandler(String name, S type, int maximumSize, NioManager manager) {
         this(name, type, maximumSize, maximumSize, manager);
     }
 
     /**
      * Alternate constructor.
      */
-    public XmlConnection(String name, S type, int minimumSize, int maximumSize) {
-        this(name, type, minimumSize, maximumSize, ConnectionManager.getInstance());
+    public XmlHandler(String name, S type, int minimumSize, int maximumSize) {
+        this(name, type, minimumSize, maximumSize, NioManager.getInstance());
     }
 
     /**
      * Alternate constructor.
      */
-    public XmlConnection(String name, S type, int maximumSize) {
-        this(name, type, maximumSize, maximumSize, ConnectionManager.getInstance());
+    public XmlHandler(String name, S type, int maximumSize) {
+        this(name, type, maximumSize, maximumSize, NioManager.getInstance());
     }
 
     /**
@@ -189,14 +190,14 @@ abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends 
     }
 
     @Override
-    public Filter<Element, T> newFilter(final C connection) {
+    public Filter<Element, T> newFilter(final H handler) {
 
         return new Filter<Element, T>() {
 
             @Override
             public void applyInbound(Queue<Element> inputs, Queue<T> outputs) {
 
-                assert !Thread.holdsLock(connection.getLock());
+                assert !Thread.holdsLock(handler.getLock());
 
                 for (Element elt; (elt = inputs.poll()) != null;) {
                     outputs.add(parse(elt));
@@ -206,7 +207,7 @@ abstract public class XmlConnection<C extends XmlConnection<C, T, S>, T extends 
             @Override
             public void applyOutbound(Queue<T> inputs, Queue<Element> outputs) {
 
-                assert Thread.holdsLock(connection.getLock());
+                assert Thread.holdsLock(handler.getLock());
 
                 for (T evt; (evt = inputs.poll()) != null;) {
                     outputs.add(evt.toDom());

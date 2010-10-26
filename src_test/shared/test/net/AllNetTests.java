@@ -49,25 +49,25 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import shared.net.ConnectionManager;
-import shared.net.SynchronousManagedConnection;
-import shared.net.filter.FilteredConnection;
-import shared.net.filter.SslEngineFactory.Mode;
-import shared.net.filter.SslFilter;
-import shared.net.filter.SslFilterFactory;
+import shared.net.filter.ssl.SslEngineFactory.Mode;
+import shared.net.filter.ssl.SslFilter;
+import shared.net.filter.ssl.SslFilterFactory;
+import shared.net.handler.FilteredHandler;
+import shared.net.handler.SynchronousHandler;
+import shared.net.nio.NioManager;
 
 /**
  * A suite encompassing all networking tests.
  * 
- * @apiviz.owns shared.test.net.AsynchronousConnectionTest
- * @apiviz.owns shared.test.net.SynchronousConnectionTest
+ * @apiviz.owns shared.test.net.AsynchronousHandlerTest
+ * @apiviz.owns shared.test.net.SynchronousHandlerTest
  * @author Roy Liu
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = {
 //
-        AsynchronousConnectionTest.class, //
-        SynchronousConnectionTest.class //
+        AsynchronousHandlerTest.class, //
+        SynchronousHandlerTest.class //
 })
 public class AllNetTests {
 
@@ -86,9 +86,9 @@ public class AllNetTests {
      */
     final protected static Class<?>[] loggerClasses = new Class[] {
             //
-            ConnectionManager.class, //
+            NioManager.class, //
             SslFilter.class, //
-            SynchronousManagedConnection.class //
+            SynchronousHandler.class //
     };
 
     /**
@@ -130,7 +130,7 @@ public class AllNetTests {
     }
 
     /**
-     * Configures the Java {@link Logger} for use by {@link ConnectionManager}s.
+     * Configures the Java {@link Logger} for use by {@link NioManager}s.
      */
     @BeforeClass
     final public static void initClass() {
@@ -199,11 +199,11 @@ public class AllNetTests {
     /**
      * Creates a client-side {@link SslFilterFactory}.
      * 
-     * @param <C>
-     *            the {@link FilteredConnection} type.
+     * @param <H>
+     *            the {@link FilteredHandler} type.
      */
-    final protected static <C extends FilteredConnection<C, ?>> SslFilterFactory<C> createClientSslFilterFactory() {
-        return new SslFilterFactory<C>() //
+    final protected static <H extends FilteredHandler<H, ?>> SslFilterFactory<H> createClientSslFilterFactory() {
+        return new SslFilterFactory<H>() //
                 .setMode(Mode.CLIENT) //
                 .setTrustManagers(getTrustManagers());
     }
@@ -211,11 +211,11 @@ public class AllNetTests {
     /**
      * Creates a server-side {@link SslFilterFactory}.
      * 
-     * @param <C>
-     *            the {@link FilteredConnection} type.
+     * @param <H>
+     *            the {@link FilteredHandler} type.
      */
-    final protected static <C extends FilteredConnection<C, ?>> SslFilterFactory<C> createServerSslFilterFactory() {
-        return new SslFilterFactory<C>() //
+    final protected static <H extends FilteredHandler<H, ?>> SslFilterFactory<H> createServerSslFilterFactory() {
+        return new SslFilterFactory<H>() //
                 .setMode(Mode.SERVER) //
                 .setKeyManagers(getKeyManagers(KEYSTORE_PATHNAME, KEYSTORE_PASSWORD)) //
                 .setTrustManagers(getTrustManagers());

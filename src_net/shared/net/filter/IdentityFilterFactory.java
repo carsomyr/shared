@@ -38,12 +38,12 @@ import shared.net.Connection;
  * 
  * @param <T>
  *            the inbound and outbound type.
- * @param <C>
+ * @param <H>
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class IdentityFilterFactory<T, C extends Connection> //
-        implements FilterFactory<OobFilter<T, T>, T, T, C>, OobFilter<T, T> {
+public class IdentityFilterFactory<T, H extends Connection> //
+        implements FilterFactory<OobFilter<T, T>, T, T, H>, OobFilter<T, T> {
 
     /**
      * The global {@link IdentityFilterFactory} instance.
@@ -55,12 +55,12 @@ public class IdentityFilterFactory<T, C extends Connection> //
      * 
      * @param <T>
      *            the inbound and outbound type.
-     * @param <C>
+     * @param <H>
      *            the {@link Connection} type.
      */
     @SuppressWarnings("unchecked")
-    final public static <T, C extends Connection> IdentityFilterFactory<T, C> getInstance() {
-        return (IdentityFilterFactory<T, C>) instance;
+    final public static <T, H extends Connection> IdentityFilterFactory<T, H> getInstance() {
+        return (IdentityFilterFactory<T, H>) instance;
     }
 
     /**
@@ -101,7 +101,7 @@ public class IdentityFilterFactory<T, C extends Connection> //
     }
 
     @Override
-    public OobFilter<T, T> newFilter(C connection) {
+    public OobFilter<T, T> newFilter(H handler) {
         return newFilter();
     }
 }

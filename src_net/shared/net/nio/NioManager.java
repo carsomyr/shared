@@ -26,36 +26,36 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.nio;
 
-import static shared.net.InterestEvent.InterestEventType.GET_BACKLOG_SIZE;
-import static shared.net.InterestEvent.InterestEventType.GET_BOUND_ADDRESSES;
-import static shared.net.InterestEvent.InterestEventType.GET_CONNECTIONS;
-import static shared.net.InterestEvent.InterestEventType.SET_BACKLOG_SIZE;
+import static shared.net.nio.NioEvent.NioEventType.GET_BACKLOG_SIZE;
+import static shared.net.nio.NioEvent.NioEventType.GET_BOUND_ADDRESSES;
+import static shared.net.nio.NioEvent.NioEventType.GET_CONNECTIONS;
+import static shared.net.nio.NioEvent.NioEventType.SET_BACKLOG_SIZE;
 
 import java.io.Closeable;
 import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import shared.net.ConnectionManagerThread.ConnectionManagerThreadStatus;
-import shared.net.InterestEvent.InterestEventType;
+import shared.net.nio.NioEvent.NioEventType;
+import shared.net.nio.NioManagerThread.NioManagerThreadStatus;
 import shared.util.Control;
 
 /**
  * A transparent, asynchronous sockets layer for easy network programming that performs readiness selection on
- * {@link AbstractManagedConnection}s via callbacks.
+ * {@link NioConnection}s via callbacks.
  * 
- * @apiviz.composedOf shared.net.ConnectionManagerDispatchThread
+ * @apiviz.composedOf shared.net.nio.NioManagerDispatchThread
  * @apiviz.uses shared.net.Constants
  * @author Roy Liu
  */
-public class ConnectionManager implements Closeable {
+public class NioManager implements Closeable {
 
     /**
      * A {@link WeakReference} to the global instance.
      */
-    protected static WeakReference<ConnectionManager> defaultInstanceRef = new WeakReference<ConnectionManager>(null);
+    protected static WeakReference<NioManager> defaultInstanceRef = new WeakReference<NioManager>(null);
 
     /**
      * A global lock for the entire class.
@@ -65,33 +65,33 @@ public class ConnectionManager implements Closeable {
     /**
      * Gets the global instance.
      */
-    final public static ConnectionManager getInstance() {
+    final public static NioManager getInstance() {
 
         synchronized (classLock) {
 
-            ConnectionManager cm = defaultInstanceRef.get();
+            NioManager cm = defaultInstanceRef.get();
 
             if (cm != null) {
 
-                ConnectionManagerThread cmt = cm.getThread();
+                NioManagerThread cmt = cm.getThread();
 
                 synchronized (cmt) {
 
-                    if (cmt.getStatus() == ConnectionManagerThreadStatus.RUN) {
+                    if (cmt.getStatus() == NioManagerThreadStatus.RUN) {
                         return cm;
                     }
                 }
             }
 
-            cm = new ConnectionManager("DefaultCM");
+            cm = new NioManager("DefaultCM");
 
-            defaultInstanceRef = new WeakReference<ConnectionManager>(cm);
+            defaultInstanceRef = new WeakReference<NioManager>(cm);
 
             return cm;
         }
     }
 
-    final ConnectionManagerDispatchThread thread;
+    final NioManagerDispatchThread thread;
 
     /**
      * Default constructor.
@@ -99,14 +99,14 @@ public class ConnectionManager implements Closeable {
      * @param name
      *            the name.
      */
-    public ConnectionManager(String name) {
+    public NioManager(String name) {
 
-        this.thread = new ConnectionManagerDispatchThread(name, Runtime.getRuntime().availableProcessors());
+        this.thread = new NioManagerDispatchThread(name, Runtime.getRuntime().availableProcessors());
         this.thread.start();
     }
 
     /**
-     * Shuts down the underlying {@link ConnectionManagerThread}. Blocks until shutdown completion.
+     * Shuts down the underlying {@link NioManagerThread}. Blocks until shutdown completion.
      */
     @Override
     public void close() {
@@ -114,7 +114,7 @@ public class ConnectionManager implements Closeable {
     }
 
     /**
-     * Gets the name of the underlying {@link ConnectionManagerThread}.
+     * Gets the name of the underlying {@link NioManagerThread}.
      */
     @Override
     public String toString() {
@@ -124,7 +124,7 @@ public class ConnectionManager implements Closeable {
     /**
      * Gets the list of connections.
      */
-    public List<AbstractManagedConnection<?>> getConnections() {
+    public List<NioConnection<?>> getConnections() {
         return this.thread.request(GET_CONNECTIONS, null);
     }
 
@@ -145,7 +145,7 @@ public class ConnectionManager implements Closeable {
     /**
      * Sets the listen backlog size.
      */
-    public ConnectionManager setBacklogSize(int backlogSize) {
+    public NioManager setBacklogSize(int backlogSize) {
 
         this.thread.request(SET_BACKLOG_SIZE, backlogSize);
 
@@ -153,9 +153,9 @@ public class ConnectionManager implements Closeable {
     }
 
     /**
-     * Gets the {@link ConnectionManagerDispatchThread}.
+     * Gets the {@link NioManagerDispatchThread}.
      */
-    protected ConnectionManagerDispatchThread getThread() {
+    protected NioManagerDispatchThread getThread() {
         return this.thread;
     }
 
@@ -165,14 +165,14 @@ public class ConnectionManager implements Closeable {
      * @param <T>
      *            the argument type.
      */
-    protected <T> void initConnection(AbstractManagedConnection<?> conn, InterestEventType opType, T argument) {
+    protected <T> void initConnection(NioConnection<?> conn, NioEventType opType, T argument) {
 
         synchronized (this.thread) {
 
-            Control.checkTrue(this.thread.getStatus() == ConnectionManagerThreadStatus.RUN, //
+            Control.checkTrue(this.thread.getStatus() == NioManagerThreadStatus.RUN, //
                     "The connection manager thread has exited");
 
-            this.thread.onLocal(new InterestEvent<T>(opType, argument, conn.getProxy()));
+            this.thread.onLocal(new NioEvent<T>(opType, argument, conn.getProxy()));
         }
     }
 
@@ -181,7 +181,7 @@ public class ConnectionManager implements Closeable {
 
         @Override
         protected void finalize() {
-            Control.close(ConnectionManager.this);
+            Control.close(NioManager.this);
         }
     };
 }

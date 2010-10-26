@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (c) 2009 Roy Liu<br>
+ * Copyright (c) 2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -26,28 +26,23 @@
  * </p>
  */
 
-package shared.net.filter;
+package shared.net.handler;
 
 import shared.net.Connection;
+import shared.net.filter.OobEvent;
 
 /**
- * Defines a factory for creating {@link Filter}s.
+ * Defines a {@link Connection} that can react to user-defined {@link OobEvent}s.
  * 
- * @apiviz.owns shared.net.filter.Filter
- * @param <F>
- *            the {@link Filter} type.
- * @param <I>
- *            the inbound type.
- * @param <O>
- *            the outbound type.
- * @param <H>
- *            the {@link Connection} type.
  * @author Roy Liu
  */
-public interface FilterFactory<F extends Filter<I, O>, I, O, H extends Connection> {
+public interface OobHandler extends Connection {
 
     /**
-     * Creates a new {@link Filter}.
+     * On receipt of a user-defined {@link OobEvent}.
+     * 
+     * @param evt
+     *            the {@link OobEvent}.
      */
-    public F newFilter(H handler);
+    public void onOob(OobEvent evt);
 }

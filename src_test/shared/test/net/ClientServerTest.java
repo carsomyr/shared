@@ -39,12 +39,12 @@ import org.slf4j.LoggerFactory;
 
 import shared.net.Connection;
 import shared.net.Connection.InitializationType;
-import shared.net.ConnectionManager;
 import shared.net.filter.ChainFilterFactory;
 import shared.net.filter.Filter;
 import shared.net.filter.FilterFactory;
-import shared.net.filter.FilteredManagedConnection;
 import shared.net.filter.FrameFilterFactory;
+import shared.net.handler.AbstractFilteredHandler;
+import shared.net.nio.NioManager;
 import shared.test.Demo;
 import shared.util.Control;
 
@@ -75,44 +75,44 @@ public class ClientServerTest {
     @Test
     public void testTransport() {
 
-        Utf8Connection clientConnection = new Utf8Connection("Client");
-        Utf8Connection serverConnection = new Utf8Connection("Server");
+        Utf8Handler clientHandler = new Utf8Handler("Client");
+        Utf8Handler serverHandler = new Utf8Handler("Server");
 
         int port = 10101;
 
-        serverConnection.init(InitializationType.ACCEPT, new InetSocketAddress(port));
-        clientConnection.init(InitializationType.CONNECT, new InetSocketAddress("localhost", port));
+        serverHandler.init(InitializationType.ACCEPT, new InetSocketAddress(port));
+        clientHandler.init(InitializationType.CONNECT, new InetSocketAddress("localhost", port));
 
         // Client sends stuff to the server.
-        clientConnection.sendOutbound("hello");
-        clientConnection.sendOutbound("from");
-        clientConnection.sendOutbound("the");
-        clientConnection.sendOutbound("client");
+        clientHandler.sendOutbound("hello");
+        clientHandler.sendOutbound("from");
+        clientHandler.sendOutbound("the");
+        clientHandler.sendOutbound("client");
 
         // Server sends stuff to the client.
-        serverConnection.sendOutbound("hello");
-        serverConnection.sendOutbound("from");
-        serverConnection.sendOutbound("the");
-        serverConnection.sendOutbound("server");
+        serverHandler.sendOutbound("hello");
+        serverHandler.sendOutbound("from");
+        serverHandler.sendOutbound("the");
+        serverHandler.sendOutbound("server");
 
         // Allow messages to propagate.
         Control.sleep(1000);
 
-        clientConnection.close();
-        serverConnection.close();
+        clientHandler.close();
+        serverHandler.close();
 
         // Give some time for a clean shutdown.
         Control.sleep(1000);
 
         // Free the default manager's threads.
-        ConnectionManager.getInstance().close();
+        NioManager.getInstance().close();
     }
 
     /**
      * An internal {@link Connection} class for demo purposes.
      */
-    protected static class Utf8Connection extends FilteredManagedConnection<Utf8Connection, String> //
-            implements FilterFactory<Filter<ByteBuffer, String>, ByteBuffer, String, Utf8Connection>, //
+    protected static class Utf8Handler extends AbstractFilteredHandler<Utf8Handler, String> //
+            implements FilterFactory<Filter<ByteBuffer, String>, ByteBuffer, String, Utf8Handler>, //
             Filter<ByteBuffer, String> {
 
         final Logger log;
@@ -120,14 +120,14 @@ public class ClientServerTest {
         /**
          * Default constructor.
          */
-        protected Utf8Connection(String name) {
-            super(name, ConnectionManager.getInstance());
+        protected Utf8Handler(String name) {
+            super(name, NioManager.getInstance());
 
             this.log = LoggerFactory.getLogger( //
                     String.format("%s.%s", ClientServerTest.class.getName(), name));
 
-            setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, Utf8Connection>() //
-                    .add(new FrameFilterFactory<Utf8Connection>()) //
+            setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, Utf8Handler>() //
+                    .add(new FrameFilterFactory<Utf8Handler>()) //
                     .add(this));
         }
 
@@ -172,7 +172,7 @@ public class ClientServerTest {
         }
 
         @Override
-        public Filter<ByteBuffer, String> newFilter(Utf8Connection connection) {
+        public Filter<ByteBuffer, String> newFilter(Utf8Handler handler) {
             return this;
         }
 

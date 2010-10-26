@@ -37,12 +37,12 @@ import shared.util.Control;
 /**
  * An implementation of {@link FilterFactory} for {@code null}-delimited {@code byte} frames.
  * 
- * @param <C>
+ * @param <H>
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class FrameFilterFactory<C extends Connection> //
-        implements FilterFactory<Filter<ByteBuffer, ByteBuffer>, ByteBuffer, ByteBuffer, C> {
+public class FrameFilterFactory<H extends Connection> //
+        implements FilterFactory<Filter<ByteBuffer, ByteBuffer>, ByteBuffer, ByteBuffer, H> {
 
     final int minimumSize;
     final int maximumSize;
@@ -71,9 +71,9 @@ public class FrameFilterFactory<C extends Connection> //
     }
 
     @Override
-    public Filter<ByteBuffer, ByteBuffer> newFilter(final C connection) {
+    public Filter<ByteBuffer, ByteBuffer> newFilter(final H handler) {
 
-        final FrameFilterFactory<C> fff = FrameFilterFactory.this;
+        final FrameFilterFactory<H> fff = FrameFilterFactory.this;
 
         return new Filter<ByteBuffer, ByteBuffer>() {
 
@@ -82,7 +82,7 @@ public class FrameFilterFactory<C extends Connection> //
             @Override
             public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-                assert !Thread.holdsLock(connection.getLock());
+                assert !Thread.holdsLock(handler.getLock());
 
                 for (ByteBuffer bb = null; (bb = inputs.peek()) != null;) {
 
@@ -131,7 +131,7 @@ public class FrameFilterFactory<C extends Connection> //
             @Override
             public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-                assert Thread.holdsLock(connection.getLock());
+                assert Thread.holdsLock(handler.getLock());
 
                 for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
 

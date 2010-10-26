@@ -26,7 +26,7 @@
  * </p>
  */
 
-package shared.net.filter;
+package shared.net.handler;
 
 import static shared.net.filter.OobEvent.OobEventType.BIND;
 import static shared.net.filter.OobEvent.OobEventType.CLOSING_EOS;
@@ -37,24 +37,30 @@ import static shared.net.filter.OobEvent.OobEventType.USER;
 import java.nio.ByteBuffer;
 import java.util.Queue;
 
-import shared.net.AbstractManagedConnection;
-import shared.net.ConnectionManager;
+import shared.net.filter.BaseOobEvent;
+import shared.net.filter.Filter;
+import shared.net.filter.FilterFactory;
+import shared.net.filter.Filters;
+import shared.net.filter.OobEvent;
 import shared.net.filter.OobEvent.OobEventType;
+import shared.net.filter.OobFilter;
+import shared.net.nio.NioConnection;
+import shared.net.nio.NioManager;
 import shared.util.Control;
 
 /**
- * An abstract base class implementing much of {@link FilteredConnection}.
+ * An abstract base class implementing much of {@link FilteredHandler}.
  * 
  * @apiviz.uses shared.net.filter.Filters
- * @param <C>
- *            the parameterization lower bounded by {@link FilteredManagedConnection} itself.
+ * @param <H>
+ *            the parameterization lower bounded by {@link AbstractFilteredHandler} itself.
  * @param <T>
  *            the {@link Filter} inbound type.
  * @author Roy Liu
  */
-abstract public class FilteredManagedConnection<C extends FilteredManagedConnection<C, T>, T> //
-        extends AbstractManagedConnection<C> //
-        implements FilteredConnection<C, T>, OobConnection {
+abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<H, T>, T> //
+        extends NioConnection<H> //
+        implements FilteredHandler<H, T>, OobHandler {
 
     final Queue<ByteBuffer> inbounds;
     final Queue<ByteBuffer> inboundsReadOnly;
@@ -82,7 +88,7 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
     /**
      * Default constructor.
      */
-    public FilteredManagedConnection(String name, ConnectionManager manager) {
+    public AbstractFilteredHandler(String name, NioManager manager) {
         super(name, manager);
 
         this.inbounds = Filters.createQueue();
@@ -132,11 +138,11 @@ abstract public class FilteredManagedConnection<C extends FilteredManagedConnect
 
     @SuppressWarnings("unchecked")
     @Override
-    public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory) {
+    public H setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super H> filterFactory) {
 
-        this.filter = Filters.asOobFilter(filterFactory.newFilter((C) this));
+        this.filter = Filters.asOobFilter(filterFactory.newFilter((H) this));
 
-        return (C) this;
+        return (H) this;
     }
 
     @Override

@@ -8,7 +8,8 @@ include ../src/shared/project.properties
 
 JSRCS			= $(wildcard ../src*/*/*.java) \
 				$(wildcard ../src*/*/*/*.java) \
-				$(wildcard ../src*/*/*/*/*.java)
+				$(wildcard ../src*/*/*/*/*.java) \
+				$(wildcard ../src*/*/*/*/*/*.java)
 
 # JNI Headers
 

@@ -42,13 +42,13 @@ import shared.net.Connection;
  *            the inbound type.
  * @param <O>
  *            the outbound type.
- * @param <C>
+ * @param <H>
  *            the {@link Connection} type.
  * @author Roy Liu
  */
-public class ChainFilterFactory<I, O, C extends Connection> implements FilterFactory<OobFilter<I, O>, I, O, C> {
+public class ChainFilterFactory<I, O, H extends Connection> implements FilterFactory<OobFilter<I, O>, I, O, H> {
 
-    FilterFactory<? extends Filter<Object, Object>, Object, Object, ? super C>[] factories;
+    FilterFactory<? extends Filter<Object, Object>, Object, Object, ? super H>[] factories;
 
     /**
      * Default constructor.
@@ -63,12 +63,12 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
      */
     @SuppressWarnings("unchecked")
     protected ChainFilterFactory( //
-            FilterFactory<? extends Filter<?, ?>, ?, ?, ? super C>[] factories, //
-            FilterFactory<? extends Filter<?, O>, ?, O, ? super C> factory) {
+            FilterFactory<? extends Filter<?, ?>, ?, ?, ? super H>[] factories, //
+            FilterFactory<? extends Filter<?, O>, ?, O, ? super H> factory) {
 
         this.factories = Arrays.copyOf(factories, factories.length + 1, FilterFactory[].class);
         this.factories[this.factories.length - 1] = //
-        (FilterFactory<? extends Filter<Object, Object>, Object, Object, ? super C>) factory;
+        (FilterFactory<? extends Filter<Object, Object>, Object, Object, ? super H>) factory;
     }
 
     /**
@@ -78,14 +78,14 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
      *            the outbound type of the resulting chain.
      * @return the resulting, longer chain.
      */
-    public <T> ChainFilterFactory<I, T, C> add( //
-            FilterFactory<? extends Filter<? super O, T>, ? super O, T, ? super C> factory) {
-        return new ChainFilterFactory<I, T, C>(this.factories, factory);
+    public <T> ChainFilterFactory<I, T, H> add( //
+            FilterFactory<? extends Filter<? super O, T>, ? super O, T, ? super H> factory) {
+        return new ChainFilterFactory<I, T, H>(this.factories, factory);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public OobFilter<I, O> newFilter(C connection) {
+    public OobFilter<I, O> newFilter(H handler) {
 
         final int nFilters = this.factories.length;
 
@@ -100,7 +100,7 @@ public class ChainFilterFactory<I, O, C extends Connection> implements FilterFac
         final Queue<OobEvent>[] outboundEvtsWriteOnly = new Queue[nFilters - 1];
 
         for (int i = 0; i < nFilters; i++) {
-            filters[i] = Filters.asOobFilter(this.factories[i].newFilter(connection));
+            filters[i] = Filters.asOobFilter(this.factories[i].newFilter(handler));
         }
 
         for (int i = 0, n = nFilters - 1; i < n; i++) {

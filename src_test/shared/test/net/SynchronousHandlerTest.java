@@ -51,30 +51,30 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import shared.net.Connection.InitializationType;
-import shared.net.ConnectionManager;
-import shared.net.SynchronousManagedConnection;
-import shared.net.filter.SslFilterFactory;
+import shared.net.filter.ssl.SslFilterFactory;
+import shared.net.handler.SynchronousHandler;
+import shared.net.nio.NioManager;
 import shared.util.Control;
 import shared.util.CoreThread;
 
 /**
- * A class of unit tests for {@link ConnectionManager}.
+ * A class of unit tests for {@link NioManager}.
  * 
  * @author Roy Liu
  */
 @RunWith(value = Parameterized.class)
-public class SynchronousConnectionTest {
+public class SynchronousHandlerTest {
 
     /**
      * The server {@link SslFilterFactory}.
      */
-    final protected static SslFilterFactory<SynchronousManagedConnection> serverSslFilterFactory = //
+    final protected static SslFilterFactory<SynchronousHandler> serverSslFilterFactory = //
     AllNetTests.createServerSslFilterFactory();
 
     /**
      * The client {@link SslFilterFactory}.
      */
-    final protected static SslFilterFactory<SynchronousManagedConnection> clientSslFilterFactory = //
+    final protected static SslFilterFactory<SynchronousHandler> clientSslFilterFactory = //
     AllNetTests.createClientSslFilterFactory();
 
     final InetSocketAddress remoteAddress;
@@ -84,12 +84,12 @@ public class SynchronousConnectionTest {
     final int nConnections;
     final boolean useSsl;
 
-    ConnectionManager rcm, scm;
+    NioManager rcm, scm;
 
     /**
      * Default constructor.
      */
-    public SynchronousConnectionTest(Properties p) {
+    public SynchronousHandlerTest(Properties p) {
 
         this.remoteAddress = new InetSocketAddress(p.getProperty("remote"), Integer.parseInt(p.getProperty("port")));
         this.delay = Long.parseLong(p.getProperty("delay"));
@@ -113,8 +113,8 @@ public class SynchronousConnectionTest {
     @Before
     public void init() {
 
-        this.rcm = ConnectionManager.getInstance();
-        this.scm = new ConnectionManager("SCM");
+        this.rcm = NioManager.getInstance();
+        this.scm = new NioManager("SCM");
     }
 
     /**
@@ -159,7 +159,7 @@ public class SynchronousConnectionTest {
     protected Verifier createReceiver(int index, //
             int bufferSize, final InetSocketAddress localAddress) throws IOException {
 
-        final SynchronousManagedConnection receiver = new SynchronousManagedConnection( //
+        final SynchronousHandler receiver = new SynchronousHandler( //
                 String.format("r-%d", index), this.rcm) //
                 .setBufferSize(bufferSize);
 
@@ -174,7 +174,7 @@ public class SynchronousConnectionTest {
             @Override
             protected void doRun() throws Exception {
 
-                SynchronousConnectionTest sct = SynchronousConnectionTest.this;
+                SynchronousHandlerTest sht = SynchronousHandlerTest.this;
 
                 receiver.init(InitializationType.ACCEPT, localAddress).get();
 
@@ -190,9 +190,9 @@ public class SynchronousConnectionTest {
                 Control.checkTrue(((ByteBuffer) header.flip()).getLong() == 0xCAFEBABEDEADBEEFL, //
                         "Invalid data");
 
-                byte[] arr = new byte[sct.messageLength << 3];
+                byte[] arr = new byte[sht.messageLength << 3];
 
-                for (int i = 0, n = sct.nMessages, acc = 0; i < n; i++, acc += sct.messageLength) {
+                for (int i = 0, n = sht.nMessages, acc = 0; i < n; i++, acc += sht.messageLength) {
 
                     for (int size, length = arr.length, offset = 0; length > 0; length -= size, offset += size) {
 
@@ -206,7 +206,7 @@ public class SynchronousConnectionTest {
                         out.write((byte) j);
                     }
 
-                    Control.checkTrue(Arrays.equals(arr, createMessage(acc, sct.messageLength).array()), //
+                    Control.checkTrue(Arrays.equals(arr, createMessage(acc, sht.messageLength).array()), //
                             "Invalid data");
                 }
 
@@ -252,7 +252,7 @@ public class SynchronousConnectionTest {
     protected Verifier createSender(int index, //
             int bufferSize, final InetSocketAddress remoteAddress) throws IOException {
 
-        final SynchronousManagedConnection sender = new SynchronousManagedConnection( //
+        final SynchronousHandler sender = new SynchronousHandler( //
                 String.format("s-%d", index), this.scm) //
                 .setBufferSize(bufferSize);
 
@@ -267,7 +267,7 @@ public class SynchronousConnectionTest {
             @Override
             protected void doRun() throws Exception {
 
-                SynchronousConnectionTest sct = SynchronousConnectionTest.this;
+                SynchronousHandlerTest sht = SynchronousHandlerTest.this;
 
                 sender.init(InitializationType.CONNECT, remoteAddress).get();
 
@@ -280,9 +280,9 @@ public class SynchronousConnectionTest {
                     out.write(header.get());
                 }
 
-                for (int i = 0, n = sct.nMessages, acc = 0; i < n; i++, acc += sct.messageLength) {
+                for (int i = 0, n = sht.nMessages, acc = 0; i < n; i++, acc += sht.messageLength) {
 
-                    ByteBuffer bb = createMessage(acc, sct.messageLength);
+                    ByteBuffer bb = createMessage(acc, sht.messageLength);
 
                     out.write(bb.array(), 0, bb.capacity());
 

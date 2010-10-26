@@ -26,24 +26,26 @@
  * </p>
  */
 
-package shared.net.filter;
+package shared.net.handler;
 
 import java.nio.ByteBuffer;
 import java.util.Queue;
 
 import shared.net.Connection;
+import shared.net.filter.Filter;
+import shared.net.filter.FilterFactory;
 
 /**
  * Defines a {@link Connection} that uses {@link Filter}s to process inbound and outbound data.
  * 
  * @apiviz.owns shared.net.filter.FilterFactory
- * @param <C>
- *            the parameterization lower bounded by {@link FilteredConnection} itself.
+ * @param <H>
+ *            the parameterization lower bounded by {@link FilteredHandler} itself.
  * @param <T>
  *            the {@link Filter} inbound type.
  * @author Roy Liu
  */
-public interface FilteredConnection<C extends FilteredConnection<C, T>, T> extends Connection {
+public interface FilteredHandler<H extends FilteredHandler<H, T>, T> extends Connection {
 
     /**
      * Sets the {@link FilterFactory} from which appropriate {@link Filter}s will be derived.
@@ -51,7 +53,7 @@ public interface FilteredConnection<C extends FilteredConnection<C, T>, T> exten
      * @param filterFactory
      *            the {@link FilterFactory}.
      */
-    public C setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super C> filterFactory);
+    public H setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super H> filterFactory);
 
     /**
      * Sends the given output value to the remote host.

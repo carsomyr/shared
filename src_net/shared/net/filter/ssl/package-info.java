@@ -1,6 +1,6 @@
 /**
  * <p>
- * Copyright (c) 2009 Roy Liu<br>
+ * Copyright (c) 2010 Roy Liu<br>
  * All rights reserved.
  * </p>
  * <p>
@@ -26,28 +26,8 @@
  * </p>
  */
 
-package shared.net.filter;
-
-import shared.net.Connection;
-
 /**
- * Defines a factory for creating {@link Filter}s.
- * 
- * @apiviz.owns shared.net.filter.Filter
- * @param <F>
- *            the {@link Filter} type.
- * @param <I>
- *            the inbound type.
- * @param <O>
- *            the outbound type.
- * @param <H>
- *            the {@link Connection} type.
- * @author Roy Liu
+ * A package for filter-based <a href="http://en.wikipedia.org/wiki/Transport_Layer_Security">SSL/TLS</a> transport.
  */
-public interface FilterFactory<F extends Filter<I, O>, I, O, H extends Connection> {
+package shared.net.filter.ssl;
 
-    /**
-     * Creates a new {@link Filter}.
-     */
-    public F newFilter(H handler);
-}

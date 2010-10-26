@@ -26,7 +26,7 @@
  * </p>
  */
 
-package shared.net.filter;
+package shared.net.filter.ssl;
 
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
@@ -38,18 +38,20 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
 
+import shared.net.filter.FilterFactory;
+import shared.net.handler.FilteredHandler;
 import shared.util.Control;
 
 /**
  * An implementation of {@link FilterFactory} that creates {@link SslFilter}s.
  * 
- * @apiviz.owns shared.net.filter.SslFilter
- * @param <C>
- *            the {@link FilteredConnection} type.
+ * @apiviz.owns shared.net.filter.ssl.SslFilter
+ * @param <H>
+ *            the {@link FilteredHandler} type.
  * @author Roy Liu
  */
-public class SslFilterFactory<C extends FilteredConnection<C, ?>> //
-        implements FilterFactory<SslFilter<C>, ByteBuffer, ByteBuffer, C>, SslEngineFactory<SslFilterFactory<C>> {
+public class SslFilterFactory<H extends FilteredHandler<H, ?>> //
+        implements FilterFactory<SslFilter<H>, ByteBuffer, ByteBuffer, H>, SslEngineFactory<SslFilterFactory<H>> {
 
     final ExecutorService executor;
 
@@ -78,7 +80,7 @@ public class SslFilterFactory<C extends FilteredConnection<C, ?>> //
     }
 
     @Override
-    public SslFilterFactory<C> setTrustManagers(TrustManager... trustManagers) {
+    public SslFilterFactory<H> setTrustManagers(TrustManager... trustManagers) {
 
         checkUninitialized();
 
@@ -88,7 +90,7 @@ public class SslFilterFactory<C extends FilteredConnection<C, ?>> //
     }
 
     @Override
-    public SslFilterFactory<C> setKeyManagers(KeyManager... keyManagers) {
+    public SslFilterFactory<H> setKeyManagers(KeyManager... keyManagers) {
 
         checkUninitialized();
 
@@ -98,7 +100,7 @@ public class SslFilterFactory<C extends FilteredConnection<C, ?>> //
     }
 
     @Override
-    public SslFilterFactory<C> setSecureRandom(SecureRandom random) {
+    public SslFilterFactory<H> setSecureRandom(SecureRandom random) {
 
         checkUninitialized();
 
@@ -108,7 +110,7 @@ public class SslFilterFactory<C extends FilteredConnection<C, ?>> //
     }
 
     @Override
-    public SslFilterFactory<C> setRequireClientAuth(boolean requireClientAuth) {
+    public SslFilterFactory<H> setRequireClientAuth(boolean requireClientAuth) {
 
         checkUninitialized();
 
@@ -118,7 +120,7 @@ public class SslFilterFactory<C extends FilteredConnection<C, ?>> //
     }
 
     @Override
-    public SslFilterFactory<C> setMode(Mode mode) {
+    public SslFilterFactory<H> setMode(Mode mode) {
 
         checkUninitialized();
 
@@ -175,8 +177,8 @@ public class SslFilterFactory<C extends FilteredConnection<C, ?>> //
     }
 
     @Override
-    public SslFilter<C> newFilter(C connection) {
-        return new SslFilter<C>(newSslEngine(), connection, this.executor);
+    public SslFilter<H> newFilter(H handler) {
+        return new SslFilter<H>(newSslEngine(), handler, this.executor);
     }
 
     /**

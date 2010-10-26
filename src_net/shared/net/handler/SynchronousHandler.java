@@ -26,7 +26,7 @@
  * </p>
  */
 
-package shared.net;
+package shared.net.handler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,20 +37,22 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import shared.net.filter.FilteredManagedConnection;
+import shared.net.Buffers;
 import shared.net.filter.IdentityFilterFactory;
+import shared.net.nio.NioConnection;
+import shared.net.nio.NioManager;
 import shared.util.Control;
 
 /**
- * A subclass of {@link AbstractManagedConnection} with synchronous behavior.
+ * A subclass of {@link NioConnection} with synchronous behavior.
  * 
- * @apiviz.composedOf shared.net.SynchronousManagedConnection.ManagedInputStream
- * @apiviz.composedOf shared.net.SynchronousManagedConnection.ManagedOutputStream
- * @apiviz.composedOf shared.net.SynchronousManagedConnection.Resolver
+ * @apiviz.composedOf shared.net.handler.SynchronousHandler.ManagedInputStream
+ * @apiviz.composedOf shared.net.handler.SynchronousHandler.ManagedOutputStream
+ * @apiviz.composedOf shared.net.handler.SynchronousHandler.Resolver
  * @apiviz.uses shared.net.Buffers
  * @author Roy Liu
  */
-public class SynchronousManagedConnection extends FilteredManagedConnection<SynchronousManagedConnection, ByteBuffer> {
+public class SynchronousHandler extends AbstractFilteredHandler<SynchronousHandler, ByteBuffer> {
 
     /**
      * Defines a gadget that supports {@link ManagedInputStream} and {@link ManagedOutputStream}.
@@ -109,16 +111,16 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             @Override
             public int resolve(int size) {
 
-                SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                ByteBuffer bb = smc.in.buffer;
+                SynchronousHandler handler = SynchronousHandler.this;
+                ByteBuffer bb = handler.in.buffer;
 
                 // If running low, request more!
                 if (bb.remaining() <= bb.capacity() >>> 1) {
 
-                    debug("[%s] reads enabled.", smc);
+                    debug("[%s] reads enabled.", handler);
 
-                    smc.setInResolverEnabled();
-                    smc.setEnabled(OperationType.READ, true);
+                    handler.setInResolverEnabled();
+                    handler.setEnabled(OperationType.READ, true);
                 }
 
                 if (size > 0) {
@@ -179,8 +181,8 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             @Override
             public int resolve(int remaining) {
 
-                SynchronousManagedConnection smc = SynchronousManagedConnection.this;
-                return smc.sendOutbound(smc.out.buffer) + smc.out.buffer.remaining();
+                SynchronousHandler handler = SynchronousHandler.this;
+                return handler.sendOutbound(handler.out.buffer) + handler.out.buffer.remaining();
             }
         };
     }
@@ -195,10 +197,10 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
             @Override
             public int resolve(int remaining) throws IOException {
 
-                SynchronousManagedConnection smc = SynchronousManagedConnection.this;
+                SynchronousHandler handler = SynchronousHandler.this;
 
                 // If there's nothing left to write, return normally.
-                if (remaining + smc.out.buffer.remaining() == 0) {
+                if (remaining + handler.out.buffer.remaining() == 0) {
 
                     return 0;
 
@@ -225,7 +227,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * The static {@link Logger} instance.
      */
-    final protected static Logger log = LoggerFactory.getLogger(SynchronousManagedConnection.class);
+    final protected static Logger log = LoggerFactory.getLogger(SynchronousHandler.class);
 
     Resolver inResolver;
     Resolver outResolver;
@@ -238,7 +240,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
     /**
      * Default constructor.
      */
-    public SynchronousManagedConnection(String name, ConnectionManager manager) {
+    public SynchronousHandler(String name, NioManager manager) {
         super(name, manager);
 
         this.inResolver = null;
@@ -249,15 +251,15 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
 
         this.stateMask = 0;
 
-        IdentityFilterFactory<ByteBuffer, SynchronousManagedConnection> iff = IdentityFilterFactory.getInstance();
+        IdentityFilterFactory<ByteBuffer, SynchronousHandler> iff = IdentityFilterFactory.getInstance();
         setFilterFactory(iff);
     }
 
     /**
      * Alternate constructor.
      */
-    public SynchronousManagedConnection(String name) {
-        this(name, ConnectionManager.getInstance());
+    public SynchronousHandler(String name) {
+        this(name, NioManager.getInstance());
     }
 
     /**
@@ -464,25 +466,25 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public int read() throws IOException {
 
-            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
+            SynchronousHandler handler = SynchronousHandler.this;
 
-            synchronized (smc.getLock()) {
+            synchronized (handler.getLock()) {
 
-                for (; (smc.stateMask & FLAG_CLOSED) == 0 && !this.buffer.hasRemaining();) {
-                    smc.waitInterruptibly();
+                for (; (handler.stateMask & FLAG_CLOSED) == 0 && !this.buffer.hasRemaining();) {
+                    handler.waitInterruptibly();
                 }
 
                 if (this.buffer.hasRemaining()) {
 
                     int res = this.buffer.get() & 0x000000FF;
 
-                    smc.inResolver.resolve(1);
+                    handler.inResolver.resolve(1);
 
                     return res;
 
                 } else {
 
-                    return smc.inResolver.resolve(0);
+                    return handler.inResolver.resolve(0);
                 }
             }
         }
@@ -493,7 +495,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public int read(byte[] dst, int offset, int length) throws IOException {
 
-            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
+            SynchronousHandler handler = SynchronousHandler.this;
 
             if (dst == null) {
                 throw new NullPointerException("Null destination array");
@@ -507,16 +509,16 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 return 0;
             }
 
-            synchronized (smc.getLock()) {
+            synchronized (handler.getLock()) {
 
-                for (; (smc.stateMask & FLAG_CLOSED) == 0 && !this.buffer.hasRemaining();) {
-                    smc.waitInterruptibly();
+                for (; (handler.stateMask & FLAG_CLOSED) == 0 && !this.buffer.hasRemaining();) {
+                    handler.waitInterruptibly();
                 }
 
                 int size = Math.min(this.buffer.remaining(), length);
                 this.buffer.get(dst, offset, size);
 
-                return smc.inResolver.resolve(size);
+                return handler.inResolver.resolve(size);
             }
         }
 
@@ -526,9 +528,9 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public int available() {
 
-            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
+            SynchronousHandler handler = SynchronousHandler.this;
 
-            synchronized (smc.getLock()) {
+            synchronized (handler.getLock()) {
                 return this.buffer.remaining();
             }
         }
@@ -538,7 +540,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
          */
         @Override
         public void close() {
-            Control.close(SynchronousManagedConnection.this);
+            Control.close(SynchronousHandler.this);
         }
     }
 
@@ -564,9 +566,9 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public void write(int b) throws IOException {
 
-            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
+            SynchronousHandler handler = SynchronousHandler.this;
 
-            synchronized (smc.getLock()) {
+            synchronized (handler.getLock()) {
 
                 for (int size, length = 1; length > 0; length -= size) {
 
@@ -574,8 +576,8 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                     size = Math.min(this.buffer.remaining(), length);
                     ((size > 0) ? this.buffer.put((byte) b) : this.buffer).flip();
 
-                    for (; smc.outResolver.resolve(length - size) > 0;) {
-                        smc.waitInterruptibly();
+                    for (; handler.outResolver.resolve(length - size) > 0;) {
+                        handler.waitInterruptibly();
                     }
                 }
             }
@@ -587,7 +589,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
         @Override
         public void write(byte[] src, int offset, int length) throws IOException {
 
-            SynchronousManagedConnection smc = SynchronousManagedConnection.this;
+            SynchronousHandler handler = SynchronousHandler.this;
 
             if (src == null) {
                 throw new NullPointerException("Null source array");
@@ -597,7 +599,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                 throw new IndexOutOfBoundsException("Invalid offset/length");
             }
 
-            synchronized (smc.getLock()) {
+            synchronized (handler.getLock()) {
 
                 for (int size; length > 0; offset += size, length -= size) {
 
@@ -605,8 +607,8 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
                     size = Math.min(this.buffer.remaining(), length);
                     this.buffer.put(src, offset, size).flip();
 
-                    for (; smc.outResolver.resolve(length - size) > 0;) {
-                        smc.waitInterruptibly();
+                    for (; handler.outResolver.resolve(length - size) > 0;) {
+                        handler.waitInterruptibly();
                     }
                 }
             }
@@ -617,7 +619,7 @@ public class SynchronousManagedConnection extends FilteredManagedConnection<Sync
          */
         @Override
         public void close() {
-            Control.close(SynchronousManagedConnection.this);
+            Control.close(SynchronousHandler.this);
         }
     }
 }
