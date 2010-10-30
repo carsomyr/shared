@@ -131,7 +131,7 @@ public class ClientServerTest {
                     String.format("%s.%s", ClientServerTest.class.getName(), name));
 
             setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, Utf8Handler>() //
-                    .add(new FrameFilterFactory<Utf8Handler>()) //
+                    .add(new FrameFilterFactory()) //
                     .add(this));
         }
 

@@ -69,14 +69,12 @@ public class SynchronousHandlerTest {
     /**
      * The server {@link SslFilterFactory}.
      */
-    final protected static SslFilterFactory<SynchronousHandler<Connection>> serverSslFilterFactory = //
-    AllNetTests.createServerSslFilterFactory();
+    final protected static SslFilterFactory serverSslFilterFactory = AllNetTests.createServerSslFilterFactory();
 
     /**
      * The client {@link SslFilterFactory}.
      */
-    final protected static SslFilterFactory<SynchronousHandler<Connection>> clientSslFilterFactory = //
-    AllNetTests.createClientSslFilterFactory();
+    final protected static SslFilterFactory clientSslFilterFactory = AllNetTests.createClientSslFilterFactory();
 
     final InetSocketAddress remoteAddress;
     final long delay;

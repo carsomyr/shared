@@ -38,30 +38,25 @@ import shared.net.ConnectionHandler;
  * 
  * @param <T>
  *            the inbound and outbound type.
- * @param <H>
- *            the {@link ConnectionHandler} type.
  * @author Roy Liu
  */
-public class IdentityFilterFactory<T, H extends ConnectionHandler<?>> //
-        implements FilterFactory<OobFilter<T, T>, T, T, H>, OobFilter<T, T> {
+public class IdentityFilterFactory<T> //
+        implements FilterFactory<OobFilter<T, T>, T, T, ConnectionHandler<?>>, OobFilter<T, T> {
 
     /**
      * The global {@link IdentityFilterFactory} instance.
      */
-    final protected static IdentityFilterFactory<?, ?> instance = //
-    new IdentityFilterFactory<Object, ConnectionHandler<?>>();
+    final protected static IdentityFilterFactory<?> instance = new IdentityFilterFactory<Object>();
 
     /**
      * Gets the global instance.
      * 
      * @param <T>
      *            the inbound and outbound type.
-     * @param <H>
-     *            the {@link ConnectionHandler} type.
      */
     @SuppressWarnings("unchecked")
-    final public static <T, H extends ConnectionHandler<?>> IdentityFilterFactory<T, H> getInstance() {
-        return (IdentityFilterFactory<T, H>) instance;
+    final public static <T> IdentityFilterFactory<T> getInstance() {
+        return (IdentityFilterFactory<T>) instance;
     }
 
     /**
@@ -102,7 +97,7 @@ public class IdentityFilterFactory<T, H extends ConnectionHandler<?>> //
     }
 
     @Override
-    public OobFilter<T, T> newFilter(H handler) {
+    public OobFilter<T, T> newFilter(ConnectionHandler<?> handler) {
         return newFilter();
     }
 }

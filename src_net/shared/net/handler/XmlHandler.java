@@ -94,7 +94,7 @@ abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Con
         };
 
         setFilterFactory(new ChainFilterFactory<ByteBuffer, ByteBuffer, H>() //
-                .add(new FrameFilterFactory<H>(minimumSize, maximumSize)) //
+                .add(new FrameFilterFactory(minimumSize, maximumSize)) //
                 .add(XmlFilterFactory.getInstance()) //
                 .add(this));
     }

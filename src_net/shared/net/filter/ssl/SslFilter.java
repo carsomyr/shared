@@ -53,11 +53,9 @@ import shared.net.handler.FilteredHandler;
  * An implementation of {@link Filter} that encrypts/decrypts traffic using the <a
  * href="http://en.wikipedia.org/wiki/Transport_Layer_Security">SSL/TLS</a> protocol.
  * 
- * @param <H>
- *            the {@link FilteredHandler} type.
  * @author Roy Liu
  */
-public class SslFilter<H extends FilteredHandler<H, ?, ?>> implements OobFilter<ByteBuffer, ByteBuffer> {
+public class SslFilter implements OobFilter<ByteBuffer, ByteBuffer> {
 
     /**
      * The global {@link Logger} instance.
@@ -65,7 +63,7 @@ public class SslFilter<H extends FilteredHandler<H, ?, ?>> implements OobFilter<
     final protected static Logger log = LoggerFactory.getLogger(SslFilter.class);
 
     final SSLEngine engine;
-    final H handler;
+    final FilteredHandler<?, ?, ?> handler;
     final Executor executor;
 
     ByteBuffer encryptBuffer;
@@ -85,7 +83,7 @@ public class SslFilter<H extends FilteredHandler<H, ?, ?>> implements OobFilter<
      * @param executor
      *            the {@link Executor} for carrying out delegated tasks.
      */
-    protected SslFilter(SSLEngine engine, H handler, Executor executor) {
+    protected SslFilter(SSLEngine engine, FilteredHandler<?, ?, ?> handler, Executor executor) {
 
         this.engine = engine;
         this.handler = handler;
@@ -396,7 +394,7 @@ public class SslFilter<H extends FilteredHandler<H, ?, ?>> implements OobFilter<
                 @Override
                 public void run() {
 
-                    SslFilter<H> sslF = SslFilter.this;
+                    SslFilter sslF = SslFilter.this;
 
                     debug("[%s] begin delegated task [%s].", //
                             sslF.handler, rr);

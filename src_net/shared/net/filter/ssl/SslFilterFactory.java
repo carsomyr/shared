@@ -46,12 +46,11 @@ import shared.util.Control;
  * An implementation of {@link FilterFactory} that creates {@link SslFilter}s.
  * 
  * @apiviz.owns shared.net.filter.ssl.SslFilter
- * @param <H>
- *            the {@link FilteredHandler} type.
  * @author Roy Liu
  */
-public class SslFilterFactory<H extends FilteredHandler<H, ?, ?>> //
-        implements FilterFactory<SslFilter<H>, ByteBuffer, ByteBuffer, H>, SslEngineFactory<SslFilterFactory<H>> {
+public class SslFilterFactory //
+        implements FilterFactory<SslFilter, ByteBuffer, ByteBuffer, FilteredHandler<?, ?, ?>>, //
+        SslEngineFactory<SslFilterFactory> {
 
     final ExecutorService executor;
 
@@ -80,7 +79,7 @@ public class SslFilterFactory<H extends FilteredHandler<H, ?, ?>> //
     }
 
     @Override
-    public SslFilterFactory<H> setTrustManagers(TrustManager... trustManagers) {
+    public SslFilterFactory setTrustManagers(TrustManager... trustManagers) {
 
         checkUninitialized();
 
@@ -90,7 +89,7 @@ public class SslFilterFactory<H extends FilteredHandler<H, ?, ?>> //
     }
 
     @Override
-    public SslFilterFactory<H> setKeyManagers(KeyManager... keyManagers) {
+    public SslFilterFactory setKeyManagers(KeyManager... keyManagers) {
 
         checkUninitialized();
 
@@ -100,7 +99,7 @@ public class SslFilterFactory<H extends FilteredHandler<H, ?, ?>> //
     }
 
     @Override
-    public SslFilterFactory<H> setSecureRandom(SecureRandom random) {
+    public SslFilterFactory setSecureRandom(SecureRandom random) {
 
         checkUninitialized();
 
@@ -110,7 +109,7 @@ public class SslFilterFactory<H extends FilteredHandler<H, ?, ?>> //
     }
 
     @Override
-    public SslFilterFactory<H> setRequireClientAuth(boolean requireClientAuth) {
+    public SslFilterFactory setRequireClientAuth(boolean requireClientAuth) {
 
         checkUninitialized();
 
@@ -120,7 +119,7 @@ public class SslFilterFactory<H extends FilteredHandler<H, ?, ?>> //
     }
 
     @Override
-    public SslFilterFactory<H> setMode(Mode mode) {
+    public SslFilterFactory setMode(Mode mode) {
 
         checkUninitialized();
 
@@ -177,8 +176,8 @@ public class SslFilterFactory<H extends FilteredHandler<H, ?, ?>> //
     }
 
     @Override
-    public SslFilter<H> newFilter(H handler) {
-        return new SslFilter<H>(newSslEngine(), handler, this.executor);
+    public SslFilter newFilter(FilteredHandler<?, ?, ?> handler) {
+        return new SslFilter(newSslEngine(), handler, this.executor);
     }
 
     /**

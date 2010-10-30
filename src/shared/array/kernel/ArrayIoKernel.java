@@ -43,13 +43,11 @@ public interface ArrayIoKernel extends Service {
      * 
      * @param <T>
      *            the {@link Array} type.
-     * @param <E>
-     *            the {@link Array} element type.
      * @param array
      *            the {@link Array}.
      * @return the {@code byte}s.
      */
-    public <T extends Array<T, E>, E> byte[] getBytes(T array);
+    public <T extends Array<T, ?>> byte[] getBytes(T array);
 
     /**
      * Parses an {@link Array} from {@code byte}s.

@@ -261,7 +261,7 @@ public class SynchronousHandler<C extends Connection> //
 
         this.stateMask = 0;
 
-        IdentityFilterFactory<ByteBuffer, SynchronousHandler<C>> iff = IdentityFilterFactory.getInstance();
+        IdentityFilterFactory<ByteBuffer> iff = IdentityFilterFactory.getInstance();
         setFilterFactory(iff);
     }
 

@@ -52,7 +52,6 @@ import org.junit.runners.Suite.SuiteClasses;
 import shared.net.filter.ssl.SslEngineFactory.Mode;
 import shared.net.filter.ssl.SslFilter;
 import shared.net.filter.ssl.SslFilterFactory;
-import shared.net.handler.FilteredHandler;
 import shared.net.handler.SynchronousHandler;
 import shared.net.nio.NioManager;
 
@@ -198,24 +197,18 @@ public class AllNetTests {
 
     /**
      * Creates a client-side {@link SslFilterFactory}.
-     * 
-     * @param <H>
-     *            the {@link FilteredHandler} type.
      */
-    final protected static <H extends FilteredHandler<H, ?, ?>> SslFilterFactory<H> createClientSslFilterFactory() {
-        return new SslFilterFactory<H>() //
+    final protected static SslFilterFactory createClientSslFilterFactory() {
+        return new SslFilterFactory() //
                 .setMode(Mode.CLIENT) //
                 .setTrustManagers(getTrustManagers());
     }
 
     /**
      * Creates a server-side {@link SslFilterFactory}.
-     * 
-     * @param <H>
-     *            the {@link FilteredHandler} type.
      */
-    final protected static <H extends FilteredHandler<H, ?, ?>> SslFilterFactory<H> createServerSslFilterFactory() {
-        return new SslFilterFactory<H>() //
+    final protected static SslFilterFactory createServerSslFilterFactory() {
+        return new SslFilterFactory() //
                 .setMode(Mode.SERVER) //
                 .setKeyManagers(getKeyManagers(KEYSTORE_PATHNAME, KEYSTORE_PASSWORD)) //
                 .setTrustManagers(getTrustManagers());

@@ -61,7 +61,7 @@ public class ModalArrayIoKernel implements ArrayIoKernel {
     }
 
     @Override
-    public <T extends Array<T, E>, E> byte[] getBytes(T array) {
+    public <T extends Array<T, ?>> byte[] getBytes(T array) {
         return this.opKernel.getBytes(array);
     }
 

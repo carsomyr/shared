@@ -37,12 +37,10 @@ import shared.util.Control;
 /**
  * An implementation of {@link FilterFactory} for {@code null}-delimited {@code byte} frames.
  * 
- * @param <H>
- *            the {@link ConnectionHandler} type.
  * @author Roy Liu
  */
-public class FrameFilterFactory<H extends ConnectionHandler<?>> //
-        implements FilterFactory<Filter<ByteBuffer, ByteBuffer>, ByteBuffer, ByteBuffer, H> {
+public class FrameFilterFactory //
+        implements FilterFactory<Filter<ByteBuffer, ByteBuffer>, ByteBuffer, ByteBuffer, ConnectionHandler<?>> {
 
     final int minimumSize;
     final int maximumSize;
@@ -71,9 +69,9 @@ public class FrameFilterFactory<H extends ConnectionHandler<?>> //
     }
 
     @Override
-    public Filter<ByteBuffer, ByteBuffer> newFilter(final H handler) {
+    public Filter<ByteBuffer, ByteBuffer> newFilter(final ConnectionHandler<?> handler) {
 
-        final FrameFilterFactory<H> fff = FrameFilterFactory.this;
+        final FrameFilterFactory fff = FrameFilterFactory.this;
 
         return new Filter<ByteBuffer, ByteBuffer>() {
 

@@ -106,7 +106,7 @@ public class MatlabIoKernel implements ArrayIoKernel {
     }
 
     @Override
-    public <T extends Array<T, E>, E> byte[] getBytes(T array) {
+    public <T extends Array<T, ?>> byte[] getBytes(T array) {
 
         final Integer count;
         final String name;

@@ -73,14 +73,12 @@ public class AsynchronousHandlerTest {
     /**
      * The server {@link SslFilterFactory}.
      */
-    final protected static SslFilterFactory<TestXmlHandler> serverSslFilterFactory = //
-    AllNetTests.createServerSslFilterFactory();
+    final protected static SslFilterFactory serverSslFilterFactory = AllNetTests.createServerSslFilterFactory();
 
     /**
      * The client {@link SslFilterFactory}.
      */
-    final protected static SslFilterFactory<TestXmlHandler> clientSslFilterFactory = //
-    AllNetTests.createClientSslFilterFactory();
+    final protected static SslFilterFactory clientSslFilterFactory = AllNetTests.createClientSslFilterFactory();
 
     final InetSocketAddress remoteAddress;
     final long delay;
@@ -143,8 +141,7 @@ public class AsynchronousHandlerTest {
 
         int minMessageSize = this.messageLength << 3;
         int maxMessageSize = this.messageLength << 6;
-        FrameFilterFactory<TestXmlHandler> fff = new FrameFilterFactory<TestXmlHandler>( //
-                minMessageSize, maxMessageSize);
+        FrameFilterFactory fff = new FrameFilterFactory(minMessageSize, maxMessageSize);
 
         List<AbstractTestVerifier<?>> verifiers = new ArrayList<AbstractTestVerifier<?>>();
 
