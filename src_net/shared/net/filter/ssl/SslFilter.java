@@ -45,6 +45,7 @@ import shared.net.Buffers;
 import shared.net.Connection.OperationType;
 import shared.net.filter.Filter;
 import shared.net.filter.Filters;
+import shared.net.filter.IdentityFilterFactory;
 import shared.net.filter.OobEvent;
 import shared.net.filter.OobFilter;
 import shared.net.handler.FilteredHandler;
@@ -62,6 +63,300 @@ public class SslFilter implements OobFilter<ByteBuffer, ByteBuffer> {
      */
     final protected static Logger log = LoggerFactory.getLogger(SslFilter.class);
 
+    /**
+     * The {@link Filter} to use when TLS is on.
+     */
+    final protected OobFilter<ByteBuffer, ByteBuffer> tlsOnFilter = new OobFilter<ByteBuffer, ByteBuffer>() {
+
+        @Override
+        public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
+
+            SslFilter sslF = SslFilter.this;
+
+            sslF.decryptBuffer.compact();
+
+            //
+
+            for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
+                sslF.readBuffer = (ByteBuffer) Buffers.append(sslF.readBuffer.compact(), bb, 1).flip();
+            }
+
+            try {
+
+                loop: for (;;) {
+
+                    SSLEngineResult result = sslF.engine.unwrap( //
+                            (ByteBuffer) sslF.readBuffer.compact().flip(), //
+                            sslF.decryptBuffer);
+
+                    Status status = result.getStatus();
+                    HandshakeStatus handshakeStatus = result.getHandshakeStatus();
+
+                    // The first step is to read in TLS packets.
+
+                    switch (status) {
+
+                    case BUFFER_OVERFLOW:
+
+                        sslF.debugStatusInbound(result);
+
+                        // Expand the application buffer.
+                        sslF.decryptBuffer = Buffers.resize( //
+                                (ByteBuffer) sslF.decryptBuffer.flip(), //
+                                (sslF.decryptBuffer.capacity() << 1) + 1);
+
+                        // Continue the loop: See what the next network buffer read brings.
+                        continue loop;
+
+                    case BUFFER_UNDERFLOW:
+
+                        sslF.debugStatusInbound(result);
+
+                        // Break the loop: Wait for the next network buffer read.
+                        break loop;
+
+                    case CLOSED:
+
+                        sslF.debugStatusInbound(result);
+
+                        // Clear the read buffer for good measure.
+                        sslF.readBuffer.clear().flip();
+
+                        // Break the loop: Although a final SSLEngine#wrap is possible with bidirectional shutdown, we
+                        // stick with the unidirectional case.
+                        break loop;
+
+                    case OK:
+                        // Continue processing: Everything is OK.
+                        break;
+
+                    default:
+                        throw new IllegalStateException("Invalid result status");
+                    }
+
+                    // The second step is to deal with handshaking.
+
+                    switch (handshakeStatus) {
+
+                    case NEED_UNWRAP:
+
+                        sslF.debugHandshakeStatusInbound(result);
+
+                        // Continue the loop: The first step is conveniently calling SSLEngine#unwrap.
+                        continue loop;
+
+                    case NEED_WRAP:
+
+                        sslF.debugHandshakeStatusInbound(result);
+
+                        sslF.handler.send(null);
+
+                        // Break the loop: We can't proceed until the remote host responds.
+                        break loop;
+
+                    case NEED_TASK:
+
+                        sslF.debugHandshakeStatusInbound(result);
+
+                        synchronized (sslF.handler.getConnection().getLock()) {
+                            sslF.runDelegatedTasks();
+                        }
+
+                        // Break the loop: We can't proceed until external tasks have finished.
+                        break loop;
+
+                    case FINISHED:
+
+                        sslF.debugHandshakeStatusInbound(result);
+
+                        // Write pending outbound data.
+                        sslF.handler.send(null);
+
+                        // Continue the loop: We just finished handshaking.
+                        continue loop;
+
+                    case NOT_HANDSHAKING:
+                        // Continue processing: Nothing remarkable happened.
+                        break;
+
+                    default:
+                        throw new IllegalStateException("Invalid handshake status");
+                    }
+
+                    // Break the loop: There's nothing to read and all special handling is done.
+                    if (!sslF.readBuffer.hasRemaining()) {
+                        break loop;
+                    }
+                }
+
+            } catch (SSLException e) {
+
+                throw new RuntimeException(e);
+            }
+
+            //
+
+            outputs.add((ByteBuffer) sslF.decryptBuffer.flip());
+        }
+
+        @Override
+        public void applyOutbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
+
+            SslFilter sslF = SslFilter.this;
+
+            sslF.encryptBuffer.compact();
+
+            //
+
+            for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
+                sslF.writeBuffer = (ByteBuffer) Buffers.append(sslF.writeBuffer.compact(), bb, 1).flip();
+            }
+
+            try {
+
+                loop: for (;;) {
+
+                    SSLEngineResult result = sslF.engine.wrap( //
+                            (ByteBuffer) sslF.writeBuffer.compact().flip(), //
+                            sslF.encryptBuffer);
+
+                    Status status = result.getStatus();
+                    HandshakeStatus handshakeStatus = result.getHandshakeStatus();
+
+                    // The first step is to write out TLS packets.
+
+                    switch (status) {
+
+                    case BUFFER_OVERFLOW:
+
+                        sslF.debugStatusOutbound(result);
+
+                        // Expand the network buffer.
+                        sslF.encryptBuffer = Buffers.resize( //
+                                (ByteBuffer) sslF.encryptBuffer.flip(), //
+                                (sslF.encryptBuffer.capacity() << 1) + 1);
+
+                        // Continue the loop: See what the next application buffer read brings.
+                        continue loop;
+
+                    case CLOSED:
+
+                        sslF.debugStatusOutbound(result);
+
+                        // Clear the write buffer for good measure.
+                        sslF.writeBuffer.clear().flip();
+
+                        // Break the loop: Writers have no more possible actions.
+                        break loop;
+
+                    case OK:
+
+                        if (sslF.shutdownOutbound) {
+
+                            debug("[%s] shut down outbound.", sslF.handler);
+
+                            // Write out a close_notify.
+                            sslF.engine.closeOutbound();
+                            sslF.shutdownOutbound = false;
+
+                            continue loop;
+                        }
+
+                        // Continue processing: Everything is OK.
+                        break;
+
+                    case BUFFER_UNDERFLOW:
+                    default:
+                        throw new IllegalStateException("Invalid result status");
+                    }
+
+                    // The second step is to deal with handshaking.
+
+                    switch (handshakeStatus) {
+
+                    case NEED_UNWRAP:
+
+                        sslF.debugHandshakeStatusOutbound(result);
+
+                        // Break the loop: We can't proceed until the remote host responds.
+                        break loop;
+
+                    case NEED_WRAP:
+
+                        sslF.debugHandshakeStatusOutbound(result);
+
+                        // Continue the loop: The first step is conveniently calling SSLEngine#wrap.
+                        continue loop;
+
+                    case NEED_TASK:
+
+                        sslF.debugHandshakeStatusOutbound(result);
+
+                        sslF.runDelegatedTasks();
+
+                        // Break the loop: We can't proceed until external tasks have finished.
+                        break loop;
+
+                    case FINISHED:
+
+                        sslF.debugHandshakeStatusOutbound(result);
+
+                        // Continue the loop: We just finished handshaking.
+                        continue loop;
+
+                    case NOT_HANDSHAKING:
+                        // Continue processing: Nothing remarkable happened.
+                        break;
+
+                    default:
+                        throw new IllegalStateException("Invalid handshake status");
+                    }
+
+                    // Break the loop: There's nothing to write and all special handling is done.
+                    if (!sslF.writeBuffer.hasRemaining()) {
+                        break loop;
+                    }
+                }
+
+            } catch (SSLException e) {
+
+                throw new RuntimeException(e);
+            }
+
+            //
+
+            outputs.add((ByteBuffer) sslF.encryptBuffer.flip());
+        }
+
+        @Override
+        public void applyInboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
+            Filters.transfer(inputs, outputs);
+        }
+
+        @Override
+        public void applyOutboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
+
+            SslFilter sslF = SslFilter.this;
+
+            for (OobEvent evt; (evt = inputs.poll()) != null;) {
+
+                switch (evt.getType()) {
+
+                case CLOSING_USER:
+                    sslF.shutdownOutbound = true;
+                    break;
+                }
+
+                outputs.add(evt);
+            }
+        }
+    };
+
+    /**
+     * The {@link Filter} to use when TLS is off.
+     */
+    final protected OobFilter<ByteBuffer, ByteBuffer> tlsOffFilter = IdentityFilterFactory.newFilter();
+
     final SSLEngine engine;
     final FilteredHandler<?, ?, ?> handler;
     final Executor executor;
@@ -72,6 +367,8 @@ public class SslFilter implements OobFilter<ByteBuffer, ByteBuffer> {
     ByteBuffer writeBuffer;
 
     boolean shutdownOutbound;
+
+    OobFilter<ByteBuffer, ByteBuffer> filter;
 
     /**
      * Default constructor.
@@ -95,6 +392,8 @@ public class SslFilter implements OobFilter<ByteBuffer, ByteBuffer> {
         this.writeBuffer = ByteBuffer.allocate(0);
 
         this.shutdownOutbound = false;
+
+        this.filter = this.tlsOnFilter;
     }
 
     @Override
@@ -102,130 +401,7 @@ public class SslFilter implements OobFilter<ByteBuffer, ByteBuffer> {
 
         assert !Thread.holdsLock(this.handler.getConnection().getLock());
 
-        this.decryptBuffer.compact();
-
-        //
-
-        for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
-            this.readBuffer = (ByteBuffer) Buffers.append(this.readBuffer.compact(), bb, 1).flip();
-        }
-
-        try {
-
-            loop: for (;;) {
-
-                SSLEngineResult result = this.engine.unwrap( //
-                        (ByteBuffer) this.readBuffer.compact().flip(), //
-                        this.decryptBuffer);
-
-                Status status = result.getStatus();
-                HandshakeStatus handshakeStatus = result.getHandshakeStatus();
-
-                // The first step is to read in TLS packets.
-
-                switch (status) {
-
-                case BUFFER_OVERFLOW:
-
-                    debugStatusInbound(result);
-
-                    // Expand the application buffer.
-                    this.decryptBuffer = Buffers.resize( //
-                            (ByteBuffer) this.decryptBuffer.flip(), //
-                            (this.decryptBuffer.capacity() << 1) + 1);
-
-                    // Continue the loop: See what the next network buffer read brings.
-                    continue loop;
-
-                case BUFFER_UNDERFLOW:
-
-                    debugStatusInbound(result);
-
-                    // Break the loop: Wait for the next network buffer read.
-                    break loop;
-
-                case CLOSED:
-
-                    debugStatusInbound(result);
-
-                    // Clear the read buffer for good measure.
-                    this.readBuffer.clear().flip();
-
-                    // Break the loop: Although a final SSLEngine#wrap is possible with bidirectional shutdown, we stick
-                    // with the unidirectional case.
-                    break loop;
-
-                case OK:
-                    // Continue processing: Everything is OK.
-                    break;
-
-                default:
-                    throw new IllegalStateException("Invalid result status");
-                }
-
-                // The second step is to deal with handshaking.
-
-                switch (handshakeStatus) {
-
-                case NEED_UNWRAP:
-
-                    debugHandshakeStatusInbound(result);
-
-                    // Continue the loop: The first step is conveniently calling SSLEngine#unwrap.
-                    continue loop;
-
-                case NEED_WRAP:
-
-                    debugHandshakeStatusInbound(result);
-
-                    this.handler.send(null);
-
-                    // Break the loop: We can't proceed until the remote host responds.
-                    break loop;
-
-                case NEED_TASK:
-
-                    debugHandshakeStatusInbound(result);
-
-                    synchronized (this.handler.getConnection().getLock()) {
-                        runDelegatedTasks();
-                    }
-
-                    // Break the loop: We can't proceed until external tasks have finished.
-                    break loop;
-
-                case FINISHED:
-
-                    debugHandshakeStatusInbound(result);
-
-                    // Write pending outbound data.
-                    this.handler.send(null);
-
-                    // Continue the loop: We just finished handshaking.
-                    continue loop;
-
-                case NOT_HANDSHAKING:
-                    // Continue processing: Nothing remarkable happened.
-                    break;
-
-                default:
-                    throw new IllegalStateException("Invalid handshake status");
-                }
-
-                // Break the loop: There's nothing to read and all special handling is done.
-                if (!this.readBuffer.hasRemaining()) {
-                    break loop;
-                }
-            }
-
-        } catch (SSLException e) {
-
-            throw new RuntimeException(e);
-        }
-
-        //
-
-        outputs.add((ByteBuffer) this.decryptBuffer.flip());
+        this.filter.applyInbound(inputs, outputs);
     }
 
     @Override
@@ -233,149 +409,37 @@ public class SslFilter implements OobFilter<ByteBuffer, ByteBuffer> {
 
         assert Thread.holdsLock(this.handler.getConnection().getLock());
 
-        this.encryptBuffer.compact();
-
-        //
-
-        for (ByteBuffer bb; (bb = inputs.poll()) != null;) {
-            this.writeBuffer = (ByteBuffer) Buffers.append(this.writeBuffer.compact(), bb, 1).flip();
-        }
-
-        try {
-
-            loop: for (;;) {
-
-                SSLEngineResult result = this.engine.wrap( //
-                        (ByteBuffer) this.writeBuffer.compact().flip(), //
-                        this.encryptBuffer);
-
-                Status status = result.getStatus();
-                HandshakeStatus handshakeStatus = result.getHandshakeStatus();
-
-                // The first step is to write out TLS packets.
-
-                switch (status) {
-
-                case BUFFER_OVERFLOW:
-
-                    debugStatusOutbound(result);
-
-                    // Expand the network buffer.
-                    this.encryptBuffer = Buffers.resize( //
-                            (ByteBuffer) this.encryptBuffer.flip(), //
-                            (this.encryptBuffer.capacity() << 1) + 1);
-
-                    // Continue the loop: See what the next application buffer read brings.
-                    continue loop;
-
-                case CLOSED:
-
-                    debugStatusOutbound(result);
-
-                    // Clear the write buffer for good measure.
-                    this.writeBuffer.clear().flip();
-
-                    // Break the loop: Writers have no more possible actions.
-                    break loop;
-
-                case OK:
-
-                    if (this.shutdownOutbound) {
-
-                        debug("[%s] shut down outbound.", this.handler);
-
-                        // Write out a close_notify.
-                        this.engine.closeOutbound();
-                        this.shutdownOutbound = false;
-
-                        continue loop;
-                    }
-
-                    // Continue processing: Everything is OK.
-                    break;
-
-                case BUFFER_UNDERFLOW:
-                default:
-                    throw new IllegalStateException("Invalid result status");
-                }
-
-                // The second step is to deal with handshaking.
-
-                switch (handshakeStatus) {
-
-                case NEED_UNWRAP:
-
-                    debugHandshakeStatusOutbound(result);
-
-                    // Break the loop: We can't proceed until the remote host responds.
-                    break loop;
-
-                case NEED_WRAP:
-
-                    debugHandshakeStatusOutbound(result);
-
-                    // Continue the loop: The first step is conveniently calling SSLEngine#wrap.
-                    continue loop;
-
-                case NEED_TASK:
-
-                    debugHandshakeStatusOutbound(result);
-
-                    runDelegatedTasks();
-
-                    // Break the loop: We can't proceed until external tasks have finished.
-                    break loop;
-
-                case FINISHED:
-
-                    debugHandshakeStatusOutbound(result);
-
-                    // Continue the loop: We just finished handshaking.
-                    continue loop;
-
-                case NOT_HANDSHAKING:
-                    // Continue processing: Nothing remarkable happened.
-                    break;
-
-                default:
-                    throw new IllegalStateException("Invalid handshake status");
-                }
-
-                // Break the loop: There's nothing to write and all special handling is done.
-                if (!this.writeBuffer.hasRemaining()) {
-                    break loop;
-                }
-            }
-
-        } catch (SSLException e) {
-
-            throw new RuntimeException(e);
-        }
-
-        //
-
-        outputs.add((ByteBuffer) this.encryptBuffer.flip());
+        this.filter.applyOutbound(inputs, outputs);
     }
 
     @Override
     public void applyInboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
-        Filters.transfer(inputs, outputs);
+
+        assert !Thread.holdsLock(this.handler.getConnection().getLock());
+
+        this.filter.applyInboundOob(inputs, outputs);
     }
 
     @Override
     public void applyOutboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
 
-        for (OobEvent evt; (evt = inputs.poll()) != null;) {
+        assert Thread.holdsLock(this.handler.getConnection().getLock());
 
-            switch (evt.getType()) {
+        this.filter.applyOutboundOob(inputs, outputs);
+    }
 
-            case CLOSING_USER:
-                this.shutdownOutbound = true;
-                break;
-            }
+    /**
+     * Sets {@link #tlsOnFilter}.
+     */
+    protected void setTlsOnFilter() {
+        this.filter = this.tlsOnFilter;
+    }
 
-            outputs.add(evt);
-        }
+    /**
+     * Sets {@link #tlsOffFilter}.
+     */
+    protected void setTlsOffFilter() {
+        this.filter = this.tlsOffFilter;
     }
 
     /**
