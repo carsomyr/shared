@@ -215,7 +215,7 @@ public class NioConnection //
 
             NioConnection conn = NioConnection.this;
             Object lock = conn.getLock();
-            assert !Thread.holdsLock(lock);
+            assert !Thread.holdsLock(lock) && conn.isManagerThread();
 
             final boolean disableWrites;
 
@@ -269,7 +269,7 @@ public class NioConnection //
 
             NioConnection conn = NioConnection.this;
             Object lock = conn.getLock();
-            assert !Thread.holdsLock(lock);
+            assert !Thread.holdsLock(lock) && conn.isManagerThread();
 
             final boolean closeConnection;
 
@@ -344,6 +344,11 @@ public class NioConnection //
     @Override
     public Object getLock() {
         return this;
+    }
+
+    @Override
+    public boolean isManagerThread() {
+        return this.thread == Thread.currentThread();
     }
 
     @Override

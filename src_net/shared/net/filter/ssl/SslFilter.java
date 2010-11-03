@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import shared.net.Buffers;
+import shared.net.Connection;
 import shared.net.Connection.OperationType;
 import shared.net.filter.Filter;
 import shared.net.filter.Filters;
@@ -399,7 +400,8 @@ public class SslFilter implements OobFilter<ByteBuffer, ByteBuffer> {
     @Override
     public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-        assert !Thread.holdsLock(this.handler.getConnection().getLock());
+        Connection conn = this.handler.getConnection();
+        assert !Thread.holdsLock(conn.getLock()) && conn.isManagerThread();
 
         this.filter.applyInbound(inputs, outputs);
     }
@@ -415,7 +417,8 @@ public class SslFilter implements OobFilter<ByteBuffer, ByteBuffer> {
     @Override
     public void applyInboundOob(Queue<OobEvent> inputs, Queue<OobEvent> outputs) {
 
-        assert !Thread.holdsLock(this.handler.getConnection().getLock());
+        Connection conn = this.handler.getConnection();
+        assert !Thread.holdsLock(conn.getLock()) && conn.isManagerThread();
 
         this.filter.applyInboundOob(inputs, outputs);
     }

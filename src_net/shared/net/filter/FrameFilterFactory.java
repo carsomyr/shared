@@ -31,6 +31,7 @@ package shared.net.filter;
 import java.nio.ByteBuffer;
 import java.util.Queue;
 
+import shared.net.Connection;
 import shared.net.ConnectionHandler;
 import shared.util.Control;
 
@@ -80,7 +81,8 @@ public class FrameFilterFactory //
             @Override
             public void applyInbound(Queue<ByteBuffer> inputs, Queue<ByteBuffer> outputs) {
 
-                assert !Thread.holdsLock(handler.getConnection().getLock());
+                Connection conn = handler.getConnection();
+                assert !Thread.holdsLock(conn.getLock()) && conn.isManagerThread();
 
                 for (ByteBuffer bb = null; (bb = inputs.peek()) != null;) {
 

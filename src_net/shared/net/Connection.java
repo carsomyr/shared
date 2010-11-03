@@ -107,6 +107,15 @@ public interface Connection extends Closeable, Executor {
     public Object getLock();
 
     /**
+     * Gets whether this connection's {@link ConnectionManager} thread is the current thread.
+     * 
+     * @return {@code true} if and only if this connection's {@link ConnectionManager} thread is the current thread.
+     *         Note: All code where this test returns {@code true} are thread-safe with respect to callbacks.
+     * @see Thread#currentThread()
+     */
+    public boolean isManagerThread();
+
+    /**
      * Executes the given code snippet on this connection's {@link ConnectionManager} thread.
      * 
      * @param r

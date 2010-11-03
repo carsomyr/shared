@@ -221,13 +221,23 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
         Control.checkTrue(evt.getType() == USER, //
                 "User-defined out-of-band events must have type USER");
 
-        this.connection.execute(new Runnable() {
+        // Are we in the manager thread?
+        if (this.connection.isManagerThread()) {
 
-            @Override
-            public void run() {
-                onOob(evt, null);
-            }
-        });
+            onOob(evt, null);
+
+        }
+        // If not, ensure thread safety.
+        else {
+
+            this.connection.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    onOob(evt, null);
+                }
+            });
+        }
     }
 
     @Override

@@ -183,7 +183,8 @@ abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Con
             @Override
             public void applyInbound(Queue<Element> inputs, Queue<T> outputs) {
 
-                assert !Thread.holdsLock(handler.getConnection().getLock());
+                Connection conn = handler.getConnection();
+                assert !Thread.holdsLock(conn.getLock()) && conn.isManagerThread();
 
                 for (Element elt; (elt = inputs.poll()) != null;) {
                     outputs.add(parse(elt));
