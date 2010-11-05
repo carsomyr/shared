@@ -85,7 +85,7 @@ public class NioEvent<T> implements Event<NioEvent<?>, NioEvent.NioEventType, So
         /**
          * Denotes a request to execute code on the manager thread.
          */
-        EXECUTE, //
+        INVOKE, //
 
         /**
          * Denotes a request to get the list of bound addresses.

@@ -37,6 +37,9 @@ import static shared.net.filter.OobEvent.OobEventType.USER;
 import java.io.Closeable;
 import java.nio.ByteBuffer;
 import java.util.Queue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import shared.net.Connection;
 import shared.net.filter.BaseOobEvent;
@@ -62,6 +65,37 @@ import shared.util.Control;
  */
 abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<H, C, T>, C extends Connection, T> //
         implements FilteredHandler<H, C, T>, OobHandler<C>, Closeable {
+
+    /**
+     * A trivial {@link Future} that returns immediately with {@code null}.
+     */
+    final protected static Future<?> dummyFuture = new Future<Object>() {
+
+        @Override
+        public Object get() {
+            return null;
+        }
+
+        @Override
+        public Object get(long timeout, TimeUnit unit) {
+            return null;
+        }
+
+        @Override
+        public boolean isDone() {
+            return true;
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            return false;
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return false;
+        }
+    };
 
     final String name;
 
@@ -216,7 +250,7 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
     }
 
     @Override
-    public void onOob(final OobEvent evt) {
+    public Future<?> onOob(final OobEvent evt) {
 
         Control.checkTrue(evt.getType() == USER, //
                 "User-defined out-of-band events must have type USER");
@@ -226,15 +260,19 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
 
             onOob(evt, null);
 
+            return dummyFuture;
         }
         // If not, ensure thread safety.
         else {
 
-            this.connection.execute(new Runnable() {
+            return this.connection.invoke(new Callable<Object>() {
 
                 @Override
-                public void run() {
+                public Object call() {
+
                     onOob(evt, null);
+
+                    return null;
                 }
             });
         }

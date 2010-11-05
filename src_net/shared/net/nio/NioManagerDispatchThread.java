@@ -47,6 +47,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import shared.event.Handler;
 import shared.event.Transitions;
@@ -327,16 +330,56 @@ public class NioManagerDispatchThread extends NioManagerThread {
     }
 
     /**
-     * Handles a request to get the list of connections, which is an aggregate of the lists reported by helper
-     * {@link NioManagerIoThread}s.
+     * Handles a request to get the list of connections, which consists of pending connections aggregated with the lists
+     * reported by helper {@link NioManagerIoThread}s.
      */
-    @SuppressWarnings("unchecked")
-    protected void handleGetConnections(Request<?, List<NioConnection>> request) {
+    protected void handleGetConnections(Request<?, List<Future<List<NioConnection>>>> request) {
 
-        List<NioConnection> res = new ArrayList<NioConnection>();
+        List<Future<List<NioConnection>>> res = new ArrayList<Future<List<NioConnection>>>();
+
+        final List<NioConnection> conns = new ArrayList<NioConnection>();
+
+        for (SelectionKey key : this.selector.keys()) {
+
+            Object attachment = key.attachment();
+
+            if (attachment instanceof Entry) {
+                conns.addAll(((Entry) attachment).getPending());
+            }
+        }
+
+        res.add(new Future<List<NioConnection>>() {
+
+            @Override
+            public List<NioConnection> get() {
+                return conns;
+            }
+
+            @Override
+            public List<NioConnection> get(long timeout, TimeUnit unit) {
+                return conns;
+            }
+
+            @Override
+            public boolean isDone() {
+                return true;
+            }
+
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return false;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+        });
 
         for (NioManagerIoThread ioThread : this.ioThreads) {
-            res.addAll((List<NioConnection>) ioThread.request(GET_CONNECTIONS, null));
+
+            Future<List<NioConnection>> fut = ioThread.request(GET_CONNECTIONS, null, null);
+            res.add(fut);
         }
 
         request.set(res);
@@ -422,16 +465,13 @@ public class NioManagerDispatchThread extends NioManagerThread {
         }
     };
 
-    @Transitions(transitions = {
-            //
-            @Transition(currentState = "CONNECT", eventType = "EXECUTE"), //
-            @Transition(currentState = "ACCEPT", eventType = "EXECUTE") //
-    })
-    final Handler<NioEvent<Runnable>> executeHandler = new Handler<NioEvent<Runnable>>() {
+    @Transition(currentState = "*", eventType = "INVOKE")
+    final Handler<NioEvent<Request<Callable<Object>, Object>>> invokeHandler = //
+    new Handler<NioEvent<Request<Callable<Object>, Object>>>() {
 
         @Override
-        public void handle(NioEvent<Runnable> evt) {
-            handleExecute((NioConnection) evt.getSource(), evt.getArgument());
+        public void handle(NioEvent<Request<Callable<Object>, Object>> evt) {
+            handleInvoke(evt.getArgument());
         }
     };
 
@@ -446,11 +486,11 @@ public class NioManagerDispatchThread extends NioManagerThread {
     };
 
     @Transition(currentState = "RUN", eventType = "GET_CONNECTIONS", group = "internal")
-    final Handler<NioEvent<Request<?, List<NioConnection>>>> getConnectionsHandler = //
-    new Handler<NioEvent<Request<?, List<NioConnection>>>>() {
+    final Handler<NioEvent<Request<?, List<Future<List<NioConnection>>>>>> getConnectionsHandler = //
+    new Handler<NioEvent<Request<?, List<Future<List<NioConnection>>>>>>() {
 
         @Override
-        public void handle(NioEvent<Request<?, List<NioConnection>>> evt) {
+        public void handle(NioEvent<Request<?, List<Future<List<NioConnection>>>>> evt) {
             handleGetConnections(evt.getArgument());
         }
     };

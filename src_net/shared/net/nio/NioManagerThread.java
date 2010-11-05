@@ -40,6 +40,8 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -172,6 +174,16 @@ abstract public class NioManagerThread extends CoreThread //
 
                 } else {
 
+                    // Note: Reading a stale thread reference is OK, since only this thread is capable of reassigning
+                    // any connection's thread reference currently pointing to it. As a consequence, any events
+                    // originating from such connections are really meant for this thread. On the other hand, any events
+                    // originating from connections not referencing this thread are forwarded to their putative
+                    // destination threads. Observe that even if these destinations are read from stale thread
+                    // references, the forwarding scheme is eventually correct -- Events will, after an indeterminate
+                    // number of forwarding hops, reach their intended destinations.
+                    //
+                    // This explanation may be a bit overwrought for a simple, single hop handoff, but it's better to be
+                    // paranoid than to suffer from subtle, once-in-a-billion race conditions.
                     NioManagerThread connThread = conn.getThread();
 
                     // The event was indeed intended for this thread.
@@ -322,16 +334,18 @@ abstract public class NioManagerThread extends CoreThread //
      *            the {@link NioEventType}.
      * @param argument
      *            the input argument.
+     * @param conn
+     *            the originating {@link NioConnection}.
      * @param <I>
      *            the input type.
      * @param <O>
      *            the output type.
      */
-    protected <I, O> O request(NioEventType type, I argument) {
+    protected <I, O> Future<O> request(NioEventType type, I argument, NioConnection conn) {
 
         Request<I, O> request = new Request<I, O>(argument);
 
-        onLocal(new NioEvent<Request<I, O>>(type, request, null));
+        onLocal(new NioEvent<Request<I, O>>(type, request, conn));
 
         synchronized (this) {
 
@@ -341,18 +355,7 @@ abstract public class NioManagerThread extends CoreThread //
             this.requests.add(request);
         }
 
-        try {
-
-            return request.get();
-
-        } catch (RuntimeException e) {
-
-            throw e;
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-        }
+        return request;
     }
 
     /**
@@ -490,16 +493,19 @@ abstract public class NioManagerThread extends CoreThread //
 
     /**
      * Handles a request to execute code on this thread.
+     * 
+     * @param <V>
+     *            the result type.
      */
-    protected void handleExecute(NioConnection conn, Runnable r) {
+    protected <V> void handleInvoke(Request<Callable<V>, V> request) {
 
         try {
 
-            r.run();
+            request.set(request.argument.call());
 
         } catch (Throwable t) {
 
-            handleError(conn, t);
+            request.setException(t);
         }
     }
 

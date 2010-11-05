@@ -30,7 +30,7 @@ package shared.net.nio;
 
 import static shared.net.nio.NioEvent.NioEventType.CLOSE;
 import static shared.net.nio.NioEvent.NioEventType.ERROR;
-import static shared.net.nio.NioEvent.NioEventType.EXECUTE;
+import static shared.net.nio.NioEvent.NioEventType.INVOKE;
 import static shared.net.nio.NioEvent.NioEventType.OP;
 
 import java.io.IOException;
@@ -40,6 +40,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -352,6 +353,14 @@ public class NioConnection //
     }
 
     @Override
+    public <V> Future<V> invoke(Callable<V> c) {
+
+        // Note: Reading a stale thread reference is OK because of built-in event forwarding; hence, no synchronization
+        // is required.
+        return this.thread.request(INVOKE, c, this);
+    }
+
+    @Override
     public InetSocketAddress getLocalAddress() {
 
         synchronized (getLock()) {
@@ -388,10 +397,9 @@ public class NioConnection //
     @Override
     public void onLocal(NioEvent<?> evt) {
 
-        // Acquire the connection monitor because the manager thread may change during a handoff.
-        synchronized (getLock()) {
-            this.thread.onLocal(evt);
-        }
+        // Note: Reading a stale thread reference is OK because of built-in event forwarding; hence, no synchronization
+        // is required.
+        this.thread.onLocal(evt);
     }
 
     /**
@@ -468,11 +476,6 @@ public class NioConnection //
         synchronized (getLock()) {
             return (this.stateMask & (FLAG_BOUND | FLAG_CLOSED)) != 0;
         }
-    }
-
-    @Override
-    public void execute(Runnable r) {
-        onLocal(new NioEvent<Runnable>(EXECUTE, r, this));
     }
 
     @Override

@@ -28,6 +28,8 @@
 
 package shared.net.handler;
 
+import java.util.concurrent.Future;
+
 import shared.net.Connection;
 import shared.net.ConnectionHandler;
 import shared.net.filter.OobEvent;
@@ -46,6 +48,8 @@ public interface OobHandler<C extends Connection> extends ConnectionHandler<C> {
      * 
      * @param evt
      *            the {@link OobEvent}.
+     * @return a {@link Future} for waiting on completion of out-of-band processing, which may occur asynchronously on
+     *         another thread.
      */
-    public void onOob(OobEvent evt);
+    public Future<?> onOob(OobEvent evt);
 }

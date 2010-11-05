@@ -33,6 +33,7 @@ import static shared.net.nio.NioEvent.NioEventType.SHUTDOWN;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import shared.event.Handler;
 import shared.event.Transitions;
@@ -165,12 +166,13 @@ public class NioManagerIoThread extends NioManagerThread {
         }
     };
 
-    @Transition(currentState = "ACTIVE", eventType = "EXECUTE")
-    final Handler<NioEvent<Runnable>> executeHandler = new Handler<NioEvent<Runnable>>() {
+    @Transition(currentState = "*", eventType = "INVOKE")
+    final Handler<NioEvent<Request<Callable<Object>, Object>>> invokeHandler = //
+    new Handler<NioEvent<Request<Callable<Object>, Object>>>() {
 
         @Override
-        public void handle(NioEvent<Runnable> evt) {
-            handleExecute((NioConnection) evt.getSource(), evt.getArgument());
+        public void handle(NioEvent<Request<Callable<Object>, Object>> evt) {
+            handleInvoke(evt.getArgument());
         }
     };
 

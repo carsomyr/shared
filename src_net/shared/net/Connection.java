@@ -30,7 +30,8 @@ package shared.net;
 
 import java.io.Closeable;
 import java.nio.ByteBuffer;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import shared.net.ConnectionHandler.ClosingType;
 
@@ -40,7 +41,7 @@ import shared.net.ConnectionHandler.ClosingType;
  * @apiviz.has shared.net.Connection.OperationType - - - argument
  * @author Roy Liu
  */
-public interface Connection extends Closeable, Executor {
+public interface Connection extends Closeable {
 
     /**
      * An enumeration of the managed operations manipulable by the user.
@@ -118,11 +119,13 @@ public interface Connection extends Closeable, Executor {
     /**
      * Executes the given code snippet on this connection's {@link ConnectionManager} thread.
      * 
-     * @param r
+     * @param c
      *            the code snippet to execute.
+     * @param <V>
+     *            the result type.
+     * @return a {@link Future} for retrieving the {@link Callable} result.
      */
-    @Override
-    public void execute(Runnable r);
+    public <V> Future<V> invoke(Callable<V> c);
 
     /**
      * Closes this connection.

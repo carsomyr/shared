@@ -39,6 +39,7 @@ import static shared.net.nio.NioEvent.NioEventType.SET_BACKLOG_SIZE;
 
 import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -154,23 +155,83 @@ public class NioManager implements SocketManager<NioManager, NioConnection> {
 
     @Override
     public List<NioConnection> getConnections() {
-        return this.thread.request(GET_CONNECTIONS, null);
+
+        List<NioConnection> res = new ArrayList<NioConnection>();
+        Future<List<Future<List<NioConnection>>>> fut = this.thread.request(GET_CONNECTIONS, null, null);
+
+        try {
+
+            for (Future<List<NioConnection>> threadFuture : fut.get()) {
+                res.addAll(threadFuture.get());
+            }
+
+        } catch (RuntimeException e) {
+
+            throw e;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
+
+        return res;
     }
 
     @Override
     public List<InetSocketAddress> getBoundAddresses() {
-        return this.thread.request(GET_BOUND_ADDRESSES, null);
+
+        Future<List<InetSocketAddress>> fut = this.thread.request(GET_BOUND_ADDRESSES, null, null);
+
+        try {
+
+            return fut.get();
+
+        } catch (RuntimeException e) {
+
+            throw e;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public int getBacklogSize() {
-        return (Integer) this.thread.request(GET_BACKLOG_SIZE, null);
+
+        Future<Integer> fut = this.thread.request(GET_BACKLOG_SIZE, null, null);
+
+        try {
+
+            return fut.get();
+
+        } catch (RuntimeException e) {
+
+            throw e;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public NioManager setBacklogSize(int backlogSize) {
 
-        this.thread.request(SET_BACKLOG_SIZE, backlogSize);
+        Future<?> fut = this.thread.request(SET_BACKLOG_SIZE, backlogSize, null);
+
+        try {
+
+            fut.get();
+
+        } catch (RuntimeException e) {
+
+            throw e;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
 
         return this;
     }
