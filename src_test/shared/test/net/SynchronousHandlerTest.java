@@ -30,7 +30,6 @@ package shared.test.net;
 
 import static shared.test.net.AllNetTests.parameterizations;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -41,7 +40,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -56,7 +60,6 @@ import shared.net.filter.ssl.SslFilterFactory;
 import shared.net.handler.SynchronousHandler;
 import shared.net.nio.NioManager;
 import shared.util.Control;
-import shared.util.CoreThread;
 
 /**
  * A class of unit tests for {@link NioManager}.
@@ -84,6 +87,7 @@ public class SynchronousHandlerTest {
     final boolean useSsl;
 
     NioManager rcm, scm;
+    ExecutorService executor;
 
     /**
      * Default constructor.
@@ -116,47 +120,57 @@ public class SynchronousHandlerTest {
 
         this.rcm = NioManager.getInstance().setBufferSize(bufferSize);
         this.scm = new NioManager("SCM").setBufferSize(bufferSize);
+        this.executor = Executors.newCachedThreadPool(new ThreadFactory() {
+
+            AtomicInteger threadCount = new AtomicInteger(0);
+
+            @Override
+            public Thread newThread(Runnable r) {
+
+                Thread t = new Thread(r, String.format("Test Worker #%d", this.threadCount.getAndIncrement()));
+                t.setDaemon(true);
+
+                return t;
+            }
+        });
     }
 
     /**
      * Tests the transport capabilities of synchronous connections.
      * 
-     * @exception IOException
+     * @exception Exception
      *                when something goes awry.
      */
     @Test
-    public void testTransport() throws IOException {
+    public void testTransport() throws Exception {
 
         int basePort = this.remoteAddress.getPort();
         String hostname = this.remoteAddress.getHostName();
 
-        List<Verifier> verifiers = new ArrayList<Verifier>();
+        List<Future<?>> futures = new ArrayList<Future<?>>();
 
         for (int i = 0, n = this.nConnections, port = basePort; i < n; i++, port++) {
-            verifiers.add(createReceiver(i, new InetSocketAddress(port)));
+            futures.add(this.executor.submit(createReceiver(i, new InetSocketAddress(port))));
         }
 
         Control.sleep(this.delay);
 
         for (int i = 0, n = this.nConnections, port = basePort; i < n; i++, port++) {
-            verifiers.add(createSender(i, new InetSocketAddress(hostname, port)));
+            futures.add(this.executor.submit(createSender(i, new InetSocketAddress(hostname, port))));
         }
 
         // Reverse the verifier list so that we synchronize on senders first and detect any errors that may arise.
-        Collections.reverse(verifiers);
+        Collections.reverse(futures);
 
-        for (Verifier v : verifiers) {
-            v.sync();
+        for (Future<?> future : futures) {
+            future.get();
         }
     }
 
     /**
-     * Creates a receiver {@link Verifier}.
-     * 
-     * @exception IOException
-     *                when something goes awry.
+     * Creates a receiving verifier.
      */
-    protected Verifier createReceiver(int index, final InetSocketAddress localAddress) throws IOException {
+    protected Callable<?> createReceiver(int index, final InetSocketAddress localAddress) {
 
         final SynchronousHandler<Connection> receiver = //
         new SynchronousHandler<Connection>(String.format("r-%d", index), this.rcm.getBufferSize());
@@ -165,12 +179,10 @@ public class SynchronousHandlerTest {
             receiver.setFilterFactory(serverSslFilterFactory);
         }
 
-        final AtomicBoolean success = new AtomicBoolean(false);
-
-        final Thread r = new CoreThread("Receiver Thread") {
+        return new Callable<Object>() {
 
             @Override
-            protected void doRun() throws Exception {
+            public Object call() throws Exception {
 
                 SynchronousHandlerTest sht = SynchronousHandlerTest.this;
                 sht.rcm.init(InitializationType.ACCEPT, receiver, localAddress).get();
@@ -209,44 +221,15 @@ public class SynchronousHandlerTest {
 
                 Control.close(in);
 
-                success.set(true);
-            }
-        };
-
-        r.start();
-
-        return new Verifier() {
-
-            @Override
-            public void sync() {
-
-                loop: for (;;) {
-
-                    try {
-
-                        r.join();
-
-                        break loop;
-
-                    } catch (InterruptedException e) {
-
-                        continue loop;
-                    }
-                }
-
-                Control.checkTrue(success.get(), //
-                        "Transport failed");
+                return null;
             }
         };
     }
 
     /**
-     * Creates a sender {@link Verifier}.
-     * 
-     * @exception IOException
-     *                when something goes awry.
+     * Creates a sending verifier.
      */
-    protected Verifier createSender(int index, final InetSocketAddress remoteAddress) throws IOException {
+    protected Callable<?> createSender(int index, final InetSocketAddress remoteAddress) {
 
         final SynchronousHandler<Connection> sender = //
         new SynchronousHandler<Connection>(String.format("s-%d", index), this.scm.getBufferSize());
@@ -255,12 +238,10 @@ public class SynchronousHandlerTest {
             sender.setFilterFactory(clientSslFilterFactory);
         }
 
-        final AtomicBoolean success = new AtomicBoolean(false);
-
-        final Thread s = new CoreThread("Sender Thread") {
+        return new Callable<Object>() {
 
             @Override
-            protected void doRun() throws Exception {
+            public Object call() throws Exception {
 
                 SynchronousHandlerTest sht = SynchronousHandlerTest.this;
                 sht.scm.init(InitializationType.CONNECT, sender, remoteAddress).get();
@@ -289,33 +270,7 @@ public class SynchronousHandlerTest {
                 Control.checkTrue(in.read() == -1, //
                         "Invalid data");
 
-                success.set(true);
-            }
-        };
-
-        s.start();
-
-        return new Verifier() {
-
-            @Override
-            public void sync() {
-
-                loop: for (;;) {
-
-                    try {
-
-                        s.join();
-
-                        break loop;
-
-                    } catch (InterruptedException e) {
-
-                        continue loop;
-                    }
-                }
-
-                Control.checkTrue(success.get(), //
-                        "Transport failed");
+                return null;
             }
         };
     }
@@ -342,5 +297,6 @@ public class SynchronousHandlerTest {
 
         Control.close(this.rcm);
         Control.close(this.scm);
+        this.executor.shutdown();
     }
 }

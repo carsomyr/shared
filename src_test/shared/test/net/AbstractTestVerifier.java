@@ -30,7 +30,7 @@ package shared.test.net;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.FutureTask;
 
 import shared.event.EnumStatus;
 import shared.event.Event;
@@ -52,32 +52,38 @@ import shared.util.Control;
  * @author Roy Liu
  */
 abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, SourceType>> //
-        implements Verifier, SourceLocal<T>, EnumStatus<AbstractTestVerifier.VerifierStatus> {
+        extends FutureTask<Object> //
+        implements SourceLocal<T>, EnumStatus<AbstractTestVerifier.VerifierStatus> {
 
     /**
-     * An enumeration of {@link Verifier} states.
+     * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
+     */
+    final protected static Runnable nullRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+        }
+    };
+
+    /**
+     * An enumeration of verifier states.
      */
     public enum VerifierStatus {
 
         /**
-         * Indicates that the {@link Verifier} has not yet been initialized.
+         * Indicates that the verifier has not yet been initialized.
          */
         VIRGIN, //
 
         /**
-         * Indicates that the {@link Verifier} presides over an active connection.
+         * Indicates that the verifier presides over an active connection.
          */
         RUN, //
 
         /**
-         * Indicates a successful run.
+         * Indicates that the run has finished.
          */
-        SUCCESS, //
-
-        /**
-         * Indicates a failed run.
-         */
-        FAILURE;
+        FINISHED;
     }
 
     /**
@@ -118,8 +124,6 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
         public Throwable getException();
     }
 
-    final Semaphore semaphore;
-
     long seqNo;
     long seqNoForward;
     int nMessages;
@@ -130,8 +134,7 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
      * Default constructor.
      */
     protected AbstractTestVerifier(long seqNo, int nMessages) {
-
-        this.semaphore = new Semaphore(0);
+        super(nullRunnable, null);
 
         this.seqNo = seqNo;
         this.seqNoForward = seqNo + 1;
@@ -148,15 +151,6 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
     @Override
     public void setStatus(VerifierStatus status) {
         this.status = status;
-    }
-
-    @Override
-    public void sync() {
-
-        this.semaphore.acquireUninterruptibly();
-
-        Control.checkTrue(this.status == VerifierStatus.SUCCESS, //
-                "Transport failed");
     }
 
     /**
@@ -232,8 +226,16 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
 
                 AbstractReceiverVerifier<T> arv = AbstractReceiverVerifier.this;
 
-                arv.status = (arv.nMessages == 0) ? VerifierStatus.SUCCESS : VerifierStatus.FAILURE;
-                arv.semaphore.release();
+                arv.setStatus(VerifierStatus.FINISHED);
+
+                if (arv.nMessages == 0) {
+
+                    arv.set(null);
+
+                } else {
+
+                    arv.setException(new IllegalStateException("Transport failed"));
+                }
             }
         };
 
@@ -306,8 +308,8 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
                     // We finished sending everything.
                     Control.close(evt.getSource());
 
-                    asv.status = VerifierStatus.SUCCESS;
-                    asv.semaphore.release();
+                    asv.setStatus(VerifierStatus.FINISHED);
+                    asv.set(null);
 
                 } else if (asv.seqNo == asv.seqNoForward) {
 
@@ -336,8 +338,8 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
 
                 AbstractSenderVerifier<T> asv = AbstractSenderVerifier.this;
 
-                asv.status = VerifierStatus.FAILURE;
-                asv.semaphore.release();
+                asv.setStatus(VerifierStatus.FINISHED);
+                asv.setException(new IllegalStateException("Transport failed"));
             }
         };
 

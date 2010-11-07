@@ -143,7 +143,7 @@ public class AsynchronousHandlerTest {
         int maxMessageSize = this.messageLength << 6;
         FrameFilterFactory fff = new FrameFilterFactory(minMessageSize, maxMessageSize);
 
-        List<AbstractTestVerifier<?>> verifiers = new ArrayList<AbstractTestVerifier<?>>();
+        List<Future<?>> verifiers = new ArrayList<Future<?>>();
 
         for (int i = 0, n = this.nConnections; i < n; i++) {
 
@@ -199,8 +199,8 @@ public class AsynchronousHandlerTest {
         // Reverse the verifier list so that we synchronize on senders first and detect any errors that may arise.
         Collections.reverse(verifiers);
 
-        for (AbstractTestVerifier<?> v : verifiers) {
-            v.sync();
+        for (Future<?> v : verifiers) {
+            v.get();
         }
     }
 
