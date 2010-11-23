@@ -32,6 +32,9 @@ import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -68,7 +71,20 @@ public class SslFilterFactory //
      */
     public SslFilterFactory() {
 
-        this.executor = Control.createPool(0, Integer.MAX_VALUE, new SynchronousQueue<Runnable>(), null);
+        this.executor = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60, TimeUnit.SECONDS, //
+                new SynchronousQueue<Runnable>(), //
+                new ThreadFactory() {
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+
+                        Thread t = new Thread(r, "SSL Delegated Task Worker");
+                        t.setDaemon(true);
+
+                        return t;
+                    }
+                } //
+        );
 
         this.keyManagers = null;
         this.trustManagers = null;

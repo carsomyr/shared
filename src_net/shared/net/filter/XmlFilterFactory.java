@@ -28,10 +28,19 @@
 
 package shared.net.filter;
 
+import static shared.util.Control.strictErrorHandler;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Queue;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import shared.net.ConnectionHandler;
@@ -52,6 +61,32 @@ public class XmlFilterFactory //
     final protected static XmlFilterFactory instance = new XmlFilterFactory();
 
     /**
+     * A {@link DocumentBuilder} local to the current thread.
+     */
+    final protected static ThreadLocal<DocumentBuilder> builderLocal = new ThreadLocal<DocumentBuilder>() {
+
+        @Override
+        protected DocumentBuilder initialValue() {
+
+            try {
+
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setValidating(true);
+                dbf.setFeature("http://apache.org/xml/features/validation/dynamic", true);
+
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                db.setErrorHandler(strictErrorHandler);
+
+                return db;
+
+            } catch (ParserConfigurationException e) {
+
+                throw new RuntimeException(e);
+            }
+        }
+    };
+
+    /**
      * Gets the global instance.
      */
     final public static XmlFilterFactory getInstance() {
@@ -63,6 +98,13 @@ public class XmlFilterFactory //
      */
     final public static Filter<ByteBuffer, Element> newFilter() {
         return instance;
+    }
+
+    /**
+     * Creates a new {@link Document}.
+     */
+    final public static Document newDocument() {
+        return builderLocal.get().newDocument();
     }
 
     /**
@@ -81,9 +123,25 @@ public class XmlFilterFactory //
 
             assert (bb.limit() == bb.capacity());
 
-            byte[] array = (size == bb.capacity()) ? bb.array() //
-                    : Arrays.copyOfRange(bb.array(), save, save + size);
-            outputs.add(Control.parse(array).getDocumentElement());
+            InputStream in = new ByteArrayInputStream((size == bb.capacity()) ? bb.array() //
+                    : Arrays.copyOfRange(bb.array(), save, save + size));
+
+            final Document doc;
+
+            try {
+
+                doc = builderLocal.get().parse(in);
+
+            } catch (RuntimeException e) {
+
+                throw e;
+
+            } catch (Exception e) {
+
+                throw new RuntimeException(e);
+            }
+
+            outputs.add(doc.getDocumentElement());
 
             bb.position(save + size);
         }

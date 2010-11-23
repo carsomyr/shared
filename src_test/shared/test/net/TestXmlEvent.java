@@ -41,12 +41,12 @@ import shared.codec.Codecs;
 import shared.event.Source;
 import shared.event.XmlEvent;
 import shared.net.SourceType;
+import shared.net.filter.XmlFilterFactory;
 import shared.test.net.AbstractTestVerifier.AbstractReceiverVerifier;
 import shared.test.net.AbstractTestVerifier.AbstractSenderVerifier;
 import shared.test.net.AbstractTestVerifier.DataEventDefinition;
 import shared.test.net.AbstractTestVerifier.ErrorEventDefinition;
 import shared.test.net.AbstractTestVerifier.SequenceEventDefinition;
-import shared.util.Control;
 
 /**
  * A base class of all XML-derived events for testing purposes.
@@ -122,7 +122,7 @@ public class TestXmlEvent extends XmlEvent<TestXmlEvent, TestXmlEvent.TestXmlEve
     @Override
     public Element toDom() {
 
-        Document doc = Control.newDocument();
+        Document doc = XmlFilterFactory.newDocument();
 
         Element rootElement = doc.createElement(XmlEvent.class.getName());
 

@@ -38,20 +38,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.lang.Thread.UncaughtExceptionHandler;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -59,7 +52,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
@@ -120,14 +112,23 @@ public class Control {
         @Override
         public InputSource resolveEntity(String publicId, String systemId) {
 
-            String classpathStr = "classpath://";
+            final URI uri;
 
-            if (!systemId.startsWith(classpathStr)) {
+            try {
+
+                uri = new URI(systemId);
+
+            } catch (URISyntaxException e) {
+
+                throw new RuntimeException(e);
+            }
+
+            if (!uri.getScheme().equals("classpath")) {
                 return null;
             }
 
             InputStream in = Thread.currentThread().getContextClassLoader() //
-                    .getResourceAsStream(systemId.substring(classpathStr.length()));
+                    .getResourceAsStream(uri.getSchemeSpecificPart());
             return (in != null) ? new InputSource(in) : null;
         }
     };
@@ -151,34 +152,6 @@ public class Control {
         @Override
         public void warning(SAXParseException exception) throws SAXException {
             throw exception;
-        }
-    };
-
-    /**
-     * A {@link DocumentBuilder} local to the current thread.
-     */
-    final protected static ThreadLocal<DocumentBuilder> builderLocal = new ThreadLocal<DocumentBuilder>() {
-
-        @Override
-        protected DocumentBuilder initialValue() {
-
-            try {
-
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                dbf.setValidating(true);
-                dbf.setIgnoringElementContentWhitespace(true);
-                dbf.setFeature("http://apache.org/xml/features/validation/dynamic", true);
-
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                db.setEntityResolver(classpathResolver);
-                db.setErrorHandler(strictErrorHandler);
-
-                return db;
-
-            } catch (ParserConfigurationException e) {
-
-                throw new RuntimeException(e);
-            }
         }
     };
 
@@ -764,32 +737,6 @@ public class Control {
     }
 
     /**
-     * Rethrows the given exception. Checked exceptions are wrapped with a {@link RuntimeException}.
-     * 
-     * @param t
-     *            the exception.
-     * @throws RuntimeException
-     *             when a {@link RuntimeException} has occurred.
-     * @throws Error
-     *             when an {@link Error} has occurred.
-     */
-    final public static void rethrow(Throwable t) throws RuntimeException, Error {
-
-        if (t instanceof RuntimeException) {
-
-            throw (RuntimeException) t;
-
-        } else if (t instanceof Error) {
-
-            throw (Error) t;
-
-        } else {
-
-            throw new RuntimeException(t);
-        }
-    }
-
-    /**
      * Forks and waits on a new {@link Process}.
      * 
      * @param parentIn
@@ -1013,126 +960,6 @@ public class Control {
                 "Must call beginEnvironment() before endEnvironment()");
 
         environmentLocal.set(null);
-    }
-
-    /**
-     * Creates a pool of daemon worker threads.
-     * 
-     * @param nCoreThreads
-     *            the number of core threads.
-     * @param nMaxThreads
-     *            the maximum number of threads.
-     * @param workQueue
-     *            the {@link BlockingQueue} to which work is submitted.
-     * @param h
-     *            the handler to invoke when a worker thread dies horribly.
-     * @return the pool.
-     */
-    final public static ThreadPoolExecutor createPool(int nCoreThreads, int nMaxThreads, //
-            BlockingQueue<Runnable> workQueue, final UncaughtExceptionHandler h) {
-
-        return new ThreadPoolExecutor(nCoreThreads, nMaxThreads, //
-                (nCoreThreads < nMaxThreads) ? 60000L : 0L, //
-                TimeUnit.MILLISECONDS, workQueue, //
-
-                new ThreadFactory() {
-
-                    volatile int threadCount = 0;
-
-                    @Override
-                    public Thread newThread(Runnable r) {
-
-                        Thread t = new Thread(r, String.format("Thread Pool Worker #%d", this.threadCount++));
-                        t.setDaemon(true);
-                        t.setUncaughtExceptionHandler(h);
-
-                        return t;
-                    }
-                } //
-        );
-    }
-
-    /**
-     * Creates a pool of daemon worker threads.
-     * 
-     * @param nCoreThreads
-     *            the number of core threads.
-     * @return the pool.
-     */
-    final public static ThreadPoolExecutor createPool(int nCoreThreads) {
-        return createPool(nCoreThreads, nCoreThreads, //
-                new LinkedBlockingQueue<Runnable>(), null);
-    }
-
-    /**
-     * Creates a pool of daemon worker threads of size {@link Runtime#availableProcessors()}.
-     * 
-     * @return the pool.
-     */
-    final public static ThreadPoolExecutor createPool() {
-
-        int nCoreThreads = Runtime.getRuntime().availableProcessors();
-        return createPool(nCoreThreads, nCoreThreads, //
-                new LinkedBlockingQueue<Runnable>(), null);
-    }
-
-    /**
-     * Creates a new {@link Document}.
-     */
-    final public static Document newDocument() {
-        return builderLocal.get().newDocument();
-    }
-
-    /**
-     * Parses a {@link Document} from the given {@code byte} array.
-     */
-    final public static Document parse(byte[] array) {
-        return parse(new ByteArrayInputStream(array));
-    }
-
-    /**
-     * Parses a {@link Document} from the given string.
-     */
-    final public static Document parse(String data) {
-        return parse(new ByteArrayInputStream(data.getBytes()));
-    }
-
-    /**
-     * Parses a {@link Document} from the given file.
-     */
-    final public static Document parse(File file) {
-
-        final FileInputStream fin;
-
-        try {
-
-            fin = new FileInputStream(file);
-
-        } catch (IOException e) {
-
-            throw new RuntimeException(e);
-        }
-
-        return parse(fin);
-    }
-
-    /**
-     * Parses a {@link Document} from the given {@link InputStream}.
-     */
-    final public static Document parse(InputStream in) {
-
-        try {
-
-            return builderLocal.get().parse(in);
-
-        } catch (RuntimeException e) {
-
-            throw e;
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-        }
     }
 
     /**

@@ -39,7 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -100,9 +102,24 @@ public class Engine<T> {
     public Engine(int nThreads, TraversalPolicy<EngineNode<?, ?>, EngineEdge<?>> policy) {
 
         this.exceptionRef = new ThrowableReferenceHandler();
-        this.executor = Control.createPool(nThreads, nThreads, //
+        this.executor = new ThreadPoolExecutor(nThreads, nThreads, 0, TimeUnit.SECONDS, //
                 new PriorityBlockingQueue<Runnable>(), //
-                this.exceptionRef);
+                new ThreadFactory() {
+
+                    AtomicInteger threadCount = new AtomicInteger(0);
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+
+                        Thread t = new Thread(r, String.format("Parallel Engine Worker #%d", //
+                                this.threadCount.getAndIncrement()));
+                        t.setDaemon(true);
+                        t.setUncaughtExceptionHandler(Engine.this.exceptionRef);
+
+                        return t;
+                    }
+                } //
+        );
 
         this.policy = policy;
 
@@ -295,7 +312,19 @@ public class Engine<T> {
 
             // If the calculation internally encountered a problem.
             if (t != null) {
-                Control.rethrow(t);
+
+                if (t instanceof RuntimeException) {
+
+                    throw (RuntimeException) t;
+
+                } else if (t instanceof Error) {
+
+                    throw (Error) t;
+
+                } else {
+
+                    throw new AssertionError("Control should never reach here");
+                }
             }
 
         } finally {

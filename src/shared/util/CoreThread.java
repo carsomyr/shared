@@ -79,7 +79,23 @@ abstract public class CoreThread extends Thread {
      * {@link RuntimeException} wrapping it if checked.
      */
     protected void doCatch(Throwable t) {
-        Control.rethrow(t);
+
+        if (t instanceof RuntimeException) {
+
+            throw (RuntimeException) t;
+
+        } else if (t instanceof Exception) {
+
+            throw new RuntimeException(t);
+
+        } else if (t instanceof Error) {
+
+            throw (Error) t;
+
+        } else {
+
+            throw new AssertionError("Control should never reach here");
+        }
     }
 
     /**

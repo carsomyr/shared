@@ -28,9 +28,17 @@
 
 package shared.log;
 
-import org.apache.log4j.xml.DOMConfigurator;
+import static shared.util.Control.classpathResolver;
+import static shared.util.Control.strictErrorHandler;
 
-import shared.util.Control;
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.log4j.xml.DOMConfigurator;
+import org.w3c.dom.Document;
 
 /**
  * A static utility class for setting up logging frameworks.
@@ -38,6 +46,33 @@ import shared.util.Control;
  * @author Roy Liu
  */
 public class Logging {
+
+    /**
+     * A {@link DocumentBuilder} local to the current thread.
+     */
+    final protected static ThreadLocal<DocumentBuilder> builderLocal = new ThreadLocal<DocumentBuilder>() {
+
+        @Override
+        protected DocumentBuilder initialValue() {
+
+            try {
+
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setValidating(true);
+                dbf.setFeature("http://apache.org/xml/features/validation/dynamic", true);
+
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                db.setErrorHandler(strictErrorHandler);
+                db.setEntityResolver(classpathResolver);
+
+                return db;
+
+            } catch (ParserConfigurationException e) {
+
+                throw new RuntimeException(e);
+            }
+        }
+    };
 
     /**
      * Configures <a href="http://logging.apache.org/log4j/">Log4J</a> from an XML file found on the class path of
@@ -48,8 +83,24 @@ public class Logging {
      */
     final public static void configureLog4J(String pathname) {
 
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        DOMConfigurator.configure(Control.parse(cl.getResourceAsStream(pathname)).getDocumentElement());
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(pathname);
+
+        final Document doc;
+
+        try {
+
+            doc = builderLocal.get().parse(in);
+
+        } catch (RuntimeException e) {
+
+            throw e;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
+
+        DOMConfigurator.configure(doc.getDocumentElement());
     }
 
     // Dummy constructor.
