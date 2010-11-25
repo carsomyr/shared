@@ -33,8 +33,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import shared.util.Control;
-
 /**
  * A static utility class in support of filtering.
  * 
@@ -59,8 +57,9 @@ public class Filters {
             @Override
             public boolean add(V e) {
 
-                Control.checkTrue(e != null, //
-                        "Element must be non-null");
+                if (e == null) {
+                    throw new IllegalArgumentException("Element must be non-null");
+                }
 
                 if (backing.isEmpty() || backing.getLast() != e) {
 

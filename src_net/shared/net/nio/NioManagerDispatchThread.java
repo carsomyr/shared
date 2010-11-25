@@ -56,7 +56,6 @@ import shared.event.Transitions;
 import shared.event.Transitions.Transition;
 import shared.net.nio.NioConnection.NioConnectionStatus;
 import shared.net.nio.NioManagerDispatchThread.AcceptRegistry.Entry;
-import shared.util.Control;
 
 /**
  * A specialized {@link NioManagerThread} that dispatches newly created connections to {@link NioManagerIoThread}s.
@@ -219,8 +218,9 @@ public class NioManagerDispatchThread extends NioManagerThread {
         try {
 
             // It had better be the case that this method either throws an exception or returns true.
-            Control.checkTrue(((SocketChannel) conn.getKey().channel()).finishConnect(), //
-                    "Expected to finish connecting");
+            if (!((SocketChannel) conn.getKey().channel()).finishConnect()) {
+                throw new IllegalStateException("Expected to finish connecting");
+            }
 
             conn.doBind();
 
@@ -610,7 +610,15 @@ public class NioManagerDispatchThread extends NioManagerThread {
 
                 this.addressToEntryMap.remove(address);
 
-                Control.close(key.channel());
+                try {
+
+                    key.channel().close();
+
+                } catch (IOException e) {
+
+                    // Ah well.
+                }
+
                 key.cancel();
             }
         }

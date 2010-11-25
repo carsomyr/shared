@@ -48,7 +48,6 @@ import shared.net.handler.AbstractFilteredHandler;
 import shared.net.nio.NioConnection;
 import shared.net.nio.NioManager;
 import shared.test.Demo;
-import shared.util.Control;
 
 /**
  * A simple client and server demo.
@@ -73,9 +72,12 @@ public class ClientServerTest {
 
     /**
      * Tests client and server communication.
+     * 
+     * @throws InterruptedException
+     *             when something goes awry.
      */
     @Test
-    public void testTransport() {
+    public void testTransport() throws InterruptedException {
 
         ConnectionManager<NioConnection> cm = NioManager.getInstance();
 
@@ -100,13 +102,13 @@ public class ClientServerTest {
         serverHandler.send("server");
 
         // Allow messages to propagate.
-        Control.sleep(1000);
+        Thread.sleep(1000);
 
         clientHandler.close();
         serverHandler.close();
 
         // Give some time for a clean shutdown.
-        Control.sleep(1000);
+        Thread.sleep(1000);
 
         // Free the default manager's threads.
         cm.close();

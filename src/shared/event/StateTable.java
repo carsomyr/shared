@@ -35,10 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import shared.array.ObjectArray;
 import shared.event.Transitions.Transition;
-import shared.util.Arithmetic;
-import shared.util.Control;
 
 /**
  * A finite state machine class.
@@ -61,18 +58,21 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
      */
     final protected static String[] wildcardCombinations = new String[] { "**", "* ", " *", "  " };
 
-    final ObjectArray<StateHandler> backingArray;
+    final int nStates;
+    final int nEvents;
+    final StateHandler[] backingArray;
 
     /**
      * Default constructor.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     public StateTable(Object target, Class<X> stateClass, Class<Y> eventTypeClass, String group) {
 
-        this.backingArray = new ObjectArray( //
-                StateHandler.class, //
-                stateClass.getEnumConstants().length, //
-                eventTypeClass.getEnumConstants().length);
+        this.nStates = stateClass.getEnumConstants().length;
+        this.nEvents = eventTypeClass.getEnumConstants().length;
+        this.backingArray = new StateTable.StateHandler[this.nStates * this.nEvents];
+
+        int stride = this.nEvents;
 
         final Map<String, List<StateHandler>> handlersMap = new HashMap<String, List<StateHandler>>();
 
@@ -89,8 +89,10 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
                 Transitions ts = field.getAnnotation(Transitions.class);
                 Transition t = field.getAnnotation(Transition.class);
 
-                Control.checkTrue(ts == null || t == null, //
-                        "Transition and Transitions annotations cannot occur simultaneously");
+                if (ts != null && t != null) {
+                    throw new IllegalArgumentException("Transition and Transitions annotations " //
+                            + "cannot occur simultaneously");
+                }
 
                 final Transition[] transitions;
 
@@ -124,8 +126,9 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
                     field.setAccessible(false);
                 }
 
-                Control.checkTrue(obj instanceof Handler<?>, //
-                        "Field does not reference an event handler");
+                if (!(obj instanceof Handler<?>)) {
+                    throw new IllegalArgumentException("Field does not reference an event handler");
+                }
 
                 final Handler<Z> handler = (Handler<Z>) obj;
                 final String name = field.getName();
@@ -204,20 +207,33 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
             }
         }
 
-        int[] rowRange = Arithmetic.range(this.backingArray.size(0));
-        int[] colRange = Arithmetic.range(this.backingArray.size(1));
+        int[] rowRange = new int[this.nStates];
+
+        for (int row = 0, nRows = rowRange.length; row < nRows; row++) {
+            rowRange[row] = row;
+        }
+
+        int[] colRange = new int[this.nEvents];
+
+        for (int col = 0, nCols = colRange.length; col < nCols; col++) {
+            colRange[col] = col;
+        }
 
         for (String key : wildcardCombinations) {
 
             for (StateHandler stateHandler : handlersMap.get(key)) {
 
-                int[][] slices = new int[][] {
-                        //
-                        (stateHandler.state != null) ? new int[] { stateHandler.state.ordinal() } : rowRange, //
-                        (stateHandler.eventType != null) ? new int[] { stateHandler.eventType.ordinal() } : colRange //
-                };
+                int[] rows = (stateHandler.state != null) ? new int[] { stateHandler.state.ordinal() } //
+                        : rowRange;
+                int[] cols = (stateHandler.eventType != null) ? new int[] { stateHandler.eventType.ordinal() } //
+                        : colRange;
 
-                this.backingArray.slice(stateHandler, slices);
+                for (int row : rows) {
+
+                    for (int col : cols) {
+                        this.backingArray[stride * row + col] = stateHandler;
+                    }
+                }
             }
         }
     }
@@ -237,14 +253,15 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
 
         Formatter f = new Formatter();
 
-        int nRows = this.backingArray.size(0);
-        int nCols = this.backingArray.size(1);
+        int nRows = this.nStates;
+        int nCols = this.nEvents;
+        int stride = this.nEvents;
 
         for (int row = 0; row < nRows; row++) {
 
             for (int col = 0; col < nCols; col++) {
 
-                StateHandler stateHandler = this.backingArray.get(row, col);
+                StateHandler stateHandler = this.backingArray[stride * row + col];
 
                 if (stateHandler != null) {
                     f.format("%s%n", stateHandler);
@@ -265,7 +282,8 @@ public class StateTable<X extends Enum<X>, Y extends Enum<Y>, Z extends Event<Z,
      */
     public void lookup(EnumStatus<X> stateObj, Z evt) {
 
-        StateHandler handler = this.backingArray.get(stateObj.getStatus().ordinal(), evt.getType().ordinal());
+        int stride = this.nEvents;
+        StateHandler handler = this.backingArray[stride * stateObj.getStatus().ordinal() + evt.getType().ordinal()];
 
         if (handler != null) {
             handler.handle(stateObj, evt);

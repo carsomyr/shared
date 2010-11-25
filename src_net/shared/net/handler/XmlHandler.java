@@ -43,7 +43,6 @@ import shared.net.filter.Filter;
 import shared.net.filter.FilterFactory;
 import shared.net.filter.FrameFilterFactory;
 import shared.net.filter.XmlFilterFactory;
-import shared.util.Control;
 
 /**
  * A null-terminated packet protocol for reading and writing {@link XmlEvent}s. Programmers will have to implement
@@ -157,8 +156,9 @@ abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Con
 
             onLocal(parse(null));
 
-            Control.checkTrue(inputs.isEmpty(), //
-                    "No more events can remain in queue");
+            if (!inputs.isEmpty()) {
+                throw new IllegalArgumentException("No more events can remain in queue");
+            }
 
             break;
 

@@ -49,7 +49,6 @@ import shared.net.filter.Filters;
 import shared.net.filter.OobEvent;
 import shared.net.filter.OobEvent.OobEventType;
 import shared.net.filter.OobFilter;
-import shared.util.Control;
 
 /**
  * An abstract base class implementing much of {@link FilteredHandler}.
@@ -252,8 +251,9 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
     @Override
     public Future<?> onOob(final OobEvent evt) {
 
-        Control.checkTrue(evt.getType() == USER, //
-                "User-defined out-of-band events must have type USER");
+        if (evt.getType() != USER) {
+            throw new IllegalArgumentException("User-defined out-of-band events must have type USER");
+        }
 
         // Are we in the manager thread?
         if (this.connection.isManagerThread()) {
@@ -290,7 +290,12 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
 
     @Override
     public void close() {
-        Control.close(this.connection);
+
+        C connection = this.connection;
+
+        if (connection != null) {
+            connection.close();
+        }
     }
 
     @Override

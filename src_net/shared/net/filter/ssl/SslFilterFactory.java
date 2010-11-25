@@ -43,7 +43,6 @@ import javax.net.ssl.TrustManager;
 
 import shared.net.filter.FilterFactory;
 import shared.net.handler.FilteredHandler;
-import shared.util.Control;
 
 /**
  * An implementation of {@link FilterFactory} that creates {@link SslFilter}s.
@@ -170,8 +169,9 @@ public class SslFilterFactory //
 
         SSLEngine res = this.context.createSSLEngine();
 
-        Control.checkTrue(this.mode != null, //
-                "Please specify the operating mode");
+        if (this.mode == null) {
+            throw new IllegalStateException("Please specify the operating mode");
+        }
 
         switch (this.mode) {
 
@@ -200,8 +200,10 @@ public class SslFilterFactory //
      * Checks that this factory is uninitialized.
      */
     protected void checkUninitialized() {
-        Control.checkTrue(this.context == null, //
-                "SSL context is already initialized");
+
+        if (this.context != null) {
+            throw new IllegalStateException("SSL context is already initialized");
+        }
     }
 
     // A finalizer guardian for the thread pool.

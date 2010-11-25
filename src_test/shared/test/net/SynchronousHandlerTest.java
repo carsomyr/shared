@@ -59,7 +59,6 @@ import shared.net.ConnectionManager.InitializationType;
 import shared.net.filter.ssl.SslFilterFactory;
 import shared.net.handler.SynchronousHandler;
 import shared.net.nio.NioManager;
-import shared.util.Control;
 
 /**
  * A class of unit tests for {@link NioManager}.
@@ -153,7 +152,7 @@ public class SynchronousHandlerTest {
             futures.add(this.executor.submit(createReceiver(i, new InetSocketAddress(port))));
         }
 
-        Control.sleep(this.delay);
+        Thread.sleep(this.delay);
 
         for (int i = 0, n = this.nConnections, port = basePort; i < n; i++, port++) {
             futures.add(this.executor.submit(createSender(i, new InetSocketAddress(hostname, port))));
@@ -196,8 +195,9 @@ public class SynchronousHandlerTest {
                     header.put((byte) in.read());
                 }
 
-                Control.checkTrue(((ByteBuffer) header.flip()).getLong() == 0xCAFEBABEDEADBEEFL, //
-                        "Invalid data");
+                if (((ByteBuffer) header.flip()).getLong() != 0xCAFEBABEDEADBEEFL) {
+                    throw new IllegalStateException("Invalid data");
+                }
 
                 byte[] arr = new byte[sht.messageLength << 3];
 
@@ -207,19 +207,21 @@ public class SynchronousHandlerTest {
 
                         size = in.read(arr, offset, length);
 
-                        Control.checkTrue(size != -1, //
-                                "Invalid data");
+                        if (size == -1) {
+                            throw new IllegalStateException("Invalid data");
+                        }
                     }
 
                     for (int j = 0; j < 256; j++) {
                         out.write((byte) j);
                     }
 
-                    Control.checkTrue(Arrays.equals(arr, createMessage(acc, sht.messageLength).array()), //
-                            "Invalid data");
+                    if (!Arrays.equals(arr, createMessage(acc, sht.messageLength).array())) {
+                        throw new IllegalStateException("Invalid data");
+                    }
                 }
 
-                Control.close(in);
+                in.close();
 
                 return null;
             }
@@ -262,13 +264,16 @@ public class SynchronousHandlerTest {
                     out.write(bb.array(), 0, bb.capacity());
 
                     for (int j = 0; j < 256; j++) {
-                        Control.checkTrue(in.read() == j, //
-                                "Invalid data");
+
+                        if (in.read() != j) {
+                            throw new IllegalStateException("Invalid data");
+                        }
                     }
                 }
 
-                Control.checkTrue(in.read() == -1, //
-                        "Invalid data");
+                if (in.read() != -1) {
+                    throw new IllegalStateException("Invalid data");
+                }
 
                 return null;
             }
@@ -295,8 +300,8 @@ public class SynchronousHandlerTest {
     @After
     public void destroy() {
 
-        Control.close(this.rcm);
-        Control.close(this.scm);
+        this.rcm.close();
+        this.scm.close();
         this.executor.shutdown();
     }
 }

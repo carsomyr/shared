@@ -28,10 +28,9 @@
 
 package shared.net.filter;
 
-import static shared.util.Control.strictErrorHandler;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Queue;
@@ -39,12 +38,20 @@ import java.util.Queue;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import shared.net.ConnectionHandler;
-import shared.util.Control;
 
 /**
  * An implementation of {@link FilterFactory} for reading and writing XML DOM {@link Element}s.
@@ -75,11 +82,46 @@ public class XmlFilterFactory //
                 dbf.setFeature("http://apache.org/xml/features/validation/dynamic", true);
 
                 DocumentBuilder db = dbf.newDocumentBuilder();
-                db.setErrorHandler(strictErrorHandler);
+                db.setErrorHandler(new ErrorHandler() {
+
+                    @Override
+                    public void error(SAXParseException exception) throws SAXException {
+                        throw exception;
+                    }
+
+                    @Override
+                    public void fatalError(SAXParseException exception) throws SAXException {
+                        throw exception;
+                    }
+
+                    @Override
+                    public void warning(SAXParseException exception) throws SAXException {
+                        throw exception;
+                    }
+                });
 
                 return db;
 
             } catch (ParserConfigurationException e) {
+
+                throw new RuntimeException(e);
+            }
+        }
+    };
+
+    /**
+     * A {@link Transformer} local to the current thread.
+     */
+    final protected static ThreadLocal<Transformer> transformerLocal = new ThreadLocal<Transformer>() {
+
+        @Override
+        protected Transformer initialValue() {
+
+            try {
+
+                return TransformerFactory.newInstance().newTransformer();
+
+            } catch (TransformerConfigurationException e) {
 
                 throw new RuntimeException(e);
             }
@@ -151,7 +193,19 @@ public class XmlFilterFactory //
     public void applyOutbound(Queue<Element> inputs, Queue<ByteBuffer> outputs) {
 
         for (Element elt; (elt = inputs.poll()) != null;) {
-            outputs.add(ByteBuffer.wrap(Control.toString(elt).getBytes()));
+
+            StringWriter sw = new StringWriter();
+
+            try {
+
+                transformerLocal.get().transform(new DOMSource(elt), new StreamResult(sw));
+
+            } catch (TransformerException e) {
+
+                throw new RuntimeException(e);
+            }
+
+            outputs.add(ByteBuffer.wrap(sw.toString().getBytes()));
         }
     }
 

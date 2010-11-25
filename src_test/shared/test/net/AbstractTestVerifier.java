@@ -28,6 +28,8 @@
 
 package shared.test.net;
 
+import static shared.test.net.AllNetTests.randomSource;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.FutureTask;
@@ -41,8 +43,6 @@ import shared.event.Transitions;
 import shared.event.Transitions.Transition;
 import shared.net.SourceType;
 import shared.test.net.TestXmlEvent.TestXmlEventType;
-import shared.util.Arithmetic;
-import shared.util.Control;
 
 /**
  * An implementation of {@link SourceLocal} that serves as a base class for checking the contents of incoming events
@@ -204,9 +204,9 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
 
                 byte[] received = ((DataEventDefinition) evt).getData();
 
-                Control.checkTrue(Arrays.equals(received, createData( //
-                        arv.seqNo, (received.length - 4) >>> 3)), //
-                        "Received data does not match expected data");
+                if (!Arrays.equals(received, createData(arv.seqNo, (received.length - 4) >>> 3))) {
+                    throw new IllegalStateException("Received data does not match expected data");
+                }
 
                 evt.getSource().onRemote(createSequenceEvent( //
                         arv.seqNo++, //
@@ -278,9 +278,9 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
 
                 SequenceEventDefinition sEvt = (SequenceEventDefinition) evt;
 
-                Control.checkTrue(sEvt.getSeqNo() == asv.seqNo //
-                        && sEvt.nMessages() == asv.nMessages, //
-                        "Invalid sequence event");
+                if (sEvt.getSeqNo() != asv.seqNo || sEvt.nMessages() != asv.nMessages) {
+                    throw new IllegalStateException("Invalid sequence event");
+                }
 
                 evt.getSource().onRemote(createDataEvent( //
                         createData(asv.seqNo, 0)));
@@ -299,14 +299,14 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
 
                 SequenceEventDefinition sEvt = (SequenceEventDefinition) evt;
 
-                Control.checkTrue(sEvt.getSeqNo() == asv.seqNo++ //
-                        && sEvt.nMessages() == asv.nMessages--, //
-                        "Invalid sequence event");
+                if (sEvt.getSeqNo() != asv.seqNo++ || sEvt.nMessages() != asv.nMessages--) {
+                    throw new IllegalStateException("Invalid sequence event");
+                }
 
                 if (asv.nMessages == 0) {
 
                     // We finished sending everything.
-                    Control.close(evt.getSource());
+                    evt.getSource().close();
 
                     asv.setStatus(VerifierStatus.FINISHED);
                     asv.set(null);
@@ -314,10 +314,10 @@ abstract public class AbstractTestVerifier<T extends Event<T, TestXmlEventType, 
                 } else if (asv.seqNo == asv.seqNoForward) {
 
                     // Otherwise, create a data event.
-                    int len = Arithmetic.nextInt(asv.meanMessageSize << 1);
+                    int len = randomSource.nextInt(asv.meanMessageSize << 1);
 
                     // Simulate bursty behavior by transmitting events as either singletons or pairs.
-                    for (int i = 0, n = Math.min(asv.nMessages, Arithmetic.nextInt(2) + 1); //
+                    for (int i = 0, n = Math.min(asv.nMessages, randomSource.nextInt(2) + 1); //
                     i < n; //
                     i++, asv.seqNoForward++) {
                         evt.getSource().onRemote(createDataEvent(createData(asv.seqNo + i, len)));

@@ -32,7 +32,6 @@ import java.io.Closeable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import shared.util.Control;
 import shared.util.CoreThread;
 import shared.util.Finalizable;
 
@@ -75,8 +74,9 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
     @Override
     public Processor<T> setFinalizer(Runnable finalizer) {
 
-        Control.checkTrue(finalizer != null, //
-                "Finalizer must be non-null");
+        if (finalizer == null) {
+            throw new IllegalArgumentException("Finalizer must be non-null");
+        }
 
         this.thread.finalizer = finalizer;
 
@@ -96,8 +96,10 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
      * serial event processing model.
      */
     public void checkCurrentThread() {
-        Control.checkTrue(Thread.currentThread() == this.thread, //
-                "Expected call from within the processor thread");
+
+        if (Thread.currentThread() != this.thread) {
+            throw new IllegalStateException("Expected call from within the processor thread");
+        }
     }
 
     /**
@@ -172,7 +174,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
 
         @Override
         protected void finalize() {
-            Control.close(Processor.this);
+            Processor.this.close();
         }
     };
 }

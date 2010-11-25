@@ -33,7 +33,6 @@ import java.util.Queue;
 
 import shared.net.Connection;
 import shared.net.ConnectionHandler;
-import shared.util.Control;
 
 /**
  * An implementation of {@link FilterFactory} for {@code null}-delimited {@code byte} frames.
@@ -140,8 +139,9 @@ public class FrameFilterFactory //
                     for (; bb.hasRemaining() && (bb.get() != 0);) {
                     }
 
-                    Control.checkTrue(bb.position() == bb.limit(), //
-                            "Buffer must contain all nonzero byte values");
+                    if (bb.position() != bb.limit()) {
+                        throw new IllegalArgumentException("Buffer must contain all nonzero byte values");
+                    }
 
                     bb.position(save);
 
@@ -155,8 +155,9 @@ public class FrameFilterFactory //
              */
             protected void ensureCapacity(int len) {
 
-                Control.checkTrue(len <= fff.maximumSize - this.frameBuffer.position(), //
-                        "Maximum message size exceeded");
+                if (len > fff.maximumSize - this.frameBuffer.position()) {
+                    throw new IllegalStateException("Maximum message size exceeded");
+                }
 
                 if (len > this.frameBuffer.remaining()) {
 

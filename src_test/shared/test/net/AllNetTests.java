@@ -36,6 +36,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -89,6 +90,11 @@ public class AllNetTests {
             SslFilter.class, //
             SynchronousHandler.class //
     };
+
+    /**
+     * A source of randomness.
+     */
+    final protected static Random randomSource = new Random();
 
     /**
      * The unit test parameterizations.

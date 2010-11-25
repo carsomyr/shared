@@ -29,6 +29,7 @@
 package shared.test.net;
 
 import static shared.test.net.AllNetTests.parameterizations;
+import static shared.test.net.AllNetTests.randomSource;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -56,8 +57,6 @@ import shared.test.net.TestXmlEvent.DataXmlEvent;
 import shared.test.net.TestXmlEvent.ReceiverXmlVerifier;
 import shared.test.net.TestXmlEvent.SenderXmlVerifier;
 import shared.test.net.TestXmlEvent.SequenceXmlEvent;
-import shared.util.Arithmetic;
-import shared.util.Control;
 
 /**
  * A class of unit tests for {@link NioManager}.
@@ -165,11 +164,11 @@ public class AsynchronousHandlerTest {
             verifiers.add(xmlV);
         }
 
-        Control.sleep(this.delay);
+        Thread.sleep(this.delay);
 
         for (int i = 0, n = this.nConnections; i < n; i++) {
 
-            long seqNo = Arithmetic.nextInt(4096);
+            long seqNo = randomSource.nextInt(4096);
 
             SenderXmlVerifier xmlV = new SenderXmlVerifier(seqNo, this.nMessages, this.messageLength);
 
@@ -210,7 +209,7 @@ public class AsynchronousHandlerTest {
     @After
     public void destroy() {
 
-        Control.close(this.rcm);
-        Control.close(this.scm);
+        this.rcm.close();
+        this.scm.close();
     }
 }

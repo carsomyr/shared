@@ -43,7 +43,6 @@ import shared.net.Buffers;
 import shared.net.Connection;
 import shared.net.Connection.OperationType;
 import shared.net.filter.IdentityFilterFactory;
-import shared.util.Control;
 
 /**
  * A subclass of {@link AbstractFilteredHandler} with synchronous behavior.
@@ -279,8 +278,9 @@ public class SynchronousHandler<C extends Connection> //
 
         synchronized (getConnection().getLock()) {
 
-            Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
-                    "Connection must be bound");
+            if ((this.stateMask & FLAG_BOUND) == 0) {
+                throw new IllegalStateException("Connection must be bound");
+            }
 
             return this.in;
         }
@@ -293,8 +293,9 @@ public class SynchronousHandler<C extends Connection> //
 
         synchronized (getConnection().getLock()) {
 
-            Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
-                    "Connection must be bound");
+            if ((this.stateMask & FLAG_BOUND) == 0) {
+                throw new IllegalStateException("Connection must be bound");
+            }
 
             return this.out;
         }
@@ -553,7 +554,7 @@ public class SynchronousHandler<C extends Connection> //
          */
         @Override
         public void close() {
-            Control.close(SynchronousHandler.this);
+            SynchronousHandler.this.close();
         }
     }
 
@@ -632,7 +633,7 @@ public class SynchronousHandler<C extends Connection> //
          */
         @Override
         public void close() {
-            Control.close(SynchronousHandler.this);
+            SynchronousHandler.this.close();
         }
     }
 }

@@ -47,7 +47,6 @@ import shared.net.ConnectionHandler;
 import shared.net.SocketManager;
 import shared.net.nio.NioEvent.NioEventType;
 import shared.net.nio.NioManagerThread.NioManagerThreadStatus;
-import shared.util.Control;
 
 /**
  * A transparent, asynchronous sockets layer for easy network programming that performs readiness selection on
@@ -144,8 +143,9 @@ public class NioManager implements SocketManager<NioManager, NioConnection> {
 
         synchronized (this.thread) {
 
-            Control.checkTrue(this.thread.getStatus() == NioManagerThreadStatus.RUN, //
-                    "The connection manager thread has exited");
+            if (this.thread.getStatus() != NioManagerThreadStatus.RUN) {
+                throw new IllegalStateException("The connection manager thread has exited");
+            }
 
             this.thread.onLocal(new NioEvent<T>(eventType, argument, conn));
         }
@@ -244,8 +244,9 @@ public class NioManager implements SocketManager<NioManager, NioConnection> {
     @Override
     public NioManager setBufferSize(int bufferSize) {
 
-        Control.checkTrue(bufferSize > 0, //
-                "Invalid buffer size");
+        if (bufferSize <= 0) {
+            throw new IllegalArgumentException("Invalid buffer size");
+        }
 
         this.bufferSize = bufferSize;
 
@@ -254,7 +255,7 @@ public class NioManager implements SocketManager<NioManager, NioConnection> {
 
     @Override
     public void close() {
-        Control.close(this.thread);
+        this.thread.close();
     }
 
     @Override
@@ -267,7 +268,7 @@ public class NioManager implements SocketManager<NioManager, NioConnection> {
 
         @Override
         protected void finalize() {
-            Control.close(NioManager.this);
+            NioManager.this.close();
         }
     };
 }

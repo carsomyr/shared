@@ -54,7 +54,6 @@ import shared.event.StateTable;
 import shared.net.ConnectionHandler.ClosingType;
 import shared.net.nio.NioConnection.NioConnectionStatus;
 import shared.net.nio.NioEvent.NioEventType;
-import shared.util.Control;
 import shared.util.CoreThread;
 
 /**
@@ -349,8 +348,9 @@ abstract public class NioManagerThread extends CoreThread //
 
         synchronized (this) {
 
-            Control.checkTrue(getStatus() == NioManagerThreadStatus.RUN, //
-                    "The connection manager thread has exited");
+            if (getStatus() != NioManagerThreadStatus.RUN) {
+                throw new IllegalStateException("The connection manager thread has exited");
+            }
 
             this.requests.add(request);
         }

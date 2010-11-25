@@ -54,7 +54,6 @@ import shared.net.ConnectionHandler;
 import shared.net.ConnectionHandler.ClosingType;
 import shared.net.SocketConnection;
 import shared.net.SourceType;
-import shared.util.Control;
 
 /**
  * An abstract asynchronous sockets class internally managed by {@link NioManager}. Instantiating classes must implement
@@ -365,8 +364,9 @@ public class NioConnection //
 
         synchronized (getLock()) {
 
-            Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
-                    "Connection must be bound");
+            if ((this.stateMask & FLAG_BOUND) == 0) {
+                throw new IllegalArgumentException("Connection must be bound");
+            }
 
             return (InetSocketAddress) this.channel.socket().getLocalSocketAddress();
         }
@@ -377,8 +377,9 @@ public class NioConnection //
 
         synchronized (getLock()) {
 
-            Control.checkTrue((this.stateMask & FLAG_BOUND) != 0, //
-                    "Connection must be bound");
+            if ((this.stateMask & FLAG_BOUND) == 0) {
+                throw new IllegalArgumentException("Connection must be bound");
+            }
 
             return (InetSocketAddress) this.channel.socket().getRemoteSocketAddress();
         }
@@ -596,8 +597,9 @@ public class NioConnection //
      */
     protected void setup(SocketChannel channel) throws IOException {
 
-        Control.checkTrue(this.channel == null, //
-                "The channel cannot already be initialized");
+        if (this.channel != null) {
+            throw new IllegalStateException("The channel cannot already be initialized");
+        }
 
         this.channel = channel;
 
@@ -626,8 +628,9 @@ public class NioConnection //
      */
     protected void registerKey(Selector selector, int initialOps) throws IOException {
 
-        Control.checkTrue(this.key == null, //
-                "The key cannot already be initialized");
+        if (this.key != null) {
+            throw new IllegalStateException("The key cannot already be initialized");
+        }
 
         this.key = this.channel.register(selector, initialOps, this);
     }
@@ -801,7 +804,20 @@ public class NioConnection //
             setNullHandler();
         }
 
-        Control.close(this.channel);
+        SocketChannel channel = this.channel;
+
+        if (channel != null) {
+
+            try {
+
+                channel.close();
+
+            } catch (IOException e) {
+
+                // Ah well.
+            }
+        }
+
         deregisterKey();
 
         try {
