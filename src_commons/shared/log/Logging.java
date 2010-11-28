@@ -28,8 +28,8 @@
 
 package shared.log;
 
-import static shared.util.Control.classpathResolver;
-import static shared.util.Control.strictErrorHandler;
+import static shared.util.XmlBase.classpathResolver;
+import static shared.util.XmlBase.strictErrorHandler;
 
 import java.io.InputStream;
 

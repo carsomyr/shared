@@ -42,7 +42,7 @@ import shared.array.RealArray;
 import shared.array.kernel.ArrayIoKernel;
 import shared.array.kernel.MatlabIoKernel;
 import shared.test.Tests;
-import shared.util.Control;
+import shared.util.IoBase;
 
 /**
  * A class of unit tests for {@link ArrayIoKernel} and, more specifically, {@link MatlabIoKernel}.
@@ -112,7 +112,7 @@ public class ArrayIoKernelTest {
                 3, 4, 5 //
         );
 
-        Array<?, ?>[] arrays = kernel.parseMat(Control.getBytes(Thread.currentThread().getContextClassLoader() //
+        Array<?, ?>[] arrays = kernel.parseMat(IoBase.getBytes(Thread.currentThread().getContextClassLoader() //
                 .getResourceAsStream("shared/test/array/r.mat")));
 
         Assert.assertTrue(Arrays.equals(expected.values(), ((RealArray) arrays[0]).values()));
@@ -168,7 +168,7 @@ public class ArrayIoKernelTest {
                 3, 4, 5, 2 //
         );
 
-        Array<?, ?>[] arrays = kernel.parseMat(Control.getBytes(Thread.currentThread().getContextClassLoader() //
+        Array<?, ?>[] arrays = kernel.parseMat(IoBase.getBytes(Thread.currentThread().getContextClassLoader() //
                 .getResourceAsStream("shared/test/array/c.mat")));
 
         Assert.assertTrue(Arrays.equals(expected.values(), ((ComplexArray) arrays[0]).values()));
@@ -233,7 +233,7 @@ public class ArrayIoKernelTest {
                 3, 4, 5 //
         );
 
-        Array<?, ?>[] arrays = kernel.parseMat(Control.getBytes(Thread.currentThread().getContextClassLoader() //
+        Array<?, ?>[] arrays = kernel.parseMat(IoBase.getBytes(Thread.currentThread().getContextClassLoader() //
                 .getResourceAsStream("shared/test/array/i.mat")));
 
         Assert.assertTrue(Arrays.equals(expected.values(), ((IntegerArray) arrays[0]).values()));

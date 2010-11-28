@@ -43,6 +43,7 @@ import shared.array.RealArray;
 import shared.stat.plot.Plot.AxisScaleType;
 import shared.stat.plot.Plot.AxisType;
 import shared.util.Control;
+import shared.util.IoBase;
 
 /**
  * A <a href="http://www.gnuplot.info/">Gnuplot</a>-backed implementation of {@link PlotContext}.
@@ -160,7 +161,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         try {
 
-            Control.execAndWaitFor(in, out, errOut, gnuplotExecArgs);
+            IoBase.execAndWaitFor(in, out, errOut, gnuplotExecArgs);
 
         } catch (IOException e) {
 
@@ -168,12 +169,12 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         } finally {
 
-            Control.close(out);
-            Control.close(errOut);
+            IoBase.close(out);
+            IoBase.close(errOut);
         }
 
         if (errFile.length() == 0) {
-            Control.delete(errFile);
+            IoBase.delete(errFile);
         }
     }
 

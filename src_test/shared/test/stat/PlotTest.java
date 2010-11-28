@@ -53,7 +53,7 @@ import shared.stat.plot.Roc;
 import shared.stat.plot.Scatter;
 import shared.test.Demo;
 import shared.util.Arithmetic;
-import shared.util.Control;
+import shared.util.IoBase;
 
 /**
  * A plotting demo.
@@ -237,9 +237,9 @@ public class PlotTest {
         File pngFile = new File(demoDir, "gnuplot.png");
         File svgFile = new File(demoDir, "gnuplot.svg");
 
-        Control.delete(epsFile);
-        Control.delete(pngFile);
-        Control.delete(svgFile);
+        IoBase.delete(epsFile);
+        IoBase.delete(pngFile);
+        IoBase.delete(svgFile);
 
         gpc.setOutputFormat("eps").setFont("Helvetica", 8).toFile(epsFile);
 
@@ -249,9 +249,9 @@ public class PlotTest {
 
         File file = new File(demoDir, "Vera.ttf");
 
-        Control.transfer(url.openStream(), file);
+        IoBase.transfer(url.openStream(), file);
 
-        Control.beginEnvironment().put("GDFONTPATH", file.getParent());
+        IoBase.beginEnvironment().put("GDFONTPATH", file.getParent());
 
         try {
 
@@ -259,10 +259,10 @@ public class PlotTest {
 
         } finally {
 
-            Control.endEnvironment();
+            IoBase.endEnvironment();
         }
 
-        Control.delete(file);
+        IoBase.delete(file);
 
         //
 
