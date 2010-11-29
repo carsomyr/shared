@@ -54,7 +54,7 @@ import shared.test.net.AbstractTestVerifier.SequenceEventDefinition;
  * @apiviz.owns shared.test.net.TestXmlEvent.TestXmlEventType
  * @author Roy Liu
  */
-public class TestXmlEvent extends XmlEvent<TestXmlEvent, TestXmlEvent.TestXmlEventType, SourceType> {
+public class TestXmlEvent implements XmlEvent<TestXmlEvent, TestXmlEvent.TestXmlEventType, SourceType> {
 
     /**
      * An enumeration of {@link TestXmlEvent} types.
@@ -101,14 +101,15 @@ public class TestXmlEvent extends XmlEvent<TestXmlEvent, TestXmlEvent.TestXmlEve
         }
     }
 
+    final TestXmlEventType type;
     final Source<TestXmlEvent, SourceType> source;
 
     /**
      * Default constructor.
      */
     protected TestXmlEvent(TestXmlEventType type, Source<TestXmlEvent, SourceType> source) {
-        super(type);
 
+        this.type = type;
         this.source = source;
     }
 
@@ -137,6 +138,11 @@ public class TestXmlEvent extends XmlEvent<TestXmlEvent, TestXmlEvent.TestXmlEve
     @Override
     public Source<TestXmlEvent, SourceType> getSource() {
         return this.source;
+    }
+
+    @Override
+    public TestXmlEventType getType() {
+        return this.type;
     }
 
     /**

@@ -67,13 +67,17 @@ public class TestXmlHandler extends XmlHandler<TestXmlHandler, Connection, TestX
     }
 
     @Override
-    protected void onError() {
-        onLocal(new ErrorXmlEvent(getConnection().getException(), this));
+    protected TestXmlEvent parse(Element rootElement) {
+        return TestXmlEvent.parse(rootElement, this);
     }
 
     @Override
-    protected TestXmlEvent parse(Element rootElement) {
-        return (rootElement == null) ? new TestXmlEvent(END_OF_STREAM, this) //
-                : TestXmlEvent.parse(rootElement, this);
+    protected TestXmlEvent createEos() {
+        return new TestXmlEvent(END_OF_STREAM, this);
+    }
+
+    @Override
+    protected TestXmlEvent createError() {
+        return new ErrorXmlEvent(getConnection().getException(), this);
     }
 }

@@ -109,15 +109,24 @@ abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Con
      * Parses an {@link XmlEvent} from the given root DOM {@link Element}.
      * 
      * @param rootElement
-     *            the root DOM {@link Element}. A {@code null} value signifies an end-of-stream.
+     *            the root DOM {@link Element}.
      * @return the {@link XmlEvent}.
      */
     abstract protected T parse(Element rootElement);
 
     /**
-     * On error.
+     * Creates an end-of-stream {@link XmlEvent}.
+     * 
+     * @return the {@link XmlEvent}.
      */
-    abstract protected void onError();
+    abstract protected T createEos();
+
+    /**
+     * Creates an error {@link XmlEvent}.
+     * 
+     * @return the {@link XmlEvent}.
+     */
+    abstract protected T createError();
 
     @Override
     public S getType() {
@@ -154,7 +163,7 @@ abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Con
 
         case EOS:
 
-            onLocal(parse(null));
+            onLocal(createEos());
 
             if (!inputs.isEmpty()) {
                 throw new IllegalArgumentException("No more events can remain in queue");
@@ -163,7 +172,7 @@ abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Con
             break;
 
         case ERROR:
-            onError();
+            onLocal(createError());
             break;
 
         case USER:

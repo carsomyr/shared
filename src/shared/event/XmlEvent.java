@@ -31,7 +31,7 @@ package shared.event;
 import org.w3c.dom.Element;
 
 /**
- * An abstract base class for all XML-derived events.
+ * Defines an XML-derived {@link Event}.
  * 
  * @param <T>
  *            the parameterization lower bounded by {@link XmlEvent} itself.
@@ -41,25 +41,10 @@ import org.w3c.dom.Element;
  *            the {@link Source} enumeration type.
  * @author Roy Liu
  */
-abstract public class XmlEvent<T extends XmlEvent<T, E, S>, E extends Enum<E>, S extends Enum<S>> //
-        implements Event<T, E, S> {
-
-    final E type;
-
-    /**
-     * Default constructor.
-     */
-    protected XmlEvent(E type) {
-        this.type = type;
-    }
-
-    @Override
-    public E getType() {
-        return this.type;
-    }
+public interface XmlEvent<T extends XmlEvent<T, E, S>, E extends Enum<E>, S extends Enum<S>> extends Event<T, E, S> {
 
     /**
      * Transforms this event into an XML DOM {@link Element}.
      */
-    abstract public Element toDom();
+    public Element toDom();
 }
