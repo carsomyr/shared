@@ -119,7 +119,7 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
     final Queue<OobEvent> outboundEvtsFiltered;
     final Queue<OobEvent> outboundEvtsFilteredWriteOnly;
 
-    OobFilter<ByteBuffer, T> filter;
+    OobFilter<T, ByteBuffer> filter;
 
     C connection;
 
@@ -151,7 +151,7 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
         this.outboundEvtsFiltered = Filters.createQueue();
         this.outboundEvtsFilteredWriteOnly = Filters.writeOnlyQueue(this.outboundEvtsFiltered);
 
-        this.filter = new OobFilter<ByteBuffer, T>() {
+        this.filter = new OobFilter<T, ByteBuffer>() {
 
             @Override
             public void applyInbound(Queue<ByteBuffer> inputs, Queue<T> outputs) {
@@ -179,7 +179,7 @@ abstract public class AbstractFilteredHandler<H extends AbstractFilteredHandler<
 
     @SuppressWarnings("unchecked")
     @Override
-    public H setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super H> filterFactory) {
+    public H setFilterFactory(FilterFactory<? extends Filter<T, ByteBuffer>, T, ByteBuffer, ? super H> filterFactory) {
 
         this.filter = Filters.asOobFilter(filterFactory.newFilter((H) this));
 

@@ -395,12 +395,12 @@ public class Filters {
         return (filter instanceof OobFilter<?, ?>) ? (OobFilter<I, O>) filter : new OobFilter<I, O>() {
 
             @Override
-            public void applyInbound(Queue<I> inputs, Queue<O> outputs) {
+            public void applyInbound(Queue<O> inputs, Queue<I> outputs) {
                 filter.applyInbound(inputs, outputs);
             }
 
             @Override
-            public void applyOutbound(Queue<O> inputs, Queue<I> outputs) {
+            public void applyOutbound(Queue<I> inputs, Queue<O> outputs) {
                 filter.applyOutbound(inputs, outputs);
             }
 

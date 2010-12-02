@@ -57,7 +57,7 @@ public interface FilteredHandler<H extends FilteredHandler<H, C, T>, C extends C
      * @param filterFactory
      *            the {@link FilterFactory}.
      */
-    public H setFilterFactory(FilterFactory<? extends Filter<ByteBuffer, T>, ByteBuffer, T, ? super H> filterFactory);
+    public H setFilterFactory(FilterFactory<? extends Filter<T, ByteBuffer>, T, ByteBuffer, ? super H> filterFactory);
 
     /**
      * Sends the given output value to the remote host.

@@ -118,8 +118,8 @@ public class ClientServerTest {
      * An internal {@link Connection} class for demo purposes.
      */
     protected static class Utf8Handler extends AbstractFilteredHandler<Utf8Handler, Connection, String> //
-            implements FilterFactory<Filter<ByteBuffer, String>, ByteBuffer, String, Utf8Handler>, //
-            Filter<ByteBuffer, String> {
+            implements FilterFactory<Filter<String, ByteBuffer>, String, ByteBuffer, Utf8Handler>, //
+            Filter<String, ByteBuffer> {
 
         final Logger log;
 
@@ -178,7 +178,7 @@ public class ClientServerTest {
         }
 
         @Override
-        public Filter<ByteBuffer, String> newFilter(Utf8Handler handler) {
+        public Filter<String, ByteBuffer> newFilter(Utf8Handler handler) {
             return this;
         }
 

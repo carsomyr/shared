@@ -59,8 +59,8 @@ import shared.net.ConnectionHandler;
  * @author Roy Liu
  */
 public class XmlFilterFactory //
-        implements FilterFactory<Filter<ByteBuffer, Element>, ByteBuffer, Element, ConnectionHandler<?>>, //
-        Filter<ByteBuffer, Element> {
+        implements FilterFactory<Filter<Element, ByteBuffer>, Element, ByteBuffer, ConnectionHandler<?>>, //
+        Filter<Element, ByteBuffer> {
 
     /**
      * The global instance.
@@ -138,7 +138,7 @@ public class XmlFilterFactory //
     /**
      * Creates a new XML {@link Filter}.
      */
-    final public static Filter<ByteBuffer, Element> newFilter() {
+    final public static Filter<Element, ByteBuffer> newFilter() {
         return instance;
     }
 
@@ -210,7 +210,7 @@ public class XmlFilterFactory //
     }
 
     @Override
-    public Filter<ByteBuffer, Element> newFilter(ConnectionHandler<?> handler) {
+    public Filter<Element, ByteBuffer> newFilter(ConnectionHandler<?> handler) {
         return newFilter();
     }
 }

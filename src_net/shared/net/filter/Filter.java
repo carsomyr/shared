@@ -49,7 +49,7 @@ public interface Filter<I, O> {
      * @param outputs
      *            the output {@link Queue}.
      */
-    public void applyInbound(Queue<I> inputs, Queue<O> outputs);
+    public void applyInbound(Queue<O> inputs, Queue<I> outputs);
 
     /**
      * Filters traffic in the outbound direction.
@@ -59,5 +59,5 @@ public interface Filter<I, O> {
      * @param outputs
      *            the output {@link Queue}.
      */
-    public void applyOutbound(Queue<O> inputs, Queue<I> outputs);
+    public void applyOutbound(Queue<I> inputs, Queue<O> outputs);
 }

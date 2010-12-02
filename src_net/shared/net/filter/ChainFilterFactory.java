@@ -65,7 +65,7 @@ public class ChainFilterFactory<I, O, H extends ConnectionHandler<?>> //
     @SuppressWarnings("unchecked")
     protected ChainFilterFactory( //
             FilterFactory<? extends Filter<?, ?>, ?, ?, ? super H>[] factories, //
-            FilterFactory<? extends Filter<?, O>, ?, O, ? super H> factory) {
+            FilterFactory<? extends Filter<I, ?>, I, ?, ? super H> factory) {
 
         this.factories = Arrays.copyOf(factories, factories.length + 1, FilterFactory[].class);
         this.factories[this.factories.length - 1] = //
@@ -79,9 +79,9 @@ public class ChainFilterFactory<I, O, H extends ConnectionHandler<?>> //
      *            the outbound type of the resulting chain.
      * @return the resulting, longer chain.
      */
-    public <T> ChainFilterFactory<I, T, H> add( //
-            FilterFactory<? extends Filter<? super O, T>, ? super O, T, ? super H> factory) {
-        return new ChainFilterFactory<I, T, H>(this.factories, factory);
+    public <T> ChainFilterFactory<T, O, H> add( //
+            FilterFactory<? extends Filter<T, ? super I>, T, ? super I, ? super H> factory) {
+        return new ChainFilterFactory<T, O, H>(this.factories, factory);
     }
 
     @SuppressWarnings("unchecked")
@@ -126,7 +126,7 @@ public class ChainFilterFactory<I, O, H extends ConnectionHandler<?>> //
         return new OobFilter<I, O>() {
 
             @Override
-            public void applyInbound(Queue<I> inputs, Queue<O> outputs) {
+            public void applyInbound(Queue<O> inputs, Queue<I> outputs) {
 
                 switch (filters.length) {
 
@@ -136,20 +136,20 @@ public class ChainFilterFactory<I, O, H extends ConnectionHandler<?>> //
 
                 default:
 
-                    ((Filter<I, Object>) filters[0]).applyInbound(inputs, inboundsWriteOnly[0]);
+                    ((Filter<Object, O>) filters[0]).applyInbound(inputs, inboundsWriteOnly[0]);
 
                     for (int i = 1, n = nFilters - 1; i < n; i++) {
                         filters[i].applyInbound(inboundsReadOnly[i - 1], inboundsWriteOnly[i]);
                     }
 
-                    ((Filter<Object, O>) filters[nFilters - 1]).applyInbound(inboundsReadOnly[nFilters - 2], outputs);
+                    ((Filter<I, Object>) filters[nFilters - 1]).applyInbound(inboundsReadOnly[nFilters - 2], outputs);
 
                     break;
                 }
             }
 
             @Override
-            public void applyOutbound(Queue<O> inputs, Queue<I> outputs) {
+            public void applyOutbound(Queue<I> inputs, Queue<O> outputs) {
 
                 switch (filters.length) {
 
@@ -159,13 +159,13 @@ public class ChainFilterFactory<I, O, H extends ConnectionHandler<?>> //
 
                 default:
 
-                    ((Filter<Object, O>) filters[nFilters - 1]).applyOutbound(inputs, outboundsWriteOnly[nFilters - 2]);
+                    ((Filter<I, Object>) filters[nFilters - 1]).applyOutbound(inputs, outboundsWriteOnly[nFilters - 2]);
 
                     for (int i = nFilters - 2; i >= 1; i--) {
                         filters[i].applyOutbound(outboundsReadOnly[i], outboundsWriteOnly[i - 1]);
                     }
 
-                    ((Filter<I, Object>) filters[0]).applyOutbound(outboundsReadOnly[0], outputs);
+                    ((Filter<Object, O>) filters[0]).applyOutbound(outboundsReadOnly[0], outputs);
 
                     break;
                 }

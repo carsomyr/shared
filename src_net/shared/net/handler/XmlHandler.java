@@ -61,7 +61,7 @@ import shared.net.filter.XmlFilterFactory;
  */
 abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Connection, T extends XmlEvent<T, ?, S>, S extends Enum<S>> //
         extends AbstractFilteredHandler<H, C, T> //
-        implements Source<T, S>, FilterFactory<Filter<Element, T>, Element, T, H> {
+        implements Source<T, S>, FilterFactory<Filter<T, Element>, T, Element, H> {
 
     final S type;
 
@@ -185,9 +185,9 @@ abstract public class XmlHandler<H extends XmlHandler<H, C, T, S>, C extends Con
     }
 
     @Override
-    public Filter<Element, T> newFilter(final H handler) {
+    public Filter<T, Element> newFilter(final H handler) {
 
-        return new Filter<Element, T>() {
+        return new Filter<T, Element>() {
 
             @Override
             public void applyInbound(Queue<Element> inputs, Queue<T> outputs) {
