@@ -54,7 +54,6 @@ import shared.event.StateTable;
 import shared.net.ConnectionHandler.ClosingType;
 import shared.net.nio.NioConnection.NioConnectionStatus;
 import shared.net.nio.NioEvent.NioEventType;
-import shared.util.CoreThread;
 
 /**
  * An abstract base class for {@link NioManager} service threads.
@@ -63,7 +62,7 @@ import shared.util.CoreThread;
  * @apiviz.has shared.net.nio.NioEvent - - - event
  * @author Roy Liu
  */
-abstract public class NioManagerThread extends CoreThread //
+abstract public class NioManagerThread extends Thread //
         implements SourceLocal<NioEvent<?>>, Closeable, EnumStatus<NioManagerThread.NioManagerThreadStatus> {
 
     /**
@@ -120,155 +119,147 @@ abstract public class NioManagerThread extends CoreThread //
      * Runs the main operation readiness and event processing loop.
      */
     @Override
-    protected void doRun() {
+    public void run() {
 
-        debug("Started.");
+        try {
 
-        onStart();
+            debug("Started.");
 
-        outer: for (; getStatus() == NioManagerThreadStatus.RUN;) {
+            onStart();
 
-            try {
-
-                this.selector.select();
-
-            } catch (IOException e) {
-
-                debug("Caught unexpected exception while in select() (%s).", e.getMessage());
-
-                continue outer;
-            }
-
-            // Iterate over the selected key set.
-            inner: for (Iterator<SelectionKey> itr = this.selector.selectedKeys().iterator(); itr.hasNext();) {
-
-                SelectionKey key = itr.next();
-
-                final int readyOps;
+            outer: for (; getStatus() == NioManagerThreadStatus.RUN;) {
 
                 try {
 
-                    readyOps = key.readyOps();
+                    this.selector.select();
 
-                } catch (CancelledKeyException e) {
+                } catch (IOException e) {
 
-                    // Canceled? OK, just ignore and continue.
-                    continue inner;
+                    debug("Caught unexpected exception while in select() (%s).", e.getMessage());
+
+                    continue outer;
                 }
 
-                doReadyOps(readyOps, key);
+                // Iterate over the selected key set.
+                inner: for (Iterator<SelectionKey> itr = this.selector.selectedKeys().iterator(); itr.hasNext();) {
 
-                // Signify that we've examined the currently selected connection.
-                itr.remove();
+                    SelectionKey key = itr.next();
+
+                    final int readyOps;
+
+                    try {
+
+                        readyOps = key.readyOps();
+
+                    } catch (CancelledKeyException e) {
+
+                        // Canceled? OK, just ignore and continue.
+                        continue inner;
+                    }
+
+                    doReadyOps(readyOps, key);
+
+                    // Signify that we've examined the currently selected connection.
+                    itr.remove();
+                }
+
+                // Keep polling for internal events.
+                for (NioEvent<?> evt; (evt = this.queue.poll()) != null;) {
+
+                    NioConnection conn = (NioConnection) evt.getSource();
+
+                    if (conn == null) {
+
+                        this.fsmInternal.lookup(this, evt);
+
+                    } else {
+
+                        // Note: Reading a stale thread reference is OK, since only this thread is capable of
+                        // reassigning any connection's thread reference currently pointing to it. As a consequence, any
+                        // events originating from such connections are really meant for this thread. On the other hand,
+                        // any events originating from connections not referencing this thread are forwarded to their
+                        // putative destination threads. Observe that even if these destinations are read from stale
+                        // thread references, the forwarding scheme is eventually correct -- Events will, after an
+                        // indeterminate number of forwarding hops, reach their intended destinations.
+                        //
+                        // This explanation may be a bit overwrought for a simple, single hop handoff, but it's better
+                        // to be paranoid than to suffer from subtle, once-in-a-billion race conditions.
+                        NioManagerThread connThread = conn.getThread();
+
+                        // The event was indeed intended for this thread.
+                        if (this == connThread) {
+
+                            this.fsm.lookup(conn, evt);
+
+                        }
+                        // The event needs to be redirected to another thread.
+                        else {
+
+                            connThread.onLocal(evt);
+                        }
+                    }
+                }
             }
 
-            // Keep polling for internal events.
+            this.exception = new IllegalStateException("The connection manager thread has exited");
+
+        } catch (Throwable t) {
+
+            synchronized (this) {
+                setStatus(NioManagerThreadStatus.CLOSING);
+            }
+
+            this.exception = new IllegalStateException("The connection manager thread has encountered " //
+                    + "an unexpected exception", t);
+
+        } finally {
+
+            // Everyone who has a request pending will get an error.
             for (NioEvent<?> evt; (evt = this.queue.poll()) != null;) {
 
                 NioConnection conn = (NioConnection) evt.getSource();
 
-                if (conn == null) {
-
-                    this.fsmInternal.lookup(this, evt);
-
-                } else {
-
-                    // Note: Reading a stale thread reference is OK, since only this thread is capable of reassigning
-                    // any connection's thread reference currently pointing to it. As a consequence, any events
-                    // originating from such connections are really meant for this thread. On the other hand, any events
-                    // originating from connections not referencing this thread are forwarded to their putative
-                    // destination threads. Observe that even if these destinations are read from stale thread
-                    // references, the forwarding scheme is eventually correct -- Events will, after an indeterminate
-                    // number of forwarding hops, reach their intended destinations.
-                    //
-                    // This explanation may be a bit overwrought for a simple, single hop handoff, but it's better to be
-                    // paranoid than to suffer from subtle, once-in-a-billion race conditions.
-                    NioManagerThread connThread = conn.getThread();
-
-                    // The event was indeed intended for this thread.
-                    if (this == connThread) {
-
-                        this.fsm.lookup(conn, evt);
-
-                    }
-                    // The event needs to be redirected to another thread.
-                    else {
-
-                        connThread.onLocal(evt);
-                    }
+                // If the source is not null, then it must be a connection.
+                if (conn != null) {
+                    handleError(conn, this.exception);
                 }
             }
-        }
 
-        this.exception = new IllegalStateException("The connection manager thread has exited");
-    }
+            // Perform a dummy Selector#select to get rid of canceled keys.
+            try {
 
-    /**
-     * Sets the status to {@link NioManagerThreadStatus#CLOSING}, since user code didn't explicitly call
-     * {@link #close()}.
-     */
-    @Override
-    protected void doCatch(Throwable t) {
+                this.selector.selectNow();
 
-        synchronized (this) {
-            setStatus(NioManagerThreadStatus.CLOSING);
-        }
+            } catch (IOException e) {
 
-        this.exception = new IllegalStateException("The connection manager thread has encountered " //
-                + "an unexpected exception", t);
-    }
-
-    /**
-     * Releases any currently held resources.
-     */
-    @Override
-    protected void doFinally() {
-
-        // Everyone who has a request pending will get an error.
-        for (NioEvent<?> evt; (evt = this.queue.poll()) != null;) {
-
-            NioConnection conn = (NioConnection) evt.getSource();
-
-            // If the source is not null, then it must be a connection.
-            if (conn != null) {
-                handleError(conn, this.exception);
-            }
-        }
-
-        // Perform a dummy Selector#select to get rid of canceled keys.
-        try {
-
-            this.selector.selectNow();
-
-        } catch (IOException e) {
-
-            // Ah well.
-        }
-
-        onStop();
-
-        // Finally, close the selector.
-        try {
-
-            this.selector.close();
-
-        } catch (IOException e) {
-
-            // Ah well.
-        }
-
-        // Notify anyone calling #close.
-        synchronized (this) {
-
-            for (Request<?, ?> request : this.requests) {
-                request.setException(this.exception);
+                // Ah well.
             }
 
-            setStatus(NioManagerThreadStatus.CLOSED);
-            notifyAll();
-        }
+            onStop();
 
-        debug("Stopped.");
+            // Finally, close the selector.
+            try {
+
+                this.selector.close();
+
+            } catch (IOException e) {
+
+                // Ah well.
+            }
+
+            // Notify anyone calling #close.
+            synchronized (this) {
+
+                for (Request<?, ?> request : this.requests) {
+                    request.setException(this.exception);
+                }
+
+                setStatus(NioManagerThreadStatus.CLOSED);
+                notifyAll();
+            }
+
+            debug("Stopped.");
+        }
     }
 
     /**

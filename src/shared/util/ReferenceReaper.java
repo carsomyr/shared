@@ -145,7 +145,7 @@ public class ReferenceReaper<T> {
      * @param <T>
      *            the referent type.
      */
-    protected static class ReaperThread<T> extends CoreThread {
+    protected static class ReaperThread<T> extends Thread {
 
         final ReferenceQueue<T> rq;
         final ConcurrentMap<Reference<T>, Runnable> map;
@@ -171,7 +171,7 @@ public class ReferenceReaper<T> {
          * Runs the reference reaping loop.
          */
         @Override
-        public void doRun() {
+        public void run() {
 
             loop: for (; this.run;) {
 

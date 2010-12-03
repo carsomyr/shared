@@ -32,7 +32,6 @@ import java.io.Closeable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import shared.util.CoreThread;
 import shared.util.Finalizable;
 
 /**
@@ -108,7 +107,7 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
      * @param <T>
      *            the {@link Event} type.
      */
-    protected static class ProcessorThread<T extends Event<T, ?, ?>> extends CoreThread {
+    protected static class ProcessorThread<T extends Event<T, ?, ?>> extends Thread {
 
         /**
          * A null {@link Runnable} that has an empty {@link Runnable#run()} method.
@@ -144,28 +143,30 @@ public class Processor<T extends Event<T, ?, ?>> implements SourceLocal<T>, Fina
          * Runs the event processing loop.
          */
         @Override
-        protected void doRun() {
+        public void run() {
 
-            loop: for (; this.run;) {
+            try {
 
-                final T evt;
+                loop: for (; this.run;) {
 
-                try {
+                    final T evt;
 
-                    evt = this.eq.take();
+                    try {
 
-                } catch (InterruptedException e) {
+                        evt = this.eq.take();
 
-                    continue loop;
+                    } catch (InterruptedException e) {
+
+                        continue loop;
+                    }
+
+                    evt.getSource().getHandler().handle(evt);
                 }
 
-                evt.getSource().getHandler().handle(evt);
-            }
-        }
+            } finally {
 
-        @Override
-        protected void doFinally() {
-            this.finalizer.run();
+                this.finalizer.run();
+            }
         }
     }
 
