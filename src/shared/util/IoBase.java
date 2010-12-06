@@ -451,6 +451,8 @@ public class IoBase {
      *            the {@link OutputStream} that receives the child's output.
      * @param parentError
      *            the {@link OutputStream} that receives the child's error output.
+     * @param workingDir
+     *            the working directory.
      * @param execArgs
      *            the command and arguments to execute.
      * @return the return code of the child process.
@@ -461,9 +463,10 @@ public class IoBase {
             final InputStream parentIn, //
             final OutputStream parentOut, //
             final OutputStream parentError, //
+            File workingDir, //
             String... execArgs) throws IOException {
 
-        ProcessBuilder pb = new ProcessBuilder(execArgs);
+        ProcessBuilder pb = new ProcessBuilder(execArgs).directory(workingDir);
 
         Map<String, String> env = environmentLocal.get();
 
@@ -591,7 +594,7 @@ public class IoBase {
      *             when something goes awry.
      */
     final public static int execAndWaitFor(String... execArgs) throws IOException {
-        return execAndWaitFor(nullInputStream, nullOutputStream, nullOutputStream, execArgs);
+        return execAndWaitFor(nullInputStream, nullOutputStream, nullOutputStream, null, execArgs);
     }
 
     /**
@@ -606,7 +609,7 @@ public class IoBase {
      *             when something goes awry.
      */
     final public static int execAndWaitFor(InputStream parentIn, String... execArgs) throws IOException {
-        return execAndWaitFor(parentIn, nullOutputStream, nullOutputStream, execArgs);
+        return execAndWaitFor(parentIn, nullOutputStream, nullOutputStream, null, execArgs);
     }
 
     /**
@@ -621,7 +624,7 @@ public class IoBase {
      *             when something goes awry.
      */
     final public static int execAndWaitFor(OutputStream parentOut, String... execArgs) throws IOException {
-        return execAndWaitFor(nullInputStream, parentOut, parentOut, execArgs);
+        return execAndWaitFor(nullInputStream, parentOut, parentOut, null, execArgs);
     }
 
     /**
@@ -639,7 +642,7 @@ public class IoBase {
      */
     final public static int execAndWaitFor(InputStream parentIn, OutputStream parentOut, String... execArgs) //
             throws IOException {
-        return execAndWaitFor(parentIn, parentOut, parentOut, execArgs);
+        return execAndWaitFor(parentIn, parentOut, parentOut, null, execArgs);
     }
 
     /**

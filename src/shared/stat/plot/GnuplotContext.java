@@ -161,7 +161,7 @@ public class GnuplotContext implements PlotContext<GnuplotContext, GnuplotContex
 
         try {
 
-            IoBase.execAndWaitFor(in, out, errOut, gnuplotExecArgs);
+            IoBase.execAndWaitFor(in, out, errOut, null, gnuplotExecArgs);
 
         } catch (IOException e) {
 
