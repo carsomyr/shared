@@ -172,7 +172,7 @@ public class Loader {
 
         for (String resourceName : resourceNamesMap.get("jar")) {
 
-            String pathname = resourceName.replace(".", "/").concat(".jar");
+            String pathname = toPathname(resourceName).concat(".jar");
             InputStream in = cl.getResourceAsStream(pathname);
 
             if (in == null) {
@@ -198,7 +198,7 @@ public class Loader {
         //
 
         for (String resourceName : resourceNamesMap.get("native")) {
-            bootstrapCl.loadLibrary(resourceName);
+            bootstrapCl.loadLibrary(toPathname(resourceName));
         }
 
         //
@@ -237,6 +237,66 @@ public class Loader {
 
             currentThread.setContextClassLoader(cl);
         }
+    }
+
+    /**
+     * Converts the given resource name into a class pathname. Note that backslashes are used for escaping -- "\."
+     * prevents the translation of "." into "/", and "\\" denotes the backslash character itself.
+     * 
+     * @param resourceName
+     *            the resource name.
+     * @return the class pathname.
+     */
+    final protected static String toPathname(String resourceName) {
+
+        boolean escaping = false;
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0, n = resourceName.length(); i < n; i++) {
+
+            char c = resourceName.charAt(i);
+
+            if (escaping) {
+
+                switch (c) {
+
+                case '\\':
+                case '.':
+
+                    sb.append(c);
+                    escaping = false;
+
+                    break;
+
+                default:
+                    throw new IllegalArgumentException(String.format("Invalid escape sequence \"\\%c\"", c));
+                }
+
+            } else {
+
+                switch (c) {
+
+                case '\\':
+                    escaping = true;
+                    break;
+
+                case '.':
+                    sb.append('/');
+                    break;
+
+                default:
+                    sb.append(c);
+                    break;
+                }
+            }
+        }
+
+        if (escaping) {
+            throw new IllegalArgumentException("Invalid escape sequence \"\\\"");
+        }
+
+        return sb.toString();
     }
 
     // Dummy constructor.

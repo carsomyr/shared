@@ -235,9 +235,7 @@ public class RegistryClassLoader extends SecureClassLoader implements ResourceRe
     /**
      * Attempts to load a native library first from the class path, and then from the system's dynamic linker.
      */
-    public void loadLibrary(String libraryName) {
-
-        String pathname = libraryName.replace(".", "/");
+    public void loadLibrary(String pathname) {
 
         int index = pathname.lastIndexOf("/");
 

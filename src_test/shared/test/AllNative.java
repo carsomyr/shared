@@ -83,7 +83,7 @@ public class AllNative {
 
         try {
 
-            ((RegistryClassLoader) Thread.currentThread().getContextClassLoader()).loadLibrary("lib.sst");
+            ((RegistryClassLoader) Thread.currentThread().getContextClassLoader()).loadLibrary("lib/sst");
 
         } catch (RuntimeException e) {
 

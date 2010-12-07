@@ -80,7 +80,7 @@ public class AllX {
 
         try {
 
-            ((RegistryClassLoader) Thread.currentThread().getContextClassLoader()).loadLibrary("libx.sstx");
+            ((RegistryClassLoader) Thread.currentThread().getContextClassLoader()).loadLibrary("libx/sstx");
 
         } catch (RuntimeException e) {
 
