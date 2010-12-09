@@ -1,4 +1,3 @@
-/*.exe
 /*.jar
 /.bin
 /.checkstyle
@@ -20,7 +19,6 @@
 /build/libx/
 /native/Darwin/
 /native/Linux/
-/native/Windows/
 /native/include/jni/jni_headers.h
 /native/include/jni/jni_headersx.h
 /native/include/win32/*.ico

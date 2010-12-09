@@ -64,9 +64,9 @@ MAKE_BUILD_AND_TEST	= \
 
 .PHONY: all \
 	shared sharedx shared_cl shared32 sharedx32 shared64 sharedx64 \
-	win32 headers headersx \
+	win32 win64 buildandtest headers headersx \
 	java jar javadoc doxydoc checkstyle publish publishx \
-	clean clean32 clean64 clean_win32 distclean
+	clean clean32 clean64 clean_win32 clean_win64 distclean
 
 all: shared sharedx
 
@@ -129,15 +129,38 @@ build/libx/$(LIB_PREFIX)sstx64.$(LIB_SUFFIX): \
 # Windows 32-Bit Cross-Compile
 
 win32: OS = Windows
+win32: WORD_SIZE = 32
 win32: LIB_PREFIX =
 win32: LIB_SUFFIX = dll
-win32: build/lib/sst.dll build/libx/sstx.dll buildandtest.exe
+win32: build/lib/sst32.dll build/libx/sstx32.dll
 
-build/lib/sst.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS)
+build/lib/sst32.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS)
 	$(MAKE_SHARED)
 
-build/libx/sstx.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
+build/libx/sstx32.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
 	$(MAKE_SHAREDX)
+
+# Windows 64-Bit Cross-Compile
+
+win64: OS = Windows
+win64: WORD_SIZE = 64
+win64: LIB_PREFIX =
+win64: LIB_SUFFIX = dll
+win64: build/lib/sst64.dll build/libx/sstx64.dll
+
+build/lib/sst64.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS)
+	$(MAKE_SHARED)
+
+build/libx/sstx64.dll: $(CSRCS) $(CHEADERS) $(JNI_HEADERS) $(JNI_HEADERSX)
+	$(MAKE_SHAREDX)
+
+# Windows Build and Test Executable
+
+buildandtest: OS = Windows
+buildandtest: WORD_SIZE = 32
+buildandtest: LIB_PREFIX =
+buildandtest: LIB_SUFFIX = dll
+buildandtest: buildandtest.exe
 
 buildandtest.exe: $(CSRCS) $(CHEADERS)
 	$(MAKE_BUILD_AND_TEST)
@@ -221,7 +244,7 @@ $(PUBLISHX_TOKEN): $(JSRCS) build/libx/$(LIB_PREFIX)sstx.$(LIB_SUFFIX)
 # Clean the distribution.                                                      #
 #------------------------------------------------------------------------------#
 
-clean: clean32 clean64 clean_win32
+clean: clean32 clean64 clean_win32 clean_win64
 	rm -rf -- doxydoc demo
 	rm -f -- $(DOXYDOC_TOKEN) *.exe
 	$(ANT) clean
@@ -236,7 +259,13 @@ clean64:
 	$(MAKE) -C native -- clean
 
 clean_win32: OS = Windows
+clean_win32: WORD_SIZE = 32
 clean_win32:
+	$(MAKE) -C native -- clean
+
+clean_win64: OS = Windows
+clean_win64: WORD_SIZE = 64
+clean_win64:
 	$(MAKE) -C native -- clean
 
 distclean: clean

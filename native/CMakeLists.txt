@@ -137,9 +137,6 @@ if(MINGW)
         get_target_property(COMPILE_FLAGS ${BUILD_TARGET} COMPILE_FLAGS)
         set_target_properties(${BUILD_TARGET} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Werror -pedantic -Wno-long-long")
 
-        get_target_property(LINK_FLAGS ${BUILD_TARGET} LINK_FLAGS)
-        set_target_properties(${BUILD_TARGET} PROPERTIES LINK_FLAGS "${LINK_FLAGS} -Wl,--add-stdcall-alias")
-
     endforeach(BUILD_TARGET ${BUILD_TARGETS})
 
 else(MINGW)
@@ -147,10 +144,7 @@ else(MINGW)
     foreach(BUILD_TARGET ${BUILD_TARGETS})
 
         get_target_property(COMPILE_FLAGS ${BUILD_TARGET} COMPILE_FLAGS)
-        set_target_properties(${BUILD_TARGET} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Werror -pedantic -Wno-long-long -fPIC")
-
-        get_target_property(LINK_FLAGS ${BUILD_TARGET} LINK_FLAGS)
-        set_target_properties(${BUILD_TARGET} PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+        set_target_properties(${BUILD_TARGET} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Werror -pedantic -Wno-long-long")
 
         if(M)
 

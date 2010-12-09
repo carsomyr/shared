@@ -32,8 +32,26 @@ void BuildAndTest::execAndWaitFor(const TCHAR *cmd) {
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
+    HMODULE kernel32Module = GetModuleHandle(TEXT("kernel32"));
+    BOOL (WINAPI *fn_Wow64DisableWow64FsRedirection)(PVOID *) = (BOOL (WINAPI *)(PVOID *)) GetProcAddress( //
+            kernel32Module, "Wow64DisableWow64FsRedirection");
+    BOOL (WINAPI *fn_Wow64RevertWow64FsRedirection)(PVOID) = (BOOL (WINAPI *)(PVOID)) GetProcAddress( //
+            kernel32Module, "Wow64RevertWow64FsRedirection");
+
+    PVOID save = NULL;
+
+    if (fn_Wow64DisableWow64FsRedirection && fn_Wow64RevertWow64FsRedirection) {
+
+        if (!fn_Wow64DisableWow64FsRedirection(&save)) {
+
+            printf("Could not disable file system redirection.\n");
+
+            return;
+        }
+    }
+
     // Start the child process.
-    if (!CreateProcess(NULL, //
+    BOOL res = CreateProcess(NULL, //
             (TCHAR *) cmd, //
             NULL, //
             NULL, //
@@ -42,7 +60,19 @@ void BuildAndTest::execAndWaitFor(const TCHAR *cmd) {
             NULL, //
             NULL, //
             &si, //
-            &pi)) {
+            &pi);
+
+    if (fn_Wow64DisableWow64FsRedirection && fn_Wow64RevertWow64FsRedirection) {
+
+        if (!fn_Wow64RevertWow64FsRedirection(save)) {
+
+            printf("Could not revert to previous file system redirection state.\n");
+
+            return;
+        }
+    }
+
+    if (!res) {
 
         printf("Could not create child process \"%s\".\n", cmd);
 
