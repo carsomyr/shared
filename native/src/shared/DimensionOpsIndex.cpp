@@ -34,27 +34,27 @@ void DimensionOps::riOp(JNIEnv *env, jobject thisObj, jint type, //
 
         switch (type) {
 
-        case shared_array_kernel_ArrayKernel_RI_MAX:
+        case org_shared_array_kernel_ArrayKernel_RI_MAX:
             op = DimensionOps::riMax;
             break;
 
-        case shared_array_kernel_ArrayKernel_RI_MIN:
+        case org_shared_array_kernel_ArrayKernel_RI_MIN:
             op = DimensionOps::riMin;
             break;
 
-        case shared_array_kernel_ArrayKernel_RI_ZERO:
+        case org_shared_array_kernel_ArrayKernel_RI_ZERO:
             op = DimensionOps::riZero;
             break;
 
-        case shared_array_kernel_ArrayKernel_RI_GZERO:
+        case org_shared_array_kernel_ArrayKernel_RI_GZERO:
             op = DimensionOps::riGZero;
             break;
 
-        case shared_array_kernel_ArrayKernel_RI_LZERO:
+        case org_shared_array_kernel_ArrayKernel_RI_LZERO:
             op = DimensionOps::riLZero;
             break;
 
-        case shared_array_kernel_ArrayKernel_RI_SORT:
+        case org_shared_array_kernel_ArrayKernel_RI_SORT:
             op = DimensionOps::riSort;
             break;
 

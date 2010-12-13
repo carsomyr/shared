@@ -33,27 +33,27 @@ jdouble ElementOps::raOp(JNIEnv *env, jobject thisObj, jint type, jdoubleArray s
 
         switch (type) {
 
-        case shared_array_kernel_ArrayKernel_RA_SUM:
+        case org_shared_array_kernel_ArrayKernel_RA_SUM:
             op = ElementOps::raSum;
             break;
 
-        case shared_array_kernel_ArrayKernel_RA_PROD:
+        case org_shared_array_kernel_ArrayKernel_RA_PROD:
             op = ElementOps::raProd;
             break;
 
-        case shared_array_kernel_ArrayKernel_RA_VAR:
+        case org_shared_array_kernel_ArrayKernel_RA_VAR:
             op = ElementOps::raVar;
             break;
 
-        case shared_array_kernel_ArrayKernel_RA_MAX:
+        case org_shared_array_kernel_ArrayKernel_RA_MAX:
             op = ElementOps::raMax;
             break;
 
-        case shared_array_kernel_ArrayKernel_RA_MIN:
+        case org_shared_array_kernel_ArrayKernel_RA_MIN:
             op = ElementOps::raMin;
             break;
 
-        case shared_array_kernel_ArrayKernel_RA_ENT:
+        case org_shared_array_kernel_ArrayKernel_RA_ENT:
             op = ElementOps::raEnt;
             break;
 
@@ -81,11 +81,11 @@ jdoubleArray ElementOps::caOp(JNIEnv *env, jobject thisObj, jint type, jdoubleAr
 
         switch (type) {
 
-        case shared_array_kernel_ArrayKernel_CA_SUM:
+        case org_shared_array_kernel_ArrayKernel_CA_SUM:
             op = ElementOps::caSum;
             break;
 
-        case shared_array_kernel_ArrayKernel_CA_PROD:
+        case org_shared_array_kernel_ArrayKernel_CA_PROD:
             op = ElementOps::caProd;
             break;
 
@@ -118,63 +118,63 @@ void ElementOps::ruOp(JNIEnv *env, jobject thisObj, jint type, jdouble a, jdoubl
 
         switch (type) {
 
-        case shared_array_kernel_ArrayKernel_RU_ADD:
+        case org_shared_array_kernel_ArrayKernel_RU_ADD:
             op = ElementOps::uAdd<jdouble>;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_MUL:
+        case org_shared_array_kernel_ArrayKernel_RU_MUL:
             op = ElementOps::uMul<jdouble>;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_SQR:
+        case org_shared_array_kernel_ArrayKernel_RU_SQR:
             op = ElementOps::uSqr<jdouble>;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_INV:
+        case org_shared_array_kernel_ArrayKernel_RU_INV:
             op = ElementOps::uInv<jdouble>;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_FILL:
+        case org_shared_array_kernel_ArrayKernel_RU_FILL:
             op = ElementOps::uFill<jdouble>;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_SHUFFLE:
+        case org_shared_array_kernel_ArrayKernel_RU_SHUFFLE:
             op = ElementOps::uShuffle<jdouble>;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_POW:
+        case org_shared_array_kernel_ArrayKernel_RU_POW:
             op = ElementOps::ruPow;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_EXP:
+        case org_shared_array_kernel_ArrayKernel_RU_EXP:
             op = ElementOps::ruExp;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_ABS:
+        case org_shared_array_kernel_ArrayKernel_RU_ABS:
             op = ElementOps::ruAbs;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_RND:
+        case org_shared_array_kernel_ArrayKernel_RU_RND:
             op = ElementOps::ruRnd;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_LOG:
+        case org_shared_array_kernel_ArrayKernel_RU_LOG:
             op = ElementOps::ruLog;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_SQRT:
+        case org_shared_array_kernel_ArrayKernel_RU_SQRT:
             op = ElementOps::ruSqrt;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_COS:
+        case org_shared_array_kernel_ArrayKernel_RU_COS:
             op = ElementOps::ruCos;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_SIN:
+        case org_shared_array_kernel_ArrayKernel_RU_SIN:
             op = ElementOps::ruSin;
             break;
 
-        case shared_array_kernel_ArrayKernel_RU_ATAN:
+        case org_shared_array_kernel_ArrayKernel_RU_ATAN:
             op = ElementOps::ruAtan;
             break;
 
@@ -198,39 +198,39 @@ void ElementOps::cuOp(JNIEnv *env, jobject thisObj, jint type, jdouble aRe, jdou
 
         switch (type) {
 
-        case shared_array_kernel_ArrayKernel_CU_ADD:
+        case org_shared_array_kernel_ArrayKernel_CU_ADD:
             op = ElementOps::uAdd<jcomplex>;
             break;
 
-        case shared_array_kernel_ArrayKernel_CU_MUL:
+        case org_shared_array_kernel_ArrayKernel_CU_MUL:
             op = ElementOps::uMul<jcomplex>;
             break;
 
-        case shared_array_kernel_ArrayKernel_CU_FILL:
+        case org_shared_array_kernel_ArrayKernel_CU_FILL:
             op = ElementOps::uFill<jcomplex>;
             break;
 
-        case shared_array_kernel_ArrayKernel_CU_SHUFFLE:
+        case org_shared_array_kernel_ArrayKernel_CU_SHUFFLE:
             op = ElementOps::uShuffle<jcomplex>;
             break;
 
-        case shared_array_kernel_ArrayKernel_CU_EXP:
+        case org_shared_array_kernel_ArrayKernel_CU_EXP:
             op = ElementOps::cuExp;
             break;
 
-        case shared_array_kernel_ArrayKernel_CU_RND:
+        case org_shared_array_kernel_ArrayKernel_CU_RND:
             op = ElementOps::cuRnd;
             break;
 
-        case shared_array_kernel_ArrayKernel_CU_CONJ:
+        case org_shared_array_kernel_ArrayKernel_CU_CONJ:
             op = ElementOps::cuConj;
             break;
 
-        case shared_array_kernel_ArrayKernel_CU_COS:
+        case org_shared_array_kernel_ArrayKernel_CU_COS:
             op = ElementOps::cuCos;
             break;
 
-        case shared_array_kernel_ArrayKernel_CU_SIN:
+        case org_shared_array_kernel_ArrayKernel_CU_SIN:
             op = ElementOps::cuSin;
             break;
 
@@ -254,19 +254,19 @@ void ElementOps::iuOp(JNIEnv *env, jobject thisObj, jint type, jint a, jintArray
 
         switch (type) {
 
-        case shared_array_kernel_ArrayKernel_IU_ADD:
+        case org_shared_array_kernel_ArrayKernel_IU_ADD:
             op = ElementOps::uAdd<jint>;
             break;
 
-        case shared_array_kernel_ArrayKernel_IU_MUL:
+        case org_shared_array_kernel_ArrayKernel_IU_MUL:
             op = ElementOps::uMul<jint>;
             break;
 
-        case shared_array_kernel_ArrayKernel_IU_FILL:
+        case org_shared_array_kernel_ArrayKernel_IU_FILL:
             op = ElementOps::uFill<jint>;
             break;
 
-        case shared_array_kernel_ArrayKernel_IU_SHUFFLE:
+        case org_shared_array_kernel_ArrayKernel_IU_SHUFFLE:
             op = ElementOps::uShuffle<jint>;
             break;
 
@@ -333,11 +333,11 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_R_TO_C_RE:
+            case org_shared_array_kernel_ArrayKernel_R_TO_C_RE:
                 op = ElementOps::rtocRe;
                 break;
 
-            case shared_array_kernel_ArrayKernel_R_TO_C_IM:
+            case org_shared_array_kernel_ArrayKernel_R_TO_C_IM:
                 op = ElementOps::rtocIm;
                 break;
 
@@ -356,15 +356,15 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_C_TO_R_RE:
+            case org_shared_array_kernel_ArrayKernel_C_TO_R_RE:
                 op = ElementOps::ctorRe;
                 break;
 
-            case shared_array_kernel_ArrayKernel_C_TO_R_IM:
+            case org_shared_array_kernel_ArrayKernel_C_TO_R_IM:
                 op = ElementOps::ctorIm;
                 break;
 
-            case shared_array_kernel_ArrayKernel_C_TO_R_ABS:
+            case org_shared_array_kernel_ArrayKernel_C_TO_R_ABS:
                 op = ElementOps::ctorAbs;
                 break;
 
@@ -383,7 +383,7 @@ void ElementOps::convert(JNIEnv *env, jobject thisObj, jint type, //
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_I_TO_R:
+            case org_shared_array_kernel_ArrayKernel_I_TO_R:
                 op = ElementOps::itor;
                 break;
 
@@ -463,19 +463,19 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_CE_ADD:
+            case org_shared_array_kernel_ArrayKernel_CE_ADD:
                 op = ElementOps::eAdd<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_CE_SUB:
+            case org_shared_array_kernel_ArrayKernel_CE_SUB:
                 op = ElementOps::eSub<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_CE_MUL:
+            case org_shared_array_kernel_ArrayKernel_CE_MUL:
                 op = ElementOps::eMul<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_CE_DIV:
+            case org_shared_array_kernel_ArrayKernel_CE_DIV:
                 op = ElementOps::eDiv<T>;
                 break;
 
@@ -491,27 +491,27 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_RE_ADD:
+            case org_shared_array_kernel_ArrayKernel_RE_ADD:
                 op = ElementOps::eAdd<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_RE_SUB:
+            case org_shared_array_kernel_ArrayKernel_RE_SUB:
                 op = ElementOps::eSub<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_RE_MUL:
+            case org_shared_array_kernel_ArrayKernel_RE_MUL:
                 op = ElementOps::eMul<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_RE_DIV:
+            case org_shared_array_kernel_ArrayKernel_RE_DIV:
                 op = ElementOps::eDiv<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_RE_MAX:
+            case org_shared_array_kernel_ArrayKernel_RE_MAX:
                 op = ElementOps::eMax<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_RE_MIN:
+            case org_shared_array_kernel_ArrayKernel_RE_MIN:
                 op = ElementOps::eMin<T>;
                 break;
 
@@ -527,23 +527,23 @@ template<class T> inline void ElementOps::binaryOpProxy(JNIEnv *env, jint type, 
 
             switch (type) {
 
-            case shared_array_kernel_ArrayKernel_IE_ADD:
+            case org_shared_array_kernel_ArrayKernel_IE_ADD:
                 op = ElementOps::eAdd<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_IE_SUB:
+            case org_shared_array_kernel_ArrayKernel_IE_SUB:
                 op = ElementOps::eSub<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_IE_MUL:
+            case org_shared_array_kernel_ArrayKernel_IE_MUL:
                 op = ElementOps::eMul<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_IE_MAX:
+            case org_shared_array_kernel_ArrayKernel_IE_MAX:
                 op = ElementOps::eMax<T>;
                 break;
 
-            case shared_array_kernel_ArrayKernel_IE_MIN:
+            case org_shared_array_kernel_ArrayKernel_IE_MIN:
                 op = ElementOps::eMin<T>;
                 break;
 

@@ -48,10 +48,10 @@ def main():
 
     java_cmd = ["java", "-ea"] + os_options[platform.system()] + ["-cp", "sst.jar"]
 
-    subprocess.call(java_cmd + ["shared.test.All"])
-    subprocess.call(java_cmd + ["shared.test.Demo"])
-    subprocess.call(java_cmd + ["shared.test.AllNative"])
-    subprocess.call(java_cmd + ["sharedx.test.AllX"])
+    subprocess.call(java_cmd + ["org.shared.test.All"])
+    subprocess.call(java_cmd + ["org.shared.test.Demo"])
+    subprocess.call(java_cmd + ["org.shared.test.AllNative"])
+    subprocess.call(java_cmd + ["org.sharedx.test.AllX"])
 
 #
 

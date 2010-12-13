@@ -1,4 +1,4 @@
-include ../src/shared/project.properties
+include ../src/org/shared/project.properties
 
 #------------------------------------------------------------------------------#
 # Declare variables.                                                           #
@@ -9,7 +9,8 @@ include ../src/shared/project.properties
 JSRCS			= $(wildcard ../src*/*/*.java) \
 				$(wildcard ../src*/*/*/*.java) \
 				$(wildcard ../src*/*/*/*/*.java) \
-				$(wildcard ../src*/*/*/*/*/*.java)
+				$(wildcard ../src*/*/*/*/*/*.java) \
+				$(wildcard ../src*/*/*/*/*/*/*.java)
 
 # JNI Headers
 

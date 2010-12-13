@@ -31,7 +31,7 @@ static jfieldID memFieldId;
 
 void Plan::init(JNIEnv *env) {
 
-    planClass = (jclass) Common::newWeakGlobalRef(env, Common::findClass(env, "sharedx/fftw/Plan"));
+    planClass = (jclass) Common::newWeakGlobalRef(env, Common::findClass(env, "org/sharedx/fftw/Plan"));
     typeFieldId = Common::getFieldId(env, planClass, "type", "I");
     dimsFieldId = Common::getFieldId(env, planClass, "dims", "[I");
     memFieldId = Common::getFieldId(env, planClass, "memory", "[B");
@@ -244,7 +244,7 @@ inline void Plan::getTransformParameters( //
 
     switch (type) {
 
-    case sharedx_fftw_Plan_R_TO_C:
+    case org_sharedx_fftw_Plan_R_TO_C:
 
     {
         jint acc1 = dimsArr[nDims - 1];
@@ -263,7 +263,7 @@ inline void Plan::getTransformParameters( //
 
         break;
 
-    case sharedx_fftw_Plan_C_TO_R:
+    case org_sharedx_fftw_Plan_C_TO_R:
 
     {
         jint acc1 = 2 * ((dimsArr[nDims - 1] / 2) + 1);
@@ -282,7 +282,7 @@ inline void Plan::getTransformParameters( //
 
         break;
 
-    case sharedx_fftw_Plan_FORWARD:
+    case org_sharedx_fftw_Plan_FORWARD:
 
     {
         jint acc1 = 2 * dimsArr[nDims - 1];
@@ -298,7 +298,7 @@ inline void Plan::getTransformParameters( //
 
         break;
 
-    case sharedx_fftw_Plan_BACKWARD:
+    case org_sharedx_fftw_Plan_BACKWARD:
 
     {
         jint acc1 = 2 * dimsArr[nDims - 1];
@@ -336,19 +336,19 @@ inline fftw_plan Plan::createPlan( //
     // Convert a Java logical constant into a FFTW constant.
     switch (logicalMode) {
 
-    case sharedx_fftw_Plan_FFTW_ESTIMATE:
+    case org_sharedx_fftw_Plan_FFTW_ESTIMATE:
         mode = FFTW_ESTIMATE;
         break;
 
-    case sharedx_fftw_Plan_FFTW_MEASURE:
+    case org_sharedx_fftw_Plan_FFTW_MEASURE:
         mode = FFTW_MEASURE;
         break;
 
-    case sharedx_fftw_Plan_FFTW_PATIENT:
+    case org_sharedx_fftw_Plan_FFTW_PATIENT:
         mode = FFTW_PATIENT;
         break;
 
-    case sharedx_fftw_Plan_FFTW_EXHAUSTIVE:
+    case org_sharedx_fftw_Plan_FFTW_EXHAUSTIVE:
         mode = FFTW_EXHAUSTIVE;
         break;
 
@@ -358,24 +358,24 @@ inline fftw_plan Plan::createPlan( //
 
     switch (type) {
 
-    case sharedx_fftw_Plan_R_TO_C:
+    case org_sharedx_fftw_Plan_R_TO_C:
         plan = fftw_plan_dft_r2c(nDims, (const int *) dimsArr, //
                 inArr, (fftw_complex *) outArr, mode | FFTW_PRESERVE_INPUT | FFTW_UNALIGNED);
         break;
 
-    case sharedx_fftw_Plan_C_TO_R:
+    case org_sharedx_fftw_Plan_C_TO_R:
         // NOTE: Complex-to-real transforms may destroy their input.
         plan = fftw_plan_dft_c2r(nDims, (const int *) dimsArr, //
                 (fftw_complex *) inArr, outArr, mode | FFTW_DESTROY_INPUT | FFTW_UNALIGNED);
         break;
 
-    case sharedx_fftw_Plan_FORWARD:
+    case org_sharedx_fftw_Plan_FORWARD:
         plan = fftw_plan_dft(nDims, (const int *) dimsArr, //
                 (fftw_complex *) inArr, (fftw_complex *) outArr, //
                 FFTW_FORWARD, mode | FFTW_PRESERVE_INPUT | FFTW_UNALIGNED);
         break;
 
-    case sharedx_fftw_Plan_BACKWARD:
+    case org_sharedx_fftw_Plan_BACKWARD:
         plan = fftw_plan_dft(nDims, (const int *) dimsArr, //
                 (fftw_complex *) inArr, (fftw_complex *) outArr, //
                 FFTW_BACKWARD, mode | FFTW_PRESERVE_INPUT | FFTW_UNALIGNED);
@@ -400,16 +400,16 @@ inline void Plan::executePlan( //
 
     switch (type) {
 
-    case sharedx_fftw_Plan_R_TO_C:
+    case org_sharedx_fftw_Plan_R_TO_C:
         fftw_execute_dft_r2c(plan, inArr, (fftw_complex *) outArr);
         break;
 
-    case sharedx_fftw_Plan_C_TO_R:
+    case org_sharedx_fftw_Plan_C_TO_R:
         executePlanCToR(plan, inArr, outArr, inLen);
         break;
 
-    case sharedx_fftw_Plan_FORWARD:
-    case sharedx_fftw_Plan_BACKWARD:
+    case org_sharedx_fftw_Plan_FORWARD:
+    case org_sharedx_fftw_Plan_BACKWARD:
         fftw_execute_dft(plan, (fftw_complex *) inArr, (fftw_complex *) outArr);
         break;
 

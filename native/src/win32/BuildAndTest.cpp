@@ -90,9 +90,9 @@ void BuildAndTest::execAndWaitFor(const TCHAR *cmd) {
 int _tmain(int argc, TCHAR *argv[]) {
 
     BuildAndTest::execAndWaitFor("java -cp build/ant-launcher.jar org.apache.tools.ant.launch.Launcher");
-    BuildAndTest::execAndWaitFor("java -cp bin shared.test.All");
-    BuildAndTest::execAndWaitFor("java -cp bin shared.test.AllNative");
-    BuildAndTest::execAndWaitFor("java -cp bin sharedx.test.AllX");
+    BuildAndTest::execAndWaitFor("java -cp bin org.shared.test.All");
+    BuildAndTest::execAndWaitFor("java -cp bin org.shared.test.AllNative");
+    BuildAndTest::execAndWaitFor("java -cp bin org.sharedx.test.AllX");
 
     //
 

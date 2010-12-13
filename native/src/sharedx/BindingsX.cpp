@@ -23,28 +23,28 @@
 
 #include <BindingsX.hpp>
 
-JNIEXPORT void JNICALL Java_sharedx_fftw_Plan_transform(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_sharedx_fftw_Plan_transform(JNIEnv *env, jobject thisObj, //
         jdoubleArray in, jdoubleArray out) {
     Plan::transform(env, thisObj, in, out);
 }
 
-JNIEXPORT jbyteArray JNICALL Java_sharedx_fftw_Plan_create(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT jbyteArray JNICALL Java_org_sharedx_fftw_Plan_create(JNIEnv *env, jobject thisObj, jint type, //
         jintArray dims, jint logicalMode) {
     return Plan::create(env, thisObj, type, dims, logicalMode);
 }
 
-JNIEXPORT void JNICALL Java_sharedx_fftw_Plan_destroy(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_org_sharedx_fftw_Plan_destroy(JNIEnv *env, jobject thisObj) {
     Plan::destroy(env, thisObj);
 }
 
-JNIEXPORT jstring JNICALL Java_sharedx_fftw_Plan_exportWisdom(JNIEnv *env, jclass clazz) {
+JNIEXPORT jstring JNICALL Java_org_sharedx_fftw_Plan_exportWisdom(JNIEnv *env, jclass clazz) {
     return Plan::exportWisdom(env);
 }
 
-JNIEXPORT void JNICALL Java_sharedx_fftw_Plan_importWisdom(JNIEnv *env, jclass clazz, jstring wisdom) {
+JNIEXPORT void JNICALL Java_org_sharedx_fftw_Plan_importWisdom(JNIEnv *env, jclass clazz, jstring wisdom) {
     Plan::importWisdom(env, wisdom);
 }
 
-JNIEXPORT void JNICALL Java_sharedx_test_BenchmarkNative_testConvolve(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_org_sharedx_test_BenchmarkNative_testConvolve(JNIEnv *env, jobject thisObj) {
     Benchmark::testConvolve(env, thisObj);
 }

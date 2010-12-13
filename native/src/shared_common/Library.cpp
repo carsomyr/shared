@@ -45,9 +45,9 @@ jint Library::OnLoad(JavaVM *jvm, void *reserved) {
     try {
 
         libraryClass = (jclass) Common::newWeakGlobalRef(env, //
-                Common::findClass(env, "shared/metaclass/Library"));
+                Common::findClass(env, "org/shared/metaclass/Library"));
         servicesClass = (jclass) Common::newWeakGlobalRef(env, //
-                Common::findClass(env, "shared/util/Services"));
+                Common::findClass(env, "org/shared/util/Services"));
 
         initializedFieldId = Common::getStaticFieldId(env, libraryClass, //
                 "initialized", "Z");
@@ -59,17 +59,17 @@ jint Library::OnLoad(JavaVM *jvm, void *reserved) {
 
         NativeArrayKernel::init(env);
         Library::registerService(env, //
-                "shared/array/kernel/ArrayKernel", "shared/array/jni/NativeArrayKernel");
+                "org/shared/array/kernel/ArrayKernel", "org/shared/array/jni/NativeArrayKernel");
 
         NativeImageKernel::init(env);
         Library::registerService(env, //
-                "shared/image/kernel/ImageKernel", "shared/image/jni/NativeImageKernel");
+                "org/shared/image/kernel/ImageKernel", "org/shared/image/jni/NativeImageKernel");
 
 #ifdef sstx_EXPORTS
 
         Library::init(env);
         Library::registerService(env, //
-                "shared/fft/FftService", "sharedx/fftw/FftwService");
+                "org/shared/fft/FftService", "org/sharedx/fftw/FftwService");
 
 #endif
 
@@ -121,6 +121,6 @@ void Library::registerService(JNIEnv *env, //
     env->CallStaticVoidMethod(servicesClass, registerServiceMethodId, specClass, implClass);
 
     if (env->ExceptionCheck()) {
-        throw std::runtime_error("shared.util.Services#registerService invocation failed");
+        throw std::runtime_error("org.shared.util.Services#registerService invocation failed");
     }
 }

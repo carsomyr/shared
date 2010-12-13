@@ -23,15 +23,15 @@
 
 #include <Bindings.hpp>
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_randomize(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_randomize(JNIEnv *env, jobject thisObj) {
     srand((jlong) time(NULL));
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_derandomize(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_derandomize(JNIEnv *env, jobject thisObj) {
     srand(0);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_map(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_map(JNIEnv *env, jobject thisObj, //
         jintArray bounds, //
         jobject srcV, jintArray srcD, jintArray srcS, //
         jobject dstV, jintArray dstD, jintArray dstS) {
@@ -41,7 +41,7 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_map(JNIEnv *env, 
             dstV, dstD, dstS);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_slice(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_slice(JNIEnv *env, jobject thisObj, //
         jintArray slices, //
         jobject srcV, jintArray srcD, jintArray srcS, //
         jobject dstV, jintArray dstD, jintArray dstS) {
@@ -51,7 +51,7 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_slice(JNIEnv *env
             dstV, dstD, dstS);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_rrOp(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_rrOp(JNIEnv *env, jobject thisObj, jint type, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, //
         jdoubleArray dstV, jintArray dstD, jintArray dstS, //
         jintArray opDims) {
@@ -61,7 +61,7 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_rrOp(JNIEnv *env,
             opDims);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_riOp(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_riOp(JNIEnv *env, jobject thisObj, jint type, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, //
         jintArray dstV, //
         jint dim) {
@@ -71,7 +71,7 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_riOp(JNIEnv *env,
             dim);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_rdOp(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_rdOp(JNIEnv *env, jobject thisObj, jint type, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, jdoubleArray dstV, //
         jintArray opDims) {
     DimensionOps::rdOp(env, thisObj, type, //
@@ -79,69 +79,69 @@ JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_rdOp(JNIEnv *env,
             opDims);
 }
 
-JNIEXPORT jdouble JNICALL Java_shared_array_jni_NativeArrayKernel_raOp(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT jdouble JNICALL Java_org_shared_array_jni_NativeArrayKernel_raOp(JNIEnv *env, jobject thisObj, jint type, //
         jdoubleArray srcV) {
     return ElementOps::raOp(env, thisObj, type, srcV);
 }
 
-JNIEXPORT jdoubleArray JNICALL Java_shared_array_jni_NativeArrayKernel_caOp(JNIEnv *env, jobject thisObj, jint type, //
-        jdoubleArray srcV) {
+JNIEXPORT jdoubleArray JNICALL Java_org_shared_array_jni_NativeArrayKernel_caOp(JNIEnv *env, jobject thisObj, //
+        jint type, jdoubleArray srcV) {
     return ElementOps::caOp(env, thisObj, type, srcV);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_ruOp(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_ruOp(JNIEnv *env, jobject thisObj, jint type, //
         jdouble a, jdoubleArray srcV) {
     ElementOps::ruOp(env, thisObj, type, a, srcV);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_cuOp(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_cuOp(JNIEnv *env, jobject thisObj, jint type, //
         jdouble aRe, jdouble aIm, jdoubleArray srcV) {
     ElementOps::cuOp(env, thisObj, type, aRe, aIm, srcV);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_iuOp(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_iuOp(JNIEnv *env, jobject thisObj, jint type, //
         jint a, jintArray srcV) {
     ElementOps::iuOp(env, thisObj, type, a, srcV);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_eOp(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_eOp(JNIEnv *env, jobject thisObj, jint type, //
         jobject lhsV, jobject rhsV, jobject dstV, jboolean complex) {
     ElementOps::eOp(env, thisObj, type, lhsV, rhsV, dstV, complex);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_convert(JNIEnv *env, jobject thisObj, jint type, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_convert(JNIEnv *env, jobject thisObj, jint type, //
         jobject srcV, jboolean isSrcComplex, jobject dstV, jboolean isDstComplex) {
     ElementOps::convert(env, thisObj, type, srcV, isSrcComplex, dstV, isDstComplex);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_mul(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_mul(JNIEnv *env, jobject thisObj, //
         jdoubleArray lhsV, jdoubleArray rhsV, jint lhsR, jint rhsC, jdoubleArray dstV, jboolean complex) {
     MatrixOps::mul(env, thisObj, lhsV, rhsV, lhsR, rhsC, dstV, complex);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_diag(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_diag(JNIEnv *env, jobject thisObj, //
         jdoubleArray srcV, jdoubleArray dstV, jint size, jboolean complex) {
     MatrixOps::diag(env, thisObj, srcV, dstV, size, complex);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_svd(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_svd(JNIEnv *env, jobject thisObj, //
         jdoubleArray srcV, jint srcStrideRow, jint srcStrideCol, //
         jdoubleArray uV, jdoubleArray sV, jdoubleArray vV, //
         jint nRows, jint nCols) {
     LinearAlgebraOps::svd(env, thisObj, srcV, srcStrideRow, srcStrideCol, uV, sV, vV, nRows, nCols);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_eigs(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_eigs(JNIEnv *env, jobject thisObj, //
         jdoubleArray srcV, jdoubleArray vecV, jdoubleArray valV, jint size) {
     LinearAlgebraOps::eigs(env, thisObj, srcV, vecV, valV, size);
 }
 
-JNIEXPORT void JNICALL Java_shared_array_jni_NativeArrayKernel_invert(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_array_jni_NativeArrayKernel_invert(JNIEnv *env, jobject thisObj, //
         jdoubleArray srcV, jdoubleArray dstV, jint size) {
     LinearAlgebraOps::invert(env, thisObj, srcV, dstV, size);
 }
 
-JNIEXPORT void JNICALL Java_shared_image_jni_NativeImageKernel_createIntegralImage(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_image_jni_NativeImageKernel_createIntegralImage(JNIEnv *env, jobject thisObj, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, //
         jdoubleArray dstV, jintArray dstD, jintArray dstS) {
     NativeImageKernel::createIntegralImage(env, thisObj, //
@@ -149,7 +149,7 @@ JNIEXPORT void JNICALL Java_shared_image_jni_NativeImageKernel_createIntegralIma
             dstV, dstD, dstS);
 }
 
-JNIEXPORT void JNICALL Java_shared_image_jni_NativeImageKernel_createIntegralHistogram(JNIEnv *env, jobject thisObj, //
+JNIEXPORT void JNICALL Java_org_shared_image_jni_NativeImageKernel_createIntegralHistogram(JNIEnv *env, jobject thisObj, //
         jdoubleArray srcV, jintArray srcD, jintArray srcS, jintArray memV, //
         jdoubleArray dstV, jintArray dstD, jintArray dstS) {
     NativeImageKernel::createIntegralHistogram(env, thisObj, //
@@ -157,18 +157,18 @@ JNIEXPORT void JNICALL Java_shared_image_jni_NativeImageKernel_createIntegralHis
             dstV, dstD, dstS);
 }
 
-JNIEXPORT jintArray JNICALL Java_shared_array_jni_NativeArrayKernel_find(JNIEnv *env, jobject thisObj, //
+JNIEXPORT jintArray JNICALL Java_org_shared_array_jni_NativeArrayKernel_find(JNIEnv *env, jobject thisObj, //
         jintArray srcV, jintArray srcD, jintArray srcS, jintArray logical) {
     return IndexOps::find(env, thisObj, srcV, srcD, srcS, logical);
 }
 
-JNIEXPORT jobject JNICALL Java_shared_array_jni_NativeArrayKernel_insertSparse(JNIEnv *env, jobject thisObj, //
+JNIEXPORT jobject JNICALL Java_org_shared_array_jni_NativeArrayKernel_insertSparse(JNIEnv *env, jobject thisObj, //
         jobject oldV, jintArray oldD, jintArray oldS, jintArray oldDo, jintArray oldI, //
         jobject newV, jintArray newLi) {
     return SparseOps::insert(env, thisObj, oldV, oldD, oldS, oldDo, oldI, newV, newLi);
 }
 
-JNIEXPORT jobject JNICALL Java_shared_array_jni_NativeArrayKernel_sliceSparse(JNIEnv *env, jobject thisObj, //
+JNIEXPORT jobject JNICALL Java_org_shared_array_jni_NativeArrayKernel_sliceSparse(JNIEnv *env, jobject thisObj, //
         jintArray slices, //
         jobject srcV, jintArray srcD, jintArray srcS, jintArray srcDo, //
         jintArray srcI, jintArray srcIo, jintArray srcIi, //

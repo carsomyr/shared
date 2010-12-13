@@ -51,7 +51,7 @@ void NativeArrayKernel::init(JNIEnv *env) {
             Common::findClass(env, "[Ljava/lang/Object;"));
 
     sparseArrayStateClass = (jclass) Common::newWeakGlobalRef(env, //
-            Common::findClass(env, "shared/array/sparse/SparseArrayState"));
+            Common::findClass(env, "org/shared/array/sparse/SparseArrayState"));
     sparseArrayStateMethodId = Common::getMethodId(env, sparseArrayStateClass, //
             "<init>", "(Ljava/lang/Object;[I[I[I)V");
 }
@@ -108,7 +108,7 @@ jobject NativeArrayKernel::newSparseArrayState(JNIEnv *env, //
             values, indices, indirectionOffsets, indirections);
 
     if (env->ExceptionCheck()) {
-        throw std::runtime_error("shared.array.sparse.SparseArrayState#<init> invocation failed");
+        throw std::runtime_error("org.shared.array.sparse.SparseArrayState#<init> invocation failed");
     }
 
     return res;

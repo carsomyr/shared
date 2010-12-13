@@ -34,23 +34,23 @@ void DimensionOps::rrOp(JNIEnv *env, jobject thisObj, jint type, //
 
         switch (type) {
 
-        case shared_array_kernel_ArrayKernel_RR_SUM:
+        case org_shared_array_kernel_ArrayKernel_RR_SUM:
             op = DimensionOps::rrSum;
             break;
 
-        case shared_array_kernel_ArrayKernel_RR_PROD:
+        case org_shared_array_kernel_ArrayKernel_RR_PROD:
             op = DimensionOps::rrProd;
             break;
 
-        case shared_array_kernel_ArrayKernel_RR_MAX:
+        case org_shared_array_kernel_ArrayKernel_RR_MAX:
             op = DimensionOps::rrMax;
             break;
 
-        case shared_array_kernel_ArrayKernel_RR_MIN:
+        case org_shared_array_kernel_ArrayKernel_RR_MIN:
             op = DimensionOps::rrMin;
             break;
 
-        case shared_array_kernel_ArrayKernel_RR_VAR:
+        case org_shared_array_kernel_ArrayKernel_RR_VAR:
             op = DimensionOps::rrVar;
             break;
 

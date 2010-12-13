@@ -34,11 +34,11 @@ void DimensionOps::rdOp(JNIEnv *env, jobject thisObj, jint type, //
 
         switch (type) {
 
-        case shared_array_kernel_ArrayKernel_RD_SUM:
+        case org_shared_array_kernel_ArrayKernel_RD_SUM:
             op = DimensionOps::rdSum;
             break;
 
-        case shared_array_kernel_ArrayKernel_RD_PROD:
+        case org_shared_array_kernel_ArrayKernel_RD_PROD:
             op = DimensionOps::rdProd;
             break;
 

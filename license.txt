@@ -15,10 +15,10 @@ Other libraries have been incorporated to varying extents:
     * native/src/shared/LinearAlgebraOps_eigs.cpp
     * native/src/shared/LinearAlgebraOps_lu.cpp
     * native/src/shared/LinearAlgebraOps_svd.cpp
-    * src/shared/array/kernel/LinearAlgebraOps.java
+    * src/org/shared/array/kernel/LinearAlgebraOps.java
   * Components of Kiss FFT (license/license_Kiss-FFT.txt) have been adapted
     into:
-    * src/shared/fft/FftOps.java
+    * src/org/shared/fft/FftOps.java
   * The Bitstream Vera font (license/license_Bitstream-Vera.txt) is included at:
     * src/font/Vera.ttf
   * The FFTW3 library (optional, license/license_FFTW3.txt) is used by:

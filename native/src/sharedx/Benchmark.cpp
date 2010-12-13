@@ -32,23 +32,23 @@ void Benchmark::testConvolve(JNIEnv *env, jobject thisObj) {
 
         jint mode;
 
-        const jint benchmarkMode = sharedx_test_BenchmarkSpecification_MODE;
+        const jint benchmarkMode = org_sharedx_test_BenchmarkSpecification_MODE;
 
         switch (benchmarkMode) {
 
-        case sharedx_fftw_Plan_FFTW_ESTIMATE:
+        case org_sharedx_fftw_Plan_FFTW_ESTIMATE:
             mode = FFTW_ESTIMATE;
             break;
 
-        case sharedx_fftw_Plan_FFTW_MEASURE:
+        case org_sharedx_fftw_Plan_FFTW_MEASURE:
             mode = FFTW_MEASURE;
             break;
 
-        case sharedx_fftw_Plan_FFTW_PATIENT:
+        case org_sharedx_fftw_Plan_FFTW_PATIENT:
             mode = FFTW_PATIENT;
             break;
 
-        case sharedx_fftw_Plan_FFTW_EXHAUSTIVE:
+        case org_sharedx_fftw_Plan_FFTW_EXHAUSTIVE:
             mode = FFTW_EXHAUSTIVE;
             break;
 
@@ -56,8 +56,8 @@ void Benchmark::testConvolve(JNIEnv *env, jobject thisObj) {
             throw std::runtime_error("Invalid FFTW execution mode");
         }
 
-        jint size = sharedx_test_BenchmarkSpecification_SIZE;
-        jint nReps = sharedx_test_BenchmarkSpecification_N_REPS;
+        jint size = org_sharedx_test_BenchmarkSpecification_SIZE;
+        jint nReps = org_sharedx_test_BenchmarkSpecification_N_REPS;
 
         const int dims[2] = { size, size };
         jint len = size * size;
@@ -75,7 +75,7 @@ void Benchmark::testConvolve(JNIEnv *env, jobject thisObj) {
         jcomplex *ker = all + len;
 
         // Acquire the class monitor just to be safe.
-        MonitorHandler monitorH(env, (jobject) env->FindClass("sharedx/fftw/Plan"));
+        MonitorHandler monitorH(env, (jobject) env->FindClass("org/sharedx/fftw/Plan"));
 
         fftw_plan forward = fftw_plan_dft(2, dims, //
                 (fftw_complex *) in, (fftw_complex *) ker, //
