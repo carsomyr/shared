@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['raent',['raEnt',['../classElementOps.html#a70d3dc57f15f562aad2fdac92e9042ba',1,'ElementOps']]],
+  ['ramax',['raMax',['../classElementOps.html#a4be2c5fb587ceebac4a4c7d4500ea3ef',1,'ElementOps']]],
+  ['ramin',['raMin',['../classElementOps.html#a8fac1748091a0bf1f612f2509b09fec6',1,'ElementOps']]],
+  ['raprod',['raProd',['../classElementOps.html#a44345ca8c4db86ba6e4b000b55cc90fb',1,'ElementOps']]],
+  ['rasum',['raSum',['../classElementOps.html#abf24d30fb9e6611818a02c36c84da191',1,'ElementOps']]],
+  ['ravar',['raVar',['../classElementOps.html#ad883fd288fa5b7aaf36d3d47a76c2b42',1,'ElementOps']]],
+  ['re',['re',['../structjcomplex.html#a7fa8d2f35a6b1230944174ae7a117d40',1,'jcomplex']]],
+  ['rrmax',['rrMax',['../classDimensionOps.html#aeb83d7cb53501ceffc8da09a6dc8b26b',1,'DimensionOps']]],
+  ['rrmin',['rrMin',['../classDimensionOps.html#a36ec91cedffeefde0ebcb759038678ec',1,'DimensionOps']]],
+  ['rrprod',['rrProd',['../classDimensionOps.html#a573ba62343484fd3e80604a11038087d',1,'DimensionOps']]],
+  ['rrsum',['rrSum',['../classDimensionOps.html#abe6964ba5c464d8b28d632d678a21598',1,'DimensionOps']]],
+  ['rrvar',['rrVar',['../classDimensionOps.html#abf3bfbdf93514c568326826c9caedf7f',1,'DimensionOps']]],
+  ['rtocim',['rtocIm',['../classElementOps.html#a8dafe27ff782e0ceefd38729c1b3296e',1,'ElementOps']]],
+  ['rtocre',['rtocRe',['../classElementOps.html#aa45c56af0747c8837bf5da07ea007c40',1,'ElementOps']]],
+  ['ruabs',['ruAbs',['../classElementOps.html#a0d4b8c10a5c91dc786644a2bea5ce1e9',1,'ElementOps']]],
+  ['ruatan',['ruAtan',['../classElementOps.html#a903d5dedd957c8d6d2f3a169f706c52d',1,'ElementOps']]],
+  ['rucos',['ruCos',['../classElementOps.html#ac320cb4b3a117eed3114f28c0a394dab',1,'ElementOps']]],
+  ['ruexp',['ruExp',['../classElementOps.html#a0088562eacfa3fceac6e436c37c09192',1,'ElementOps']]],
+  ['rulog',['ruLog',['../classElementOps.html#a1c4160d083e2eb00b808deec3a4e95a8',1,'ElementOps']]],
+  ['rupow',['ruPow',['../classElementOps.html#a8559f6dcd0a1a809e3d112a2ca7751bf',1,'ElementOps']]],
+  ['rurnd',['ruRnd',['../classElementOps.html#a67873e050723ba64cdd3306d4ab53c88',1,'ElementOps']]],
+  ['rusin',['ruSin',['../classElementOps.html#a6db3a114e3a1ad487f0f1d5718ef804e',1,'ElementOps']]],
+  ['rusqrt',['ruSqrt',['../classElementOps.html#af3c52fae40287662dd2a1835b3a6d0b3',1,'ElementOps']]]
+];

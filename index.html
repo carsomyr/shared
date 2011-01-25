@@ -1,0 +1,212 @@
+---
+layout: default
+title:  Shared Scientific Toolbox
+---
+
+<div class="title">
+<img src="images/logo.png" alt="SST Logo" />
+<p style="text-align: center;">The Shared Scientific Toolbox in Java</p>
+</div>
+
+<div class="section">
+<h2 class="section_heading">Introduction</h2>
+<div class="section_body">
+<p>
+The Shared Scientific Toolbox in Java (SST) is a collection of foundational scientific libraries.
+Its primary purpose is to serve as a bridge between the highly specific demands of involved scientific calculations and the more traditional aspects of the <a href="http://www.oracle.com/technetwork/java/index.html">Java</a> programming language.
+True to the Java way, the SST strives for idioms and primitives that are powerful and yet general enough to enable the user to write concise, correct, and fast code for most scientific tasks.
+The SST is best suited for deployment code where integration and portability are priorities -- in other words, <i>prototype</i> in <a href="http://www.mathworks.com/">MATLAB</a>, <i>deploy</i> in the <a href="http://code.google.com/p/shared/">SST</a>.
+</p>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section_heading">Features</h2>
+<div class="section_body">
+<p>
+The SST includes many member packages with the goal of simplifying scientific programming.
+These include and are not limited to:
+</p>
+<ul>
+<li>A full-featured multidimensional array package supporting slicing operations, elementwise operations, dimensionwise operations, FFTs, and linear algebraic functions.</li>
+<li>A highly scalable, asynchronous sockets API built on top of <a href="http://download.oracle.com/javase/1.4.2/docs/guide/nio/">java.nio</a>.</li>
+<li>A parallel dataflow engine that facilitates the exploitation of multicore hardware.</li>
+<li>Plotting abstractions that provide a consistent, easy way to leverage the power of plotting packages like <a href="http://gnuplot.info/">Gnuplot</a>.</li>
+<li>Declarative, annotation-driven APIs for resource loading, command-line parsing, and message passing.</li>
+<li>Numerous convenience classes that improve upon existing <a href="http://en.wikipedia.org/wiki/Java_Foundation_Classes">java.*</a> foundation class functionality.</li>
+</ul>
+<p>
+The next five sections offer a cross section of the features described above.
+</p>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section_heading">Multidimensional Arrays -- <a href="javadoc/org/shared/array/package-summary.html">org.shared.array</a></h2>
+<div class="section_body">
+<p>
+The <a href="javadoc/org/shared/array/package-summary.html">org.shared.array</a> package allows the user to interact with multidimensional numerical data in a structured, concise manner.
+The following picture demonstrates how one goes about multiplying two <a href="javadoc/org/shared/array/RealArray.html">RealArray</a>s (which happen to be two-dimensional and interpreted as matrices).
+</p>
+<div style="text-align: center;"><img src="images/formula.png" alt="Formula" /></div>
+<br>
+Users of this package may enjoy many potential benefits:
+<ul>
+<li>A breadth of operations comparable to that of MATLAB.</li>
+<li>Multidimensional FFT operations backed by the award winning <a href="http://www.fftw.org/">FFTW3</a> package.</li>
+<li>Execution of native code whenever shared libraries or DLLs are available through the <a href="http://en.wikipedia.org/wiki/Java_Native_Interface">JNI</a>.</li>
+<li>An arbitrary number of array dimensions.</li>
+<li>A generic <a href="javadoc/org/shared/array/ObjectArray.html">ObjectArray</a> class that can hold anything.</li>
+<li>Your choice of row major or column major indexing and the ability to convert between the two.</li>
+<li>An experimental sparse array class that supports an arbitrary number of dimensions.</li>
+<li>Arrays permitting an arbitrary number of dimensions.
+Matrix operations are provided through an interface whose methods work on arrays that happen to be two-dimensional.</li>
+<li>Orthogonal design to increase extensibility, maintainability, and understandability.</li>
+</ul>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section_heading">High Performance Networking -- <a href="javadoc/org/shared/net/package-summary.html">org.shared.net</a></h2>
+<div class="section_body">
+<p>
+An asynchronous model for sockets, aside from the performance benefits associated with being built on top of <a href="http://www.lowtek.com/sockets/select.html">select</a>, can reduce programmer error through a concise API and well-defined set of usage conventions.
+The SST implements a complete messaging layer upon which high level protocols may be built.
+Users may override any level of the networking stack, with the choice dependent on the level of specific functionality desired.
+The end goal is to empower users to build scalable, thread-safe distributed programs.
+The illustration below demonstrates a fairly typical, network-aware message passing architecture in the style of <a href="http://www.eecs.harvard.edu/~mdw/papers/seda-sosp01.pdf">SEDA</a>, with the asynchronous sockets layer marked in red.
+In it, packets come in from asynchronous sockets; packets are transformed into events; events are then dispatched to processing units; processing units serialize response events; and finally serialized responses are written back to asynchronous sockets.
+</p>
+<div style="text-align: center;"><img src="images/network.png" alt="Asynchronous Networking" /></div>
+<p>
+The subsystem described above offers significant advantages over the traditional one-thread-per-socket model of network programming:
+</p>
+<ul>
+<li>Consistent performance under thousands of concurrent connections.
+The internally multithreaded design applies otherwise idle CPU resources toward non-blocking socket I/O.</li>
+<li>Callback reads and asynchronous writes, which remove programmer responsibility for ensuring that mission critical code does not block.</li>
+<li>A realization of the <a href="http://www.oracle.com/technetwork/java/interceptingfilter-142169.html">intercepting filter</a> pattern that separates protocol and endpoint logic concerns.
+As a consequence, pluggable SSL/TLS transport and XML DOM parsing are available to the programmer with &#x03B5; additional effort.</li>
+<li>Compact, orthogonal, type-safe design both in terms of lines of code and economy of API concepts.
+Internals are hidden from the user in an effort to prevent misuse and bugs.</li>
+</ul>
+<p>
+Switching from traditional I/O constructs to an NIO framework requires careful initial consideration; consequently, we invite you to peruse the networking chapter of the <a href="manual.pdf">user manual</a> to see if the SST's networking layer is appropriate for your problem.
+If not, do check out the excellent <a href="http://mina.apache.org/">Apache MINA</a> and <a href="http://netty.io/">Netty</a> projects as alternatives.
+</p>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section_heading">Parallel Dataflow Engines -- <a href="javadoc/org/shared/parallel/package-summary.html">org.shared.parallel</a></h2>
+<div class="section_body">
+<p>
+A parallel dataflow engine separates the <i>specification</i> of a parallel computation from the actual <i>execution</i> of it.
+All that is required from the user is a description of the atomic units of work involved and their interdependencies.
+Upon receiving an input, the engine will carry out the computation in parallel to the fullest extent that its dependencies allow.
+The illustration below depicts a very simple engine whose nodes perform arithmetic operations on their inputs.
+Conceptually, one may view engine execution as pushing, and in the process transforming, an initial input from a source node through a series of calculation nodes to an eventual sink node.
+</p>
+<div style="text-align: center;"><img src="images/engine.png" alt="Parallel Engine" /></div>
+<p>
+The above approach has multiple computational and organizational advantages:
+</p>
+<ul>
+<li>Elimination of potential bottlenecks by encouraging users to break computations down into small tasks and scheduling tasks as soon as dependencies are met.</li>
+<li>A methodical way to deal with repetitive, parameterized computations.
+<a href="http://en.wikipedia.org/wiki/Feature_extraction">Feature extraction</a> routines for machine learning would benefit greatly from decreased code complexity and increased throughput resulting from parallelism.</li>
+<li>Removal of task scheduling on multicore hardware from the programmer's list of responsibilities.
+Although prototype systems like <a href="http://supertech.csail.mit.edu/jCilkImp.html">JCilk</a> have this benefit, they require Java language extensions and do not run on vanilla JVMs.</li>
+</ul>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section_heading">Statistical Tools -- <a href="javadoc/org/shared/stat/package-summary.html">org.shared.stat</a></h2>
+<div class="section_body">
+<p>
+Whereas MATLAB is a sheltered execution environment with all statistical tools in one place, the SST, being compatible with vanilla Java code, takes a mix-and-match approach.
+In providing a statistical package, we pay particular attention to design and abstraction, since these are what the base language encourages.
+Time constraints, however, dictate the implementation of only a handful of concepts -- we welcome the user to check out what's currently available (e.g., classes for <a href="javadoc/org/shared/stat/util/Combinatorics.html">combinatorics</a> and <a href="javadoc/org/shared/stat/ml/GmModel.html">Gaussian mixture modeling</a>).
+One noteworthy subpackage is <a href="javadoc/org/shared/stat/plot/package-summary.html">org.shared.stat.plot</a>.
+Here, one will find abstractions modeled for basic plotting functionality.
+Currently, we provide a Gnuplot-backed implementation of the interfaces.
+Consequently, we were able to generate the surface plot shown below with <code>14</code> lines of non-Gnuplot-specific code.
+</p>
+<div style="text-align: center;"><img src="images/gnuplot.png" alt="Mesh Plot" /></div>
+<p>
+</p>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section_heading">Annotation-Driven Class Loading -- <a href="javadoc/org/shared/metaclass/Loader.html">org.shared.metaclass.Loader</a></h2>
+<div class="section_body">
+<p>
+In addition to calculation-driven libraries, the SST contains declarative, annotation-driven APIs that attempt to reduce the tedium of writing repetitive, boilerplate code.
+With Java 1.5 <a href="http://download.oracle.com/javase/1.5.0/docs/guide/language/annotations.html">annotations</a>, programmers can describe how their program is supposed to work without having to write control flow logic.
+</p>
+<p>
+One such annotation-driven API marshalls resources and loads them on program start.
+Normally, programs depend on third party libraries, and, by association, their Jar files.
+In general, it's not good practice to unpack Jar files and dump their contents onto the main class path.
+Declaring an overly long class path for the system class loader isn't a viable solution either, as one exposes the underlying needs of the program to a shell script or the like, and that breaks portability.
+The SST program loader addresses the above issues by inserting a level of indirection between resource management and program execution.
+The illustration below demonstrates just how the loader interrogates a designated main class for resource targets (delimited in red along with annotations).
+Quite simply, the annotations say that the paths found in "embedded.jar", which itself is a resource on the bootstrap class path, should be visible to a newly created <a href="javadoc/org/shared/metaclass/RegistryClassLoader.html">RegistryClassLoader</a>.
+Moreover, as an added service, said class loader should also load the native JNI library "stuff/libnative.so".
+</p>
+<div style="text-align: center;"><img src="images/resource_loading.png" alt="Resource Loading" /></div>
+<p>
+By controlling class loading behavior with annotations, users can achieve the following effects:
+</p>
+<ul>
+<li>Jar-in-Jar deployments equivalent to those possible with <a href="http://classworlds.codehaus.org/">classworlds</a>.</li>
+<li>Packaging and loading native libraries as part of Jar-in-Jar distributions and declaring their presence with annotations.</li>
+<li>Fine-grained control over class loader delegation rules that may diverge from Java's default model.</li>
+</ul>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section_heading">Downloads and Documentation</h2>
+<div class="section_body">
+<p>
+To send you on your way, here's how to obtain the SST and/or learn more about it:
+</p>
+<ul>
+<li><a href="http://code.google.com/p/shared/downloads/list">Downloads</a> of source and Jar distributions.</li>
+<li><a href="manual.pdf">A user manual</a> of usage examples and design philosophy.</li>
+<li><a href="javadoc/">Javadocs</a> of member classes, or, for the eternally curious, <a href="doxydoc/">Doxygen</a> of the native components.</li>
+<li><a href="https://github.com/carsomyr/shared">A Git repository</a> of browseable code.</li>
+</ul>
+<p>
+The fastest way to test drive the SST is to download the pure Java distribution, given as a Jar, and type
+</p>
+<blockquote>
+<code>java -jar sst.jar</code>,
+</blockquote>
+<p>
+which will kick off a suite of JUnit tests.
+No functionality is lost in using pure Java backend bindings; however, we highly recommend compiling the native layer for speed.
+Thus, once you are satisfied that the SST will meet your needs, download the full, Tar'd distribution and build the Java sources as well as the C++ sources constituting the native layer.
+Windows users may benefit from a special source distribution that contains precompiled DLLs and a special executable, <code>buildandtest.exe</code>, for compiling Java classes and unit testing the whole package.
+</p>
+<p>
+Finally, <a href="http://eclipse.org/">Eclipse</a> users can import the source distribution or version control working image, which contain <code>.project</code> and <code>.classpath</code> files, directly.
+Note that the <a href="http://ant.apache.org/ivy/ivyde/">IvyDE</a> plugin is required to properly set up the class path.
+</p>
+<p>
+Make sure you have <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java</a> 1.6.*+ handy.
+Contact the <a href="https://www.google.com/profiles/carsomyr">administrator</a> if you have any lingering doubts and/or questions.
+</p>
+</div>
+</div>
+
+<div class="section">
+<div class="footer_link">
+<a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10-blue" alt="Valid XHTML 1.0 Transitional" width="88" height="31" /></a>
+<a href="http://jigsaw.w3.org/css-validator/check/referer"><img src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!" width="88" height="31" /></a>
+<a href="http://java.com/getjava/" target="_blank"><img src="http://java.com/en/img/everywhere/getjava_sm.gif" alt="GetJava Download Button" width="88" height="31" /></a>
+</div>
+</div>
